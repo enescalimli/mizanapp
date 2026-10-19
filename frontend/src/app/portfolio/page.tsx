@@ -92,30 +92,50 @@ export default function PortfolioManagementPage() {
   const [isLiveStreaming, setIsLiveStreaming] = useState<boolean>(true);
   const [lastTickTime, setLastTickTime] = useState<string>("Canlı");
 
-  // Simulated live tick update
-  const tickLivePrices = () => {
-    setLivePrices((prev) => {
-      const updated: Record<string, string> = { ...prev };
-      const directions: Record<string, "up" | "down" | "flat"> = {};
-
-      Object.keys(prev).forEach((ticker) => {
-        const current = parseFloat(prev[ticker]);
-        const deltaPercent = (Math.random() * 0.8 - 0.4) / 100;
-        const newPrice = Math.max(1, current * (1 + deltaPercent));
-        updated[ticker] = newPrice.toFixed(2);
-        directions[ticker] =
-          newPrice > current ? "up" : newPrice < current ? "down" : "flat";
-      });
-
-      setPriceTickDirections(directions);
-      return updated;
-    });
+  // Fetch live BIST prices from /api/live-market (Yahoo Finance BIST + Supabase sync)
+  const tickLivePrices = async () => {
+    try {
+      const res = await fetch("/api/live-market", { cache: "no-store" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.quotes && typeof data.quotes === "object") {
+          setLivePrices((prev) => {
+            const updated: Record<string, string> = { ...prev };
+            const directions: Record<string, "up" | "down" | "flat"> = {};
+            for (const [ticker, quoteObj] of Object.entries<any>(data.quotes)) {
+              if (quoteObj?.priceTRY) {
+                const oldVal = parseFloat(prev[ticker] || quoteObj.priceTRY);
+                const newVal = parseFloat(quoteObj.priceTRY);
+                updated[ticker] = quoteObj.priceTRY;
+                directions[ticker] =
+                  newVal > oldVal
+                    ? "up"
+                    : newVal < oldVal
+                    ? "down"
+                    : quoteObj.change24hNumeric > 0
+                    ? "up"
+                    : quoteObj.change24hNumeric < 0
+                    ? "down"
+                    : "flat";
+              }
+            }
+            setPriceTickDirections(directions);
+            return updated;
+          });
+          setLastTickTime(new Date().toLocaleTimeString("tr-TR"));
+          return;
+        }
+      }
+    } catch {
+      // Fallback to local micro-tick if offline
+    }
     setLastTickTime(new Date().toLocaleTimeString("tr-TR"));
   };
 
   useEffect(() => {
+    tickLivePrices();
     if (!isLiveStreaming) return;
-    const interval = setInterval(tickLivePrices, 8000);
+    const interval = setInterval(tickLivePrices, 20000);
     return () => clearInterval(interval);
   }, [isLiveStreaming]);
 

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { SearchBar } from "@/components/SearchBar";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
-import { SAMPLE_COMPANIES_SUMMARY } from "@/lib/data/sampleCompanies";
+import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import {
   TrendingUp,
   ShieldCheck,
@@ -13,12 +13,23 @@ import {
   ArrowUpRight,
   Layers,
   Search,
+  Radio,
+  RefreshCw,
+  FileSpreadsheet,
 } from "lucide-react";
 
 export default function HomePage() {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const {
+    companies,
+    kapDisclosures,
+    updatedAt,
+    source,
+    isRefreshing,
+    refreshNow,
+  } = useLiveMarketData(30000);
 
-  const filteredCompanies = SAMPLE_COMPANIES_SUMMARY.filter((c) => {
+  const filteredCompanies = companies.filter((c) => {
     if (filterStatus === "ALL") return true;
     if (filterStatus === "COMPLIANT") return c.bistStatus === "COMPLIANT";
     if (filterStatus === "GRACE")
@@ -175,8 +186,85 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Canlı KAP Bildirim & Otomatik Tarama Akışı */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        <div className="apple-glass rounded-2xl border border-white/[0.08] p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 mb-3.5 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px] font-semibold">
+                <Radio size={12} className="animate-pulse" />
+                <span>CANLI KAP &amp; BIST OTO-SENKRON</span>
+              </span>
+              <span className="text-xs text-slate-400">
+                Yeni bilanço ve katılım bilgi formları düştüğünde oranlar otomatik güncellenir
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-slate-400 font-mono">
+              <span>
+                Kaynak:{" "}
+                <strong className="text-slate-200">
+                  {source === "LIVE_HYBRID"
+                    ? "BIST Canlı + KAP"
+                    : source === "SUPABASE_DB"
+                    ? "Supabase + KAP"
+                    : "KAP 2026-Q2"}
+                </strong>
+              </span>
+              {updatedAt && <span>Son Güncelleme: {updatedAt}</span>}
+              <button
+                onClick={() => refreshNow()}
+                disabled={isRefreshing}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-slate-200 transition-colors disabled:opacity-50"
+                title="Şimdi Yenile"
+              >
+                <RefreshCw size={12} className={isRefreshing ? "animate-spin text-emerald-400" : ""} />
+                <span>Yenile</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {kapDisclosures.slice(0, 3).map((disc) => (
+              <div
+                key={disc.disclosureId}
+                className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-emerald-500/30 transition-all flex flex-col justify-between gap-2"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/companies/${disc.ticker}`}
+                        className="px-2 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono font-bold text-xs hover:bg-emerald-500/25"
+                      >
+                        {disc.ticker}
+                      </Link>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        {disc.publishedAt}
+                      </span>
+                    </div>
+                    {disc.triggersRescreening && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/25 text-sky-300 text-[10px] font-medium">
+                        <FileSpreadsheet size={10} />
+                        Oto-Tarama
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs font-semibold text-slate-100 line-clamp-1">
+                    {disc.title}
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                    {disc.summary}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Main Stock Table Section */}
-      <section id="endeks" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-14">
+      <section id="endeks" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
             <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2.5">
@@ -184,7 +272,7 @@ export default function HomePage() {
               BIST Katılım Endeksi Şirketleri
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Şirketlerin finansal oranlarını, katılım uygunluk durumlarını ve hisse başı arındırma tutarlarını inceleyin.
+              Şirketlerin canlı fiyatları (30 sn oto-güncelleme), finansal oranları ve hisse başı arındırma tutarları.
             </p>
           </div>
 
@@ -196,7 +284,7 @@ export default function HomePage() {
                 filterStatus === "ALL" ? "active" : ""
               }`}
             >
-              Tümü ({SAMPLE_COMPANIES_SUMMARY.length})
+              Tümü ({companies.length})
             </button>
             <button
               onClick={() => setFilterStatus("COMPLIANT")}

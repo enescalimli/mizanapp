@@ -435,3 +435,76 @@ def test_fastapi_pipeline_sync_endpoint() -> None:
     assert payload["kap_evaluated_count"] == 13
     assert "THYAO" in payload["non_compliant_tickers"]
     assert "PGSUS" in payload["at_risk_tickers"]
+
+
+# ============================================================================
+# 5. CANLI FİYAT AKIŞI & KAP WATCHER TESTLERİ (`price_stream.py` & `kap_watcher.py`)
+# ============================================================================
+
+
+def test_bist_live_price_service_parses_yahoo_payload_and_updates_mcap() -> None:
+    """Canlı fiyat verisi Zero-Float Decimal olarak ayrıştırılmalı ve Piyasa Değerini dinamik güncellemelidir."""
+    from services.pipeline.price_stream import BISTLivePriceService, parse_yahoo_chart_payload
+
+    sample_yahoo_json = {
+        "chart": {
+            "result": [
+                {
+                    "meta": {
+                        "regularMarketPrice": 500.0,
+                        "chartPreviousClose": 480.0,
+                    },
+                    "indicators": {
+                        "quote": [
+                            {
+                                "close": [475.0, 480.0, 485.5, 492.0, 500.0],
+                            }
+                        ]
+                    },
+                }
+            ]
+        }
+    }
+    quote = parse_yahoo_chart_payload("BIMAS", sample_yahoo_json)
+    assert quote is not None
+    assert quote.ticker == "BIMAS"
+    assert quote.last_price_try == Decimal("500.00")
+    assert quote.change_24h_percent == Decimal("4.17")
+    assert len(quote.sparkline_5d) == 5
+
+    updated_snap = BISTLivePriceService.apply_quote_to_snapshot(
+        CANONICAL_KAP_SNAPSHOTS["BIMAS"], quote
+    )
+    # 500.00 TL * 607.200.000 pay = 303.600.000.000,00 TL
+    assert updated_snap.market_cap_try == Decimal("303600000000.0000")
+
+
+async def test_kap_watcher_filters_financial_disclosures_and_triggers_targeted_sync() -> None:
+    """KAP'a yeni bir bilanço veya katılım formu düştüğünde sadece ilgili hisseler için anında tarama tetiklenmeli."""
+    from services.pipeline.kap_watcher import parse_kap_disclosures_xml_or_html
+
+    sample_rss = """
+    <rss><channel>
+      <item data-disclosure-id="KAP-9991" data-ticker="BIMAS">
+        <title>BIMAS - Katılım Finans İlkeleri Bilgi Formu</title>
+        <description>2026-Q2 katılım finans oranları bildirimi</description>
+        <pubDate>16:15</pubDate>
+      </item>
+      <item data-disclosure-id="KAP-9992" data-ticker="ASELS">
+        <title>ASELS - Özel Durum Açıklaması (Yeni Sözleşme)</title>
+        <description>İhracat sözleşmesi imzalanması</description>
+        <pubDate>16:10</pubDate>
+      </item>
+    </channel></rss>
+    """
+    events = parse_kap_disclosures_xml_or_html(sample_rss)
+    assert len(events) == 2
+    assert events[0].ticker == "BIMAS"
+    assert events[0].triggers_rescreening is True
+    assert events[1].ticker == "ASELS"
+    assert events[1].triggers_rescreening is False
+
+    orchestrator = DataPipelineOrchestrator()
+    actionable = orchestrator.kap_watcher.filter_actionable_tickers(events)
+    assert actionable == ["BIMAS"]
+

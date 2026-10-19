@@ -1,17 +1,15 @@
-"""MizanApp.tr Veri Boru Hattı (Data Pipeline) Orkestratörü, CLI / Cron ve FastAPI Tetikleyicisi.
+"""MizanApp.tr Veri Boru Hattı (Data Pipeline) Orkestratörü, Canlı Fiyat & KAP Watcher, CLI / Cron ve FastAPI Tetikleyicisi.
 
 Bu modül tüm veri boru hattını tek komutla, zamanlanmış görevle (cron job) veya
 FastAPI endpoint'i üzerinden uçtan uca çalıştırır:
 1. `TKBBSyncService` ile BIST Katılım Endeksi ve TKBB dönemsel listesini tarar.
-2. `KAPFinancialParser` ile çeyreklik KAP finansal tablolarını çekip Faz 2'deki
+2. `BISTLivePriceService` ile canlı/15dk gecikmeli BIST hisse fiyatlarını çekip
+   Piyasa Değerini (`market_cap_try`) Zero-Float (`Decimal`) olarak günceller.
+3. `KAPNewsWatcher` ile KAP'a düşen yeni Finansal Rapor / Katılım Bilgi Formu bildirimlerini yakalar.
+4. `KAPFinancialParser` ile çeyreklik KAP finansal tablolarını çekip Faz 2'deki
    `ScreeningEngine` (BIST Katılım %33/%33/%5 & AAOIFI %30/%30/%5) ile denetler.
-3. `pandas.DataFrame` üzerinde TKBB ve KAP denetim sonuçlarını birleştirir.
-4. `SupabaseStockSyncService` ile sonuçları `public.stocks_data` tablosuna `upsert`
+5. `SupabaseStockSyncService` ile sonuçları `public.stocks_data` tablosuna `upsert`
    eder ve uygunluk durumundaki değişiklikleri tespit edip loglar.
-
-Kullanım (CLI / Cron):
-    python -m services.pipeline.run_pipeline --period 2026-Q2
-    python -m services.pipeline.run_pipeline --tickers BIMAS THYAO PGSUS --dry-run
 """
 
 from __future__ import annotations
@@ -26,8 +24,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
-# Doğrudan `python backend/services/pipeline/run_pipeline.py` olarak çalıştırıldığında
-# `backend/` dizinini sys.path'e ekle
 _BACKEND_ROOT = Path(__file__).resolve().parents[2]
 if str(_BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(_BACKEND_ROOT))
@@ -36,7 +32,13 @@ import httpx
 import pandas as pd
 from fastapi import APIRouter
 
-from services.pipeline.kap_parser import KAPFinancialParser, KAPMultiStandardEvaluation
+from services.pipeline.kap_parser import (
+    CANONICAL_KAP_SNAPSHOTS,
+    KAPFinancialParser,
+    KAPMultiStandardEvaluation,
+)
+from services.pipeline.kap_watcher import KAPDisclosureEvent, KAPNewsWatcher
+from services.pipeline.price_stream import BISTLivePriceService, BISTLiveQuote
 from services.pipeline.sync_db import SupabaseStockSyncService, SupabaseSyncReport
 from services.pipeline.tkbb_sync import TKBBIndexRecord, TKBBSyncService
 
@@ -52,6 +54,8 @@ class PipelineExecutionResult:
     kap_evaluations: List[KAPMultiStandardEvaluation]
     sync_report: SupabaseSyncReport
     merged_dataframe: pd.DataFrame
+    kap_disclosures: List[KAPDisclosureEvent] = field(default_factory=list)
+    live_quotes: Dict[str, BISTLiveQuote] = field(default_factory=dict)
     executed_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     def to_summary_dict(self) -> Dict[str, Any]:
@@ -80,36 +84,43 @@ class PipelineExecutionResult:
             "aaoifi_compliant_count": aaoifi_compliant_count,
             "non_compliant_tickers": non_compliant_tickers,
             "at_risk_tickers": at_risk_tickers,
+            "kap_disclosures_count": len(self.kap_disclosures),
             "sync_report": self.sync_report.to_dict(),
         }
 
 
 class DataPipelineOrchestrator:
-    """TKBB Scraper, KAP Parser (`ScreeningEngine`) ve Supabase Upsert adımlarını yöneten orkestratör."""
+    """TKBB Scraper, Canlı Fiyat Akışı, KAP Watcher, KAP Parser (`ScreeningEngine`) ve Supabase Upsert adımlarını yöneten orkestratör."""
 
     def __init__(
         self,
         tkbb_service: Optional[TKBBSyncService] = None,
         kap_parser: Optional[KAPFinancialParser] = None,
         sync_service: Optional[SupabaseStockSyncService] = None,
+        price_service: Optional[BISTLivePriceService] = None,
+        kap_watcher: Optional[KAPNewsWatcher] = None,
     ) -> None:
         self.tkbb_service = tkbb_service or TKBBSyncService()
         self.kap_parser = kap_parser or KAPFinancialParser()
         self.sync_service = sync_service or SupabaseStockSyncService()
+        self.price_service = price_service or BISTLivePriceService()
+        self.kap_watcher = kap_watcher or KAPNewsWatcher()
 
     async def execute(
         self,
         tickers: Optional[Sequence[str]] = None,
         effective_period: str = "2026-Q2",
         dry_run: bool = False,
+        refresh_live_prices: bool = False,
         existing_rows: Optional[Dict[str, Dict[str, Any]]] = None,
         http_client: Optional[httpx.AsyncClient] = None,
     ) -> PipelineExecutionResult:
         """Tüm veri boru hattını sırasıyla çalıştırır ve sonuç raporunu döner."""
         logger.info(
-            "MizanApp Veri Boru Hattı başlatılıyor (Dönem: %s, DryRun: %s)...",
+            "MizanApp Veri Boru Hattı başlatılıyor (Dönem: %s, DryRun: %s, LivePrices: %s)...",
             effective_period,
             dry_run,
+            refresh_live_prices,
         )
 
         # 1. TKBB & BIST Katılım dönemsel duyuru listesini çek
@@ -123,19 +134,41 @@ class DataPipelineOrchestrator:
 
         tkbb_df = self.tkbb_service.to_dataframe(tkbb_records)
 
-        # 2. KAP çeyreklik finansal verilerini çek ve ScreeningEngine (BIST + AAOIFI) ile denetle
         target_tickers = (
             [t.strip().upper() for t in tickers]
             if tickers
             else [r.ticker for r in tkbb_records]
         )
-        kap_evaluations = await self.kap_parser.fetch_and_evaluate_batch(
-            tickers=target_tickers,
-            client=http_client,
-        )
+
+        # 2. İstenirse canlı BIST fiyatlarını çekip KAP snapshot piyasa değerlerini güncelle
+        live_quotes: Dict[str, BISTLiveQuote] = {}
+        if refresh_live_prices:
+            live_quotes = await self.price_service.fetch_quotes_batch(
+                tickers=target_tickers, client=http_client
+            )
+
+        # 3. KAP çeyreklik finansal verilerini çek ve ScreeningEngine (BIST + AAOIFI) ile denetle
+        kap_evaluations: List[KAPMultiStandardEvaluation] = []
+        for ticker in target_tickers:
+            base_snap = CANONICAL_KAP_SNAPSHOTS.get(ticker)
+            if base_snap is None:
+                continue
+            if ticker in live_quotes:
+                base_snap = self.price_service.apply_quote_to_snapshot(
+                    base_snap, live_quotes[ticker]
+                )
+            kap_evaluations.append(
+                self.kap_parser.evaluate_snapshot_with_screening_engine(base_snap)
+            )
+
         kap_df = self.kap_parser.to_dataframe(kap_evaluations)
 
-        # 3. Pandas üzerinde TKBB resmi durumu ile KAP finansal tarama tablosunu birleştir
+        # 4. Son KAP bildirimlerini kontrol et
+        kap_disclosures = await self.kap_watcher.fetch_recent_disclosures(
+            client=http_client
+        )
+
+        # 5. Pandas üzerinde TKBB resmi durumu ile KAP finansal tarama tablosunu birleştir
         if not tkbb_df.empty and not kap_df.empty:
             merged_df = pd.merge(
                 kap_df,
@@ -151,7 +184,7 @@ class DataPipelineOrchestrator:
         else:
             merged_df = kap_df
 
-        # 4. Supabase `stocks_data` tablosuna upsert et ve durum değişimlerini logla
+        # 6. Supabase `stocks_data` tablosuna upsert et ve durum değişimlerini logla
         sync_report = await self.sync_service.upsert_to_supabase(
             evaluations=kap_evaluations,
             tkbb_records=tkbb_records,
@@ -172,6 +205,27 @@ class DataPipelineOrchestrator:
             kap_evaluations=kap_evaluations,
             sync_report=sync_report,
             merged_dataframe=merged_df,
+            kap_disclosures=kap_disclosures,
+            live_quotes=live_quotes,
+        )
+
+    async def poll_kap_and_trigger_targeted_sync(
+        self,
+        effective_period: str = "2026-Q2",
+        dry_run: bool = False,
+        http_client: Optional[httpx.AsyncClient] = None,
+    ) -> Optional[PipelineExecutionResult]:
+        """KAP akışını tarar; finansal veya katılım bildirimi düşen hisseler varsa anında hedefli pipeline çalıştırır."""
+        disclosures = await self.kap_watcher.fetch_recent_disclosures(client=http_client)
+        actionable_tickers = self.kap_watcher.filter_actionable_tickers(disclosures)
+        if not actionable_tickers:
+            return None
+        return await self.execute(
+            tickers=actionable_tickers,
+            effective_period=effective_period,
+            dry_run=dry_run,
+            refresh_live_prices=True,
+            http_client=http_client,
         )
 
 
@@ -179,6 +233,7 @@ async def run_pipeline(
     tickers: Optional[Sequence[str]] = None,
     effective_period: str = "2026-Q2",
     dry_run: bool = False,
+    refresh_live_prices: bool = False,
     existing_rows: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> PipelineExecutionResult:
     """Pipeline'ı tek fonksiyon çağrısıyla çalıştıran yardımcı giriş noktası."""
@@ -187,6 +242,7 @@ async def run_pipeline(
         tickers=tickers,
         effective_period=effective_period,
         dry_run=dry_run,
+        refresh_live_prices=refresh_live_prices,
         existing_rows=existing_rows,
     )
 
@@ -199,10 +255,32 @@ router = APIRouter(prefix="/pipeline", tags=["Data Pipeline"])
 async def trigger_pipeline_sync_endpoint(
     effective_period: str = "2026-Q2",
     dry_run: bool = True,
+    refresh_live_prices: bool = False,
 ) -> Dict[str, Any]:
     """FastAPI üzerinden TKBB + KAP + ScreeningEngine + Supabase senkronizasyonunu tetikler."""
-    result = await run_pipeline(effective_period=effective_period, dry_run=dry_run)
+    result = await run_pipeline(
+        effective_period=effective_period,
+        dry_run=dry_run,
+        refresh_live_prices=refresh_live_prices,
+    )
     return result.to_summary_dict()
+
+
+@router.get("/live-feed")
+async def get_live_kap_and_market_feed(
+    refresh_live_prices: bool = False,
+) -> Dict[str, Any]:
+    """Canlı hisse değerlendirmelerini ve son KAP bildirimlerini döner."""
+    result = await run_pipeline(
+        effective_period="2026-Q2",
+        dry_run=True,
+        refresh_live_prices=refresh_live_prices,
+    )
+    return {
+        "updated_at": result.executed_at.isoformat(),
+        "disclosures": [d.to_dict() for d in result.kap_disclosures],
+        "stocks": result.sync_report.payload_snapshot,
+    }
 
 
 def _build_arg_parser() -> argparse.ArgumentParser:
@@ -224,6 +302,11 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         "--dry-run",
         action="store_true",
         help="Supabase'e ağ isteği göndermeden yerel doğrulama ve raporlama çalıştır",
+    )
+    parser.add_argument(
+        "--live-prices",
+        action="store_true",
+        help="BIST canlı fiyatlarını çekerek piyasa değerini ve borç/nakit rasyolarını anlık güncelle",
     )
     parser.add_argument(
         "--output-json",
@@ -248,6 +331,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             tickers=args.tickers,
             effective_period=args.period,
             dry_run=args.dry_run,
+            refresh_live_prices=args.live_prices,
         )
     )
     summary = result.to_summary_dict()
