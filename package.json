@@ -14,8 +14,9 @@
     "type-check": "npm --prefix frontend run type-check",
     "frontend:dev": "npm --prefix frontend run dev",
     "frontend:build": "npm --prefix frontend run build",
-    "backend:test": "backend/.venv/bin/pytest backend/tests/unit -v",
-    "backend:dev": "backend/.venv/bin/uvicorn app.main:app --reload --port 8000"
+    "backend:test": "PYTHONPATH=backend backend/.venv/bin/pytest backend/tests -v",
+    "backend:dev": "PYTHONPATH=backend backend/.venv/bin/uvicorn app.main:app --reload --port 8000",
+    "pipeline:run": "PYTHONPATH=backend backend/.venv/bin/python backend/services/pipeline/run_pipeline.py --dry-run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
