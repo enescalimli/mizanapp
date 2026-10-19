@@ -1,0 +1,230 @@
+export type ComplianceStatus =
+  | "COMPLIANT"
+  | "GRACE_PERIOD_TOLERANCE"
+  | "NON_COMPLIANT"
+  | "INSUFFICIENT_DATA";
+
+export type ScreeningStandardCode = "BIST_KATILIM_DIB" | "AAOIFI_STD_21";
+
+export type ZakatIntentionType = "TRADING_SHORT_TERM" | "LONG_TERM_DIVIDEND";
+
+export type CalendarBasisType = "HIJRI_354" | "GREGORIAN_365";
+
+export type KatilimRiskLevel = "SAFE" | "AT_RISK" | "BREACHED";
+
+export interface CompanySummary {
+  ticker: string;
+  name: string;
+  sector: string;
+  subSector?: string;
+  bistStatus: ComplianceStatus;
+  aaoifiStatus: ComplianceStatus;
+  debtRatioPercent: number;
+  cashRatioPercent: number;
+  impureIncomePercent: number;
+  priceTRY: string;
+  change24h: string;
+  purificationPerShareTRY: string;
+  zatableNetAssetsPerShareTRY?: string;
+  breachReasonSummary?: string;
+  previousQuarterStatus?: ComplianceStatus;
+}
+
+export interface RatioDetail {
+  numeratorTRY: string;
+  denominatorTRY: string;
+  ratioDecimal: string;
+  ratioPercentage: string;
+  thresholdPercentage: string;
+  toleranceCeilingPercentage: string;
+  isCompliant: boolean;
+  isInToleranceBand: boolean;
+  marginToLimitPercentage: string;
+}
+
+export interface CashFootnoteDetail {
+  cashOnHandTRY: string;
+  demandDepositsTRY: string;
+  participationAccountsTRY: string;
+  timeDepositsInterestTRY: string;
+  reverseRepoTRY: string;
+  moneyMarketFundsTRY: string;
+  unclassifiedCashTRY: string;
+}
+
+export interface DebtFootnoteDetail {
+  participationBankFinancingsTRY: string;
+  sukukIssuedTRY: string;
+  operationalLeaseTRY: string;
+  conventionalBankLoansTRY: string;
+  issuedBondsDebtTRY: string;
+  factoringDebtTRY: string;
+}
+
+export interface FootnoteVerification {
+  isAccountingIdentityVerified: boolean;
+  usedConservativeFallback: boolean;
+  extractionMethod: string;
+  auditNotes: string[];
+  balanceSheetCashTotalTRY: string;
+  balanceSheetDebtTotalTRY: string;
+  cashBreakdown: CashFootnoteDetail;
+  debtBreakdown: DebtFootnoteDetail;
+}
+
+export interface CompanyDetailScreening {
+  ticker: string;
+  companyName: string;
+  sector: string;
+  subSector: string;
+  fiscalPeriod: string;
+  valuationDate: string;
+  standardCode: ScreeningStandardCode;
+  overallStatus: ComplianceStatus;
+  isSectorCompliant: boolean;
+  prohibitedActivitiesFound: string[];
+  gracePeriodInfo: {
+    isInGracePeriod: boolean;
+    consecutiveBreachQuarters: number;
+    maxAllowedQuarters: number;
+    notes: string[];
+  };
+  ratios: {
+    denominatorRuleUsed: string;
+    denominatorValueTRY: string;
+    spotMarketCapTRY: string;
+    mcapMA24mTRY: string;
+    totalAssetsTRY: string;
+    interestDebt: RatioDetail;
+    interestCash: RatioDetail;
+    impureIncome: RatioDetail;
+  };
+  footnoteVerification: FootnoteVerification;
+  purificationMetrics: {
+    purificationPerShareQuarterTRY: string;
+    dividendPurificationRatio: string;
+    zatableNetCurrentAssetsPerShareTRY: string;
+    totalSharesOutstanding: string;
+    impureIncomeIsolatedQuarterTRY: string;
+    isLossMakingQuarter?: boolean;
+  };
+}
+
+export interface PurificationCalculationRequest {
+  ticker: string;
+  quantityLots: string;
+  daysHeld: number;
+  periodTotalDays?: number;
+  calculationMethod: "HOLDING_PERIOD_PRO_RATA" | "DIVIDEND_BASED";
+  dividendReceivedTRY?: string;
+  useConservativeCeiling?: boolean;
+}
+
+export interface PurificationCalculationResponse {
+  ticker: string;
+  quantityLots: string;
+  daysHeld: number;
+  periodTotalDays: number;
+  proRataFactor: string;
+  purificationPerShareTRY: string;
+  totalPurificationRawTRY: string;
+  totalPurificationPayableTRY: string;
+  methodUsed: string;
+  breakdownSummary: string;
+}
+
+export interface PortfolioHoldingItem {
+  id: string;
+  ticker: string;
+  lots: string;
+  avgCostTRY: string;
+  purchaseDate: string; // e.g. "2026-04-15" (Days held is computed dynamically, never manually typed)
+  periodDays?: number;
+  receivedDividendTRY?: string;
+  purificationMethod: "holding" | "dividend";
+  zakatIntent: ZakatIntentionType;
+}
+
+export interface BreachedMetricItem {
+  metricName: string;
+  currentValuePercent: string;
+  thresholdPercent: string;
+  excessPercent: string;
+  severity: "CRITICAL" | "WARNING";
+}
+
+export interface SmartAlternativeStock {
+  ticker: string;
+  name: string;
+  sector: string;
+  subSector?: string;
+  priceTRY: string;
+  change24h: string;
+  debtRatioPercent: number;
+  cashRatioPercent: number;
+  impureIncomePercent: number;
+  purificationPerShareTRY: string;
+  complianceAdvantageNote: string;
+}
+
+export interface KatilimRiskAssessment {
+  ticker: string;
+  riskLevel: KatilimRiskLevel; // "SAFE" | "AT_RISK" (çıkma ihtimali) | "BREACHED" (katılımdan çıktı)
+  title: string;
+  explanation: string;
+  debtRatioPercent: number;
+  debtThresholdPercent: number;
+  debtMarginPercent: number; // e.g. 2.15% margin to limit
+  cashRatioPercent: number;
+  impureIncomePercent: number;
+  isNearBreach: boolean; // Borç oranı eşiğe %3'ten yakınsa veya hoşgörü süresindeyse
+  consecutiveBreachQuarters: number;
+  actionRecommendation: string;
+}
+
+export interface ComplianceAlertItem {
+  holdingId: string;
+  ticker: string;
+  companyName: string;
+  sector: string;
+  fiscalPeriod: string;
+  previousStatus: ComplianceStatus;
+  currentStatus: ComplianceStatus;
+  riskLevel: KatilimRiskLevel; // "BREACHED" or "AT_RISK"
+  alertType?: "EXITED_COMPLIANCE" | "GRACE_PERIOD_WARNING";
+  consecutiveBreachQuarters: number;
+  maxGraceQuarters: number;
+  breachedMetrics: BreachedMetricItem[];
+  reasonText: string;
+  actionRequiredText: string;
+  positionMarketValueTRY: string;
+  accruedPurificationTRY: string;
+  alternatives: SmartAlternativeStock[];
+}
+
+export interface LivePriceQuote {
+  ticker: string;
+  priceTRY: string;
+  change24h: string;
+  changePercent: number;
+  tickDirection: "up" | "down" | "flat";
+  lastUpdated: string;
+}
+
+export interface SellPurificationSimulation {
+  holdingId: string;
+  ticker: string;
+  companyName: string;
+  lotsToSell: string;
+  currentPriceTRY: string;
+  grossProceedsTRY: string;
+  avgCostTRY: string;
+  costBasisTRY: string;
+  realizedPnlTRY: string;
+  purchaseDate: string;
+  daysHeldInPeriod: number;
+  purificationPerShareQuarterTRY: string;
+  purificationFeePayableTRY: string;
+  netHalalProceedsTRY: string;
+  purificationDeductionPercent: string;
+}

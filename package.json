@@ -1,0 +1,37 @@
+{
+  "name": "katilim-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Katılım Finansmanı Screening, Bilanço Analizi, Portföy Arındırma ve Piyasa Takip Platformu",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix frontend run start",
+    "lint": "npm --prefix frontend run lint",
+    "type-check": "npm --prefix frontend run type-check",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "backend:test": "backend/.venv/bin/pytest backend/tests/unit -v",
+    "backend:dev": "backend/.venv/bin/uvicorn app.main:app --reload --port 8000"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "decimal.js": "^10.4.3",
+    "lucide-react": "^0.468.0",
+    "next": "15.0.3",
+    "react": "^19.0.0-rc-66855b96-20241106",
+    "react-dom": "^19.0.0-rc-66855b96-20241106"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.6.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.6.3"
+  }
+}
