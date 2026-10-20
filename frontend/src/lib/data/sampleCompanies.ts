@@ -6,6 +6,7 @@ import {
   ScreeningStandardCode,
   SmartAlternativeStock,
 } from "@/types/katilim";
+import { BIST_COMPREHENSIVE_UNIVERSE } from "./bistUniverse";
 
 export const SAMPLE_COMPANIES_SUMMARY: CompanySummary[] = [
   {
@@ -818,7 +819,16 @@ export const DETAILED_COMPANIES_DATABASE: Record<string, CompanyDetailScreening>
   },
 };
 
-// Populate remaining companies dynamically so all 18 tickers have full detail objects
+// Merge all 626+ BIST companies from BIST_COMPREHENSIVE_UNIVERSE into SAMPLE_COMPANIES_SUMMARY
+const existingTickers = new Set(SAMPLE_COMPANIES_SUMMARY.map((c) => c.ticker));
+for (const univComp of BIST_COMPREHENSIVE_UNIVERSE) {
+  if (!existingTickers.has(univComp.ticker)) {
+    SAMPLE_COMPANIES_SUMMARY.push(univComp);
+    existingTickers.add(univComp.ticker);
+  }
+}
+
+// Populate remaining companies dynamically so all 626+ tickers have full detail objects
 for (const summary of SAMPLE_COMPANIES_SUMMARY) {
   if (!DETAILED_COMPANIES_DATABASE[summary.ticker]) {
     DETAILED_COMPANIES_DATABASE[summary.ticker] = buildDetailFromSummary(summary);

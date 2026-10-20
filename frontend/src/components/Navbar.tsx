@@ -7,15 +7,14 @@ import { usePathname } from "next/navigation";
 import {
   Menu,
   X,
-  ArrowRight,
+  ArrowUpRight,
   LogOut,
-  User,
   BarChart3,
   Briefcase,
   Scale,
   Calculator,
   Calendar,
-  Sparkles,
+  Bell,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext";
 
@@ -25,214 +24,198 @@ export const Navbar: React.FC = () => {
   const { user, profile, signOut, isDemoUser } = useAuth();
 
   const navLinks = [
-    { href: "/", label: "Katılım Taraması", icon: BarChart3 },
-    { href: "/ipo", label: "Halka Arzlar", icon: Calendar, badge: "Canlı" },
-    { href: "/rehber", label: "Fıkıh & Rehber", icon: Scale, badge: "Cevazlar" },
+    { href: "/", label: "Hisse Tarayıcı", icon: BarChart3, count: "626" },
+    { href: "/ipo", label: "Halka Arzlar", icon: Calendar, count: "57" },
+    { href: "/portfolio", label: "Portföy & Cüzdan", icon: Briefcase },
     { href: "/purification", label: "Arındırma & Zekât", icon: Calculator },
-    { href: "/portfolio", label: "Portföyüm", icon: Briefcase },
+    { href: "/rehber", label: "Fıkıh & Cevazlar", icon: Scale },
   ];
 
   return (
-    <>
-      {/* 1. ÜST DUYURU VE KAP DURUM BANDI */}
-      <div className="bg-slate-900 text-white text-xs py-2 px-4 text-center font-medium">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>BIST Katılım Endeksi &amp; KAP KAFİF Bildirimleri Anlık Senkronize Edilmektedir</span>
-          <span className="text-slate-500 hidden sm:inline">&bull;</span>
-          <span className="text-emerald-300 hidden sm:inline font-mono">TKBB &amp; AAOIFI Uyumlu</span>
+    <header className="sticky top-0 z-50 pt-4 pb-2 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        {/* Sol: Payno Tarzı Minimalist Geometrik Marka & Logo */}
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-white/90 border border-white shadow-sm p-1.5 flex items-center justify-center transition-transform group-hover:scale-105">
+            <Image
+              src="/brand/logo.svg"
+              alt="Mizan"
+              width={30}
+              height={30}
+              className="w-full h-full object-contain"
+              priority
+            />
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-light tracking-tight text-[#182542]">
+              mizan
+            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#12B76A]" />
+          </div>
+        </Link>
+
+        {/* Orta: Payno Yüzen Buzlu Cam (Frosted Pill) Navigasyon */}
+        <nav className="hidden lg:flex items-center payno-glass-pill p-1.5 gap-1">
+          {navLinks.map((link) => {
+            const isActive =
+              pathname === link.href ||
+              (link.href !== "/" && pathname.startsWith(link.href));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-full text-xs transition-all duration-200 flex items-center gap-1.5 ${
+                  isActive
+                    ? "bg-white text-[#182542] font-bold shadow-[0_2px_10px_rgba(24,37,66,0.08)]"
+                    : "text-[#182542]/75 hover:text-[#182542] font-medium hover:bg-white/40"
+                }`}
+              >
+                <span>{link.label}</span>
+                {link.count && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                      isActive
+                        ? "bg-[#182542] text-white"
+                        : "bg-white/75 text-[#182542]"
+                    }`}
+                  >
+                    {link.count}
+                  </span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Sağ: Payno Beyaz Pill Aksiyon Butonu / Kullanıcı Profili */}
+        <div className="hidden lg:flex items-center gap-2.5 shrink-0">
+          {user ? (
+            <div className="flex items-center gap-2 payno-glass-pill p-1.5 pl-3">
+              <div className="w-7 h-7 rounded-full bg-[#182542] text-white flex items-center justify-center text-xs font-bold">
+                {user.email ? user.email.charAt(0).toUpperCase() : "M"}
+              </div>
+              <div className="flex flex-col pr-1">
+                <span className="text-xs font-bold text-[#182542] max-w-[120px] truncate leading-tight">
+                  {profile?.full_name || user.email?.split("@")[0]}
+                </span>
+                <span className="text-[10px] text-[#6E81A0] leading-tight">
+                  {isDemoUser ? "Demo Portföy" : "Aktif Hesap"}
+                </span>
+              </div>
+              <button
+                onClick={() => signOut()}
+                title="Çıkış Yap"
+                className="w-8 h-8 rounded-full bg-white hover:bg-rose-50 text-[#182542] hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs"
+              >
+                <LogOut size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/auth/login"
+                className="px-4 py-2.5 rounded-full text-xs font-semibold text-[#182542] hover:bg-white/50 transition"
+              >
+                Giriş Yap
+              </Link>
+              <Link
+                href="/auth/register"
+                className="px-5 py-2.5 rounded-full bg-white text-[#182542] text-xs font-bold shadow-[0_6px_20px_rgba(24,37,66,0.08)] border border-white hover:scale-[1.02] transition flex items-center gap-1.5"
+              >
+                <span>Hesap Oluştur</span>
+                <ArrowUpRight size={14} className="text-[#273B69]" />
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Mobil Menü Butonu */}
+        <div className="flex lg:hidden items-center gap-2">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-white text-[#182542] flex items-center justify-center shadow-sm"
+            aria-label="Menü"
+          >
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </div>
 
-      {/* 2. ANA SİTE BAŞLIĞI (MUSAFFA TARZI TEMİZ VE FERAH) */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-          
-          {/* Logo & Marka */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200/90 shadow-xs p-1 flex items-center justify-center transition-transform group-hover:scale-105">
-                <Image
-                  src="/brand/logo.svg"
-                  alt="Mizan Logo"
-                  width={34}
-                  height={34}
-                  className="w-full h-full object-contain"
-                  priority
-                />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight text-slate-900 leading-none">
-                  mizan<span className="text-emerald-600">.</span>
-                </span>
-                <span className="text-xs text-slate-500 font-medium mt-1">
-                  Katılım Finans &amp; Arındırma
-                </span>
-              </div>
-            </Link>
-
-            {/* Masaüstü Menü Linkleri */}
-            <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold text-slate-600">
-              {navLinks.map((link) => {
-                const isActive =
-                  pathname === link.href ||
-                  (link.href !== "/" && pathname.startsWith(link.href));
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`transition-colors flex items-center gap-1.5 py-1 ${
-                      isActive
-                        ? "text-slate-950 font-bold border-b-2 border-slate-950 -mb-0.5"
-                        : "hover:text-slate-950"
-                    }`}
-                  >
-                    <span>{link.label}</span>
-                    {link.badge && (
-                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                        {link.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-
-          {/* Sağ Eylemler: Giriş Yap / Profil */}
-          <div className="hidden lg:flex items-center gap-4">
-            {user ? (
-              <div className="flex items-center gap-3">
+      {/* Mobil Açılır Menü */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden mt-3 max-w-7xl mx-auto rounded-[28px] bg-white/95 backdrop-blur-xl border border-white p-4 shadow-xl space-y-3">
+          <nav className="flex flex-col space-y-1">
+            {navLinks.map((link) => {
+              const IconComponent = link.icon;
+              const isActive =
+                pathname === link.href ||
+                (link.href !== "/" && pathname.startsWith(link.href));
+              return (
                 <Link
-                  href="/portfolio"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors"
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold ${
+                    isActive
+                      ? "bg-[#182542] text-white font-bold"
+                      : "text-[#182542] hover:bg-[#EEF3F9]"
+                  }`}
                 >
-                  <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">
-                    {user.email ? user.email.charAt(0).toUpperCase() : "U"}
+                  <div className="flex items-center gap-2.5">
+                    <IconComponent size={16} />
+                    <span>{link.label}</span>
                   </div>
-                  <span className="max-w-[120px] truncate">
-                    {profile?.full_name || user.email?.split("@")[0]}
-                  </span>
-                  {isDemoUser && (
-                    <span className="text-[10px] bg-amber-100 text-amber-800 px-1 rounded font-bold">
-                      Demo
+                  {link.count && (
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                        isActive
+                          ? "bg-white/20 text-white"
+                          : "bg-[#EEF3F9] text-[#182542]"
+                      }`}
+                    >
+                      {link.count}
                     </span>
                   )}
                 </Link>
+              );
+            })}
+          </nav>
 
+          <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+            {user ? (
+              <div className="flex items-center justify-between px-3 py-2 bg-[#F3F6FB] rounded-2xl text-xs">
+                <span className="font-semibold text-[#182542]">{user.email}</span>
                 <button
-                  onClick={() => signOut()}
-                  title="Çıkış Yap"
-                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="text-rose-600 font-bold"
                 >
-                  <LogOut size={16} />
+                  Çıkış
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Link
                   href="/auth/login"
-                  className="text-xs font-bold text-slate-700 hover:text-slate-950 px-3 py-2 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-full border border-[#DCE5F2] text-xs font-bold text-[#182542] bg-white"
                 >
                   Giriş Yap
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="fintech-btn-primary text-xs py-2.5 px-4 font-bold flex items-center gap-1.5"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-full bg-[#182542] text-white text-xs font-bold"
                 >
-                  <span>Ücretsiz Başla</span>
-                  <ArrowRight size={13} />
+                  Hesap Oluştur
                 </Link>
               </div>
             )}
           </div>
-
-          {/* Mobil Menü Butonu */}
-          <div className="flex lg:hidden items-center gap-2">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
-              aria-label="Menüyü Aç"
-            >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
-          </div>
         </div>
-
-        {/* Mobil Açılır Menü */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-b border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-lg">
-            <nav className="flex flex-col space-y-1">
-              {navLinks.map((link) => {
-                const IconComponent = link.icon;
-                const isActive =
-                  pathname === link.href ||
-                  (link.href !== "/" && pathname.startsWith(link.href));
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold ${
-                      isActive
-                        ? "bg-slate-100 text-slate-950 font-bold"
-                        : "text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <IconComponent size={16} className="text-slate-500" />
-                      <span>{link.label}</span>
-                    </div>
-                    {link.badge && (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                        {link.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
-              {user ? (
-                <>
-                  <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl text-xs">
-                    <span className="font-semibold text-slate-800">
-                      {user.email}
-                    </span>
-                    <button
-                      onClick={() => {
-                        signOut();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="text-rose-600 font-bold"
-                    >
-                      Çıkış
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-50"
-                  >
-                    Giriş Yap
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full text-center py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 shadow-xs"
-                  >
-                    Ücretsiz Başla
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </header>
-    </>
+      )}
+    </header>
   );
 };

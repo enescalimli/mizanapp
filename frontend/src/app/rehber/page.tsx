@@ -211,75 +211,75 @@ export default function RehberPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 pb-24">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-              <Scale size={14} className="text-emerald-600" />
-              <span>Diyanet, TKBB ve AAOIFI Standartları</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              İslami Finans &amp; Katılım Yatırımı Rehberi
-            </h1>
-            <p className="text-base text-slate-600 leading-relaxed font-normal">
-              Borsa İstanbul&apos;da helal kazanç esasları, yetkili kurulların fıkhi cevazları,
-              faizsiz finans terimleri ve yatırımcıların en çok merak ettiği sorular.
-            </p>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-24 space-y-8">
+      {/* Payno Sky-Mist Hero Header */}
+      <div className="payno-sky-hero p-6 sm:p-10">
+        <div className="max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[#182542] text-xs font-semibold">
+            <Scale size={14} className="text-[#12B76A]" />
+            <span>Diyanet, TKBB ve AAOIFI Standartları</span>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-light text-[#182542] tracking-tight">
+            İslami Finans &amp;{" "}
+            <span className="font-normal italic font-serif">Fıkhi Cevazlar</span>{" "}
+            Rehberi
+          </h1>
+          <p className="text-sm text-[#182542]/80 leading-relaxed font-normal">
+            Borsa İstanbul&apos;da helal kazanç esasları, yetkili kurulların fıkhi cevazları,
+            faizsiz finans terimleri ve yatırımcıların en çok merak ettiği sorular.
+          </p>
+        </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex flex-wrap items-center gap-2 mt-8 border-b border-slate-200 pb-px">
-            <button
-              onClick={() => setActiveTab("CEVAZLAR")}
-              className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                activeTab === "CEVAZLAR"
-                  ? "border-emerald-600 text-emerald-700 bg-emerald-50/50"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <ShieldCheck size={14} />
-              <span>Fıkhi Cevazlar &amp; Kurallar</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("TERIMLER")}
-              className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                activeTab === "TERIMLER"
-                  ? "border-emerald-600 text-emerald-700 bg-emerald-50/50"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <BookOpen size={14} />
-              <span>Finans Terimleri Sözlüğü</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("SSS")}
-              className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                activeTab === "SSS"
-                  ? "border-emerald-600 text-emerald-700 bg-emerald-50/50"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <HelpCircle size={14} />
-              <span>Sıkça Sorulan Sorular (SSS)</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("RASYO")}
-              className={`px-4 py-2.5 rounded-t-xl text-xs font-bold transition-all border-b-2 flex items-center gap-2 ${
-                activeTab === "RASYO"
-                  ? "border-emerald-600 text-emerald-700 bg-emerald-50/50"
-                  : "border-transparent text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <Calculator size={14} />
-              <span>3 Altın Rasyo Metodolojisi</span>
-            </button>
-          </div>
+        {/* Navigation Tabs */}
+        <div className="flex flex-wrap items-center gap-2 mt-6">
+          <button
+            onClick={() => setActiveTab("CEVAZLAR")}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === "CEVAZLAR"
+                ? "bg-[#182542] text-white shadow-sm"
+                : "bg-white/75 text-[#182542] hover:bg-white"
+            }`}
+          >
+            <ShieldCheck size={14} />
+            <span>Fıkhi Cevazlar &amp; Kurallar</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("TERIMLER")}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === "TERIMLER"
+                ? "bg-[#182542] text-white shadow-sm"
+                : "bg-white/75 text-[#182542] hover:bg-white"
+            }`}
+          >
+            <BookOpen size={14} />
+            <span>Finans Terimleri Sözlüğü</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("SSS")}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === "SSS"
+                ? "bg-[#182542] text-white shadow-sm"
+                : "bg-white/75 text-[#182542] hover:bg-white"
+            }`}
+          >
+            <HelpCircle size={14} />
+            <span>Sıkça Sorulan Sorular (SSS)</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("RASYO")}
+            className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === "RASYO"
+                ? "bg-[#182542] text-white shadow-sm"
+                : "bg-white/75 text-[#182542] hover:bg-white"
+            }`}
+          >
+            <Calculator size={14} />
+            <span>3 Altın Rasyo Metodolojisi</span>
+          </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div>
         {/* TAB 1: CEVAZLAR VE KURALLAR */}
         {activeTab === "CEVAZLAR" && (
           <div className="space-y-8">

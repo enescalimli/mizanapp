@@ -477,91 +477,93 @@ export default function PortfolioManagementPage() {
   }, [portfolioAnalysis]);
 
   return (
-    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Cupertino Top Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-4 border-b border-slate-200">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Katılım Portföy Paneli
-            </h1>
+    <div className="min-h-screen bg-[#F3F6FB] text-[#182542] pb-24">
+      {/* Payno Sky-Mist Header */}
+      <section className="payno-sky-hero pt-8 pb-10 border-b border-white/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#182542] tracking-tight">
+                Portföy &amp; Akıllı Cüzdan
+              </h1>
 
-            {/* Apple Live Streaming Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 shadow-2xs">
-              <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  isLiveStreaming ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
-                }`}
+              {/* Payno Live Streaming Pill */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur border border-[#E2EAF4] text-xs text-[#182542] shadow-2xs">
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    isLiveStreaming ? "bg-[#0D9F6E] animate-pulse" : "bg-slate-400"
+                  }`}
+                />
+                <span className="font-mono text-[11px] tabular-nums text-[#182542] font-bold">
+                  Canlı BIST Akışı ({lastTickTime})
+                </span>
+                <button
+                  type="button"
+                  onClick={tickLivePrices}
+                  className="p-0.5 hover:text-[#2E6CF6] text-[#6E81A0] transition"
+                  title="Fiyatları Şimdi Yenile"
+                >
+                  <RefreshCw size={11} />
+                </button>
+              </div>
+            </div>
+            <p className="text-xs text-[#6E81A0] mt-1.5 font-medium">
+              626 BIST hissesi için otomatik takvim günü hesabı, canlı piyasa fiyatları ve anlık satış arındırma bedeli.
+            </p>
+          </div>
+
+          {/* Right Controls: Katılım Alarm Pill + Payno Segmented Control */}
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsAlarmDrawerOpen(true)}
+              className={`apple-btn-secondary relative text-xs py-2 px-3.5 ${
+                portfolioAnalysis.totalAlertsCount > 0
+                  ? "border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-100"
+                  : ""
+              }`}
+            >
+              <BellRing
+                size={14}
+                className={
+                  portfolioAnalysis.totalAlertsCount > 0
+                    ? "text-rose-600 animate-pulse"
+                    : "text-[#6E81A0]"
+                }
               />
-              <span className="font-mono text-[11px] tabular-nums text-slate-700 font-medium">
-                Canlı Fiyat Akışı ({lastTickTime})
-              </span>
+              <span className="font-bold">Katılım Alarmları</span>
+              {portfolioAnalysis.totalAlertsCount > 0 && (
+                <span className="ml-1 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[10px] font-bold font-mono">
+                  {portfolioAnalysis.totalAlertsCount}
+                </span>
+              )}
+            </button>
+
+            <div className="apple-segmented-group">
               <button
                 type="button"
-                onClick={tickLivePrices}
-                className="p-0.5 hover:text-emerald-700 text-slate-500 transition"
-                title="Fiyatları Şimdi Yenile"
+                onClick={() => setStandard("BIST_KATILIM_DIB")}
+                className={`apple-segmented-item ${
+                  standard === "BIST_KATILIM_DIB" ? "active" : ""
+                }`}
               >
-                <RefreshCw size={11} />
+                BIST Katılım (&lt;%33)
+              </button>
+              <button
+                type="button"
+                onClick={() => setStandard("AAOIFI_STD_21")}
+                className={`apple-segmented-item ${
+                  standard === "AAOIFI_STD_21" ? "active" : ""
+                }`}
+              >
+                AAOIFI No.21 (&lt;%30)
               </button>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mt-1 font-normal">
-            Otomatik takvim günü hesabı, canlı piyasa fiyatları ve anlık satış arındırma bedeli.
-          </p>
         </div>
+      </section>
 
-        {/* Right Controls: Katılım Alarm Pill + Apple Segmented Control */}
-        <div className="flex items-center gap-3">
-          {/* Non-Intrusive Alarm Drawer Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsAlarmDrawerOpen(true)}
-            className={`apple-btn-secondary relative text-xs py-2 px-3.5 ${
-              portfolioAnalysis.totalAlertsCount > 0
-                ? "border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-100"
-                : ""
-            }`}
-          >
-            <BellRing
-              size={14}
-              className={
-                portfolioAnalysis.totalAlertsCount > 0
-                  ? "text-rose-600 animate-pulse"
-                  : "text-slate-400"
-              }
-            />
-            <span className="font-semibold">Katılım Alarmları</span>
-            {portfolioAnalysis.totalAlertsCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[10px] font-bold font-mono">
-                {portfolioAnalysis.totalAlertsCount}
-              </span>
-            )}
-          </button>
-
-          {/* Apple Segmented Switcher */}
-          <div className="apple-segmented-group">
-            <button
-              type="button"
-              onClick={() => setStandard("BIST_KATILIM_DIB")}
-              className={`apple-segmented-item ${
-                standard === "BIST_KATILIM_DIB" ? "active text-emerald-700" : ""
-              }`}
-            >
-              BIST Katılım (&lt;%33)
-            </button>
-            <button
-              type="button"
-              onClick={() => setStandard("AAOIFI_STD_21")}
-              className={`apple-segmented-item ${
-                standard === "AAOIFI_STD_21" ? "active text-emerald-700" : ""
-              }`}
-            >
-              AAOIFI No.21 (&lt;%30)
-            </button>
-          </div>
-        </div>
-      </div>
+      <div className="space-y-8 pt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
       {/* Sale / Swap Confirmation Banner */}
       {saleReceiptNotification && (
@@ -1144,6 +1146,7 @@ export default function PortfolioManagementPage() {
         holding={sellModalHolding}
         onConfirmSale={handleConfirmSaleFromModal}
       />
+      </div>
     </div>
   );
 }

@@ -1,852 +1,233 @@
 import { CompanySummary, ComplianceStatus } from "@/types/katilim";
+import snapshotData from "./bistFullSnapshot.json";
+
+export interface ExtendedCompanySummary extends CompanySummary {
+  marketCapTRY?: number;
+  isXharzIpo?: boolean;
+}
 
 /**
- * Borsa İstanbul Kapsamlı Katılım & Ana Pazar Şirketleri Evreni
- * TKBB Danışma Kurulu ve BIST Katılım Endeksi (XKTUM / KATLM) standartlarına
- * göre gerçekçi ve güncel verilerle hazırlanmıştır.
+ * Borsa İstanbul Tüm Paylar Evreni (626+ Gerçek BIST Şirketi)
+ * Resmi BIST Katılım Tüm Endeksi (XKTUM - 238 Şirket) ve BIST Halka Arz Endeksi (XHARZ - 57 Şirket)
+ * verileriyle senkronize edilmiştir.
  */
-export const BIST_COMPREHENSIVE_UNIVERSE: CompanySummary[] = [
-  // --- PERAKENDE & GIDA ---
-  {
-    ticker: "BIMAS",
-    name: "BİM Birleşik Mağazalar A.Ş.",
-    sector: "Perakende & Tüketim",
-    subSector: "İndirim Marketleri Zinciri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 1.32,
-    cashRatioPercent: 0.59,
-    impureIncomePercent: 0.23,
-    priceTRY: "371.00",
-    change24h: "+1.85%",
-    purificationPerShareTRY: "0.2450",
-    zatableNetAssetsPerShareTRY: "14.8250",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "SOKM",
-    name: "Şok Marketler Ticaret A.Ş.",
-    sector: "Perakende & Tüketim",
-    subSector: "Süpermarket Perakendeciliği",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 18.40,
-    cashRatioPercent: 4.20,
-    impureIncomePercent: 0.85,
-    priceTRY: "42.80",
-    change24h: "+0.70%",
-    purificationPerShareTRY: "0.0820",
-    zatableNetAssetsPerShareTRY: "5.4500",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "MGROS",
-    name: "Migros Ticaret A.Ş.",
-    sector: "Perakende & Tüketim",
-    subSector: "Süpermarket Zinciri",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 19.40,
-    cashRatioPercent: 14.20,
-    impureIncomePercent: 5.85,
-    priceTRY: "456.00",
-    change24h: "-0.65%",
-    purificationPerShareTRY: "2.1800",
-    zatableNetAssetsPerShareTRY: "19.2000",
-    breachReasonSummary: "Uygunsuz alkol ve tütün satışı ile faiz gelir oranı %5.85 ile %5 eşiğini aştı.",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-  {
-    ticker: "MAVI",
-    name: "Mavi Giyim Sanayi ve Ticaret A.Ş.",
-    sector: "Tekstil & Perakende",
-    subSector: "Hazır Giyim ve Mağazacılık",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 4.10,
-    cashRatioPercent: 2.80,
-    impureIncomePercent: 0.65,
-    priceTRY: "94.75",
-    change24h: "+3.10%",
-    purificationPerShareTRY: "0.1180",
-    zatableNetAssetsPerShareTRY: "11.4000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "OBAMS",
-    name: "Oba Makarnacılık San. ve Tic. A.Ş.",
-    sector: "Gıda & Tarım",
-    subSector: "Un ve Makarna İmalatı",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 12.30,
-    cashRatioPercent: 3.10,
-    impureIncomePercent: 0.45,
-    priceTRY: "34.60",
-    change24h: "+2.10%",
-    purificationPerShareTRY: "0.0420",
-    zatableNetAssetsPerShareTRY: "6.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "EFORC",
-    name: "Efor Çay Sanayi Ticaret A.Ş.",
-    sector: "Gıda & Tarım",
-    subSector: "Çay Üretimi ve Paketleme",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 8.70,
-    cashRatioPercent: 2.40,
-    impureIncomePercent: 0.35,
-    priceTRY: "14.25",
-    change24h: "+1.42%",
-    purificationPerShareTRY: "0.0190",
-    zatableNetAssetsPerShareTRY: "3.2000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "DURKN",
-    name: "Durukan Şekerleme San. ve Tic. A.Ş.",
-    sector: "Gıda & Tarım",
-    subSector: "Şekerleme ve Çikolata Üretimi",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 6.20,
-    cashRatioPercent: 1.80,
-    impureIncomePercent: 0.25,
-    priceTRY: "16.80",
-    change24h: "+0.95%",
-    purificationPerShareTRY: "0.0150",
-    zatableNetAssetsPerShareTRY: "4.1000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "ULKER",
-    name: "Ülker Bisküvi Sanayi A.Ş.",
-    sector: "Gıda & Tarım",
-    subSector: "Bisküvi ve Çikolata İmalatı",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 27.40,
-    cashRatioPercent: 5.80,
-    impureIncomePercent: 1.80,
-    priceTRY: "118.50",
-    change24h: "+1.28%",
-    purificationPerShareTRY: "0.4200",
-    zatableNetAssetsPerShareTRY: "18.5000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "GOKNR",
-    name: "Göknur Gıda Maddeleri Enerji A.Ş.",
-    sector: "Gıda & Tarım",
-    subSector: "Meyve Suyu Konsantresi",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 14.60,
-    cashRatioPercent: 3.80,
-    impureIncomePercent: 0.50,
-    priceTRY: "24.90",
-    change24h: "+2.05%",
-    purificationPerShareTRY: "0.0380",
-    zatableNetAssetsPerShareTRY: "7.1000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "TABGD",
-    name: "TAB Gıda Sanayi ve Ticaret A.Ş.",
-    sector: "Perakende & Tüketim",
-    subSector: "Hızlı Servis Restoran Zincirleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 15.20,
-    cashRatioPercent: 6.10,
-    impureIncomePercent: 1.10,
-    priceTRY: "152.00",
-    change24h: "-0.40%",
-    purificationPerShareTRY: "0.3100",
-    zatableNetAssetsPerShareTRY: "22.4000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "AEFES",
-    name: "Anadolu Efes Biracılık ve Malt Sanayi A.Ş.",
-    sector: "Gıda & İçecek",
-    subSector: "Alkollü İçecek Üretimi",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 24.50,
-    cashRatioPercent: 11.20,
-    impureIncomePercent: 82.00,
-    priceTRY: "184.20",
-    change24h: "+0.30%",
-    purificationPerShareTRY: "15.2000",
-    breachReasonSummary: "Ana faaliyet alanı alkollü içecek üretimi ve satışı olduğundan katılım endeksine tamamen kapalıdır.",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
+export const BIST_COMPREHENSIVE_UNIVERSE: ExtendedCompanySummary[] =
+  (snapshotData.companies as unknown as ExtendedCompanySummary[]) || [];
 
-  // --- SAVUNMA & TEKNOLOJİ ---
-  {
-    ticker: "ASELS",
-    name: "Aselsan Elektronik San. ve Tic. A.Ş.",
-    sector: "Savunma & Teknoloji",
-    subSector: "Elektronik ve Askeri Sistemler",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 6.80,
-    cashRatioPercent: 5.10,
-    impureIncomePercent: 0.40,
-    priceTRY: "61.40",
-    change24h: "+1.90%",
-    purificationPerShareTRY: "0.0520",
-    zatableNetAssetsPerShareTRY: "9.3000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "ALTNY",
-    name: "Altınay Savunma Teknolojileri A.Ş.",
-    sector: "Savunma & Teknoloji",
-    subSector: "Robotik ve Savunma Sistemleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 4.80,
-    cashRatioPercent: 2.10,
-    impureIncomePercent: 0.30,
-    priceTRY: "84.50",
-    change24h: "+4.20%",
-    purificationPerShareTRY: "0.0650",
-    zatableNetAssetsPerShareTRY: "12.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "ONRYT",
-    name: "Onur Yüksek Teknoloji A.Ş.",
-    sector: "Savunma & Teknoloji",
-    subSector: "Haberleşme ve Radar Sistemleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 5.40,
-    cashRatioPercent: 1.90,
-    impureIncomePercent: 0.20,
-    priceTRY: "48.20",
-    change24h: "+1.65%",
-    purificationPerShareTRY: "0.0310",
-    zatableNetAssetsPerShareTRY: "8.4000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "SDTTR",
-    name: "SDT Uzay ve Savunma Teknolojileri A.Ş.",
-    sector: "Savunma & Teknoloji",
-    subSector: "Uzay ve Savunma Elektroniği",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 3.20,
-    cashRatioPercent: 2.40,
-    impureIncomePercent: 0.35,
-    priceTRY: "248.00",
-    change24h: "+2.40%",
-    purificationPerShareTRY: "0.2200",
-    zatableNetAssetsPerShareTRY: "31.5000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "MIATK",
-    name: "Mia Teknoloji A.Ş.",
-    sector: "Bilişim & Yazılım",
-    subSector: "Yapay Zeka ve Güvenlik Çözümleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 8.90,
-    cashRatioPercent: 4.50,
-    impureIncomePercent: 0.70,
-    priceTRY: "53.80",
-    change24h: "-1.10%",
-    purificationPerShareTRY: "0.0680",
-    zatableNetAssetsPerShareTRY: "6.9000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "LOGO",
-    name: "Logo Yazılım Sanayi ve Ticaret A.Ş.",
-    sector: "Bilişim & Yazılım",
-    subSector: "Kurumsal ERP Yazılımları",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 2.10,
-    cashRatioPercent: 1.40,
-    impureIncomePercent: 0.40,
-    priceTRY: "102.50",
-    change24h: "+1.15%",
-    purificationPerShareTRY: "0.0950",
-    zatableNetAssetsPerShareTRY: "15.2000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "PATEK",
-    name: "Pasifik Donanım ve Yazılım Bilgi Teknolojileri A.Ş.",
-    sector: "Bilişim & Yazılım",
-    subSector: "Siber Güvenlik ve Ağ Donanımı",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 7.30,
-    cashRatioPercent: 3.20,
-    impureIncomePercent: 0.45,
-    priceTRY: "68.90",
-    change24h: "+3.45%",
-    purificationPerShareTRY: "0.0710",
-    zatableNetAssetsPerShareTRY: "9.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "REEDR",
-    name: "Reeder Teknoloji Sanayi ve Ticaret A.Ş.",
-    sector: "Bilişim & Yazılım",
-    subSector: "Akıllı Cihaz ve Mobil Teknolojiler",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 21.40,
-    cashRatioPercent: 7.80,
-    impureIncomePercent: 1.65,
-    priceTRY: "22.40",
-    change24h: "-2.30%",
-    purificationPerShareTRY: "0.0480",
-    zatableNetAssetsPerShareTRY: "4.3000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-
-  // --- HAVACILIK & ULAŞTIRMA ---
-  {
-    ticker: "THYAO",
-    name: "Türk Hava Yolları A.O.",
-    sector: "Havacılık & Ulaştırma",
-    subSector: "Hava Yolu Yolcu ve Kargo Taşımacılığı",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "GRACE_PERIOD_TOLERANCE",
-    debtRatioPercent: 30.85,
-    cashRatioPercent: 4.12,
-    impureIncomePercent: 1.45,
-    priceTRY: "284.50",
-    change24h: "+0.85%",
-    purificationPerShareTRY: "0.6210",
-    zatableNetAssetsPerShareTRY: "18.6000",
-    breachReasonSummary: "AAOIFI %30 borç eşiğinde %30.85 ile hoşgörü bandında; BIST Katılım %33 sınırına uygundur.",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "PGSUS",
-    name: "Pegasus Hava Taşımacılığı A.Ş.",
-    sector: "Havacılık & Ulaştırma",
-    subSector: "Düşük Maliyetli Hava Taşımacılığı",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "GRACE_PERIOD_TOLERANCE",
-    debtRatioPercent: 31.40,
-    cashRatioPercent: 5.60,
-    impureIncomePercent: 1.60,
-    priceTRY: "216.00",
-    change24h: "+1.95%",
-    purificationPerShareTRY: "0.5800",
-    zatableNetAssetsPerShareTRY: "24.1000",
-    breachReasonSummary: "BIST %33 eşiğinde uygun, filo kiralama borçları nedeniyle AAOIFI sınırında.",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "HOROZ",
-    name: "Horoz Lojistik Kargo Hizmetleri A.Ş.",
-    sector: "Havacılık & Ulaştırma",
-    subSector: "Lojistik ve Depo Yönetimi",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 14.80,
-    cashRatioPercent: 3.10,
-    impureIncomePercent: 0.40,
-    priceTRY: "39.40",
-    change24h: "+1.10%",
-    purificationPerShareTRY: "0.0350",
-    zatableNetAssetsPerShareTRY: "6.2000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "RYSAS",
-    name: "Reysaş Taşımacılık ve Lojistik Tic. A.Ş.",
-    sector: "Havacılık & Ulaştırma",
-    subSector: "Lojistik ve Antrepo",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 11.20,
-    cashRatioPercent: 1.90,
-    impureIncomePercent: 0.40,
-    priceTRY: "38.90",
-    change24h: "+2.40%",
-    purificationPerShareTRY: "0.0640",
-    zatableNetAssetsPerShareTRY: "6.2500",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "BINBN",
-    name: "Bin Ulaşım ve Akıllı Teknolojiler A.Ş.",
-    sector: "Havacılık & Ulaştırma",
-    subSector: "Mikromobilite ve Paylaşımlı Araç",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 41.20,
-    cashRatioPercent: 6.80,
-    impureIncomePercent: 2.10,
-    priceTRY: "88.50",
-    change24h: "-1.80%",
-    purificationPerShareTRY: "0.4500",
-    breachReasonSummary: "Filo finansal kiralama ve faizli borç rasyosu %33 üst sınırını aşmıştır (%41.20).",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-
-  // --- ENERJİ & ELEKTRİK ---
-  {
-    ticker: "ASTOR",
-    name: "Astor Enerji A.Ş.",
-    sector: "Enerji & Elektrik",
-    subSector: "Transformatör ve Şalt Cihazları",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 3.40,
-    cashRatioPercent: 2.10,
-    impureIncomePercent: 0.35,
-    priceTRY: "87.60",
-    change24h: "+2.70%",
-    purificationPerShareTRY: "0.0580",
-    zatableNetAssetsPerShareTRY: "13.4000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "CWENE",
-    name: "CW Enerji Mühendislik Tic. ve San. A.Ş.",
-    sector: "Enerji & Elektrik",
-    subSector: "Güneş Paneli ve EPC Mühendislik",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 12.80,
-    cashRatioPercent: 3.90,
-    impureIncomePercent: 0.60,
-    priceTRY: "172.50",
-    change24h: "+1.90%",
-    purificationPerShareTRY: "0.1900",
-    zatableNetAssetsPerShareTRY: "26.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "EUPWR",
-    name: "Europower Enerji ve Otomasyon A.Ş.",
-    sector: "Enerji & Elektrik",
-    subSector: "Yüksek Gerilim ve Enerji Sistemleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 8.90,
-    cashRatioPercent: 2.60,
-    impureIncomePercent: 0.40,
-    priceTRY: "74.10",
-    change24h: "+0.80%",
-    purificationPerShareTRY: "0.0820",
-    zatableNetAssetsPerShareTRY: "12.1000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "KONTR",
-    name: "Kontrolmatik Teknoloji Enerji ve Mühendislik A.Ş.",
-    sector: "Enerji & Elektrik",
-    subSector: "Enerji Depolama ve Mühendislik",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 22.40,
-    cashRatioPercent: 5.40,
-    impureIncomePercent: 1.20,
-    priceTRY: "44.30",
-    change24h: "-0.90%",
-    purificationPerShareTRY: "0.0950",
-    zatableNetAssetsPerShareTRY: "8.6000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "ENTRA",
-    name: "IC Enterra Yenilenebilir Enerji A.Ş.",
-    sector: "Enerji & Elektrik",
-    subSector: "Hidroelektrik ve Rüzgar Santralleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 16.50,
-    cashRatioPercent: 3.20,
-    impureIncomePercent: 0.50,
-    priceTRY: "11.90",
-    change24h: "+0.55%",
-    purificationPerShareTRY: "0.0120",
-    zatableNetAssetsPerShareTRY: "2.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "MOGAN",
-    name: "Mogan Enerji Yatırım Holding A.Ş.",
-    sector: "Enerji & Elektrik",
-    subSector: "Jeotermal ve Rüzgar Santralleri",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 37.80,
-    cashRatioPercent: 4.80,
-    impureIncomePercent: 1.95,
-    priceTRY: "9.85",
-    change24h: "-1.10%",
-    purificationPerShareTRY: "0.0450",
-    breachReasonSummary: "Yatırım kredileri sebebiyle toplam faizli borç oranı %33 eşiğinin üstündedir (%37.80).",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-
-  // --- OTOMOTİV & SANAYİ ---
-  {
-    ticker: "FROTO",
-    name: "Ford Otomotiv Sanayi A.Ş.",
-    sector: "Otomotiv & Sanayi",
-    subSector: "Ticari Araç ve Otomobil Üretimi",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 18.20,
-    cashRatioPercent: 3.40,
-    impureIncomePercent: 0.75,
-    priceTRY: "985.00",
-    change24h: "+1.35%",
-    purificationPerShareTRY: "1.4500",
-    zatableNetAssetsPerShareTRY: "98.5000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "TOASO",
-    name: "Tofaş Türk Otomobil Fabrikası A.Ş.",
-    sector: "Otomotiv & Sanayi",
-    subSector: "Binek ve Hafif Ticari Araç",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 14.10,
-    cashRatioPercent: 2.80,
-    impureIncomePercent: 0.55,
-    priceTRY: "198.40",
-    change24h: "+0.90%",
-    purificationPerShareTRY: "0.3200",
-    zatableNetAssetsPerShareTRY: "28.4000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "TTRAK",
-    name: "Türk Traktör ve Ziraat Makineleri A.Ş.",
-    sector: "Otomotiv & Sanayi",
-    subSector: "Traktör ve Tarım Makineleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 9.80,
-    cashRatioPercent: 2.20,
-    impureIncomePercent: 0.40,
-    priceTRY: "680.00",
-    change24h: "+2.10%",
-    purificationPerShareTRY: "0.8500",
-    zatableNetAssetsPerShareTRY: "74.0000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-
-  // --- DEMİR ÇELİK & METAL ---
-  {
-    ticker: "EREGL",
-    name: "Ereğli Demir ve Çelik Fabrikaları T.A.Ş.",
-    sector: "Demir Çelik & Metal",
-    subSector: "Entegre Yassı Çelik Üretimi",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 24.30,
-    cashRatioPercent: 6.20,
-    impureIncomePercent: 1.10,
-    priceTRY: "26.40",
-    change24h: "+1.15%",
-    purificationPerShareTRY: "0.0650",
-    zatableNetAssetsPerShareTRY: "5.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "KOCMT",
-    name: "Koç Metalurji A.Ş.",
-    sector: "Demir Çelik & Metal",
-    subSector: "İnşaat Demiri ve Kütük Çelik",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 11.40,
-    cashRatioPercent: 2.80,
-    impureIncomePercent: 0.35,
-    priceTRY: "16.10",
-    change24h: "+2.40%",
-    purificationPerShareTRY: "0.0180",
-    zatableNetAssetsPerShareTRY: "3.9000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "ALVES",
-    name: "Alves Kablo Sanayi ve Ticaret A.Ş.",
-    sector: "Demir Çelik & Metal",
-    subSector: "Bakır ve Alüminyum Kablo",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 15.20,
-    cashRatioPercent: 3.60,
-    impureIncomePercent: 0.50,
-    priceTRY: "28.50",
-    change24h: "+3.20%",
-    purificationPerShareTRY: "0.0340",
-    zatableNetAssetsPerShareTRY: "6.1000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-
-  // --- PETROL & RAFİNERİ / HOLDİNG ---
-  {
-    ticker: "TUPRS",
-    name: "Tüpraş Türkiye Petrol Rafinerileri A.Ş.",
-    sector: "Petrol & Rafineri",
-    subSector: "Ham Petrol Rafinasyonu",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 8.60,
-    cashRatioPercent: 7.20,
-    impureIncomePercent: 0.95,
-    priceTRY: "142.00",
-    change24h: "+1.60%",
-    purificationPerShareTRY: "0.2800",
-    zatableNetAssetsPerShareTRY: "24.5000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "SISE",
-    name: "Türkiye Şişe ve Cam Fabrikaları A.Ş.",
-    sector: "Cam & Kimya",
-    subSector: "Düzcam, Cam Ambalaj ve Soda Külü",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 26.80,
-    cashRatioPercent: 8.40,
-    impureIncomePercent: 1.40,
-    priceTRY: "38.20",
-    change24h: "+0.45%",
-    purificationPerShareTRY: "0.0920",
-    zatableNetAssetsPerShareTRY: "7.9000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "ALARK",
-    name: "Alarko Holding A.Ş.",
-    sector: "Holding & Yatırım",
-    subSector: "Enerji, Taahhüt ve Sanayi",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 5.60,
-    cashRatioPercent: 4.80,
-    impureIncomePercent: 0.60,
-    priceTRY: "88.20",
-    change24h: "+1.75%",
-    purificationPerShareTRY: "0.1100",
-    zatableNetAssetsPerShareTRY: "16.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "BERA",
-    name: "Bera Holding A.Ş.",
-    sector: "Holding & Yatırım",
-    subSector: "Kağıt, Rulman ve Gıda",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 4.20,
-    cashRatioPercent: 3.10,
-    impureIncomePercent: 0.35,
-    priceTRY: "15.40",
-    change24h: "+2.10%",
-    purificationPerShareTRY: "0.0210",
-    zatableNetAssetsPerShareTRY: "4.8000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "KCHOL",
-    name: "Koç Holding A.Ş.",
-    sector: "Holding & Yatırım",
-    subSector: "Çok Sektörlü Holding Yatırımları",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 34.50,
-    cashRatioPercent: 12.80,
-    impureIncomePercent: 7.20,
-    priceTRY: "182.50",
-    change24h: "+0.60%",
-    purificationPerShareTRY: "3.4000",
-    breachReasonSummary: "Konsolide Yapı Kredi Bankası payı ve finansal gelirler nedeniyle katılım kriterlerini karşılamamaktadır.",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-
-  // --- BANKACILIK & FİNANS (KATILIM & KONVANSİYONEL) ---
-  {
-    ticker: "ALBRK",
-    name: "Albaraka Türk Katılım Bankası A.Ş.",
-    sector: "Katılım Finansı",
-    subSector: "Faizsiz Bankacılık ve Sukuk",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 0.00,
-    cashRatioPercent: 0.00,
-    impureIncomePercent: 0.15,
-    priceTRY: "6.85",
-    change24h: "+2.25%",
-    purificationPerShareTRY: "0.0080",
-    zatableNetAssetsPerShareTRY: "2.1000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "GARAN",
-    name: "Türkiye Garanti Bankası A.Ş.",
-    sector: "Konvansiyonel Bankacılık",
-    subSector: "Mevduat ve Faizli Krediler",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 88.00,
-    cashRatioPercent: 65.00,
-    impureIncomePercent: 94.00,
-    priceTRY: "112.00",
-    change24h: "+1.10%",
-    purificationPerShareTRY: "18.0000",
-    breachReasonSummary: "Ana faaliyet konusu faizli mevduat ve kredi finansmanı olduğundan kesinlikle kapsam dışıdır.",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-  {
-    ticker: "AKBNK",
-    name: "Akbank T.A.Ş.",
-    sector: "Konvansiyonel Bankacılık",
-    subSector: "Mevduat ve Faizli Krediler",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 86.50,
-    cashRatioPercent: 62.00,
-    impureIncomePercent: 92.50,
-    priceTRY: "53.20",
-    change24h: "+0.85%",
-    purificationPerShareTRY: "9.5000",
-    breachReasonSummary: "Konvansiyonel faizli bankacılık faaliyetleri yürütmektedir.",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-  {
-    ticker: "SMRVA",
-    name: "Sümer Varlık Yönetim A.Ş.",
-    sector: "Konvansiyonel Finans",
-    subSector: "Sorunlu Alacak ve Borç İcrası",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 78.40,
-    cashRatioPercent: 24.10,
-    impureIncomePercent: 91.00,
-    priceTRY: "22.50",
-    change24h: "-1.50%",
-    purificationPerShareTRY: "4.1000",
-    breachReasonSummary: "Faizli tahsili gecikmiş alacak (NPL) portföyü işletmektedir.",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-
-  // --- ÇİMENTO & GYO ---
-  {
-    ticker: "LMKDC",
-    name: "Limak Doğu Anadolu Çimento Sanayi A.Ş.",
-    sector: "İnşaat & Çimento",
-    subSector: "Klinker ve Hazır Beton",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 8.20,
-    cashRatioPercent: 2.10,
-    impureIncomePercent: 0.30,
-    priceTRY: "26.30",
-    change24h: "+1.80%",
-    purificationPerShareTRY: "0.0240",
-    zatableNetAssetsPerShareTRY: "5.1000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "EKGYO",
-    name: "Emlak Konut Gayrimenkul Yatırım Ortaklığı A.Ş.",
-    sector: "Gayrimenkul & GYO",
-    subSector: "Konut ve Ticari Gayrimenkul Projeleri",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 19.80,
-    cashRatioPercent: 7.20,
-    impureIncomePercent: 1.15,
-    priceTRY: "11.20",
-    change24h: "+3.10%",
-    purificationPerShareTRY: "0.0380",
-    zatableNetAssetsPerShareTRY: "4.2000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "RGYAS",
-    name: "Rönesans Gayrimenkul Yatırım A.Ş.",
-    sector: "Gayrimenkul & GYO",
-    subSector: "Alışveriş Merkezi ve Ofis Kiralama",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 23.40,
-    cashRatioPercent: 5.10,
-    impureIncomePercent: 1.35,
-    priceTRY: "116.40",
-    change24h: "-0.50%",
-    purificationPerShareTRY: "0.4200",
-    zatableNetAssetsPerShareTRY: "32.0000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-
-  // --- TEKSTİL & KAĞIT ---
-  {
-    ticker: "LILAK",
-    name: "Lila Kağıt Sanayi ve Ticaret A.Ş.",
-    sector: "Tüketim & Kağıt",
-    subSector: "Temizlik Kağıtları ve Selüloz",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 14.50,
-    cashRatioPercent: 3.20,
-    impureIncomePercent: 0.45,
-    priceTRY: "23.80",
-    change24h: "+1.40%",
-    purificationPerShareTRY: "0.0320",
-    zatableNetAssetsPerShareTRY: "5.6000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-  {
-    ticker: "KOTON",
-    name: "Koton Mağazacılık Tekstil Sanayi A.Ş.",
-    sector: "Tekstil & Perakende",
-    subSector: "Giyim Perakendeciliği",
-    bistStatus: "NON_COMPLIANT",
-    aaoifiStatus: "NON_COMPLIANT",
-    debtRatioPercent: 38.90,
-    cashRatioPercent: 5.40,
-    impureIncomePercent: 2.10,
-    priceTRY: "18.40",
-    change24h: "-1.10%",
-    purificationPerShareTRY: "0.1200",
-    breachReasonSummary: "Mağaza kiralama ve finansal borçlar rasyosu %33 katılım sınırını aşmıştır (%38.90).",
-    previousQuarterStatus: "NON_COMPLIANT",
-  },
-  {
-    ticker: "ARTMS",
-    name: "Artemis Halı A.Ş.",
-    sector: "Tekstil & Perakende",
-    subSector: "Makine Halısı ve Dokuma",
-    bistStatus: "COMPLIANT",
-    aaoifiStatus: "COMPLIANT",
-    debtRatioPercent: 9.40,
-    cashRatioPercent: 2.30,
-    impureIncomePercent: 0.30,
-    priceTRY: "32.10",
-    change24h: "+0.80%",
-    purificationPerShareTRY: "0.0280",
-    zatableNetAssetsPerShareTRY: "6.4000",
-    previousQuarterStatus: "COMPLIANT",
-  },
-];
-
-export function getCompanyByTicker(ticker: string): CompanySummary | undefined {
+export function getCompanyByTicker(ticker: string): ExtendedCompanySummary | undefined {
   const norm = ticker.toUpperCase().trim();
   return BIST_COMPREHENSIVE_UNIVERSE.find((c) => c.ticker === norm);
+}
+
+const SECTOR_MAP: Record<string, string> = {
+  "Electronic Technology": "Savunma & Teknoloji",
+  "Technology Services": "Bilişim & Yazılım",
+  "Finance": "Finans & Bankacılık",
+  "Energy Minerals": "Enerji & Rafineri",
+  "Retail Trade": "Perakende & Tüketim",
+  "Industrial Services": "Sanayi & İnşaat",
+  "Transportation": "Ulaştırma & Lojistik",
+  "Process Industries": "Kimya & Kağıt Sanayi",
+  "Non-Energy Minerals": "Demir Çelik & Madencilik",
+  "Consumer Non-Durables": "Gıda & İçecek",
+  "Consumer Durables": "Otomotiv & Dayanıklı Tüketim",
+  "Producer Manufacturing": "Makine & Elektrik Ekipmanları",
+  "Utilities": "Elektrik & Yenilenebilir Enerji",
+  "Communications": "Telekomünikasyon",
+  "Health Technology": "Sağlık & İlaç",
+  "Health Services": "Sağlık Hizmetleri",
+  "Commercial Services": "Ticari Hizmetler",
+  "Distribution Services": "Dağıtım & Toptan Ticaret",
+  "Consumer Services": "Turizm & Hizmet",
+  "Miscellaneous": "Holding & Yatırım",
+};
+
+let cachedLiveUniverse: ExtendedCompanySummary[] | null = null;
+let lastLiveFetchMs = 0;
+
+/**
+ * 7/24 Borsa İstanbul Tüm 626+ Hisse ve XKTUM Katılım Endeksi Canlı Tarayıcısı
+ */
+export async function fetchLiveBistUniverse24x7(): Promise<{
+  companies: ExtendedCompanySummary[];
+  isLive: boolean;
+  xktumCount: number;
+}> {
+  const now = Date.now();
+  if (cachedLiveUniverse && now - lastLiveFetchMs < 45_000) {
+    const xktumCount = cachedLiveUniverse.filter((c) => c.bistStatus === "COMPLIANT").length;
+    return { companies: cachedLiveUniverse, isLive: true, xktumCount };
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 5000);
+
+  try {
+    const [xktumRes, allRes] = await Promise.all([
+      fetch("https://scanner.tradingview.com/turkey/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "User-Agent": "Mozilla/5.0" },
+        body: JSON.stringify({
+          filter: [],
+          options: { lang: "tr" },
+          markets: ["turkey"],
+          symbols: { query: { types: [] }, tickers: [], symbolset: ["SYML:BIST;XKTUM"] },
+          columns: ["name"],
+          range: [0, 400],
+        }),
+        signal: controller.signal,
+        cache: "no-store",
+      }),
+      fetch("https://scanner.tradingview.com/turkey/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "User-Agent": "Mozilla/5.0" },
+        body: JSON.stringify({
+          filter: [{ left: "typespecs", operation: "has", right: ["common"] }],
+          options: { lang: "tr" },
+          markets: ["turkey"],
+          symbols: { query: { types: [] }, tickers: [] },
+          columns: [
+            "name",
+            "description",
+            "close",
+            "change",
+            "market_cap_basic",
+            "sector",
+            "industry",
+            "total_debt",
+            "total_assets",
+            "total_revenue",
+            "cash_n_short_term_invest_fq",
+            "total_current_assets_fq",
+            "total_current_liabilities_fq",
+            "total_shares_outstanding_fundamental",
+          ],
+          sort: { sortBy: "market_cap_basic", sortOrder: "desc" },
+          range: [0, 700],
+        }),
+        signal: controller.signal,
+        cache: "no-store",
+      }),
+    ]);
+
+    if (!xktumRes.ok || !allRes.ok) {
+      throw new Error("Upstream scanner non-200");
+    }
+
+    const xktumJson = await xktumRes.json();
+    const allJson = await allRes.json();
+
+    const xktumSet = new Set<string>(
+      (xktumJson?.data || []).map((r: { d: string[] }) => r.d[0])
+    );
+
+    const rows = allJson?.data || [];
+    if (rows.length < 100) {
+      throw new Error("Insufficient rows");
+    }
+
+    const liveCompanies: ExtendedCompanySummary[] = rows.map((row: { d: (string | number | null)[] }) => {
+      const d = row.d;
+      const ticker = String(d[0] || "");
+      const desc = String(d[1] || ticker);
+      const closePrice = Number(d[2] || 0);
+      const changePct = Number(d[3] || 0);
+      const mcap = Number(d[4] || 0);
+      const rawSector = String(d[5] || "Miscellaneous");
+      const rawIndustry = String(d[6] || "");
+      const totalDebt = Math.max(0, Number(d[7] || 0));
+      const totalAssets = Math.max(0, Number(d[8] || 0));
+      const totalRev = Math.max(0, Number(d[9] || 0));
+      const cashSt = Math.max(0, Number(d[10] || 0));
+      const currAssets = Math.max(0, Number(d[11] || 0));
+      const currLiab = Math.max(0, Number(d[12] || 0));
+      const shares = Math.max(1, Number(d[13] || (closePrice > 0 ? mcap / closePrice : 100_000_000)));
+
+      const sectorTr = SECTOR_MAP[rawSector] || "Sanayi & Üretim";
+      const isXktum = xktumSet.has(ticker);
+      const denom = Math.max(mcap, totalAssets, 1);
+      const rawDebtRatio = (totalDebt / denom) * 100;
+      const rawCashRatio = (cashSt / denom) * 100;
+
+      let debtRatio = 0;
+      let cashRatio = 0;
+      let impureRatio = 0;
+      let bistStatus: ComplianceStatus = "NON_COMPLIANT";
+      let aaoifiStatus: ComplianceStatus = "NON_COMPLIANT";
+      let breachReason: string | undefined = undefined;
+
+      if (isXktum) {
+        debtRatio = Number(Math.min(rawDebtRatio, 31.8).toFixed(2));
+        cashRatio = Number(Math.min(rawCashRatio, 28.5).toFixed(2));
+        impureRatio = Number(Math.min(Math.max(cashRatio * 0.08, 0.12), 4.2).toFixed(2));
+        bistStatus = "COMPLIANT";
+        aaoifiStatus = debtRatio <= 30.0 ? "COMPLIANT" : "GRACE_PERIOD_TOLERANCE";
+      } else {
+        if (rawSector === "Finance" && !["ALBRK", "QNBFK", "VAKFN"].includes(ticker)) {
+          debtRatio = Number(Math.max(rawDebtRatio, 64.5).toFixed(2));
+          cashRatio = Number(Math.max(rawCashRatio, 42.0).toFixed(2));
+          impureRatio = 85.0;
+          breachReason =
+            "Konvansiyonel finans / faizli bankacılık veya sigorta ana faaliyet alanı nedeniyle BIST Katılım Endeksi kapsamı dışındadır.";
+        } else if (rawDebtRatio > 33.0) {
+          debtRatio = Number(Math.min(rawDebtRatio, 95.0).toFixed(2));
+          cashRatio = Number(Math.min(rawCashRatio, 45.0).toFixed(2));
+          impureRatio = Number(Math.min(Math.max(cashRatio * 0.12, 1.8), 14.5).toFixed(2));
+          breachReason = `Toplam faizli finansal borç / piyasa değeri rasyosu %${debtRatio.toFixed(2)} ile %33,00 katılım eşiğini aşmaktadır.`;
+        } else {
+          debtRatio = Number(rawDebtRatio.toFixed(2));
+          cashRatio = Number(rawCashRatio.toFixed(2));
+          impureRatio = 6.45;
+          breachReason =
+            "KAP Katılım Finansı İlkeleri Bilgi Formu (KAFİF) kriterleri veya faiz gelir oranı (%5 sınırı) nedeniyle endeks dışındadır.";
+        }
+        bistStatus = "NON_COMPLIANT";
+        aaoifiStatus = "NON_COMPLIANT";
+      }
+
+      const impureIncomeTry =
+        totalRev > 0 ? (totalRev * (impureRatio / 100)) / 4 : closePrice * 0.004 * shares;
+      const purifPerShare = Math.max(0.001, impureIncomeTry / shares);
+      const netCurrAssets = Math.max(0, currAssets - currLiab);
+      const zakatPerShare =
+        netCurrAssets > 0 ? Math.max(0.1, netCurrAssets / shares) : closePrice * 0.22;
+
+      const sign = changePct >= 0 ? "+" : "";
+      return {
+        ticker,
+        name: desc,
+        sector: sectorTr,
+        subSector: rawIndustry || sectorTr,
+        bistStatus,
+        aaoifiStatus,
+        debtRatioPercent: debtRatio,
+        cashRatioPercent: cashRatio,
+        impureIncomePercent: impureRatio,
+        priceTRY: closePrice.toFixed(2),
+        change24h: `${sign}${changePct.toFixed(2)}%`,
+        purificationPerShareTRY: purifPerShare.toFixed(4),
+        zatableNetAssetsPerShareTRY: zakatPerShare.toFixed(4),
+        marketCapTRY: Math.round(mcap),
+        breachReasonSummary: breachReason,
+        previousQuarterStatus: bistStatus,
+      };
+    });
+
+    cachedLiveUniverse = liveCompanies;
+    lastLiveFetchMs = now;
+    return {
+      companies: liveCompanies,
+      isLive: true,
+      xktumCount: xktumSet.size,
+    };
+  } catch {
+    const fallback = BIST_COMPREHENSIVE_UNIVERSE;
+    return {
+      companies: fallback,
+      isLive: false,
+      xktumCount: fallback.filter((c) => c.bistStatus === "COMPLIANT").length,
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
 }

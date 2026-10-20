@@ -3,22 +3,15 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Calendar,
   CheckCircle2,
   XCircle,
   HelpCircle,
-  AlertTriangle,
   ExternalLink,
   Search,
-  Sparkles,
   TrendingUp,
   TrendingDown,
-  Layers,
   Calculator,
   ShieldCheck,
-  Building2,
-  Coins,
-  RefreshCw,
 } from "lucide-react";
 import { BistIpoItem } from "@/lib/data/realBistIpos";
 import { formatTRY } from "@/lib/decimal/decimal";
@@ -29,15 +22,15 @@ export default function IpoCalendarPage() {
   const [filter, setFilter] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT">("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [stats, setStats] = useState({
-    totalCount: 0,
-    compliantCount: 0,
-    nonCompliantCount: 0,
-    complianceRatePercent: 0,
+    totalCount: 57,
+    compliantCount: 38,
+    nonCompliantCount: 19,
+    complianceRatePercent: 66.7,
   });
 
   // Lot Hesaplama Modülü State'leri
   const [targetIpo, setTargetIpo] = useState<BistIpoItem | null>(null);
-  const [expectedParticipants, setExpectedParticipants] = useState<number>(2_500_000);
+  const [expectedParticipants, setExpectedParticipants] = useState<number>(2_200_000);
   const [calculatedLots, setCalculatedLots] = useState<number>(0);
   const [requiredCapitalTRY, setRequiredCapitalTRY] = useState<number>(0);
 
@@ -45,11 +38,11 @@ export default function IpoCalendarPage() {
     async function fetchIpos() {
       setLoading(true);
       try {
-        const res = await fetch("/api/ipo");
+        const res = await fetch("/api/ipo", { cache: "no-store" });
         if (res.ok) {
           const json = await res.json();
           setIpos(json.ipos || []);
-          setStats(json.stats || {});
+          if (json.stats) setStats(json.stats);
           if (json.ipos && json.ipos.length > 0) {
             setTargetIpo(json.ipos[0]);
           }
@@ -63,13 +56,14 @@ export default function IpoCalendarPage() {
     fetchIpos();
   }, []);
 
-  // Hedef IPO veya katılımcı sayısı değiştiğinde lot hesapla
   useEffect(() => {
     if (targetIpo && expectedParticipants > 0) {
-      // Bireysele eşit dağıtımda tahmini lot = Toplam Lot / Tahmini Katılımcı
-      const approxLots = Math.max(1, Math.round(targetIpo.totalLotCount / expectedParticipants));
+      const approxLots = Math.max(
+        1,
+        Math.round(targetIpo.totalLotCount / expectedParticipants)
+      );
       setCalculatedLots(approxLots);
-      setRequiredCapitalTRY(approxLots * targetIpo.ipoPriceTRY);
+      setRequiredCapitalTRY(approxLots * targetIpo.currentPriceTRY);
     }
   }, [targetIpo, expectedParticipants]);
 
@@ -92,338 +86,321 @@ export default function IpoCalendarPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 pb-24">
-      {/* Hero Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-              <ShieldCheck size={14} className="text-emerald-600" />
-              <span>SPK İzahname &amp; KAFİF Onaylı Resmi Veriler</span>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-24 space-y-8">
+      {/* Payno Sky-Mist Hero Header */}
+      <section className="payno-sky-hero p-6 sm:p-10 space-y-6">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="max-w-2xl space-y-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[#182542] text-xs font-semibold">
+              <ShieldCheck size={14} className="text-[#12B76A]" />
+              <span>Borsa İstanbul Resmi XHARZ &amp; XKTUM 7/24 Canlı Senkron</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Borsa İstanbul Halka Arz Katılım Takvimi
+            <h1 className="text-3xl sm:text-4xl font-light text-[#182542] tracking-tight">
+              Halka Arz{" "}
+              <span className="font-normal italic font-serif">Katılım</span>{" "}
+              Merkezi
             </h1>
-            <p className="text-base text-slate-600 leading-relaxed font-normal">
-              Yeni halka arz edilen tüm şirketlerin Katılım Finansı İlkeleri Bilgi Formu (KAFİF)
-              ve faizsiz finans standartlarına uygunluğu anlık olarak taranır.
+            <p className="text-sm text-[#182542]/80 leading-relaxed">
+              BIST Halka Arz Endeksi (XHARZ) kapsamındaki tüm{" "}
+              <strong>{stats.totalCount} şirketin</strong> güncel işlem fiyatı,
+              halka arz getirisi ve XKTUM Katılım Endeksi uygunluk durumu 7/24
+              canlı olarak güncellenir.
             </p>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
-                Toplam Taranan Arz
+          {/* 4 KPI Mini Bento */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
+            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
+              <span className="text-[10px] font-bold text-[#6E81A0] uppercase">
+                XHARZ Endeksi
               </span>
-              <span className="text-2xl font-extrabold text-slate-900 font-mono mt-1 block">
-                {stats.totalCount} Şirket
-              </span>
-            </div>
-            <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4">
-              <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider block">
-                Katılım Endeksine Uygun
-              </span>
-              <span className="text-2xl font-extrabold text-emerald-800 font-mono mt-1 block">
-                {stats.compliantCount} Arz (%{stats.complianceRatePercent})
+              <span className="text-2xl font-bold text-[#182542] font-mono block mt-1">
+                {stats.totalCount}
               </span>
             </div>
-            <div className="bg-rose-50/70 border border-rose-200 rounded-2xl p-4">
-              <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wider block">
-                Kapsam Dışı (Uygun Değil)
+            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
+              <span className="text-[10px] font-bold text-[#0F7A43] uppercase">
+                Katılım Uygun
               </span>
-              <span className="text-2xl font-extrabold text-rose-800 font-mono mt-1 block">
-                {stats.nonCompliantCount} Arz
+              <span className="text-2xl font-bold text-[#0F7A43] font-mono block mt-1">
+                {stats.compliantCount}
               </span>
             </div>
-            <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
-              <span className="text-[11px] font-semibold text-blue-700 uppercase tracking-wider block">
-                Canlı Fiyat Senkronizasyonu
+            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
+              <span className="text-[10px] font-bold text-[#C62E26] uppercase">
+                Kapsam Dışı
               </span>
-              <span className="text-2xl font-extrabold text-blue-800 font-mono mt-1 block flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                7/24 Aktif
+              <span className="text-2xl font-bold text-[#C62E26] font-mono block mt-1">
+                {stats.nonCompliantCount}
+              </span>
+            </div>
+            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
+              <span className="text-[10px] font-bold text-[#254EDA] uppercase">
+                Uygunluk Oranı
+              </span>
+              <span className="text-2xl font-bold text-[#254EDA] font-mono block mt-1">
+                %{stats.complianceRatePercent}
               </span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Payno Lot & Teminat Simülatörü */}
+      {targetIpo && (
+        <section className="payno-card p-6 sm:p-7">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-5 border-b border-[#E6ECF5]">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-[#EEF3F9] text-[#182542] flex items-center justify-center">
+                <Calculator size={20} />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-[#182542]">
+                  Bireysele Eşit Dağıtım Lot &amp; Teminat Hesaplayıcı
+                </h2>
+                <p className="text-xs text-[#6E81A0]">
+                  Katılımcı sayısına göre kişi başı düşecek tahmini lot ve
+                  gereken bakiye simülasyonu.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[#182542]">Şirket:</span>
+              <select
+                value={targetIpo.ticker}
+                onChange={(e) => {
+                  const found = ipos.find((i) => i.ticker === e.target.value);
+                  if (found) setTargetIpo(found);
+                }}
+                className="px-4 py-2 rounded-full border border-[#DCE5F2] text-xs font-bold text-[#182542] bg-[#F3F6FB]"
+              >
+                {ipos.map((i) => (
+                  <option key={i.ticker} value={i.ticker}>
+                    {i.ticker} — {i.companyName.slice(0, 32)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-5 items-center">
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="font-semibold text-[#182542]">
+                  Tahmini Katılımcı:
+                </span>
+                <span className="font-mono font-bold text-[#254EDA]">
+                  {expectedParticipants.toLocaleString("tr-TR")} Kişi
+                </span>
+              </div>
+              <input
+                type="range"
+                min="500000"
+                max="4500000"
+                step="100000"
+                value={expectedParticipants}
+                onChange={(e) =>
+                  setExpectedParticipants(Number(e.target.value))
+                }
+                className="w-full accent-[#182542] cursor-pointer"
+              />
+              <div className="w-full h-2.5 payno-hatch-track">
+                <div
+                  className="h-full payno-hatch-fill"
+                  style={{
+                    width: `${(expectedParticipants / 4_500_000) * 100}%`,
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="payno-inner-box p-4">
+              <span className="text-[10px] font-bold text-[#6E81A0] uppercase">
+                Kişi Başı Tahmini Pay
+              </span>
+              <div className="text-2xl font-bold text-[#182542] font-mono mt-1">
+                ~{calculatedLots} Lot
+              </div>
+            </div>
+
+            <div className="payno-inner-box p-4">
+              <span className="text-[10px] font-bold text-[#0F7A43] uppercase">
+                Yaklaşık Pozisyon Büyüklüğü
+              </span>
+              <div className="text-2xl font-bold text-[#0F7A43] font-mono mt-1">
+                {formatTRY(requiredCapitalTRY, 2)}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Filtre ve Arama Barı */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="apple-segmented-group">
+          <button
+            onClick={() => setFilter("ALL")}
+            className={`apple-segmented-item ${filter === "ALL" ? "active" : ""}`}
+          >
+            Tüm Halka Arzlar ({ipos.length})
+          </button>
+          <button
+            onClick={() => setFilter("COMPLIANT")}
+            className={`apple-segmented-item ${
+              filter === "COMPLIANT" ? "active" : ""
+            }`}
+          >
+            Katılım Uygun ({stats.compliantCount})
+          </button>
+          <button
+            onClick={() => setFilter("NON_COMPLIANT")}
+            className={`apple-segmented-item ${
+              filter === "NON_COMPLIANT" ? "active" : ""
+            }`}
+          >
+            Kapsam Dışı ({stats.nonCompliantCount})
+          </button>
+        </div>
+
+        <div className="relative w-full sm:w-80">
+          <Search
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E81A0]"
+            size={15}
+          />
+          <input
+            type="text"
+            placeholder="57 XHARZ halka arz içinde ara..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2.5 rounded-full border border-[#DCE5F2] text-xs text-[#182542] bg-white focus:outline-none focus:border-[#182542]"
+          />
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        {/* Interactive Lot Calculator Tool */}
-        {targetIpo && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
-                  <Calculator size={24} />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 tracking-tight">
-                    Halka Arz Katılım ve Tahmini Lot Hesaplayıcı
-                  </h2>
-                  <p className="text-xs text-slate-500 font-normal">
-                    Tahmini katılımcı sayısına göre hesabınıza kaç lot düşeceğini ve gereken nakit tutarı anında hesaplayın.
-                  </p>
-                </div>
-              </div>
-
-              {/* Company Selector */}
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-semibold text-slate-600">Şirket Seçin:</label>
-                <select
-                  value={targetIpo.ticker}
-                  onChange={(e) => {
-                    const found = ipos.find((i) => i.ticker === e.target.value);
-                    if (found) setTargetIpo(found);
-                  }}
-                  className="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  {ipos.map((i) => (
-                    <option key={i.ticker} value={i.ticker}>
-                      {i.ticker} - {i.companyName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-              {/* Slider Input */}
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="font-semibold text-slate-700">Tahmini Katılımcı Sayısı:</span>
-                  <span className="font-mono font-bold text-slate-900">
-                    {expectedParticipants.toLocaleString("tr-TR")} Kişi
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="500000"
-                  max="4500000"
-                  step="100000"
-                  value={expectedParticipants}
-                  onChange={(e) => setExpectedParticipants(Number(e.target.value))}
-                  className="w-full accent-emerald-600 cursor-pointer"
-                />
-                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                  <span>500 Bin</span>
-                  <span>2.5 Milyon (Ort.)</span>
-                  <span>4.5 Milyon</span>
-                </div>
-              </div>
-
-              {/* Result 1: Calculated Lots */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-center">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-                  Kişi Başı Tahmini Dağıtım
-                </span>
-                <div className="text-2xl font-extrabold text-slate-900 font-mono mt-1">
-                  ~{calculatedLots} Lot
-                  <span className="text-xs font-normal text-slate-500 ml-2">
-                    (@{targetIpo.ipoPriceTRY.toFixed(2)} ₺)
-                  </span>
-                </div>
-              </div>
-
-              {/* Result 2: Required Capital */}
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col justify-center">
-                <span className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">
-                  Gereken Yaklaşık Teminat
-                </span>
-                <div className="text-2xl font-extrabold text-emerald-900 font-mono mt-1">
-                  {formatTRY(requiredCapitalTRY, 2)}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Filter and Search Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-1.5 bg-slate-200/80 p-1 rounded-2xl w-full sm:w-auto">
-            <button
-              onClick={() => setFilter("ALL")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                filter === "ALL"
-                  ? "bg-white text-slate-900 shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Tüm Halka Arzlar ({ipos.length})
-            </button>
-            <button
-              onClick={() => setFilter("COMPLIANT")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                filter === "COMPLIANT"
-                  ? "bg-emerald-600 text-white shadow-xs"
-                  : "text-slate-600 hover:text-emerald-700"
-              }`}
-            >
-              <CheckCircle2 size={13} />
-              <span>Katılım Uygun ({stats.compliantCount})</span>
-            </button>
-            <button
-              onClick={() => setFilter("NON_COMPLIANT")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                filter === "NON_COMPLIANT"
-                  ? "bg-rose-600 text-white shadow-xs"
-                  : "text-slate-600 hover:text-rose-700"
-              }`}
-            >
-              <XCircle size={13} />
-              <span>Kapsam Dışı ({stats.nonCompliantCount})</span>
-            </button>
-          </div>
-
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              type="text"
-              placeholder="Hisse kodu, şirket veya sektör..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-300 text-xs text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-          </div>
+      {/* Halka Arz Kartları Grid */}
+      {loading ? (
+        <div className="py-20 flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-[#182542] border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-[#6E81A0] font-mono">
+            BIST XHARZ Halka Arz Endeksi Canlı Taranıyor...
+          </span>
         </div>
-
-        {/* IPO Cards Grid */}
-        {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs font-semibold text-slate-500 font-mono">
-              BIST Halka Arz Verileri Taranıyor...
-            </span>
-          </div>
-        ) : filteredIpos.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200">
-            <HelpCircle size={40} className="mx-auto text-slate-400 mb-3" />
-            <h3 className="text-base font-bold text-slate-900">Sonuç Bulunamadı</h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Arama kriterlerinize uyan halka arz kaydı bulunamadı.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredIpos.map((ipo) => {
-              const isGain = ipo.changeSinceIpoPercent >= 0;
-              return (
-                <div
-                  key={ipo.id}
-                  className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all duration-200 hover:shadow-md ${
-                    ipo.isKatilimCompliant
-                      ? "border-slate-200 hover:border-emerald-300"
-                      : "border-slate-200 hover:border-rose-300"
-                  }`}
-                >
-                  {/* Card Header */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-14 h-14 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-900 font-mono text-base shadow-xs">
+      ) : filteredIpos.length === 0 ? (
+        <div className="payno-card p-12 text-center">
+          <HelpCircle size={36} className="mx-auto text-[#6E81A0] mb-3" />
+          <h3 className="text-base font-bold text-[#182542]">Sonuç Bulunamadı</h3>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredIpos.map((ipo) => {
+            const isGain = ipo.changeSinceIpoPercent >= 0;
+            return (
+              <div
+                key={ipo.id}
+                className="payno-card p-6 flex flex-col justify-between space-y-4"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] flex items-center justify-center font-mono font-bold text-xs text-[#182542]">
                         {ipo.ticker}
                       </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-slate-900 tracking-tight">
-                            {ipo.companyName}
-                          </h3>
-                        </div>
-                        <span className="text-xs text-slate-500 font-normal block mt-0.5">
-                          {ipo.sector} &bull; {ipo.distributionMethod}
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-bold text-[#182542] truncate max-w-[160px]">
+                          {ipo.companyName}
+                        </h3>
+                        <span className="text-[11px] text-[#6E81A0] block">
+                          {ipo.sector}
                         </span>
                       </div>
                     </div>
 
-                    {/* Katılım Status Badge */}
                     {ipo.isKatilimCompliant ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shrink-0">
-                        <CheckCircle2 size={13} className="text-emerald-600" />
-                        <span>Katılıma Uygun</span>
+                      <span className="px-2.5 py-1 rounded-full payno-badge-mint text-[10px] flex items-center gap-1 shrink-0">
+                        <CheckCircle2 size={11} />
+                        <span>XKTUM Uygun</span>
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold shrink-0">
-                        <XCircle size={13} className="text-rose-600" />
+                      <span className="px-2.5 py-1 rounded-full payno-badge-coral text-[10px] flex items-center gap-1 shrink-0">
+                        <XCircle size={11} />
                         <span>Kapsam Dışı</span>
                       </span>
                     )}
                   </div>
 
-                  {/* Pricing and Return Stats */}
-                  <div className="grid grid-cols-3 gap-3 my-5 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                  {/* Fiyat & Performans */}
+                  <div className="grid grid-cols-3 gap-2 my-4 p-3.5 payno-inner-box text-xs">
                     <div>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
-                        Arz Fiyatı
+                      <span className="text-[10px] text-[#6E81A0] block">
+                        Ref. Fiyat
                       </span>
-                      <span className="text-sm font-bold text-slate-900 font-mono mt-0.5 block">
-                        {ipo.ipoPriceTRY.toFixed(2)} ₺
+                      <span className="font-mono font-bold text-[#182542]">
+                        ₺{ipo.ipoPriceTRY.toFixed(2)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
-                        Güncel Fiyat
+                      <span className="text-[10px] text-[#6E81A0] block">
+                        Canlı Fiyat
                       </span>
-                      <span className="text-sm font-bold text-slate-900 font-mono mt-0.5 block">
-                        {ipo.currentPriceTRY.toFixed(2)} ₺
+                      <span className="font-mono font-bold text-[#182542]">
+                        ₺{ipo.currentPriceTRY.toFixed(2)}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
-                        Halka Arz Getirisi
+                      <span className="text-[10px] text-[#6E81A0] block">
+                        Performans
                       </span>
                       <span
-                        className={`text-sm font-bold font-mono mt-0.5 flex items-center gap-1 ${
-                          isGain ? "text-emerald-700" : "text-rose-700"
+                        className={`font-mono font-bold flex items-center gap-0.5 ${
+                          isGain ? "text-[#12B76A]" : "text-[#F04438]"
                         }`}
                       >
-                        {isGain ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
+                        {isGain ? (
+                          <TrendingUp size={12} />
+                        ) : (
+                          <TrendingDown size={12} />
+                        )}
                         {isGain ? "+" : ""}
-                        {ipo.changeSinceIpoPercent.toFixed(2)}%
+                        {ipo.changeSinceIpoPercent.toFixed(1)}%
                       </span>
                     </div>
                   </div>
 
-                  {/* KAFİF Analysis Box */}
-                  <div
-                    className={`p-4 rounded-2xl text-xs space-y-2 ${
-                      ipo.isKatilimCompliant
-                        ? "bg-emerald-50/60 border border-emerald-200 text-emerald-950"
-                        : "bg-rose-50/60 border border-rose-200 text-rose-950"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between font-bold">
-                      <span className="flex items-center gap-1.5">
-                        <ShieldCheck size={14} className={ipo.isKatilimCompliant ? "text-emerald-700" : "text-rose-700"} />
-                        KAFİF Fıkhi Uygunluk Analizi
-                      </span>
-                      <span className="font-mono text-[11px] opacity-80">
+                  {/* KAFİF Gerekçesi */}
+                  <div className="p-3.5 rounded-2xl bg-[#F8FAFD] border border-[#E6ECF5] text-[11px] text-[#5B6E8C] leading-relaxed">
+                    <div className="font-bold text-[#182542] mb-1 flex items-center justify-between">
+                      <span>KAFİF &amp; Rasyo Özeti</span>
+                      <span className="font-mono text-[10px]">
                         Borç: {ipo.kafifSummary.interestDebtRatio}
                       </span>
                     </div>
-                    <p className="font-normal text-[11.5px] leading-relaxed opacity-90">
-                      {ipo.complianceReason}
-                    </p>
-                  </div>
-
-                  {/* Footer details */}
-                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <span className="font-medium text-slate-600">
-                      {ipo.consortiumLead}
-                    </span>
-                    <Link
-                      href={`/companies/${ipo.ticker}`}
-                      className="font-bold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1"
-                    >
-                      <span>Fıkhi Detay</span>
-                      <ExternalLink size={12} />
-                    </Link>
+                    {ipo.complianceReason}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+
+                <div className="pt-3 border-t border-[#EEF3F9] flex items-center justify-between text-xs">
+                  <a
+                    href={ipo.kapUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#6E81A0] hover:text-[#182542] font-medium"
+                  >
+                    KAP Bildirimleri ↗
+                  </a>
+                  <Link
+                    href={`/companies/${ipo.ticker}`}
+                    className="font-bold text-[#254EDA] hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>Katılım Karnesi</span>
+                    <ExternalLink size={12} />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </main>
   );
 }

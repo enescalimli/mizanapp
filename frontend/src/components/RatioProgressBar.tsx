@@ -41,9 +41,9 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
   const isCompliant = detail.isCompliant;
   const isInTolerance = detail.isInToleranceBand;
 
-  // Color scheme
-  let barColor = "bg-emerald-500";
-  let textColor = "text-emerald-700";
+  // Payno color scheme
+  let barColor = "bg-[#0D9F6E]";
+  let textColor = "text-[#0D9F6E]";
   let statusBadge = (
     <span className="badge-apple-emerald text-[10px]">
       <Check size={11} /> {detail.marginToLimitPercentage}
@@ -51,16 +51,16 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
   );
 
   if (isInTolerance) {
-    barColor = "bg-amber-500";
-    textColor = "text-amber-700";
+    barColor = "bg-[#F59E0B]";
+    textColor = "text-[#B45309]";
     statusBadge = (
       <span className="badge-apple-amber text-[10px]">
         <AlertCircle size={11} /> Hoşgörü Sınırında
       </span>
     );
   } else if (!isCompliant) {
-    barColor = "bg-rose-500";
-    textColor = "text-rose-700";
+    barColor = "bg-[#E11D48]";
+    textColor = "text-[#BE123C]";
     statusBadge = (
       <span className="badge-apple-rose text-[10px]">
         <AlertCircle size={11} /> {detail.marginToLimitPercentage}
@@ -69,24 +69,24 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-      <div className="flex items-start justify-between gap-4 mb-2">
+    <div className="payno-card p-6">
+      <div className="flex items-start justify-between gap-4 mb-3">
         <div>
-          <h4 className="text-sm font-bold text-slate-900 tracking-tight">{label}</h4>
-          {subLabel && <p className="text-xs text-slate-500 font-normal">{subLabel}</p>}
+          <h4 className="text-sm font-extrabold text-[#182542] tracking-tight">{label}</h4>
+          {subLabel && <p className="text-xs text-[#6E81A0] font-medium mt-0.5">{subLabel}</p>}
         </div>
         <div className="text-right">
-          <div className={`text-2xl font-bold font-mono tabular-nums tracking-tight ${textColor}`}>
+          <div className={`text-2xl font-extrabold font-mono tabular-nums tracking-tight ${textColor}`}>
             {detail.ratioPercentage}
           </div>
-          <div className="text-[11px] text-slate-500 font-mono tabular-nums">
+          <div className="text-[11px] text-[#7B8FA8] font-mono tabular-nums font-medium">
             {formatCompactNumber(detail.numeratorTRY)} / {formatCompactNumber(detail.denominatorTRY)} TL
           </div>
         </div>
       </div>
 
-      {/* Progress Track */}
-      <div className="relative w-full h-2 bg-slate-100 rounded-full overflow-hidden my-3">
+      {/* Payno Diagonal Hatch Progress Track */}
+      <div className="relative w-full h-3.5 payno-hatch-track overflow-hidden my-3.5">
         {/* Shaded Tolerance Zone */}
         {isDebtOrCash && (
           <div
@@ -100,22 +100,22 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
 
         {/* Current Ratio Bar */}
         <div
-          className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+          className={`payno-hatch-fill ${barColor}`}
           style={{ width: `${progressPercent}%` }}
         />
 
         {/* Threshold Mark Line */}
         <div
-          className="absolute top-0 bottom-0 w-0.5 bg-rose-400 z-10"
+          className="absolute top-0 bottom-0 w-0.5 bg-[#E11D48] z-10"
           style={{ left: `${thresholdMarkPercent}%` }}
         />
       </div>
 
       {/* Footer labels */}
-      <div className="flex items-center justify-between text-xs text-slate-400 font-mono tabular-nums">
-        <span className="text-[11px]">0%</span>
-        <div className="flex items-center gap-1.5 text-[11px]">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+      <div className="flex items-center justify-between text-xs text-[#7B8FA8] font-mono tabular-nums">
+        <span className="text-[11px] font-semibold">0%</span>
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#182542]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48]" />
           <span>Eşik: {detail.thresholdPercentage}</span>
         </div>
         <div>{statusBadge}</div>

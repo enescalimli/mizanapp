@@ -181,38 +181,42 @@ export default function PortfolioPurificationPage() {
   };
 
   return (
-    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Cupertino Top Header */}
-      <div className="bg-white rounded-3xl p-8 border border-slate-200 relative overflow-hidden shadow-sm">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-50/60 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#F3F6FB] text-[#182542] pb-24">
+      {/* Payno Sky-Mist Top Header */}
+      <section className="payno-sky-hero pt-8 pb-12 border-b border-white/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="payno-card p-8 relative overflow-hidden">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDFBF5] border border-[#BBF7D0] text-[#0D9F6E] text-xs font-extrabold">
+                  <ShieldCheck size={14} />
+                  <span>TKBB &amp; AAOIFI No. 21 Uyumlu • 626 BIST Hissesi</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#182542] tracking-tight">
+                  Arındırma (Taharet) &amp; Hisse Zekâtı Merkezi
+                </h1>
+                <p className="text-sm text-[#6E81A0] max-w-3xl leading-relaxed font-medium">
+                  Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
+                  uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D9F6E] font-bold">Zero-Float Precision</span>)
+                  arındırın ve niyetinize göre hisse senedi zekâtınızı kesin tutarlarla hesaplayın.
+                </p>
+              </div>
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
-              <ShieldCheck size={14} />
-              <span>TKBB &amp; AAOIFI No. 21 Uyumlu</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => window.print()}
+                  className="apple-btn-secondary text-xs"
+                >
+                  <Download size={14} />
+                  <span>Yazdır / PDF Rapor</span>
+                </button>
+              </div>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-              Portföy Arındırma &amp; Hisse Zekatı Merkezi
-            </h1>
-            <p className="text-sm text-slate-600 max-w-3xl leading-relaxed font-normal">
-              Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
-              uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-emerald-700 font-semibold">Zero-Float Precision</span>)
-              arındırın ve niyetinize göre hisse senedi zekatınızı kesin tutarlarla hesaplayın.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => window.print()}
-              className="apple-btn-secondary text-xs"
-            >
-              <Download size={14} />
-              <span>Yazdır / PDF Rapor</span>
-            </button>
           </div>
         </div>
-      </div>
+      </section>
+
+      <div className="space-y-8 pt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
       {/* Top Level Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -576,6 +580,7 @@ export default function PortfolioPurificationPage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

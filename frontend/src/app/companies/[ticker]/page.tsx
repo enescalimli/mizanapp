@@ -107,111 +107,111 @@ export default function CompanyDetailPage() {
   const isBist = standard === "BIST_KATILIM_DIB";
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900 pb-24">
-      {/* Breadcrumb */}
-      <div className="border-b border-slate-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-slate-500">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="hover:text-emerald-700 transition-colors flex items-center gap-1.5 font-medium">
-              <ArrowLeft size={13} />
-              <span>Katılım Endeksi</span>
-            </Link>
-            <span className="text-slate-300">/</span>
-            <span>Şirketler</span>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-900 font-bold font-mono">{ticker}</span>
+    <main className="min-h-screen bg-[#F3F6FB] text-[#182542] pb-24">
+      {/* Payno Sky-Mist Header */}
+      <section className="payno-sky-hero pt-6 pb-10 border-b border-white/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          {/* Breadcrumb & Actions */}
+          <div className="flex items-center justify-between text-xs text-[#6E81A0]">
+            <div className="flex items-center gap-2">
+              <Link href="/" className="hover:text-[#182542] transition-colors flex items-center gap-1.5 font-bold">
+                <ArrowLeft size={13} />
+                <span>Hisse Tarayıcı (626)</span>
+              </Link>
+              <span className="text-[#94A3B8]">/</span>
+              <span>Şirketler</span>
+              <span className="text-[#94A3B8]">/</span>
+              <span className="text-[#182542] font-extrabold font-mono">{ticker}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleAddToPortfolio}
+                className="px-3.5 py-2 rounded-full bg-[#182542] hover:bg-[#22345c] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+              >
+                <PlusCircle size={13} />
+                <span>{addedToPortfolio ? "Eklendi!" : "Portföye Ekle"}</span>
+              </button>
+
+              <button
+                onClick={handleShare}
+                className="px-3.5 py-2 rounded-full bg-white hover:bg-[#F8FAFD] text-[#182542] border border-[#E2EAF4] text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+              >
+                <Share2 size={12} />
+                <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleAddToPortfolio}
-              className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5"
-            >
-              <PlusCircle size={13} />
-              <span>{addedToPortfolio ? "Eklendi!" : "Portföye Ekle"}</span>
-            </button>
+          {/* Company Header Card */}
+          <div className="payno-card p-6 sm:p-8 relative overflow-hidden">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+              {/* Title & Info */}
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-[#182542] text-white flex items-center justify-center font-extrabold text-xl font-mono tabular-nums shadow-md">
+                  {ticker}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#182542] tracking-tight">
+                      {data.companyName}
+                    </h1>
+                    <ComplianceBadge status={data.overallStatus} size="lg" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-[#6E81A0] mt-2 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Building2 size={13} className="text-[#2E6CF6]" />
+                      {data.sector} &bull; {data.subSector}
+                    </span>
+                    <span>&bull;</span>
+                    <span className="flex items-center gap-1 font-mono tabular-nums">
+                      <Calendar size={13} className="text-[#2E6CF6]" />
+                      {data.fiscalPeriod} Bilanço &bull; Değerleme: {data.valuationDate}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-            <button
-              onClick={handleShare}
-              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-medium transition flex items-center gap-1.5"
-            >
-              <Share2 size={12} />
-              <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
-            </button>
+              {/* Standard Switcher */}
+              <div className="apple-segmented-group">
+                <button
+                  onClick={() => setStandard("BIST_KATILIM_DIB")}
+                  className={`apple-segmented-item ${
+                    isBist ? "active" : ""
+                  }`}
+                >
+                  BIST Katılım (&lt;%33)
+                </button>
+                <button
+                  onClick={() => setStandard("AAOIFI_STD_21")}
+                  className={`apple-segmented-item ${
+                    !isBist ? "active" : ""
+                  }`}
+                >
+                  AAOIFI No.21 (&lt;%30)
+                </button>
+              </div>
+            </div>
+
+            {/* Grace Period Alert Banner */}
+            {data.gracePeriodInfo.isInGracePeriod && (
+              <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3 text-xs text-amber-900">
+                <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={16} />
+                <div>
+                  <span className="font-bold text-amber-900 block mb-0.5">
+                    Hoşgörü Süresi Devrede ({data.gracePeriodInfo.consecutiveBreachQuarters}/{data.gracePeriodInfo.maxAllowedQuarters} Çeyrek)
+                  </span>
+                  <p className="font-normal leading-relaxed text-amber-800">
+                    {data.gracePeriodInfo.notes.join(" ")}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        {/* Company Header Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
-            {/* Title & Info */}
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-900 text-xl font-mono tabular-nums shadow-xs">
-                {ticker}
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    {data.companyName}
-                  </h1>
-                  <ComplianceBadge status={data.overallStatus} size="lg" />
-                </div>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-2 font-normal">
-                  <span className="flex items-center gap-1">
-                    <Building2 size={13} className="text-slate-400" />
-                    {data.sector} &bull; {data.subSector}
-                  </span>
-                  <span>&bull;</span>
-                  <span className="flex items-center gap-1 font-mono tabular-nums">
-                    <Calendar size={13} className="text-slate-400" />
-                    {data.fiscalPeriod} Bilanço &bull; Değerleme: {data.valuationDate}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Standard Switcher */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
-              <button
-                onClick={() => setStandard("BIST_KATILIM_DIB")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                  isBist
-                    ? "bg-white text-emerald-800 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                BIST Katılım (&lt;%33)
-              </button>
-              <button
-                onClick={() => setStandard("AAOIFI_STD_21")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                  !isBist
-                    ? "bg-white text-emerald-800 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                AAOIFI No.21 (&lt;%30)
-              </button>
-            </div>
-          </div>
-
-          {/* Grace Period Alert Banner */}
-          {data.gracePeriodInfo.isInGracePeriod && (
-            <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3 text-xs text-amber-900">
-              <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={16} />
-              <div>
-                <span className="font-bold text-amber-900 block mb-0.5">
-                  Hoşgörü Süresi Devrede ({data.gracePeriodInfo.consecutiveBreachQuarters}/{data.gracePeriodInfo.maxAllowedQuarters} Çeyrek)
-                </span>
-                <p className="font-normal leading-relaxed text-amber-800">
-                  {data.gracePeriodInfo.notes.join(" ")}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* 3 Core Ratio Progress Bars */}
         <div className="space-y-4">
