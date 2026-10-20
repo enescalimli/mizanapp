@@ -1,0 +1,55 @@
+================================================================================
+MIZANAPP — SOSYAL MEDYA REELS / TIKTOK / SHORTS PAYLAŞIM KİTİ
+================================================================================
+
+📁 Dosyalar:
+• Video (1080x1920 Full HD): mizan_reels_tanitim_1080x1920.mp4
+• Video (720x1280 HD): mizan_reels_tanitim_720x1280.mp4
+• Kapak Fotoğrafı: mizan_reels_kapak_1080x1920.png
+• Süre: 30.00 Saniye
+• Format: Dikey 9:16 (60/30 FPS, H.264 Video + AAC Türkçe Seslendirme)
+
+--------------------------------------------------------------------------------
+📌 VİDEO METNİ & SESLENDİRME DÖKÜMÜ (30 Saniye)
+--------------------------------------------------------------------------------
+[00:00 - 00:05.3] (Kanca):
+"Borsada 626 şirket var... Peki hangisi GERÇEKTEN katılım fıkhına uygun?"
+
+[00:05.3 - 00:09.6] (Mizan Çözümü):
+"Tanışın: Mizan! Borsa İstanbul Katılım ve Arındırma Çözümü."
+
+[00:09.6 - 00:18.2] (626 Canlı Tarayıcı):
+"238 resmi Katılım hissesi ve 57 Halka Arz şirketi, AAOIFI ve TKBB kurallarıyla 7/24 taranıyor."
+
+[00:18.2 - 00:24.0] (Zero-Float Arındırma & Zekât):
+"Kuruşu kuruşuna şüpheli kazanç arındırması ve hisse senedi zekâtı, tek tıkla cebinizde."
+
+[00:24.0 - 00:30.0] (Çağrı / CTA):
+"Borsada helal kazanç, şüphesiz yatırım. Hemen ücretsiz keşfedin: mizanapp.tr"
+
+--------------------------------------------------------------------------------
+📝 INSTAGRAM REELS & TIKTOK AÇIKLAMA METNİ (KOPYALAYIP YAPIŞTIRIN)
+--------------------------------------------------------------------------------
+Borsada 626 hisse var… Ama hangisi GERÇEKTEN katılım fıkhına uygun? 📈⚖️
+
+Kulaktan dolma bilgilerle hisse alıp satma devri bitti! Borsa İstanbul’daki tüm 626 hisseyi, 238 resmi BIST Katılım (XKTUM) şirketini ve en son halka arzları 7/24 fıkhi rasyolarıyla denetleyen yeni nesil platformumuz yayında:
+
+👉 mizanapp.tr
+
+✨ Neler Var?
+• TKBB & AAOIFI No. 21 standartlarında anlık borç, faizli gelir ve faaliyet denetimi
+• Satış anında kuruşu kuruşuna (Zero-Float Precision) şüpheli kazanç arındırması (taharet)
+• Al-Sat ve Temettü niyetine göre otomatik Hisse Senedi Zekâtı hesabı
+• 57 BIST Halka Arz endeksi için canlı katılım uygunluk karnesi
+
+Hemen profilimizdeki linkten veya mizanapp.tr adresinden ücretsiz deneyin. Helal kazanç arayan yatırımcı dostlarına göndermeyi ve kaydetmeyi unutma! ✈️💾
+
+#bist100 #katılımendeksi #borsaistanbul #helalyatırım #mizanapp #halkaarz #xktum #finans #borsa #hissesenedi #faizsizkazanç #zekat #aaoifi #tkbb #yatırım
+
+--------------------------------------------------------------------------------
+🎯 PAYLAŞIM TAVSİYELERİ
+--------------------------------------------------------------------------------
+1. Instagram Reels'ta ses seviyesini videonun kendi orijinal sesi (%100) olarak bırakın.
+2. İsterseniz Instagram müzik kütüphanesinden hafif ritimli "Tech Ambient" veya "Business Lofi" parçasını %10 ses seviyesinde ekleyebilirsiniz.
+3. Kapak görseli olarak klasördeki `mizan_reels_kapak_1080x1920.png` dosyasını seçebilirsiniz.
+================================================================================
