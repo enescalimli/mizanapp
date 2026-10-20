@@ -43,7 +43,7 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
 
   // Color scheme
   let barColor = "bg-emerald-500";
-  let textColor = "text-emerald-400";
+  let textColor = "text-emerald-700";
   let statusBadge = (
     <span className="badge-apple-emerald text-[10px]">
       <Check size={11} /> {detail.marginToLimitPercentage}
@@ -51,8 +51,8 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
   );
 
   if (isInTolerance) {
-    barColor = "bg-amber-400";
-    textColor = "text-amber-300";
+    barColor = "bg-amber-500";
+    textColor = "text-amber-700";
     statusBadge = (
       <span className="badge-apple-amber text-[10px]">
         <AlertCircle size={11} /> Hoşgörü Sınırında
@@ -60,7 +60,7 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
     );
   } else if (!isCompliant) {
     barColor = "bg-rose-500";
-    textColor = "text-rose-400";
+    textColor = "text-rose-700";
     statusBadge = (
       <span className="badge-apple-rose text-[10px]">
         <AlertCircle size={11} /> {detail.marginToLimitPercentage}
@@ -69,28 +69,28 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
   }
 
   return (
-    <div className="apple-card p-5">
+    <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <h4 className="text-sm font-bold text-white tracking-tight">{label}</h4>
-          {subLabel && <p className="text-xs text-slate-400 font-normal">{subLabel}</p>}
+          <h4 className="text-sm font-bold text-slate-900 tracking-tight">{label}</h4>
+          {subLabel && <p className="text-xs text-slate-500 font-normal">{subLabel}</p>}
         </div>
         <div className="text-right">
           <div className={`text-2xl font-bold font-mono tabular-nums tracking-tight ${textColor}`}>
             {detail.ratioPercentage}
           </div>
-          <div className="text-[11px] text-slate-400 font-mono tabular-nums">
+          <div className="text-[11px] text-slate-500 font-mono tabular-nums">
             {formatCompactNumber(detail.numeratorTRY)} / {formatCompactNumber(detail.denominatorTRY)} TL
           </div>
         </div>
       </div>
 
       {/* Progress Track */}
-      <div className="relative w-full h-2 bg-white/[0.06] rounded-full overflow-hidden my-3">
+      <div className="relative w-full h-2 bg-slate-100 rounded-full overflow-hidden my-3">
         {/* Shaded Tolerance Zone */}
         {isDebtOrCash && (
           <div
-            className="absolute top-0 bottom-0 bg-amber-500/15"
+            className="absolute top-0 bottom-0 bg-amber-500/20"
             style={{
               left: `${thresholdMarkPercent}%`,
               width: `${Math.max(toleranceMarkPercent - thresholdMarkPercent, 0)}%`,

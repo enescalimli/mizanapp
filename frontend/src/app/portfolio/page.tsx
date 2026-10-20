@@ -477,36 +477,36 @@ export default function PortfolioManagementPage() {
   }, [portfolioAnalysis]);
 
   return (
-    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 selection:bg-emerald-500/30 selection:text-emerald-300">
+    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Cupertino Top Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-4 border-b border-white/[0.07]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Katılım Portföy Paneli
             </h1>
 
             {/* Apple Live Streaming Pill */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md text-xs text-slate-300 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 shadow-2xs">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
-                  isLiveStreaming ? "bg-emerald-400 animate-pulse" : "bg-slate-500"
+                  isLiveStreaming ? "bg-emerald-500 animate-pulse" : "bg-slate-400"
                 }`}
               />
-              <span className="font-mono text-[11px] tabular-nums text-slate-300">
+              <span className="font-mono text-[11px] tabular-nums text-slate-700 font-medium">
                 Canlı Fiyat Akışı ({lastTickTime})
               </span>
               <button
                 type="button"
                 onClick={tickLivePrices}
-                className="p-0.5 hover:text-emerald-400 text-slate-400 transition"
+                className="p-0.5 hover:text-emerald-700 text-slate-500 transition"
                 title="Fiyatları Şimdi Yenile"
               >
                 <RefreshCw size={11} />
               </button>
             </div>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-normal">
+          <p className="text-xs text-slate-500 mt-1 font-normal">
             Otomatik takvim günü hesabı, canlı piyasa fiyatları ve anlık satış arındırma bedeli.
           </p>
         </div>
@@ -519,7 +519,7 @@ export default function PortfolioManagementPage() {
             onClick={() => setIsAlarmDrawerOpen(true)}
             className={`apple-btn-secondary relative text-xs py-2 px-3.5 ${
               portfolioAnalysis.totalAlertsCount > 0
-                ? "border-rose-500/40 text-rose-300 bg-rose-500/10 hover:bg-rose-500/20"
+                ? "border-rose-200 text-rose-800 bg-rose-50 hover:bg-rose-100"
                 : ""
             }`}
           >
@@ -527,13 +527,13 @@ export default function PortfolioManagementPage() {
               size={14}
               className={
                 portfolioAnalysis.totalAlertsCount > 0
-                  ? "text-rose-400 animate-pulse"
+                  ? "text-rose-600 animate-pulse"
                   : "text-slate-400"
               }
             />
             <span className="font-semibold">Katılım Alarmları</span>
             {portfolioAnalysis.totalAlertsCount > 0 && (
-              <span className="ml-1 px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[10px] font-bold font-mono">
+              <span className="ml-1 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[10px] font-bold font-mono">
                 {portfolioAnalysis.totalAlertsCount}
               </span>
             )}
@@ -545,7 +545,7 @@ export default function PortfolioManagementPage() {
               type="button"
               onClick={() => setStandard("BIST_KATILIM_DIB")}
               className={`apple-segmented-item ${
-                standard === "BIST_KATILIM_DIB" ? "active text-emerald-400" : ""
+                standard === "BIST_KATILIM_DIB" ? "active text-emerald-700" : ""
               }`}
             >
               BIST Katılım (&lt;%33)
@@ -554,7 +554,7 @@ export default function PortfolioManagementPage() {
               type="button"
               onClick={() => setStandard("AAOIFI_STD_21")}
               className={`apple-segmented-item ${
-                standard === "AAOIFI_STD_21" ? "active text-emerald-400" : ""
+                standard === "AAOIFI_STD_21" ? "active text-emerald-700" : ""
               }`}
             >
               AAOIFI No.21 (&lt;%30)
@@ -600,19 +600,19 @@ export default function PortfolioManagementPage() {
         </div>
 
         <div className="lg:col-span-7 flex flex-col justify-between">
-          <SpotlightCard className="p-6 h-full flex flex-col justify-between border-white/[0.08]">
+          <SpotlightCard className="p-6 h-full flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-white/[0.06]">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div>
-                  <h3 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
-                    <Activity size={15} className="text-emerald-400" />
+                  <h3 className="text-sm font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                    <Activity size={15} className="text-emerald-600" />
                     <span>Portföy Varlık Spektrumu &amp; Risk Matrisi</span>
                   </h3>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
+                  <p className="text-[11px] text-slate-500 mt-0.5">
                     Hisselerin piyasa değeri ağırlıkları ve anlık katılım uygunluk sınıflandırması.
                   </p>
                 </div>
-                <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-white/[0.04] text-slate-300 border border-white/[0.08]">
+                <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                   {allocationItems.length} Pozisyon
                 </span>
               </div>
@@ -626,31 +626,31 @@ export default function PortfolioManagementPage() {
             </div>
 
             {/* Quick Metrics Strip inside the Card */}
-            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/[0.06]">
-              <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-100">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
                   Ort. Borç Oranı
                 </span>
-                <span className="text-sm font-bold font-mono text-slate-200 mt-0.5 block tabular-nums">
+                <span className="text-sm font-bold font-mono text-slate-900 mt-0.5 block tabular-nums">
                   %{portfolioAnalysis.avgDebtRatioPercent.toFixed(1)}{" "}
-                  <span className="text-[10px] text-slate-400 font-normal">
+                  <span className="text-[10px] text-slate-500 font-normal">
                     / %{standard === "BIST_KATILIM_DIB" ? "33" : "30"}
                   </span>
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
                   Arındırma Kesintisi
                 </span>
-                <span className="text-sm font-bold font-mono text-amber-400 mt-0.5 block tabular-nums">
+                <span className="text-sm font-bold font-mono text-amber-700 mt-0.5 block tabular-nums">
                   %{portfolioAnalysis.purificationRatioPercent.toFixed(2)}
                 </span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
                 <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
                   Zekata Tabi Pay
                 </span>
-                <span className="text-sm font-bold font-mono text-emerald-400 mt-0.5 block tabular-nums">
+                <span className="text-sm font-bold font-mono text-emerald-700 mt-0.5 block tabular-nums">
                   {formatTRY(portfolioAnalysis.totalZakatPayable, 0)}
                 </span>
               </div>
@@ -659,27 +659,27 @@ export default function PortfolioManagementPage() {
         </div>
       </div>
 
-      {/* 4 Core Financial Metrics Cards (Taste-Skill: Type-first, No icons in circles) */}
+      {/* 4 Core Financial Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Total Live Market Value */}
-        <SpotlightCard className="p-5" spotlightColor="rgba(16, 185, 129, 0.08)">
+        <SpotlightCard className="p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block">
               PORTFÖY CANLI DEĞERİ
             </span>
-            <span className="text-[10px] font-mono font-medium text-slate-400">
+            <span className="text-[10px] font-mono font-medium text-slate-500">
               Maliyet: {formatTRY(portfolioAnalysis.totalCostBasis, 0)}
             </span>
           </div>
-          <div className="text-3xl font-bold text-white tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-slate-900 tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
           </div>
           <div className="flex items-center gap-2 mt-2">
             <span
               className={`inline-flex items-center gap-1 text-xs font-mono font-semibold tabular-nums ${
                 portfolioAnalysis.totalPnlTRY.gte(0)
-                  ? "text-emerald-400"
-                  : "text-rose-400"
+                  ? "text-emerald-700"
+                  : "text-rose-700"
               }`}
             >
               {portfolioAnalysis.totalPnlTRY.gte(0) ? "+" : ""}
@@ -691,18 +691,7 @@ export default function PortfolioManagementPage() {
         </SpotlightCard>
 
         {/* Card 2: Halal Weight & Compliance Status */}
-        <SpotlightCard
-          className={`p-5 ${
-            portfolioAnalysis.breachedAlerts.length === 0
-              ? "border-emerald-500/25"
-              : "border-rose-500/30"
-          }`}
-          spotlightColor={
-            portfolioAnalysis.breachedAlerts.length === 0
-              ? "rgba(16, 185, 129, 0.1)"
-              : "rgba(244, 63, 94, 0.1)"
-          }
-        >
+        <SpotlightCard className="p-5">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block">
               KATILIM UYGUNLUK AĞIRLIĞI
@@ -710,14 +699,14 @@ export default function PortfolioManagementPage() {
             <span
               className={`w-2 h-2 rounded-full ${
                 portfolioAnalysis.breachedAlerts.length === 0
-                  ? "bg-emerald-400 animate-pulse"
-                  : "bg-rose-400"
+                  ? "bg-emerald-500 animate-pulse"
+                  : "bg-rose-500"
               }`}
             />
           </div>
-          <div className="text-3xl font-bold text-white tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-slate-900 tracking-tight font-mono tabular-nums">
             %{portfolioAnalysis.halalWeightPercent.toFixed(1)}{" "}
-            <span className="text-xs font-normal text-emerald-400">Helal</span>
+            <span className="text-xs font-semibold text-emerald-700">Helal</span>
           </div>
           <div className="flex items-center gap-2 mt-2 text-xs">
             {portfolioAnalysis.breachedAlerts.length > 0 ? (
@@ -738,64 +727,64 @@ export default function PortfolioManagementPage() {
         </SpotlightCard>
 
         {/* Card 3: Exit Purification Obligation */}
-        <SpotlightCard className="p-5 border-amber-500/25" spotlightColor="rgba(245, 158, 11, 0.1)">
+        <SpotlightCard className="p-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-semibold text-amber-400 uppercase tracking-widest block">
+            <span className="text-[10px] font-semibold text-amber-700 uppercase tracking-widest block">
               SATIŞ ANI ARINDIRMA
             </span>
-            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
+            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
               ROUND_CEIL
             </span>
           </div>
-          <div className="text-3xl font-bold text-amber-400 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-amber-700 tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 font-normal">
+          <p className="text-[11px] text-slate-500 mt-2 font-normal">
             Bugün satılırsa infak edilecek net şüpheli kazanç
           </p>
         </SpotlightCard>
 
         {/* Card 4: Zakat Obligation */}
-        <SpotlightCard className="p-5 border-emerald-500/25" spotlightColor="rgba(16, 185, 129, 0.1)">
+        <SpotlightCard className="p-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-widest block">
+            <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest block">
               HİSSE ZEKATI (%2,5)
             </span>
-            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
               Yıllık
             </span>
           </div>
-          <div className="text-3xl font-bold text-emerald-400 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-emerald-700 tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioAnalysis.totalZakatPayable, 2)}
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 font-normal">
+          <p className="text-[11px] text-slate-500 mt-2 font-normal">
             Al-Sat &amp; Temettü niyetine göre zekata tabi varlık
           </p>
         </SpotlightCard>
       </div>
 
-      {/* Main Portfolio Holdings Table (Apple Glass Floating Table with Spotlight) */}
-      <SpotlightCard className="apple-glass rounded-2xl overflow-hidden border border-white/[0.08] shadow-2xl p-0">
-        <div className="p-5 border-b border-white/[0.07] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Main Portfolio Holdings Table */}
+      <div className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+        <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2.5">
-              <Briefcase size={16} className="text-emerald-400" />
+            <h2 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2.5">
+              <Briefcase size={16} className="text-emerald-700" />
               <span>Portföy Varlıkları ve Canlı Değerleme</span>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Alış tarihi ile otomatik gün hesabı, canlı BIST fiyatları ve satış anında arındırma bedeli.
             </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
-            <span className="text-slate-400 text-[11px]">Şer&apos;i Yuvarlama:</span>
+            <span className="text-slate-500 text-[11px]">Şer&apos;i Yuvarlama:</span>
             <button
               type="button"
               onClick={() => setUseCeilingRounding(!useCeilingRounding)}
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
                 useCeilingRounding
-                  ? "bg-white/[0.08] text-white border-white/[0.18]"
-                  : "bg-white/[0.02] text-slate-400 border-white/[0.06]"
+                  ? "bg-slate-100 text-slate-900 border-slate-300"
+                  : "bg-white text-slate-500 border-slate-200"
               }`}
             >
               {useCeilingRounding ? "Tavan (ROUND_CEIL)" : "Standart"}
@@ -806,18 +795,18 @@ export default function PortfolioManagementPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-white/[0.07] bg-white/[0.02] text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+              <tr className="border-b border-slate-100 bg-slate-50 text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
                 <th className="py-3.5 px-5">Hisse &amp; Sektör</th>
                 <th className="py-3.5 px-4">Katılım &amp; Risk Durumu</th>
                 <th className="py-3.5 px-4">Alış Tarihi (Süre)</th>
                 <th className="py-3.5 px-4">Lot Adedi</th>
                 <th className="py-3.5 px-4">Canlı Fiyat &amp; Trend</th>
                 <th className="py-3.5 px-4">Piyasa Değeri &amp; K/Z</th>
-                <th className="py-3.5 px-4 text-amber-400 font-bold">Satış Arındırma Bedeli</th>
+                <th className="py-3.5 px-4 text-amber-700 font-bold">Satış Arındırma Bedeli</th>
                 <th className="py-3.5 px-5 text-right">Aksiyonlar</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.06] font-normal">
+            <tbody className="divide-y divide-slate-100 font-normal">
               {portfolioAnalysis.rows.map((row) => {
                 const tick = priceTickDirections[row.ticker];
                 const isBreached = row.riskAssessment.riskLevel === "BREACHED";
@@ -829,10 +818,10 @@ export default function PortfolioManagementPage() {
                     <tr
                       className={`transition-colors duration-150 ${
                         isBreached
-                          ? "bg-rose-500/[0.04] hover:bg-rose-500/[0.08]"
+                          ? "bg-rose-50/60 hover:bg-rose-50"
                           : isAtRisk
-                          ? "bg-amber-500/[0.03] hover:bg-amber-500/[0.07]"
-                          : "hover:bg-white/[0.03]"
+                          ? "bg-amber-50/50 hover:bg-amber-50"
+                          : "hover:bg-slate-50/80"
                       }`}
                     >
                       {/* Ticker & Sector */}
@@ -840,16 +829,16 @@ export default function PortfolioManagementPage() {
                         <div className="flex items-center gap-2.5">
                           <Link
                             href={`/companies/${row.ticker}`}
-                            className="font-bold text-sm text-white hover:text-emerald-400 font-mono transition flex items-center gap-1"
+                            className="font-bold text-sm text-slate-900 hover:text-emerald-700 font-mono transition flex items-center gap-1"
                           >
                             <span>{row.ticker}</span>
                             <ArrowUpRight size={12} className="text-slate-400" />
                           </Link>
-                          <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.04] text-slate-300 border border-white/[0.07]">
+                          <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
                             {row.summary.sector}
                           </span>
                         </div>
-                        <span className="text-[11px] text-slate-400 truncate max-w-[150px] block mt-0.5">
+                        <span className="text-[11px] text-slate-500 truncate max-w-[150px] block mt-0.5">
                           {row.summary.name}
                         </span>
                       </td>
@@ -879,16 +868,16 @@ export default function PortfolioManagementPage() {
 
                       {/* Purchase Date & Auto-Computed Days */}
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-200 font-mono tabular-nums">
+                        <div className="font-semibold text-slate-900 font-mono tabular-nums">
                           {row.formattedPurchaseDate}
                         </div>
-                        <div className="text-[10px] text-emerald-400 font-mono mt-0.5 tabular-nums">
+                        <div className="text-[10px] text-emerald-700 font-mono mt-0.5 tabular-nums font-medium">
                           {row.totalDaysHeld} Gün ({row.daysHeldInQuarter}/90 Pro-Rata)
                         </div>
                       </td>
 
                       {/* Lots */}
-                      <td className="py-3.5 px-4 font-mono font-bold text-slate-200 tabular-nums">
+                      <td className="py-3.5 px-4 font-mono font-bold text-slate-900 tabular-nums">
                         {row.lots} Lot
                       </td>
 
@@ -899,10 +888,10 @@ export default function PortfolioManagementPage() {
                             <div
                               className={`font-bold transition-all duration-300 ${
                                 tick === "up"
-                                  ? "text-emerald-400 animate-tick-up"
+                                  ? "text-emerald-700 animate-tick-up"
                                   : tick === "down"
-                                  ? "text-rose-400 animate-tick-down"
-                                  : "text-slate-100"
+                                  ? "text-rose-700 animate-tick-down"
+                                  : "text-slate-900"
                               }`}
                             >
                               {formatTRY(row.livePrice, 2)}
@@ -928,12 +917,12 @@ export default function PortfolioManagementPage() {
 
                       {/* Market Value & Real-time PnL */}
                       <td className="py-3.5 px-4 font-mono tabular-nums">
-                        <div className="font-bold text-slate-100">
+                        <div className="font-bold text-slate-900">
                           {formatTRY(row.marketValue, 2)}
                         </div>
                         <div
                           className={`text-[10px] font-semibold ${
-                            row.pnlTRY.gte(0) ? "text-emerald-400" : "text-rose-400"
+                            row.pnlTRY.gte(0) ? "text-emerald-700" : "text-rose-700"
                           }`}
                         >
                           {row.pnlTRY.gte(0) ? "+" : ""}
@@ -943,7 +932,7 @@ export default function PortfolioManagementPage() {
                       </td>
 
                       {/* Sell Purification Fee Due */}
-                      <td className="py-3.5 px-4 font-mono tabular-nums font-bold text-amber-400 text-sm">
+                      <td className="py-3.5 px-4 font-mono tabular-nums font-bold text-amber-700 text-sm">
                         {formatTRY(row.exitPurificationPayable, 2)}
                         <span className="text-[9px] text-slate-400 block font-normal">
                           {formatTRY(row.purificationPerShare, 4)}/pay
@@ -971,7 +960,7 @@ export default function PortfolioManagementPage() {
                                   row.detail.purificationMetrics.totalSharesOutstanding,
                               })
                             }
-                            className="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-semibold transition active:scale-[0.98]"
+                            className="px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold transition active:scale-[0.98]"
                             title="Pozisyonu Sat veya Arındırma Ücretini Hesapla"
                           >
                             Sat / Arındır
@@ -986,7 +975,7 @@ export default function PortfolioManagementPage() {
                                   isExpanded ? null : row.id
                                 )
                               }
-                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold transition active:scale-[0.98]"
+                              className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold transition active:scale-[0.98]"
                             >
                               Yerine Hisse?
                             </button>
@@ -995,7 +984,7 @@ export default function PortfolioManagementPage() {
                           <button
                             type="button"
                             onClick={() => handleRemoveHolding(row.id)}
-                            className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
                             title="Pozisyonu Sil"
                           >
                             <Trash2 size={14} />
@@ -1006,8 +995,8 @@ export default function PortfolioManagementPage() {
 
                     {/* Inline SmartAlternativeCard expansion when clicked */}
                     {isExpanded && (
-                      <tr className="bg-white/[0.01]">
-                        <td colSpan={8} className="p-4 border-l-2 border-emerald-500">
+                      <tr className="bg-slate-50/50">
+                        <td colSpan={8} className="p-4 border-l-4 border-emerald-500">
                           <SmartAlternativeCard
                             sourceTicker={row.ticker}
                             sourceCompanyName={row.summary.name}
@@ -1035,10 +1024,10 @@ export default function PortfolioManagementPage() {
           </table>
         </div>
 
-        {/* Add Asset Form (Cupertino styling, Date-driven) */}
-        <div className="p-5 bg-white/[0.02] border-t border-white/[0.07]">
-          <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-            <Plus size={13} className="text-emerald-400" />
+        {/* Add Asset Form */}
+        <div className="p-5 bg-slate-50/80 border-t border-slate-200">
+          <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-3 flex items-center gap-2">
+            <Plus size={13} className="text-emerald-700" />
             <span>Portföye Yeni Hisse Ekle (Alış Tarihi ile Otomatik Gün Hesabı)</span>
           </h3>
 
@@ -1047,16 +1036,16 @@ export default function PortfolioManagementPage() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end"
           >
             <div className="lg:col-span-2">
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1">
                 Hisse Senedi
               </label>
               <select
                 value={newTicker}
                 onChange={(e) => handleSelectNewTicker(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-semibold focus:outline-none focus:border-emerald-500 transition"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-emerald-500 transition"
               >
                 {SAMPLE_COMPANIES_SUMMARY.map((c) => (
-                  <option key={c.ticker} value={c.ticker} className="bg-slate-900 text-white">
+                  <option key={c.ticker} value={c.ticker}>
                     {c.ticker} — {c.name} ({c.bistStatus === "COMPLIANT" ? "UYGUN" : "KAPSAM DIŞI"})
                   </option>
                 ))}
@@ -1064,7 +1053,7 @@ export default function PortfolioManagementPage() {
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1">
                 Lot Adedi
               </label>
               <input
@@ -1073,13 +1062,13 @@ export default function PortfolioManagementPage() {
                 step="1"
                 value={newLots}
                 onChange={(e) => setNewLots(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-mono focus:outline-none focus:border-emerald-500 transition tabular-nums"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500 transition tabular-nums"
                 placeholder="Örn: 250"
               />
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1">
                 Alış Maliyeti (₺)
               </label>
               <input
@@ -1088,19 +1077,19 @@ export default function PortfolioManagementPage() {
                 step="0.01"
                 value={newAvgCost}
                 onChange={(e) => setNewAvgCost(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-mono focus:outline-none focus:border-emerald-500 transition tabular-nums"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500 transition tabular-nums"
               />
             </div>
 
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1">
                 Alış Tarihi
               </label>
               <input
                 type="date"
                 value={newPurchaseDate}
                 onChange={(e) => setNewPurchaseDate(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-mono focus:outline-none focus:border-emerald-500 transition tabular-nums"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500 transition tabular-nums"
               />
             </div>
 
@@ -1114,7 +1103,7 @@ export default function PortfolioManagementPage() {
             </div>
           </form>
         </div>
-      </SpotlightCard>
+      </div>
 
       {/* Zakat Tracker Module */}
       <ZakatTrackerModule

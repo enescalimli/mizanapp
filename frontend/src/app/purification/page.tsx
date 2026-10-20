@@ -181,23 +181,23 @@ export default function PortfolioPurificationPage() {
   };
 
   return (
-    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 selection:bg-emerald-500/30 selection:text-emerald-300">
+    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Cupertino Top Header */}
-      <div className="apple-glass rounded-3xl p-8 border border-white/[0.08] relative overflow-hidden shadow-2xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-white rounded-3xl p-8 border border-slate-200 relative overflow-hidden shadow-sm">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-50/60 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-emerald-400 text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
               <ShieldCheck size={14} />
               <span>TKBB &amp; AAOIFI No. 21 Uyumlu</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
               Portföy Arındırma &amp; Hisse Zekatı Merkezi
             </h1>
-            <p className="text-sm text-slate-300 max-w-3xl leading-relaxed font-normal">
+            <p className="text-sm text-slate-600 max-w-3xl leading-relaxed font-normal">
               Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
-              uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-emerald-400 font-medium">Zero-Float Precision</span>)
+              uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-emerald-700 font-semibold">Zero-Float Precision</span>)
               arındırın ve niyetinize göre hisse senedi zekatınızı kesin tutarlarla hesaplayın.
             </p>
           </div>
@@ -216,52 +216,52 @@ export default function PortfolioPurificationPage() {
 
       {/* Top Level Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="apple-card p-5">
+        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mb-2">
             TOPLAM PORTFÖY DEĞERİ
           </span>
-          <div className="text-3xl font-bold text-white tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-slate-900 tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioTotals.totalMarketValue, 2)}
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 font-normal">
+          <p className="text-[11px] text-slate-500 mt-2 font-normal">
             {positions.length} hisse pozisyonu
           </p>
         </div>
 
-        <div className="apple-card p-5 border-amber-500/25">
-          <span className="text-[10px] font-semibold text-amber-400 uppercase tracking-widest block mb-2">
+        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
+          <span className="text-[10px] font-semibold text-amber-700 uppercase tracking-widest block mb-2">
             ÖDENECEK TOPLAM ARINDIRMA
           </span>
-          <div className="text-3xl font-bold text-amber-400 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-amber-700 tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioTotals.totalPurification, 2)}
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 font-normal">
+          <p className="text-[11px] text-slate-500 mt-2 font-normal">
             Portföyün %{portfolioTotals.purificationRatioOfPortfolio.toFixed(4)} kadarı
           </p>
         </div>
 
-        <div className="apple-card p-5 border-emerald-500/25">
-          <span className="text-[10px] font-semibold text-emerald-400 uppercase tracking-widest block mb-2">
+        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
+          <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest block mb-2">
             HİSSE ZEKATI TUTARI (%2.5)
           </span>
-          <div className="text-3xl font-bold text-emerald-400 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-emerald-700 tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioTotals.totalZakat, 2)}
           </div>
-          <p className="text-[11px] text-slate-400 mt-2 font-normal">
+          <p className="text-[11px] text-slate-500 mt-2 font-normal">
             {zakatIntent === "trading" ? "Ticari Al-Sat Matrahı" : "Dönen Varlıklar Matrahı"}
           </p>
         </div>
 
-        <div className="apple-card p-5">
+        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
           <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mb-2">
             FIKHİ İHTİYAT &amp; YUVARLAMA
           </span>
           <div className="mt-2 flex items-center justify-between">
             <div>
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-semibold text-slate-900">
                 {useCeilingRounding ? "Tavan Yuvarlama" : "Standart"}
               </span>
-              <p className="text-[11px] text-slate-400 font-normal">
+              <p className="text-[11px] text-slate-500 font-normal">
                 {useCeilingRounding ? "Kuruşlar yukarı tamamlanır" : "En yakın kuruşa"}
               </p>
             </div>
@@ -269,8 +269,8 @@ export default function PortfolioPurificationPage() {
               onClick={() => setUseCeilingRounding(!useCeilingRounding)}
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
                 useCeilingRounding
-                  ? "bg-white/[0.1] text-white border-white/[0.2]"
-                  : "bg-white/[0.02] text-slate-400 border-white/[0.06]"
+                  ? "bg-slate-100 text-slate-900 border-slate-300"
+                  : "bg-white text-slate-500 border-slate-200"
               }`}
             >
               {useCeilingRounding ? "Aktif" : "Pasif"}
@@ -280,14 +280,14 @@ export default function PortfolioPurificationPage() {
       </div>
 
       {/* Main Portfolio Table & Management */}
-      <div className="apple-glass rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden">
-        <div className="p-5 border-b border-white/[0.07] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-              <FileSpreadsheet className="text-emerald-400" size={17} />
+            <h2 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <FileSpreadsheet className="text-emerald-700" size={17} />
               <span>Portföy Pozisyonları ve Arındırma Dağılımı</span>
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5 font-normal">
+            <p className="text-xs text-slate-500 mt-0.5 font-normal">
               Alış tarihi ile otomatik gün hesabı, pay adedi ve tercih edilen arındırma usulü.
             </p>
           </div>
@@ -297,10 +297,10 @@ export default function PortfolioPurificationPage() {
             <select
               value={selectedAddTicker}
               onChange={(e) => setSelectedAddTicker(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-semibold focus:outline-none focus:border-emerald-500"
+              className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-emerald-500"
             >
               {SAMPLE_COMPANIES_SUMMARY.map((c) => (
-                <option key={c.ticker} value={c.ticker} className="bg-slate-900 text-white">
+                <option key={c.ticker} value={c.ticker}>
                   {c.ticker} - {c.name.split(" ")[0]} ({c.sector})
                 </option>
               ))}
@@ -319,29 +319,29 @@ export default function PortfolioPurificationPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-white/[0.07] bg-white/[0.02] text-[10px] font-semibold text-slate-400 uppercase tracking-widest">
+              <tr className="border-b border-slate-100 bg-slate-50 text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
                 <th className="py-3.5 px-5">Hisse Senedi</th>
                 <th className="py-3.5 px-4">Yöntem</th>
                 <th className="py-3.5 px-4">Lot Adedi</th>
                 <th className="py-3.5 px-4">Süre / Temettü</th>
                 <th className="py-3.5 px-4">Piyasa Değeri</th>
-                <th className="py-3.5 px-4 text-amber-400">Arındırma Borcu</th>
-                <th className="py-3.5 px-4 text-emerald-400">Hisse Zekatı (%2.5)</th>
+                <th className="py-3.5 px-4 text-amber-700">Arındırma Borcu</th>
+                <th className="py-3.5 px-4 text-emerald-700">Hisse Zekatı (%2.5)</th>
                 <th className="py-3.5 px-5 text-center">İşlem</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.06] font-normal">
+            <tbody className="divide-y divide-slate-100 font-normal">
               {analyzedPositions.map((pos) => (
-                <tr key={pos.id} className="hover:bg-white/[0.03] transition">
+                <tr key={pos.id} className="hover:bg-slate-50/70 transition">
                   <td className="py-4 px-5">
                     <div className="flex items-center gap-2.5">
                       <Link
                         href={`/companies/${pos.ticker}`}
-                        className="font-bold text-white hover:text-emerald-400 transition font-mono"
+                        className="font-bold text-slate-900 hover:text-emerald-700 transition font-mono"
                       >
                         {pos.ticker}
                       </Link>
-                      <span className="text-[11px] text-slate-400 truncate max-w-[140px]">
+                      <span className="text-[11px] text-slate-500 truncate max-w-[140px]">
                         {pos.summary?.name}
                       </span>
                     </div>
@@ -355,7 +355,7 @@ export default function PortfolioPurificationPage() {
                       <button
                         onClick={() => updatePosition(pos.id, "method", "holding")}
                         className={`apple-segmented-item ${
-                          pos.method === "holding" ? "active text-emerald-400" : ""
+                          pos.method === "holding" ? "active text-emerald-700" : ""
                         }`}
                       >
                         Gün Bazlı
@@ -363,7 +363,7 @@ export default function PortfolioPurificationPage() {
                       <button
                         onClick={() => updatePosition(pos.id, "method", "dividend")}
                         className={`apple-segmented-item ${
-                          pos.method === "dividend" ? "active text-emerald-400" : ""
+                          pos.method === "dividend" ? "active text-emerald-700" : ""
                         }`}
                       >
                         Temettü
@@ -376,7 +376,7 @@ export default function PortfolioPurificationPage() {
                       type="number"
                       value={pos.lots}
                       onChange={(e) => updatePosition(pos.id, "lots", e.target.value)}
-                      className="w-24 px-2 py-1 rounded-lg bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
+                      className="w-24 px-2 py-1 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
                       min="1"
                     />
                   </td>
@@ -390,9 +390,9 @@ export default function PortfolioPurificationPage() {
                           onChange={(e) =>
                             updatePosition(pos.id, "purchaseDate", e.target.value)
                           }
-                          className="px-2 py-1 rounded-lg bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
+                          className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
                         />
-                        <div className="text-[10px] text-emerald-400 font-mono tabular-nums">
+                        <div className="text-[10px] text-emerald-700 font-mono tabular-nums font-semibold">
                           {pos.totalDaysHeld} Gün ({pos.daysHeldInQuarter}/90 Pro-Rata)
                         </div>
                       </div>
@@ -405,24 +405,24 @@ export default function PortfolioPurificationPage() {
                             onChange={(e) =>
                               updatePosition(pos.id, "receivedDividendTRY", e.target.value)
                             }
-                            className="w-24 px-2 py-1 rounded-lg bg-slate-900/90 border border-white/[0.1] text-slate-100 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
+                            className="w-24 px-2 py-1 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
                             placeholder="Temettü TRY"
                           />
                           <span className="text-slate-400 font-mono">₺</span>
                         </div>
-                        <span className="text-[10px] text-slate-400 font-mono tabular-nums">
+                        <span className="text-[10px] text-slate-500 font-mono tabular-nums">
                           Oran: {formatPercent(pos.divPurificationRatio, 2)}
                         </span>
                       </div>
                     )}
                   </td>
 
-                  <td className="py-4 px-4 font-mono tabular-nums font-semibold text-slate-200">
+                  <td className="py-4 px-4 font-mono tabular-nums font-semibold text-slate-900">
                     {formatTRY(pos.marketValue, 2)}
                   </td>
 
                   <td className="py-4 px-4">
-                    <div className="text-sm font-bold text-amber-400 font-mono tabular-nums">
+                    <div className="text-sm font-bold text-amber-700 font-mono tabular-nums">
                       {formatTRY(pos.payablePurification, 2)}
                     </div>
                     <span className="text-[10px] text-slate-400">
@@ -431,10 +431,10 @@ export default function PortfolioPurificationPage() {
                   </td>
 
                   <td className="py-4 px-4">
-                    <div className="text-sm font-bold text-emerald-400 font-mono tabular-nums">
+                    <div className="text-sm font-bold text-emerald-700 font-mono tabular-nums">
                       {formatTRY(pos.zakatPayable, 2)}
                     </div>
-                    <span className="text-[10px] text-slate-400 font-mono tabular-nums">
+                    <span className="text-[10px] text-slate-500 font-mono tabular-nums">
                       Matrah: {formatTRY(pos.zakatBaseTRY, 0)}
                     </span>
                   </td>
@@ -442,7 +442,7 @@ export default function PortfolioPurificationPage() {
                   <td className="py-4 px-5 text-center">
                     <button
                       onClick={() => removePosition(pos.id)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition"
                       title="Pozisyonu Kaldır"
                     >
                       <Trash2 size={15} />
@@ -461,17 +461,17 @@ export default function PortfolioPurificationPage() {
             </tbody>
             {analyzedPositions.length > 0 && (
               <tfoot>
-                <tr className="bg-white/[0.02] border-t border-white/[0.08] font-bold text-xs">
-                  <td colSpan={4} className="py-4 px-5 text-slate-300 uppercase tracking-wider">
+                <tr className="bg-slate-50 border-t border-slate-200 font-bold text-xs">
+                  <td colSpan={4} className="py-4 px-5 text-slate-700 uppercase tracking-wider">
                     Genel Portföy Toplamı
                   </td>
-                  <td className="py-4 px-4 text-slate-100 font-mono tabular-nums">
+                  <td className="py-4 px-4 text-slate-900 font-mono tabular-nums">
                     {formatTRY(portfolioTotals.totalMarketValue, 2)}
                   </td>
-                  <td className="py-4 px-4 text-amber-400 text-base font-mono tabular-nums">
+                  <td className="py-4 px-4 text-amber-700 text-base font-mono tabular-nums">
                     {formatTRY(portfolioTotals.totalPurification, 2)}
                   </td>
-                  <td className="py-4 px-4 text-emerald-400 text-base font-mono tabular-nums">
+                  <td className="py-4 px-4 text-emerald-700 text-base font-mono tabular-nums">
                     {formatTRY(portfolioTotals.totalZakat, 2)}
                   </td>
                   <td></td>
@@ -485,10 +485,10 @@ export default function PortfolioPurificationPage() {
       {/* Zakat Intent & Jurisprudence Explanation */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Zakat Strategy Card */}
-        <div className="apple-card p-6 space-y-4">
-          <div className="flex items-center gap-2 border-b border-white/[0.07] pb-3">
-            <Sparkles className="text-emerald-400" size={18} />
-            <h3 className="text-base font-bold text-white tracking-tight">
+        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <Sparkles className="text-emerald-700" size={18} />
+            <h3 className="text-base font-bold text-slate-900 tracking-tight">
               Hisse Senedi Zekatı Hesaplama Yöntemi (Niyet Modeli)
             </h3>
           </div>
@@ -498,8 +498,8 @@ export default function PortfolioPurificationPage() {
               onClick={() => setZakatIntent("long_term")}
               className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition ${
                 zakatIntent === "long_term"
-                  ? "bg-white/[0.06] border-emerald-500/40 text-slate-100"
-                  : "bg-white/[0.02] border-white/[0.07] text-slate-400 hover:border-white/[0.14]"
+                  ? "bg-emerald-50/50 border-emerald-300 text-slate-900"
+                  : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
               }`}
             >
               <input
@@ -507,13 +507,13 @@ export default function PortfolioPurificationPage() {
                 name="zakatIntent"
                 checked={zakatIntent === "long_term"}
                 onChange={() => setZakatIntent("long_term")}
-                className="mt-1 accent-emerald-500"
+                className="mt-1 accent-emerald-600"
               />
               <div className="space-y-1">
-                <span className="text-sm font-bold text-slate-200">
+                <span className="text-sm font-bold text-slate-900">
                   Uzun Vadeli Temettü &amp; Ortaklık Yatırımı (Tavsiye Edilen)
                 </span>
-                <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
                   Şirketin bina, fabrika, makine gibi zekata tabi olmayan duran varlıkları hariç tutulur.
                   Yalnızca şirketin <strong>Zekata Tabi Dönen Varlıkları (Nakit, Ticari Alacak, Stoklar - Kısa Vadeli Borçlar)</strong> üzerinden %2,5 zekat hesaplanır.
                 </p>
@@ -524,8 +524,8 @@ export default function PortfolioPurificationPage() {
               onClick={() => setZakatIntent("trading")}
               className={`flex items-start gap-3 p-4 rounded-2xl border cursor-pointer transition ${
                 zakatIntent === "trading"
-                  ? "bg-white/[0.06] border-emerald-500/40 text-slate-100"
-                  : "bg-white/[0.02] border-white/[0.07] text-slate-400 hover:border-white/[0.14]"
+                  ? "bg-emerald-50/50 border-emerald-300 text-slate-900"
+                  : "bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300"
               }`}
             >
               <input
@@ -533,13 +533,13 @@ export default function PortfolioPurificationPage() {
                 name="zakatIntent"
                 checked={zakatIntent === "trading"}
                 onChange={() => setZakatIntent("trading")}
-                className="mt-1 accent-emerald-500"
+                className="mt-1 accent-emerald-600"
               />
               <div className="space-y-1">
-                <span className="text-sm font-bold text-slate-200">
+                <span className="text-sm font-bold text-slate-900">
                   Kısa Vadeli Al-Sat / Ticari Emtia Niyeti
                 </span>
-                <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">
                   Hisseleri kâr payı için değil, fiyat artışından yararlanıp satmak üzere alan yatırımcılar için.
                   Hisseler ticaret malı hükmünde kabul edilir ve <strong>Cari Piyasa Değeri (Portföy Tutarı)</strong> üzerinden %2,5 oranında tam zekat tahakkuk eder.
                 </p>
@@ -549,29 +549,29 @@ export default function PortfolioPurificationPage() {
         </div>
 
         {/* Fıkhi Arındırma Hükümleri Rehberi */}
-        <div className="apple-card p-6 space-y-4">
-          <div className="flex items-center gap-2 border-b border-white/[0.07] pb-3">
-            <Info className="text-emerald-400" size={18} />
-            <h3 className="text-base font-bold text-white tracking-tight">
+        <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
+            <Info className="text-emerald-700" size={18} />
+            <h3 className="text-base font-bold text-slate-900 tracking-tight">
               Fıkhi Arındırma (Purification / Taharet) Esasları
             </h3>
           </div>
 
-          <div className="space-y-3 text-xs text-slate-300 leading-relaxed font-normal">
-            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.07]">
-              <strong className="text-amber-300 block mb-1">1. Arındırma Bedeli Zekat Yerine Geçmez:</strong>
+          <div className="space-y-3 text-xs text-slate-600 leading-relaxed font-normal">
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <strong className="text-amber-800 block mb-1">1. Arındırma Bedeli Zekat Yerine Geçmez:</strong>
               Arındırılması gereken faiz veya gayrimeşru gelir, hissedarın mülkü olmayan şüpheli bir fondur.
               Bu sebeple bu tutar doğrudan hayır kurumlarına, kamu yararına veya yoksullara infak edilmeli; zekat borcundan düşülmemelidir.
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.07]">
-              <strong className="text-emerald-400 block mb-1">2. Şahsi Menfaat İçin Kullanılamaz:</strong>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <strong className="text-emerald-800 block mb-1">2. Şahsi Menfaat İçin Kullanılamaz:</strong>
               Arındırma bedeli vergi, ceza veya harç gibi şahsi mükellefiyetleri ödemek için harcanamaz.
               MizanApp, şüphelerden kaçınmak adına kuruş küsuratlarını Şer'i ihtiyat kuralı (Ceiling Rounding) gereği bir üst tam kuruşa tamamlar.
             </div>
 
-            <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.07]">
-              <strong className="text-slate-200 block mb-1">3. Dönem Gün Sayısı (Pro-Rata Kuralı):</strong>
+            <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <strong className="text-slate-800 block mb-1">3. Dönem Gün Sayısı (Pro-Rata Kuralı):</strong>
               Hisseler çeyrek yıl içinde 90 gün boyunca elde tutulmadıysa, hissedar yalnızca hisseyi elinde bulundurduğu gün oranında (Örn: 45 gün ise %50) arındırma öder.
             </div>
           </div>

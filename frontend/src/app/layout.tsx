@@ -2,11 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { AuthProvider } from "@/lib/auth/AuthContext";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "mizanapp.tr — Modern Katılım Finans, Bilanço X-Ray & Arındırma Terminali",
+  title: "mizanapp.tr — Borsa İstanbul Helal Hisse Tarama & Arındırma Platformu",
   description:
     "BIST Katılım (DİB/TKBB) ve AAOIFI standartlarında hisse uygunluk tarama, KAP bilanço dipnot analizi, kuruşu kuruşuna arındırma ve hisse zekatı hesaplayıcı.",
+  icons: {
+    icon: "/brand/logo.svg",
+    apple: "/brand/logo-180.png",
+  },
 };
 
 export default function RootLayout({
@@ -16,26 +21,62 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tr">
-      <body
-        data-theme="sapphire"
-        className="antialiased min-h-screen theme-bg flex flex-col selection:bg-sky-500/30 selection:text-sky-300"
-      >
+      <body className="antialiased min-h-screen bg-white text-slate-900 flex flex-col selection:bg-emerald-100 selection:text-emerald-900">
         <AuthProvider>
-          <Navbar>
-            <div className="flex flex-col min-h-[calc(100vh-3.5rem)]">
-              <div className="flex-1">{children}</div>
-              <footer className="border-t border-[var(--border-col)] py-6 px-6 text-center text-xs theme-muted">
-                <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-                  <p className="font-semibold">
-                    mizanapp.tr &copy; {new Date().getFullYear()} — Katılım Finansmanı &amp; AAOIFI No. 21 Denetim Terminali
-                  </p>
-                  <p className="text-xs opacity-80">
-                    Sıfır-Float (Decimal) Finansal Motor • Canlı BIST &amp; KAP Otomatik Senkronizasyon
+          <Navbar />
+          <div className="flex-1">{children}</div>
+
+          {/* MUSAFFA VE STRIPE TARZI GÜVEN VEREN BEYAZ SİTE ALTLIĞI (FOOTER) */}
+          <footer className="bg-white border-t border-slate-200/80 py-14 px-4 sm:px-6 lg:px-8 text-xs text-slate-500">
+            <div className="max-w-7xl mx-auto space-y-8">
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-lg tracking-tight text-slate-900">
+                      mizan<span className="text-emerald-600">.</span>
+                    </span>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 font-semibold">
+                      Katılım Finans Terminali
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 max-w-md">
+                    Borsa İstanbul yatırımcıları için şeffaf, kuruş hassasiyetli İslami finans denetim ve arındırma platformu.
                   </p>
                 </div>
-              </footer>
+
+                <div className="flex flex-wrap items-center gap-6 font-semibold text-sm text-slate-700">
+                  <Link href="/#hisseler" className="hover:text-emerald-600 transition">
+                    Hisseler &amp; Tarayıcı
+                  </Link>
+                  <Link href="/portfolio" className="hover:text-emerald-600 transition">
+                    Portföy Paneli
+                  </Link>
+                  <Link href="/purification" className="hover:text-emerald-600 transition">
+                    Arındırma &amp; Zekât
+                  </Link>
+                  <Link href="/ipo" className="hover:text-emerald-600 transition">
+                    Halka Arz Takvimi
+                  </Link>
+                  <Link href="/companies/BIMAS" className="hover:text-emerald-600 transition">
+                    Bilanço X-Ray
+                  </Link>
+                </div>
+              </div>
+
+              <div className="space-y-3 text-slate-400 font-normal leading-relaxed text-xs">
+                <p>
+                  <strong className="text-slate-600 font-semibold">Standart &amp; Metodoloji Referansları:</strong> mizanapp.tr; Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu kararları, Türkiye Katılım Bankaları Birliği (TKBB) Danışma Kurulu standartları ve Accounting and Auditing Organization for Islamic Financial Institutions (AAOIFI) Shariah Standard No. 21 kriterlerini referans alır.
+                </p>
+                <p>
+                  <strong className="text-slate-600 font-semibold">Yasal Uyarı:</strong> Bu platformdaki finansal analizler, uygunluk durumları ve arındırma hesaplamaları Kamuyu Aydınlatma Platformu (KAP) resmi finansal tablolarından çekilmekte olup yatırım tavsiyesi (YAT) niteliği taşımaz. Yatırımcılar nihai kararlarını kendi mali durumlarına ve şahsi fıkhi kanaatlerine göre vermelidir.
+                </p>
+                <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-400 border-t border-slate-100">
+                  <p>&copy; {new Date().getFullYear()} mizanapp.tr. Tüm hakları saklıdır.</p>
+                  <p className="font-mono text-xs">IEEE 754 Zero-Float (Decimal) Altyapısıyla Güçlendirilmiştir.</p>
+                </div>
+              </div>
             </div>
-          </Navbar>
+          </footer>
         </AuthProvider>
       </body>
     </html>

@@ -15,7 +15,7 @@ interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const SpotlightCard: React.FC<SpotlightCardProps> = ({
   children,
   className = "",
-  spotlightColor = "rgba(255, 255, 255, 0.06)",
+  spotlightColor = "rgba(16, 185, 129, 0.06)",
   ...props
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -37,7 +37,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden rounded-2xl bg-[#0d0e14]/80 backdrop-blur-2xl border border-white/[0.08] transition-all duration-300 shadow-[0_4px_24px_-2px_rgba(0,0,0,0.6),inset_0_1px_0_0_rgba(255,255,255,0.06)] hover:border-white/[0.16] hover:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.7),inset_0_1px_0_0_rgba(255,255,255,0.12)] ${className}`}
+      className={`relative overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 ${className}`}
       {...props}
     >
       {/* Dynamic Cursor Spotlight Layer */}

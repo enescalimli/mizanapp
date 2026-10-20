@@ -35,14 +35,14 @@ export const PortfolioAllocationBar: React.FC<PortfolioAllocationBarProps> = ({
       </div>
 
       {/* Segmented Proportional Stream Bar */}
-      <div className="w-full h-2 rounded-full bg-white/[0.04] overflow-hidden flex gap-0.5 p-0.5 border border-white/[0.06]">
+      <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden flex gap-0.5 p-0.5 border border-slate-200">
         {items.map((item) => {
           const colorClass =
             item.status === "COMPLIANT"
-              ? "bg-emerald-500/80 hover:bg-emerald-400"
+              ? "bg-emerald-500 hover:bg-emerald-600"
               : item.status === "AT_RISK"
-              ? "bg-amber-400/80 hover:bg-amber-300"
-              : "bg-rose-400/80 hover:bg-rose-300";
+              ? "bg-amber-500 hover:bg-amber-600"
+              : "bg-rose-500 hover:bg-rose-600";
 
           return (
             <div
@@ -59,23 +59,23 @@ export const PortfolioAllocationBar: React.FC<PortfolioAllocationBarProps> = ({
       </div>
 
       {/* Ticker Weight Pills */}
-      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-mono text-slate-400">
+      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-mono text-slate-500">
         {items.map((item) => (
           <div
             key={item.id}
-            className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-white/[0.02] border border-white/[0.06]"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-slate-50 border border-slate-200"
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
                 item.status === "COMPLIANT"
-                  ? "bg-emerald-400"
+                  ? "bg-emerald-500"
                   : item.status === "AT_RISK"
-                  ? "bg-amber-400"
-                  : "bg-rose-400"
+                  ? "bg-amber-500"
+                  : "bg-rose-500"
               }`}
             />
-            <span className="font-semibold text-slate-200">{item.ticker}</span>
-            <span className="text-slate-400 tabular-nums">
+            <span className="font-semibold text-slate-900">{item.ticker}</span>
+            <span className="text-slate-500 tabular-nums">
               %{item.weightPercent.toFixed(1)}
             </span>
           </div>

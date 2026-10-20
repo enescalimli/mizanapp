@@ -106,17 +106,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <SpotlightCard className="p-7 sm:p-9 border-white/[0.08] shadow-2xl backdrop-blur-2xl">
+      <div className="p-7 sm:p-9 border border-slate-200 rounded-3xl shadow-xl bg-white space-y-6">
         {/* Header / Brand */}
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-3">
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold mb-3">
             <ShieldCheck size={14} />
-            <span>MizanApp Güvenli Giriş</span>
+            <span>Mizan Güvenli Giriş</span>
           </div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
             {mode === "login" ? "Hesabınıza Giriş Yapın" : "Yeni Katılım Hesabı Aç"}
           </h2>
-          <p className="text-xs text-slate-400 mt-1.5 font-normal">
+          <p className="text-xs text-slate-500 mt-1.5 font-normal">
             {mode === "login"
               ? "Bilanço analizlerinize ve kuruşu kuruşuna arındırma verilerinize erişin."
               : "TKBB ve AAOIFI standartlarında şer'i portföy takibine hemen başlayın."}
@@ -124,7 +124,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         </div>
 
         {/* Apple Segmented Switcher */}
-        <div className="flex p-1 rounded-xl bg-white/[0.04] border border-white/[0.06] mb-6">
+        <div className="flex p-1 rounded-xl bg-slate-100 border border-slate-200">
           <button
             type="button"
             onClick={() => {
@@ -133,8 +133,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "login"
-                ? "bg-white/[0.12] text-white shadow-sm font-bold"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-white text-slate-900 shadow-sm font-bold"
+                : "text-slate-500 hover:text-slate-900"
             }`}
           >
             Giriş Yap
@@ -147,8 +147,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "register"
-                ? "bg-white/[0.12] text-white shadow-sm font-bold"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-white text-slate-900 shadow-sm font-bold"
+                : "text-slate-500 hover:text-slate-900"
             }`}
           >
             Kayıt Ol
@@ -157,22 +157,22 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
         {/* Notifications & Warnings */}
         {errorMessage && (
-          <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs mb-5 flex items-start gap-2.5 animate-in fade-in duration-150">
-            <AlertTriangle size={15} className="text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-150">
+            <AlertTriangle size={15} className="text-rose-600 shrink-0 mt-0.5" />
             <div className="leading-relaxed">{errorMessage}</div>
           </div>
         )}
 
         {successMessage && (
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs mb-5 flex items-start gap-2.5 animate-in fade-in duration-150">
-            <CheckCircle2 size={15} className="text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-150">
+            <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
             <div className="leading-relaxed font-medium">{successMessage}</div>
           </div>
         )}
 
         {!isConfigured && (
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs mb-5 flex items-start gap-2.5">
-            <Sparkles size={14} className="text-amber-400 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2.5">
+            <Sparkles size={14} className="text-amber-600 shrink-0 mt-0.5" />
             <div className="leading-relaxed">
               <span className="font-semibold">Supabase Anahtarları Bekleniyor:</span>{" "}
               Canlı DB bağlantısı öncesinde anında test etmek için aşağıdaki <strong>&quot;Hızlı Demo Girişi&quot;</strong> butonunu kullanabilirsiniz.
@@ -184,7 +184,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "register" && (
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1.5">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
                 Ad Soyad
               </label>
               <div className="relative">
@@ -196,14 +196,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Örn: Mustafa Çalımlı"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-black/40 border border-white/[0.1] text-slate-100 text-xs focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-600"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-400"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1.5">
+            <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
               E-Posta Adresi
             </label>
             <div className="relative">
@@ -216,21 +216,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@yatirim.com"
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-black/40 border border-white/[0.1] text-slate-100 text-xs font-mono focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-600"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block">
                 Şifre
               </label>
               {mode === "login" && (
                 <button
                   type="button"
                   onClick={() => alert("Şifre sıfırlama bağlantısı için lütfen sistem yöneticisiyle iletişime geçin veya demo modunu kullanın.")}
-                  className="text-[10px] text-emerald-400 hover:text-emerald-300 font-medium"
+                  className="text-[10px] text-emerald-700 hover:text-emerald-800 font-semibold"
                 >
                   Şifremi Unuttum
                 </button>
@@ -246,12 +246,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-black/40 border border-white/[0.1] text-slate-100 text-xs font-mono focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-600"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-400"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
               >
                 {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
@@ -260,7 +260,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
           {mode === "register" && (
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1.5">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
                 Şifre Tekrar
               </label>
               <div className="relative">
@@ -273,7 +273,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-black/40 border border-white/[0.1] text-slate-100 text-xs font-mono focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-600"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -281,18 +281,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
           {mode === "register" && (
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1.5">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
                 Varsayılan Katılım Standardı
               </label>
               <select
                 value={standardPreference}
                 onChange={(e) => setStandardPreference(e.target.value as any)}
-                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/[0.1] text-slate-200 text-xs font-medium focus:outline-none focus:border-emerald-500 transition"
+                className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-medium focus:outline-none focus:border-emerald-500 transition"
               >
-                <option value="BIST_KATILIM_DIB" className="bg-slate-900 text-white">
+                <option value="BIST_KATILIM_DIB">
                   BIST Katılım Standardı (%33 Borç / %33 Nakit / %5 Gelir)
                 </option>
-                <option value="AAOIFI_STD_21" className="bg-slate-900 text-white">
+                <option value="AAOIFI_STD_21">
                   AAOIFI Shariah Standard No. 21 (%30 Borç / %30 Nakit / %5 Gelir)
                 </option>
               </select>
@@ -302,7 +302,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
           <button
             type="submit"
             disabled={isLoading}
-            className="apple-btn-primary w-full py-2.5 mt-2 flex items-center justify-center gap-2 text-xs font-bold"
+            className="w-full py-2.5 mt-2 rounded-full bg-slate-950 text-white hover:bg-slate-800 flex items-center justify-center gap-2 text-xs font-bold transition shadow-sm"
           >
             {isLoading ? (
               <>
@@ -319,12 +319,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         </form>
 
         {/* Divider */}
-        <div className="relative my-6">
+        <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/[0.08]" />
+            <div className="w-full border-t border-slate-200" />
           </div>
           <div className="relative flex justify-center text-[10px] uppercase font-semibold">
-            <span className="bg-[#08090d] px-3 text-slate-400">veya</span>
+            <span className="bg-white px-3 text-slate-400">veya</span>
           </div>
         </div>
 
@@ -332,21 +332,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         <button
           type="button"
           onClick={handleDemoLogin}
-          className="w-full py-2.5 px-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.1] text-slate-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition duration-150 active:scale-[0.98]"
+          className="w-full py-2.5 px-4 rounded-full bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-800 text-xs font-semibold flex items-center justify-center gap-2 transition duration-150 active:scale-[0.98]"
         >
-          <Sparkles size={14} className="text-amber-400" />
+          <Sparkles size={14} className="text-amber-600" />
           <span>Hızlı Demo Hesabı ile Devam Et</span>
         </button>
 
         {/* Security / Privacy Footnote */}
-        <div className="mt-6 pt-4 border-t border-white/[0.06] text-center">
+        <div className="pt-2 border-t border-slate-100 text-center">
           <p className="text-[10px] text-slate-400 leading-relaxed font-normal">
             Portföy verileriniz Supabase PostgreSQL üzerinde{" "}
-            <span className="text-slate-300 font-mono">Row Level Security (RLS)</span>{" "}
+            <span className="text-slate-600 font-mono">Row Level Security (RLS)</span>{" "}
             ile izole edilerek kuruş hassasiyetinde saklanır.
           </p>
         </div>
-      </SpotlightCard>
+      </div>
     </div>
   );
 };

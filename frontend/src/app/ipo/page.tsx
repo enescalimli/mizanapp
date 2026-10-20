@@ -141,24 +141,24 @@ export default function IpoCalendarPage() {
   }, [ipoList, searchQuery, filterStatus]);
 
   return (
-    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 selection:bg-emerald-500/30 selection:text-emerald-300">
+    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-4 border-b border-white/[0.07]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-2.5">
-              <Calendar className="text-emerald-400" />
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
+              <Calendar className="text-emerald-700" />
               <span>Katılım Halka Arz Takvimi</span>
             </h1>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md text-xs text-slate-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
               <span className="font-mono text-[11px] tabular-nums">
                 {isFromSupabase ? "Supabase Canlı DB" : "Aktif İzahname Analizleri"}
               </span>
             </div>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-normal">
+          <p className="text-xs text-slate-500 mt-1 font-normal">
             BIST Halka arzlarının SPK onaylı izahnamelerindeki katılım finans ilkeleri, fon kullanım yeri ve arındırma analizleri.
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function IpoCalendarPage() {
               type="button"
               onClick={() => setFilterStatus("ALL")}
               className={`apple-segmented-item ${
-                filterStatus === "ALL" ? "active text-emerald-400" : ""
+                filterStatus === "ALL" ? "active text-emerald-700" : ""
               }`}
             >
               Tümü ({ipoList.length})
@@ -179,7 +179,7 @@ export default function IpoCalendarPage() {
               type="button"
               onClick={() => setFilterStatus("COMPLIANT")}
               className={`apple-segmented-item ${
-                filterStatus === "COMPLIANT" ? "active text-emerald-400" : ""
+                filterStatus === "COMPLIANT" ? "active text-emerald-700" : ""
               }`}
             >
               Katılıma Uygun
@@ -188,7 +188,7 @@ export default function IpoCalendarPage() {
               type="button"
               onClick={() => setFilterStatus("NON_COMPLIANT")}
               className={`apple-segmented-item ${
-                filterStatus === "NON_COMPLIANT" ? "active text-rose-400" : ""
+                filterStatus === "NON_COMPLIANT" ? "active text-rose-700" : ""
               }`}
             >
               Kapsam Dışı
@@ -207,7 +207,7 @@ export default function IpoCalendarPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Şirket adı veya hisse kodu ile ara (Örn: MIZAN)..."
-          className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.08] text-slate-100 text-xs focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-500"
+          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-400 shadow-2xs"
         />
       </div>
 
@@ -221,33 +221,26 @@ export default function IpoCalendarPage() {
           return (
             <SpotlightCard
               key={item.id}
-              className={`p-6 border-white/[0.08] ${
+              className={`p-6 border ${
                 isNonCompliant
-                  ? "border-rose-500/25"
+                  ? "border-rose-200 hover:border-rose-300"
                   : isWithPurif
-                  ? "border-amber-500/25"
-                  : "border-emerald-500/25"
+                  ? "border-amber-200 hover:border-amber-300"
+                  : "border-slate-200 hover:border-emerald-300"
               }`}
-              spotlightColor={
-                isNonCompliant
-                  ? "rgba(244, 63, 94, 0.08)"
-                  : isWithPurif
-                  ? "rgba(245, 158, 11, 0.08)"
-                  : "rgba(16, 185, 129, 0.08)"
-              }
             >
               {/* Card Header */}
               <div className="flex items-start justify-between gap-3 mb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-white font-mono tracking-tight">
+                    <span className="text-lg font-bold text-slate-900 font-mono tracking-tight">
                       {item.ticker}
                     </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
                       {item.distribution_method}
                     </span>
                   </div>
-                  <h3 className="text-xs font-semibold text-slate-300 mt-0.5">
+                  <h3 className="text-xs font-semibold text-slate-700 mt-0.5">
                     {item.company_name}
                   </h3>
                 </div>
@@ -274,12 +267,12 @@ export default function IpoCalendarPage() {
               </div>
 
               {/* Key IPO Metrics */}
-              <div className="grid grid-cols-3 gap-2.5 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] mb-4">
+              <div className="grid grid-cols-3 gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200 mb-4">
                 <div>
                   <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
                     Halka Arz Fiyatı
                   </span>
-                  <span className="text-sm font-bold font-mono text-white mt-0.5 block tabular-nums">
+                  <span className="text-sm font-bold font-mono text-slate-900 mt-0.5 block tabular-nums">
                     {formatTRY(item.ipo_price_try, 2)}
                   </span>
                 </div>
@@ -287,7 +280,7 @@ export default function IpoCalendarPage() {
                   <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
                     Talep Tarihleri
                   </span>
-                  <span className="text-xs font-semibold font-mono text-slate-200 mt-1 block">
+                  <span className="text-xs font-semibold font-mono text-slate-800 mt-1 block">
                     {item.ipo_date_range}
                   </span>
                 </div>
@@ -295,21 +288,21 @@ export default function IpoCalendarPage() {
                   <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
                     Halka Arz Büyüklüğü
                   </span>
-                  <span className="text-sm font-bold font-mono text-emerald-400 mt-0.5 block tabular-nums">
+                  <span className="text-sm font-bold font-mono text-emerald-700 mt-0.5 block tabular-nums">
                     {formatTRY(item.issue_size_try, 0)}
                   </span>
                 </div>
               </div>
 
               {/* Financial Ratios Row */}
-              <div className="flex items-center gap-4 text-xs font-mono mb-4 text-slate-400">
+              <div className="flex items-center gap-4 text-xs font-mono mb-4 text-slate-500">
                 <div>
                   <span className="text-[10px] text-slate-400">Faizli Borç Oranı: </span>
                   <span
                     className={`font-semibold ${
                       (item.interest_debt_ratio_percent || 0) <= 33
-                        ? "text-emerald-400"
-                        : "text-rose-400"
+                        ? "text-emerald-700"
+                        : "text-rose-700"
                     }`}
                   >
                     %{item.interest_debt_ratio_percent?.toFixed(1) || "0.0"}
@@ -320,8 +313,8 @@ export default function IpoCalendarPage() {
                   <span
                     className={`font-semibold ${
                       (item.impure_income_ratio_percent || 0) <= 5
-                        ? "text-emerald-400"
-                        : "text-rose-400"
+                        ? "text-emerald-700"
+                        : "text-rose-700"
                     }`}
                   >
                     %{item.impure_income_ratio_percent?.toFixed(2) || "0.00"}
@@ -332,8 +325,8 @@ export default function IpoCalendarPage() {
                   <span
                     className={`font-semibold ${
                       item.fund_usage_shariah_compliant
-                        ? "text-emerald-400"
-                        : "text-rose-400"
+                        ? "text-emerald-700"
+                        : "text-rose-700"
                     }`}
                   >
                     {item.fund_usage_shariah_compliant ? "Caiz" : "Uygunsuz"}
@@ -343,9 +336,9 @@ export default function IpoCalendarPage() {
 
               {/* Shariah Decision Summary */}
               {item.prospectus_shariah_decision && (
-                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-slate-300 leading-relaxed font-normal">
-                  <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-semibold uppercase tracking-wider mb-1">
-                    <Info size={12} className="text-emerald-400" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed font-normal">
+                  <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">
+                    <Info size={12} className="text-emerald-700" />
                     <span>İzahname Katılım Finans Raporu</span>
                   </div>
                   <p>{item.prospectus_shariah_decision}</p>
@@ -353,14 +346,14 @@ export default function IpoCalendarPage() {
               )}
 
               {/* Footer / Lead Consortium */}
-              <div className="mt-4 pt-3 border-t border-white/[0.05] flex items-center justify-between text-[11px] text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
                 <span>Konsorsiyum Lideri: {item.lead_consortium || "Belirtilmedi"}</span>
                 {item.prospectus_url && (
                   <a
                     href={item.prospectus_url}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-medium"
+                    className="text-emerald-700 hover:text-emerald-800 flex items-center gap-1 font-semibold"
                   >
                     <span>İzahname (KAP)</span>
                     <ExternalLink size={11} />

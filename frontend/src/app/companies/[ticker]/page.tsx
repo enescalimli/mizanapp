@@ -97,19 +97,19 @@ export default function CompanyDetailPage() {
   const isBist = standard === "BIST_KATILIM_DIB";
 
   return (
-    <main className="min-h-screen text-slate-100 pb-24 selection:bg-emerald-500/30 selection:text-emerald-300">
+    <main className="min-h-screen text-slate-900 pb-24">
       {/* Cupertino Breadcrumb */}
-      <div className="border-b border-white/[0.07] bg-white/[0.01]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-slate-400">
+      <div className="border-b border-slate-200/80 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <Link href="/" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5 font-medium">
+            <Link href="/" className="hover:text-emerald-700 transition-colors flex items-center gap-1.5 font-medium">
               <ArrowLeft size={13} />
               <span>Katılım Endeksi</span>
             </Link>
-            <span className="text-slate-600">/</span>
+            <span className="text-slate-300">/</span>
             <span>Şirketler</span>
-            <span className="text-slate-600">/</span>
-            <span className="text-white font-bold font-mono">{ticker}</span>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-bold font-mono">{ticker}</span>
           </div>
 
           <button
@@ -124,30 +124,30 @@ export default function CompanyDetailPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         {/* Apple-grade Company Header Card */}
-        <div className="apple-glass rounded-3xl p-6 sm:p-8 border border-white/[0.08] shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/50 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
             {/* Title & Info */}
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/[0.05] border border-white/[0.1] flex items-center justify-center font-bold text-white text-xl shadow-xl font-mono tabular-nums">
+              <div className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-900 text-xl font-mono tabular-nums shadow-xs">
                 {ticker}
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                     {data.companyName}
                   </h1>
                   <ComplianceBadge status={data.overallStatus} size="lg" />
                 </div>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 mt-2 font-normal">
+                <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-2 font-normal">
                   <span className="flex items-center gap-1">
-                    <Building2 size={13} className="text-slate-500" />
+                    <Building2 size={13} className="text-slate-400" />
                     {data.sector} &bull; {data.subSector}
                   </span>
                   <span>&bull;</span>
                   <span className="flex items-center gap-1 font-mono tabular-nums">
-                    <Calendar size={13} className="text-slate-500" />
+                    <Calendar size={13} className="text-slate-400" />
                     {data.fiscalPeriod} Bilanço &bull; Değerleme: {data.valuationDate}
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export default function CompanyDetailPage() {
               <button
                 onClick={() => setStandard("BIST_KATILIM_DIB")}
                 className={`apple-segmented-item ${
-                  isBist ? "active text-emerald-400" : ""
+                  isBist ? "active text-emerald-700" : ""
                 }`}
               >
                 BIST Katılım (&lt;%33)
@@ -167,7 +167,7 @@ export default function CompanyDetailPage() {
               <button
                 onClick={() => setStandard("AAOIFI_STD_21")}
                 className={`apple-segmented-item ${
-                  !isBist ? "active text-emerald-400" : ""
+                  !isBist ? "active text-emerald-700" : ""
                 }`}
               >
                 AAOIFI No.21 (&lt;%30)
@@ -177,13 +177,13 @@ export default function CompanyDetailPage() {
 
           {/* Grace Period Alert Banner */}
           {data.gracePeriodInfo.isInGracePeriod && (
-            <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3 text-xs text-amber-200">
-              <AlertTriangle className="text-amber-400 shrink-0 mt-0.5" size={16} />
+            <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3 text-xs text-amber-900">
+              <AlertTriangle className="text-amber-600 shrink-0 mt-0.5" size={16} />
               <div>
-                <span className="font-bold text-amber-300 block mb-0.5">
+                <span className="font-bold text-amber-900 block mb-0.5">
                   Hoşgörü Süresi Devrede ({data.gracePeriodInfo.consecutiveBreachQuarters}/{data.gracePeriodInfo.maxAllowedQuarters} Çeyrek)
                 </span>
-                <p className="font-normal leading-relaxed">{data.gracePeriodInfo.notes.join(" ")}</p>
+                <p className="font-normal leading-relaxed text-amber-800">{data.gracePeriodInfo.notes.join(" ")}</p>
               </div>
             </div>
           )}
@@ -192,12 +192,12 @@ export default function CompanyDetailPage() {
         {/* 3 Core Ratio Progress Bars */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              <Sparkles size={16} className="text-emerald-400" />
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <Sparkles size={16} className="text-emerald-600" />
               Finansal Oran (Rasyo) Denetimi
             </h2>
-            <span className="text-xs text-slate-400 font-normal">
-              Payda Kuralı: <strong className="text-slate-200 font-mono tabular-nums">{data.ratios.denominatorRuleUsed}</strong> ({formatTRY(data.ratios.denominatorValueTRY, 0)})
+            <span className="text-xs text-slate-500 font-normal">
+              Payda Kuralı: <strong className="text-slate-900 font-mono tabular-nums">{data.ratios.denominatorRuleUsed}</strong> ({formatTRY(data.ratios.denominatorValueTRY, 0)})
             </span>
           </div>
 
@@ -243,12 +243,12 @@ export default function CompanyDetailPage() {
         )}
 
         {/* Denominator Reference Metrics Card */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl apple-card text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm text-xs">
           <div>
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
               Spot Piyasa Değeri
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-200 text-sm">
+            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
               {formatTRY(data.ratios.spotMarketCapTRY, 0)}
             </span>
           </div>
@@ -256,7 +256,7 @@ export default function CompanyDetailPage() {
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
               24 Aylık Ort. Piyasa Değeri
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-200 text-sm">
+            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
               {formatTRY(data.ratios.mcapMA24mTRY, 0)}
             </span>
           </div>
@@ -264,7 +264,7 @@ export default function CompanyDetailPage() {
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
               Toplam Varlıklar (Aktifler)
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-200 text-sm">
+            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
               {formatTRY(data.ratios.totalAssetsTRY, 0)}
             </span>
           </div>
@@ -272,7 +272,7 @@ export default function CompanyDetailPage() {
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
               Toplam Pay / Sermaye
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-200 text-sm">
+            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
               {formatTRY(data.purificationMetrics.totalSharesOutstanding, 0).replace("₺", "")} Pay
             </span>
           </div>

@@ -56,9 +56,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div ref={containerRef} className="relative w-full max-w-2xl mx-auto">
-      <div className="relative flex items-center">
+      <div className="relative flex items-center bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200/80 transition-all focus-within:ring-4 focus-within:ring-emerald-500/10 focus-within:border-emerald-500">
         <Search
-          size={16}
+          size={18}
           className="absolute left-4 text-slate-400 pointer-events-none"
         />
         <input
@@ -72,18 +72,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full bg-[#0b101f]/80 border border-white/[0.1] focus:border-emerald-500/80 rounded-2xl pl-11 pr-16 py-3.5 text-sm text-slate-100 placeholder:text-slate-500 shadow-apple-glass backdrop-blur-2xl outline-none transition-all focus:ring-2 focus:ring-emerald-500/20"
+          className="w-full bg-transparent border-0 rounded-2xl pl-12 pr-16 py-3.5 text-sm sm:text-base text-slate-900 placeholder:text-slate-400 outline-none transition-all font-medium"
         />
         <div className="absolute right-3.5 flex items-center gap-1.5">
           {query ? (
             <button
               onClick={() => setQuery("")}
-              className="p-1 text-slate-400 hover:text-slate-200 transition"
+              className="p-1 text-slate-400 hover:text-slate-600 transition"
             >
-              <X size={15} />
+              <X size={16} />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-white/[0.08] text-[10px] text-slate-400 font-mono border border-white/[0.06]">
+            <kbd className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-slate-100 text-xs text-slate-400 font-mono border border-slate-200">
               ⌘K
             </kbd>
           )}
@@ -92,23 +92,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
       {/* Autocomplete Dropdown */}
       {isOpen && query.trim() && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[#080d1a]/95 border border-white/[0.1] rounded-2xl shadow-apple-elevated overflow-hidden z-50 divide-y divide-white/[0.06] max-h-96 overflow-y-auto backdrop-blur-2xl animate-in fade-in duration-150">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white/95 border border-slate-200 rounded-2xl shadow-2xl overflow-hidden z-50 divide-y divide-slate-100 max-h-96 overflow-y-auto backdrop-blur-xl animate-in fade-in duration-150">
           {filtered.length > 0 ? (
             filtered.map((item) => (
               <button
                 key={item.ticker}
                 onClick={() => handleSelect(item.ticker)}
-                className="w-full flex items-center justify-between p-3.5 hover:bg-white/[0.04] transition-colors text-left group"
+                className="w-full flex items-center justify-between p-3.5 hover:bg-slate-50 transition-colors text-left group"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center font-bold text-slate-200 text-xs font-mono group-hover:border-emerald-500/50 group-hover:text-emerald-400 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-700 text-xs font-mono group-hover:border-emerald-500 group-hover:bg-emerald-50 group-hover:text-emerald-700 transition-colors">
                     {item.ticker}
                   </div>
                   <div>
-                    <div className="font-bold text-slate-100 group-hover:text-emerald-400 transition-colors text-sm">
+                    <div className="font-bold text-slate-900 group-hover:text-emerald-600 transition-colors text-sm">
                       {item.name}
                     </div>
-                    <div className="text-xs text-slate-400 font-mono tabular-nums">
+                    <div className="text-xs text-slate-500 font-mono tabular-nums">
                       {item.sector} &bull; ₺{item.priceTRY} ({item.change24h})
                     </div>
                   </div>
@@ -118,7 +118,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                   <ComplianceBadge status={item.bistStatus} size="sm" />
                   <ArrowRight
                     size={15}
-                    className="text-slate-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all"
+                    className="text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all"
                   />
                 </div>
               </button>

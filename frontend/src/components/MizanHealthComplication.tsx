@@ -83,7 +83,7 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
                 cy={center}
                 r={r1}
                 fill="none"
-                stroke="rgba(255, 255, 255, 0.05)"
+                stroke="rgba(15, 23, 42, 0.08)"
                 strokeWidth={strokeWidth}
               />
               <circle
@@ -91,7 +91,7 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
                 cy={center}
                 r={r1}
                 fill="none"
-                stroke="#10b981"
+                stroke="#059669"
                 strokeWidth={strokeWidth}
                 strokeDasharray={c1}
                 strokeDashoffset={offset1}
@@ -105,7 +105,7 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
                 cy={center}
                 r={r2}
                 fill="none"
-                stroke="rgba(255, 255, 255, 0.05)"
+                stroke="rgba(15, 23, 42, 0.08)"
                 strokeWidth={strokeWidth}
               />
               <circle
@@ -113,7 +113,7 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
                 cy={center}
                 r={r2}
                 fill="none"
-                stroke="#38bdf8"
+                stroke="#0284c7"
                 strokeWidth={strokeWidth}
                 strokeDasharray={c2}
                 strokeDashoffset={offset2}
@@ -127,7 +127,7 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
                 cy={center}
                 r={r3}
                 fill="none"
-                stroke="rgba(255, 255, 255, 0.05)"
+                stroke="rgba(15, 23, 42, 0.08)"
                 strokeWidth={strokeWidth}
               />
               <circle
@@ -135,7 +135,7 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
                 cy={center}
                 r={r3}
                 fill="none"
-                stroke="#f59e0b"
+                stroke="#d97706"
                 strokeWidth={strokeWidth}
                 strokeDasharray={c3}
                 strokeDashoffset={offset3}
@@ -149,10 +149,10 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
               <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest leading-none">
                 MİZAN
               </span>
-              <span className="text-xl font-bold font-mono tracking-tight text-white mt-0.5">
+              <span className="text-xl font-bold font-mono tracking-tight text-slate-900 mt-0.5">
                 {grade}
               </span>
-              <span className="text-[9px] font-mono text-emerald-400 font-medium">
+              <span className="text-[9px] font-mono text-emerald-700 font-bold">
                 %{halalWeightPercent.toFixed(0)}
               </span>
             </div>
@@ -161,16 +161,16 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
           {/* Core Descriptive Text */}
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
               <span>Katılım Uygunluk Denge Endeksi</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
               Portföy Katılım Sağlığı:{" "}
-              <span className={breachedCount === 0 ? "text-emerald-400" : "text-amber-400"}>
+              <span className={breachedCount === 0 ? "text-emerald-700" : "text-amber-700"}>
                 {breachedCount === 0 ? "Kusursuz Dengede" : `${breachedCount} Kapsam Dışı Risk`}
               </span>
             </h3>
-            <p className="text-xs text-slate-400 max-w-md leading-relaxed font-normal">
+            <p className="text-xs text-slate-500 max-w-md leading-relaxed font-normal">
               {standardName} kriterlerine göre portföyün <strong>%{halalWeightPercent.toFixed(1)}</strong>&apos;lik
               kısmı tam uygunluk taşımakta; ortalama faizli borç oranı ise %{avgDebtRatioPercent.toFixed(1)} seviyesindedir.
             </p>
@@ -178,13 +178,13 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
         </div>
 
         {/* Right: Three Whispering Precision Ring Swatches */}
-        <div className="grid grid-cols-3 sm:grid-cols-3 gap-3 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 lg:border-l border-white/[0.08] lg:pl-6">
+        <div className="grid grid-cols-3 sm:grid-cols-3 gap-3 w-full lg:w-auto pt-2 lg:pt-0 border-t lg:border-t-0 lg:border-l border-slate-200 lg:pl-6">
           <div className="space-y-1">
             <div className="flex items-center gap-1.5 text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span className="w-2 h-2 rounded-full bg-emerald-600" />
               <span>Helal Ağırlık</span>
             </div>
-            <div className="text-xl font-bold text-white font-mono tabular-nums">
+            <div className="text-xl font-bold text-slate-900 font-mono tabular-nums">
               %{halalWeightPercent.toFixed(1)}
             </div>
             <span className="text-[10px] text-slate-400 block font-normal">
@@ -194,10 +194,10 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
 
           <div className="space-y-1">
             <div className="flex items-center gap-1.5 text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-sky-400" />
+              <span className="w-2 h-2 rounded-full bg-sky-600" />
               <span>Borç Tamponu</span>
             </div>
-            <div className="text-xl font-bold text-sky-400 font-mono tabular-nums">
+            <div className="text-xl font-bold text-sky-700 font-mono tabular-nums">
               +%{Math.max(0, debtThresholdPercent - avgDebtRatioPercent).toFixed(1)}
             </div>
             <span className="text-[10px] text-slate-400 block font-normal">
@@ -207,10 +207,10 @@ export const MizanHealthComplication: React.FC<MizanHealthComplicationProps> = (
 
           <div className="space-y-1">
             <div className="flex items-center gap-1.5 text-[10px] uppercase font-semibold text-slate-400 tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-amber-400" />
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
               <span>Temizlik</span>
             </div>
-            <div className="text-xl font-bold text-amber-400 font-mono tabular-nums">
+            <div className="text-xl font-bold text-amber-700 font-mono tabular-nums">
               %{purityRatio ? (purityRatio * 100).toFixed(1) : "99.8"}
             </div>
             <span className="text-[10px] text-slate-400 block font-normal">

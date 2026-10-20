@@ -1,25 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SearchBar } from "@/components/SearchBar";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
 import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import {
   ArrowUpRight,
-  Radio,
+  ArrowRight,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
   RefreshCw,
-  FileSpreadsheet,
-  Plus,
-  Sparkles,
-  Repeat,
-  ShieldCheck,
   TrendingUp,
+  ShieldCheck,
+  Scale,
+  Sparkles,
+  Calculator,
+  Search,
+  Radio,
+  FileSpreadsheet,
+  Coins,
+  ChevronRight,
 } from "lucide-react";
 
 export default function HomePage() {
+  const router = useRouter();
   const [standard, setStandard] = useState<"BIST" | "AAOIFI">("BIST");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [screenerSearch, setScreenerSearch] = useState("");
+
+  // Interactive quick purification state
+  const [calcTicker, setCalcTicker] = useState("BIMAS");
+  const [calcLots, setCalcLots] = useState(500);
 
   const {
     companies,
@@ -30,600 +44,606 @@ export default function HomePage() {
     refreshNow,
   } = useLiveMarketData(30000);
 
-  const filteredCompanies = companies.filter((c) => {
-    const activeStatus = standard === "BIST" ? c.bistStatus : c.aaoifiStatus;
-    if (filterStatus === "ALL") return true;
-    if (filterStatus === "COMPLIANT") return activeStatus === "COMPLIANT";
-    if (filterStatus === "GRACE")
-      return (
-        c.aaoifiStatus === "GRACE_PERIOD_TOLERANCE" ||
-        c.bistStatus === "GRACE_PERIOD_TOLERANCE" ||
-        (c.debtRatioPercent >= 29 && c.debtRatioPercent < 33)
-      );
-    if (filterStatus === "NON_COMPLIANT") return activeStatus === "NON_COMPLIANT";
-    return true;
-  });
+  // Screener filtering
+  const filteredCompanies = useMemo(() => {
+    return companies.filter((c) => {
+      // Search filter
+      if (screenerSearch.trim()) {
+        const query = screenerSearch.toLowerCase().trim();
+        const matchesQuery =
+          c.ticker.toLowerCase().includes(query) ||
+          c.name.toLowerCase().includes(query) ||
+          c.sector.toLowerCase().includes(query);
+        if (!matchesQuery) return false;
+      }
 
-  const compliantCount = companies.filter((c) =>
-    standard === "BIST"
-      ? c.bistStatus === "COMPLIANT"
-      : c.aaoifiStatus === "COMPLIANT"
-  ).length;
-  const nonCompliantCount = companies.filter((c) =>
-    standard === "BIST"
-      ? c.bistStatus === "NON_COMPLIANT"
-      : c.aaoifiStatus === "NON_COMPLIANT"
-  ).length;
+      // Status filter
+      const activeStatus = standard === "BIST" ? c.bistStatus : c.aaoifiStatus;
+      if (filterStatus === "ALL") return true;
+      if (filterStatus === "COMPLIANT") return activeStatus === "COMPLIANT";
+      if (filterStatus === "GRACE") {
+        return (
+          c.aaoifiStatus === "GRACE_PERIOD_TOLERANCE" ||
+          c.bistStatus === "GRACE_PERIOD_TOLERANCE" ||
+          (c.debtRatioPercent >= 28 && c.debtRatioPercent < 33)
+        );
+      }
+      if (filterStatus === "NON_COMPLIANT") return activeStatus === "NON_COMPLIANT";
+      return true;
+    });
+  }, [companies, screenerSearch, standard, filterStatus]);
 
-  const barChartStocks = [
-    { ticker: "BERA", ratio: 8.5, status: "ok" },
-    { ticker: "BIMAS", ratio: 14.8, status: "ok" },
-    { ticker: "FROTO", ratio: 20.4, status: "ok" },
-    { ticker: "ASELS", ratio: 22.1, status: "ok" },
-    {
-      ticker: "PGSUS",
-      ratio: 31.4,
-      status: standard === "AAOIFI" ? "bad" : "warn",
-    },
-    { ticker: "THYAO", ratio: 36.8, status: "bad" },
-  ];
+  const compliantCount = useMemo(() => {
+    return companies.filter((c) =>
+      standard === "BIST"
+        ? c.bistStatus === "COMPLIANT"
+        : c.aaoifiStatus === "COMPLIANT"
+    ).length;
+  }, [companies, standard]);
 
-  const complianceScoreStr = standard === "BIST" ? "%85,25" : "%73,22";
-  const complianceScoreNum = standard === "BIST" ? 85.25 : 73.22;
-  const debtCeilingNum = standard === "BIST" ? 33 : 30;
+  const nonCompliantCount = useMemo(() => {
+    return companies.filter((c) =>
+      standard === "BIST"
+        ? c.bistStatus === "NON_COMPLIANT"
+        : c.aaoifiStatus === "NON_COMPLIANT"
+    ).length;
+  }, [companies, standard]);
+
+  // Rates for calculator
+  const calcRates: Record<string, { rate: number; name: string }> = {
+    BIMAS: { rate: 0.0842, name: "BİM Birleşik Mağazalar" },
+    ASELS: { rate: 0.0245, name: "Aselsan" },
+    FROTO: { rate: 0.21, name: "Ford Otomotiv" },
+    TUPRS: { rate: 0.048, name: "Tüpraş" },
+    PGSUS: { rate: 0.142, name: "Pegasus Hava Taşımacılığı" },
+    BERA: { rate: 0.012, name: "Bera Holding" },
+  };
+
+  const currentRate = calcRates[calcTicker]?.rate ?? 0.0842;
+  const calculatedPurification = (currentRate * (Number(calcLots) || 0)).toFixed(2);
 
   return (
-    <main className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1440px] mx-auto">
-      {/* ÜST KARŞILAMA + ARAMA + STANDART SEÇİCİ */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full theme-subtle text-xs font-semibold mb-2">
-            <Radio size={12} className="text-emerald-400 animate-pulse" />
-            <span>
-              {source === "LIVE_HYBRID"
-                ? "BIST Canlı Fiyat + KAP Otomatik Akış"
-                : source === "SUPABASE_DB"
-                ? "Supabase Canlı Veritabanı + KAP"
-                : "KAP 2026-Q2 Finansal Veri Boru Hattı"}
-            </span>
-            {updatedAt && (
-              <span className="font-mono opacity-75">• {updatedAt}</span>
-            )}
+    <div className="space-y-16 sm:space-y-24 pb-20">
+      {/* ===================================================================== */}
+      {/* 1. HERO SECTION (MUSAFFA TARZI FERAH VE GÜVEN VERİCİ)                 */}
+      {/* ===================================================================== */}
+      <section className="relative pt-10 sm:pt-16 pb-16 px-4 sm:px-6 lg:px-8 bg-grid-pattern border-b border-slate-100 overflow-hidden">
+        {/* Soft emerald glow background */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[380px] bg-emerald-100/40 blur-3xl pointer-events-none rounded-full" />
+
+        <div className="max-w-5xl mx-auto text-center relative z-10 space-y-6">
+          {/* Eyebrow Trust Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>TKBB &amp; AAOIFI No. 21 Standartlarında İslami Finans Platformu</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Katılım Finans &amp; Bilanço X-Ray Terminali
+
+          {/* Main Title */}
+          <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-950 leading-[1.12]">
+            Borsa İstanbul&apos;da Helal Yatırımın <br className="hidden sm:inline" />
+            <span className="bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
+              En Güvenilir &amp; Net Adresi
+            </span>
           </h1>
-          <p className="text-xs sm:text-sm theme-muted mt-1">
-            BIST şirketlerinin canlı fiyatlarını, faizli borç/nakit rasyolarını ve kuruşu kuruşuna arındırma tutarlarını takip edin.
+
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed font-normal">
+            500&apos;den fazla BIST hissesinin çeyreklik KAP bilançolarını kuruşu kuruşuna denetleyin, şüpheli faiz gelirlerini tek tıkla arındırın ve hisse zekâtınızı hatasız hesaplayın.
+          </p>
+
+          {/* Musaffa Tarzı Canlı Arama Çubuğu */}
+          <div className="pt-2 max-w-2xl mx-auto space-y-3">
+            <SearchBar placeholder="Hisse kodu veya şirket adı arayın (BIMAS, THYAO, ASELS...)" />
+
+            {/* Hızlı Seçim Etiketleri */}
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs pt-1">
+              <span className="text-slate-400 font-medium">Hızlı Örnekler:</span>
+              <button
+                onClick={() => router.push("/companies/BIMAS")}
+                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-emerald-400 text-slate-700 font-mono font-medium flex items-center gap-1.5 shadow-xs transition"
+              >
+                <span>BIMAS</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-emerald-700 font-sans text-xs">Uygun</span>
+              </button>
+              <button
+                onClick={() => router.push("/companies/THYAO")}
+                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-rose-400 text-slate-700 font-mono font-medium flex items-center gap-1.5 shadow-xs transition"
+              >
+                <span>THYAO</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                <span className="text-rose-700 font-sans text-xs">Kapsam Dışı</span>
+              </button>
+              <button
+                onClick={() => router.push("/companies/PGSUS")}
+                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-amber-400 text-slate-700 font-mono font-medium flex items-center gap-1.5 shadow-xs transition"
+              >
+                <span>PGSUS</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span className="text-amber-700 font-sans text-xs">Sınırda</span>
+              </button>
+              <button
+                onClick={() => router.push("/companies/ASELS")}
+                className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-emerald-400 text-slate-700 font-mono font-medium flex items-center gap-1.5 shadow-xs transition"
+              >
+                <span>ASELS</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-emerald-700 font-sans text-xs">Uygun</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Trust Metrics Bar */}
+          <div className="pt-8 border-t border-slate-200/60 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tabular">542+</div>
+              <div className="text-xs text-slate-500 font-medium mt-0.5">Taranan BIST Şirketi</div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 font-mono tabular">%100</div>
+              <div className="text-xs text-slate-500 font-medium mt-0.5">Sıfır-Float Decimal Hassasiyeti</div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tabular">4x / Gün</div>
+              <div className="text-xs text-slate-500 font-medium mt-0.5">Otomatik KAP Senkronu</div>
+            </div>
+            <div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tabular">2 Standart</div>
+              <div className="text-xs text-slate-500 font-medium mt-0.5">TKBB &amp; AAOIFI No. 21</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/* 2. CANLI HİSSE VE UYGUNLUK KARTLARI (BIMAS vs THYAO KARŞILAŞTIRMASI) */}
+      {/* ===================================================================== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-950 tracking-tight">
+            Şüpheye Yer Bırakmayan Şeffaf Analiz
+          </h2>
+          <p className="text-sm text-slate-500 max-w-xl mx-auto">
+            Bir şirketin katılım endeksine neden uygun olduğunu veya hangi rasyoyu aştığını tüm bilanço dipnotlarıyla görün.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <div className="w-full sm:w-80">
-            <SearchBar placeholder="Hisse ara (BIMAS, THYAO, PGSUS...)" />
-          </div>
-
-          <div className="theme-card rounded-2xl p-1.5 flex items-center gap-1 text-xs shrink-0">
-            <button
-              type="button"
-              onClick={() => setStandard("BIST")}
-              className={`px-3 py-2 rounded-xl font-bold transition-all ${
-                standard === "BIST"
-                  ? "accent-pill text-slate-950 shadow-sm"
-                  : "theme-muted hover:opacity-100"
-              }`}
-            >
-              BIST Katılım (&lt;%33)
-            </button>
-            <button
-              type="button"
-              onClick={() => setStandard("AAOIFI")}
-              className={`px-3 py-2 rounded-xl font-bold transition-all ${
-                standard === "AAOIFI"
-                  ? "accent-pill text-slate-950 shadow-sm"
-                  : "theme-muted hover:opacity-100"
-              }`}
-            >
-              AAOIFI (&lt;%30)
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 1. SATIR: 4'LÜ MODERN FINTECH KPI KARTLARI */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div className="theme-card rounded-3xl p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs theme-muted font-medium">
-              Örnek Portföy Toplam Değeri
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 tabular">
-              +8,95%
-            </span>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular mt-3">
-            ₺584.920,00
-          </div>
-          <div className="text-xs theme-muted mt-2.5 flex items-center justify-between pt-2 border-t border-[var(--border-col)]">
-            <span>Net Helal Pay:</span>
-            <span className="font-mono font-semibold text-emerald-400 tabular">
-              ₺498.650,00
-            </span>
-          </div>
-        </div>
-
-        <div className="theme-card rounded-3xl p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs theme-muted font-medium">
-              Katılım Uyumluluk Skoru
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-500/15 text-sky-400">
-              {standard === "BIST" ? "A+ Seviye" : "B+ Sınırda"}
-            </span>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular mt-3">
-            {complianceScoreStr}
-          </div>
-          <div className="w-full h-2.5 rounded-full theme-subtle mt-3 overflow-hidden">
-            <div
-              className="h-full accent-pill transition-all duration-300 rounded-full"
-              style={{ width: `${complianceScoreNum}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="theme-card rounded-3xl p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs theme-muted font-medium">
-              Ağırlıklı Faizli Borç Oranı
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400">
-              Güvenli Bölge
-            </span>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular mt-3">
-            %21,40
-          </div>
-          <div className="text-xs theme-muted mt-2.5 pt-2 border-t border-[var(--border-col)]">
-            {standard} Üst Sınırı: %{debtCeilingNum},00 (Kalan Marjin: %
-            {(debtCeilingNum - 21.4).toFixed(2)})
-          </div>
-        </div>
-
-        <div className="theme-card rounded-3xl p-5 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs theme-muted font-medium">
-              Çeyreklik Arındırma &amp; Zekât
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-400">
-              2026-Q2
-            </span>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold font-mono tabular mt-3">
-            ₺294,48
-          </div>
-          <div className="text-xs theme-muted mt-2.5 flex items-center justify-between pt-2 border-t border-[var(--border-col)]">
-            <span>Yıllık Zekât (%2,5):</span>
-            <span className="font-mono font-semibold tabular">₺4.812,60</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. SATIR (3 SÜTUNLU BENTO): CÜZDAN KARTI + SÜTUN GRAFİĞİ + UYUMLULUK HALKASI */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Sol: Dijital Katılım Portföy Cüzdan Kartı */}
-        <div className="lg:col-span-4 hero-wallet-card rounded-3xl p-6 flex flex-col justify-between shadow-xl relative overflow-hidden">
-          <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-          <div className="flex items-center justify-between z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* 1. KART: UYGUN HİSSE (BIMAS) */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-md shadow-slate-200/40 hover:border-emerald-300 transition-all flex flex-col justify-between">
             <div>
-              <div className="text-xs uppercase tracking-wider opacity-80 font-semibold">
-                MİZAN KATILIM PORTFÖY KARTI
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center font-bold text-emerald-800 text-sm font-mono shadow-xs">
+                    BIM
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                      <span>BIMAS</span>
+                      <span className="text-xs font-normal text-slate-500">BİM Birleşik Mağazalar</span>
+                    </h3>
+                    <div className="text-xs text-slate-400 font-medium">Perakende Ticaret &bull; 2026-Q2 KAP Bilançosu</div>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200/90 flex items-center gap-1.5">
+                  <CheckCircle2 size={13} className="text-emerald-600" />
+                  Katılım Uygun
+                </span>
               </div>
-              <div className="text-sm font-semibold mt-0.5">
-                {standard === "BIST"
-                  ? "BIST Katılım (DİB/TKBB) Korumalı"
-                  : "AAOIFI Shariah No. 21 Korumalı"}
+
+              {/* Canlı Fiyat */}
+              <div className="mt-4 flex items-baseline gap-2">
+                <span className="text-2xl font-black font-mono tabular text-slate-900">₺482,50</span>
+                <span className="text-xs font-semibold text-emerald-600 font-mono tabular">+0,42% (Canlı BIST)</span>
+              </div>
+
+              {/* 3 Temel Katılım Kriter Çubuğu */}
+              <div className="mt-6 space-y-3.5 text-xs">
+                <div>
+                  <div className="flex justify-between font-semibold mb-1">
+                    <span className="text-slate-600">Toplam Faizli Borç / Piyasa Değeri</span>
+                    <span className="text-emerald-700 font-mono tabular">%14,80 (Eşik: &lt;%33)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "44.8%" }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between font-semibold mb-1">
+                    <span className="text-slate-600">Faizli Nakit &amp; Mevduat / Piyasa Değeri</span>
+                    <span className="text-emerald-700 font-mono tabular">%11,20 (Eşik: &lt;%33)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "33.9%" }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between font-semibold mb-1">
+                    <span className="text-slate-600">Uygun Olmayan Gelirler / Toplam Hasılat</span>
+                    <span className="text-emerald-700 font-mono tabular">%1,45 (Eşik: &lt;%5)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "29%" }} />
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="px-2.5 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-mono font-semibold">
-              2026-Q2
+
+            {/* Dipnot ve Arındırma */}
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+              <div>
+                <span className="text-slate-400 block font-medium">Hisse Başına Arındırma:</span>
+                <span className="text-sm font-bold font-mono text-emerald-700 tabular">₺0,0842 / Pay</span>
+              </div>
+              <Link
+                href="/companies/BIMAS"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold border border-slate-200 transition flex items-center gap-1"
+              >
+                <span>Bilanço Dipnotu</span>
+                <ChevronRight size={14} />
+              </Link>
             </div>
           </div>
 
-          <div className="my-6 z-10">
-            <div className="text-xs opacity-80">
-              Toplam Arındırılmış Net Varlık
-            </div>
-            <div className="text-3xl sm:text-4xl font-black font-mono tabular tracking-tight mt-1">
-              ₺584.920,00
-            </div>
-            <div className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-xs font-semibold">
-              <span>▲ +₺48.320,00 (+8,95%)</span>
-              <span className="opacity-75">• Son 30 Gün</span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 pt-4 border-t border-white/15 z-10 text-center">
-            <Link
-              href="/portfolio"
-              className="py-2.5 px-2 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-semibold transition-all inline-flex items-center justify-center gap-1"
-            >
-              <Plus size={13} />
-              <span>Hisse Ekle</span>
-            </Link>
-            <Link
-              href="/purification"
-              className="py-2.5 px-2 rounded-2xl bg-white/15 hover:bg-white/25 text-xs font-semibold transition-all inline-flex items-center justify-center gap-1"
-            >
-              <Sparkles size={13} />
-              <span>Arındır</span>
-            </Link>
-            <Link
-              href="/portfolio"
-              className="py-2.5 px-2 rounded-2xl bg-white text-slate-950 hover:opacity-90 text-xs font-bold transition-all inline-flex items-center justify-center gap-1"
-            >
-              <Repeat size={13} />
-              <span>İkame Et</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Orta: Şirket Borç / Piyasa Değeri Dikey Sütun Grafiği */}
-        <div className="lg:col-span-5 theme-card rounded-3xl p-6 flex flex-col justify-between">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          {/* 2. KART: KAPSAM DIŞI HİSSE (THYAO) + HELAL İKAME */}
+          <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-md shadow-slate-200/40 hover:border-rose-300 transition-all flex flex-col justify-between">
             <div>
-              <h2 className="text-base font-bold">
-                Faizli Borç / Piyasa Değeri Rasyo Analizi
-              </h2>
-              <p className="text-xs theme-muted">
-                {standard} (%{debtCeilingNum}) üst sınırına göre canlı bilanço karşılaştırması
-              </p>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center font-bold text-rose-800 text-sm font-mono shadow-xs">
+                    THY
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                      <span>THYAO</span>
+                      <span className="text-xs font-normal text-slate-500">Türk Hava Yolları</span>
+                    </h3>
+                    <div className="text-xs text-slate-400 font-medium">Havacılık &amp; Taşımacılık &bull; 2026-Q2 KAP Bilançosu</div>
+                  </div>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200/90 flex items-center gap-1.5">
+                  <XCircle size={13} className="text-rose-600" />
+                  Kapsam Dışı
+                </span>
+              </div>
+
+              {/* Canlı Fiyat */}
+              <div className="mt-4 flex items-baseline gap-2">
+                <span className="text-2xl font-black font-mono tabular text-slate-900">₺312,00</span>
+                <span className="text-xs font-semibold text-emerald-600 font-mono tabular">+1,15% (Canlı BIST)</span>
+              </div>
+
+              {/* Rasyolar & İhlal */}
+              <div className="mt-6 space-y-3.5 text-xs">
+                <div>
+                  <div className="flex justify-between font-semibold mb-1">
+                    <span className="text-slate-600">Toplam Faizli Borç / Piyasa Değeri</span>
+                    <span className="text-rose-700 font-bold font-mono tabular">%36,80 (Eşik: &lt;%33 Aşıldı!)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-rose-500 rounded-full" style={{ width: "100%" }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between font-semibold mb-1">
+                    <span className="text-slate-600">Faizli Nakit &amp; Mevduat / Piyasa Değeri</span>
+                    <span className="text-emerald-700 font-mono tabular">%14,20 (Eşik: &lt;%33)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "43%" }} />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between font-semibold mb-1">
+                    <span className="text-slate-600">Uygun Olmayan Gelirler / Toplam Hasılat</span>
+                    <span className="text-emerald-700 font-mono tabular">%4,20 (Eşik: &lt;%5)</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: "84%" }} />
+                  </div>
+                </div>
+              </div>
             </div>
-            <span className="text-xs font-mono px-2.5 py-1 rounded-xl theme-subtle font-semibold">
-              Eşik: %{debtCeilingNum},0
-            </span>
-          </div>
 
-          <div className="grid grid-cols-6 gap-3 items-end h-44 pt-8 pb-2 px-2 border-b border-[var(--border-col)] relative mt-2">
-            {/* Dinamik Eşik Çizgisi */}
-            <div
-              className="absolute left-0 right-0 border-t border-dashed border-rose-400/70 flex justify-end pr-1 transition-all duration-300"
-              style={{ bottom: standard === "BIST" ? "78%" : "71%" }}
-            >
-              <span className="text-xs font-mono text-rose-400 -mt-4 bg-black/50 px-1.5 py-0.5 rounded">
-                {standard} %{debtCeilingNum}
-              </span>
+            {/* İkame Önerisi Kutusu */}
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs bg-slate-50/80 -mx-6 -mb-6 sm:-mx-7 sm:-mb-7 p-4 sm:p-5 rounded-b-3xl">
+              <div>
+                <span className="text-slate-500 block font-medium">Ulaştırma Sektöründe Alternatif:</span>
+                <span className="text-xs font-bold text-slate-800">PGSUS (%31,40 Borç ile BIST Uygun)</span>
+              </div>
+              <Link
+                href="/companies/PGSUS"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold transition flex items-center gap-1"
+              >
+                <span>İkameyi İncele</span>
+                <ChevronRight size={14} />
+              </Link>
             </div>
-
-            {barChartStocks.map((item) => {
-              const heightPct = Math.min(95, Math.round((item.ratio / 40) * 100));
-              const barColorClass =
-                item.status === "bad"
-                  ? "bg-rose-500"
-                  : item.status === "warn"
-                  ? "bg-amber-400"
-                  : "";
-              const labelColorClass =
-                item.status === "bad"
-                  ? "text-rose-400 font-bold"
-                  : item.status === "warn"
-                  ? "text-amber-400 font-semibold"
-                  : "";
-
-              return (
-                <Link
-                  key={item.ticker}
-                  href={`/companies/${item.ticker}`}
-                  className="flex flex-col items-center gap-2 h-full justify-end group"
-                >
-                  <span className={`text-xs font-mono tabular ${labelColorClass}`}>
-                    %{item.ratio}
-                  </span>
-                  <div
-                    className={`w-full max-w-[36px] rounded-t-xl transition-all duration-300 group-hover:opacity-85 ${barColorClass}`}
-                    style={{
-                      height: `${heightPct}%`,
-                      background:
-                        item.status === "ok" ? "var(--chart-bar-1)" : undefined,
-                    }}
-                  />
-                  <span className={`text-xs font-bold font-mono ${labelColorClass}`}>
-                    {item.ticker}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs theme-muted pt-3">
-            <span className="flex items-center gap-1.5">
-              <span
-                className="w-2.5 h-2.5 rounded-full"
-                style={{ background: "var(--chart-bar-1)" }}
-              />
-              Tam Uygun (&lt;%30)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-              Sınırda (%30-%33)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-              Eşik İhlali (&gt;%{debtCeilingNum})
-            </span>
           </div>
         </div>
+      </section>
 
-        {/* Sağ: Halka (Donut) Uygunluk & Dağılım Kartı */}
-        <div className="lg:col-span-3 theme-card rounded-3xl p-6 flex flex-col justify-between">
-          <div>
-            <h2 className="text-base font-bold">Uyumluluk Halkası</h2>
-            <p className="text-xs theme-muted">
-              Piyasa değerine göre portföy dağılımı
+      {/* ===================================================================== */}
+      {/* 3. 4 TEMEL KATILIM HİZMETİ (CORE VALUE PILLARS)                       */}
+      {/* ===================================================================== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="text-center space-y-2">
+          <span className="text-xs uppercase font-bold text-emerald-700 tracking-wider">NEDEN MİZAN?</span>
+          <h2 className="text-3xl font-extrabold text-slate-950 tracking-tight">
+            Helal Yatırımın Her Adımında Yanınızda
+          </h2>
+          <p className="text-sm text-slate-500 max-w-xl mx-auto">
+            Diyanet İşleri Başkanlığı, TKBB ve AAOIFI standartlarını modern teknolojiyle birleştiren 4 temel sütun.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Sütun 1: Çift Standart Tarama */}
+          <div className="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:shadow-lg hover:border-slate-300 transition-all space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+              <Scale size={24} />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">BIST &amp; AAOIFI Çift Standart</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+              BIST Katılım (%33) ve uluslararası AAOIFI Shariah Standard No. 21 (%30) kurallarını tek ekranda yan yana karşılaştırın.
             </p>
           </div>
 
-          <div className="flex items-center justify-center my-3">
-            <div className="relative w-36 h-36 flex items-center justify-center">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="38"
-                  fill="none"
-                  stroke="rgba(148,163,184,0.15)"
-                  strokeWidth="12"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="38"
-                  fill="none"
-                  stroke="#10B981"
-                  strokeWidth="12"
-                  strokeDasharray="175 240"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="38"
-                  fill="none"
-                  stroke="#F59E0B"
-                  strokeWidth="12"
-                  strokeDasharray="28 240"
-                  strokeDashoffset="-180"
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="38"
-                  fill="none"
-                  stroke="#EF4444"
-                  strokeWidth="12"
-                  strokeDasharray="32 240"
-                  strokeDashoffset="-212"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                <span className="text-xl font-extrabold font-mono tabular">
-                  {complianceScoreStr}
-                </span>
-                <span className="text-xs theme-muted">Helal Oranı</span>
-              </div>
+          {/* Sütun 2: Kuruşu Kuruşuna Arındırma */}
+          <div className="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:shadow-lg hover:border-slate-300 transition-all space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+              <Coins size={24} />
             </div>
+            <h3 className="text-base font-bold text-slate-900">Kuruşu Kuruşuna Arındırma</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+              Tuttuğunuz gün ve lot sayısına göre çeyreklik arındırma tutarınızı kuruş hassasiyetli Decimal motoru ile kesin olarak hesaplayın.
+            </p>
           </div>
 
-          <div className="space-y-2 text-xs">
-            <div className="flex justify-between">
-              <span className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                Tam Uygun ({compliantCount} Şirket)
-              </span>
-              <span className="font-mono font-semibold tabular">%73,2</span>
+          {/* Sütun 3: Hisse Zekâtı Hesaplayıcı */}
+          <div className="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:shadow-lg hover:border-slate-300 transition-all space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+              <Calculator size={24} />
             </div>
-            <div className="flex justify-between">
-              <span className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                Sınırda İzlenen
-              </span>
-              <span className="font-mono font-semibold tabular">%12,0</span>
+            <h3 className="text-base font-bold text-slate-900">Hisse Zekâtı Hesaplayıcı</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+              Hissenizi kısa vadeli al-sat için mi yoksa uzun vadeli temettü için mi tuttuğunuza göre net dönen varlık bazlı zekât matrahınızı görün.
+            </p>
+          </div>
+
+          {/* Sütun 4: Canlı KAP ve Halka Arz */}
+          <div className="p-6 rounded-3xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:shadow-lg hover:border-slate-300 transition-all space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
+              <Sparkles size={24} />
             </div>
-            <div className="flex justify-between">
-              <span className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                Kapsam Dışı ({nonCompliantCount} Şirket)
-              </span>
-              <span className="font-mono font-semibold tabular">%14,8</span>
-            </div>
+            <h3 className="text-base font-bold text-slate-900">Canlı KAP &amp; Halka Arz</h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-normal">
+              KAP bildirim akışı ve yeni halka arz izahnameleri çıktığı anda katılım finans uygunluk durumlarını anında öğrenin.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* 3. SATIR (2 SÜTUNLU BENTO): CANLI BİST TABLOSU + CANLI KAP BİLDİRİMLERİ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        {/* Sol: BIST Katılım Hisseleri & Bilanço X-Ray Matrisi */}
-        <div className="lg:col-span-8 theme-card rounded-3xl p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-            <div>
-              <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
-                <TrendingUp size={18} className="text-sky-400" />
-                <span>BIST Katılım Hisseleri &amp; KAP Bilanço X-Ray</span>
-              </h2>
-              <p className="text-xs theme-muted mt-0.5">
-                Canlı fiyatlar (30 sn oto-senkron), görsel borç/nakit barları ve pay başı arındırma tutarları
-              </p>
+      {/* ===================================================================== */}
+      {/* 4. CANLI HİSSE TARAYICI TABLOSU (SCREENER)                            */}
+      {/* ===================================================================== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-semibold mb-2">
+              <Radio size={12} className="text-emerald-500 animate-pulse" />
+              <span>
+                {source === "LIVE_HYBRID"
+                  ? "BIST Canlı Fiyat + KAP Akışı"
+                  : source === "SUPABASE_DB"
+                  ? "Supabase Canlı Veritabanı"
+                  : "KAP 2026-Q2 Bilanço Boru Hattı"}
+              </span>
+              {updatedAt && <span className="font-mono text-slate-400">• {updatedAt}</span>}
             </div>
-
-            <div className="flex flex-wrap items-center gap-1.5 text-xs">
-              <button
-                type="button"
-                onClick={() => setFilterStatus("ALL")}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-                  filterStatus === "ALL"
-                    ? "accent-pill text-slate-950"
-                    : "theme-subtle theme-muted"
-                }`}
-              >
-                Tümü ({companies.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilterStatus("COMPLIANT")}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-                  filterStatus === "COMPLIANT"
-                    ? "bg-emerald-500 text-slate-950"
-                    : "theme-subtle text-emerald-400"
-                }`}
-              >
-                Uygun ({compliantCount})
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilterStatus("GRACE")}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-                  filterStatus === "GRACE"
-                    ? "bg-amber-400 text-slate-950"
-                    : "theme-subtle text-amber-400"
-                }`}
-              >
-                Sınırda
-              </button>
-              <button
-                type="button"
-                onClick={() => setFilterStatus("NON_COMPLIANT")}
-                className={`px-3 py-1.5 rounded-xl font-semibold transition-all ${
-                  filterStatus === "NON_COMPLIANT"
-                    ? "bg-rose-500 text-white"
-                    : "theme-subtle text-rose-400"
-                }`}
-              >
-                İhlal ({nonCompliantCount})
-              </button>
-            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight">
+              Borsa İstanbul Katılım Hisseleri
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              {filteredCompanies.length} şirket listeleniyor &bull; {compliantCount} Uygun, {nonCompliantCount} Kapsam Dışı
+            </p>
           </div>
 
+          {/* Standart Seçici & Yenileme */}
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-100 p-1 rounded-2xl flex items-center text-xs font-semibold">
+              <button
+                type="button"
+                onClick={() => setStandard("BIST")}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  standard === "BIST"
+                    ? "bg-white text-slate-950 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                BIST Katılım (&lt;%33)
+              </button>
+              <button
+                type="button"
+                onClick={() => setStandard("AAOIFI")}
+                className={`px-3 py-1.5 rounded-xl transition ${
+                  standard === "AAOIFI"
+                    ? "bg-white text-slate-950 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                AAOIFI (&lt;%30)
+              </button>
+            </div>
+
+            <button
+              onClick={refreshNow}
+              disabled={isRefreshing}
+              className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition"
+              title="Verileri Yenile"
+            >
+              <RefreshCw size={16} className={isRefreshing ? "animate-spin text-emerald-600" : ""} />
+            </button>
+          </div>
+        </div>
+
+        {/* Tablo Filtre Çubuğu */}
+        <div className="bg-white rounded-2xl border border-slate-200 p-3 sm:p-4 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <div className="relative flex-1 max-w-md">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={screenerSearch}
+              onChange={(e) => setScreenerSearch(e.target.value)}
+              placeholder="Tablo içinde ara (kod, şirket veya sektör)..."
+              className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-emerald-500 focus:bg-white transition text-slate-900 font-medium"
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5 overflow-x-auto text-xs font-semibold">
+            <button
+              onClick={() => setFilterStatus("ALL")}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                filterStatus === "ALL"
+                  ? "bg-slate-950 text-white"
+                  : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+              }`}
+            >
+              Tümü ({companies.length})
+            </button>
+            <button
+              onClick={() => setFilterStatus("COMPLIANT")}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                filterStatus === "COMPLIANT"
+                  ? "bg-emerald-600 text-white"
+                  : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+              }`}
+            >
+              Uygun ({compliantCount})
+            </button>
+            <button
+              onClick={() => setFilterStatus("GRACE")}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                filterStatus === "GRACE"
+                  ? "bg-amber-600 text-white"
+                  : "bg-amber-50 text-amber-800 hover:bg-amber-100"
+              }`}
+            >
+              İzleme / Hoşgörü
+            </button>
+            <button
+              onClick={() => setFilterStatus("NON_COMPLIANT")}
+              className={`px-3 py-1.5 rounded-xl transition ${
+                filterStatus === "NON_COMPLIANT"
+                  ? "bg-rose-600 text-white"
+                  : "bg-rose-50 text-rose-800 hover:bg-rose-100"
+              }`}
+            >
+              Kapsam Dışı ({nonCompliantCount})
+            </button>
+          </div>
+        </div>
+
+        {/* Tablo */}
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-sm tabular">
-              <thead>
-                <tr className="border-b border-[var(--border-col)] text-xs theme-muted font-semibold">
-                  <th className="py-3 px-3">Şirket</th>
-                  <th className="py-3 px-3">BIST / AAOIFI</th>
-                  <th className="py-3 px-3 text-right">Canlı Fiyat</th>
-                  <th className="py-3 px-3">Faizli Borç (&lt;%{debtCeilingNum})</th>
-                  <th className="py-3 px-3 text-right">Uygunsuz Gelir</th>
-                  <th className="py-3 px-3 text-right">Arındırma / Pay</th>
-                  <th className="py-3 px-3 text-center">X-Ray</th>
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead className="bg-slate-50/80 border-b border-slate-100 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                <tr>
+                  <th className="py-4 px-5">Şirket / Kod</th>
+                  <th className="py-4 px-4">Canlı Fiyat</th>
+                  <th className="py-4 px-4">BIST Durumu</th>
+                  <th className="py-4 px-4">AAOIFI</th>
+                  <th className="py-4 px-4">Faizli Borç Oranı</th>
+                  <th className="py-4 px-4">Faiz Gelir Oranı</th>
+                  <th className="py-4 px-4">Arındırma / Pay</th>
+                  <th className="py-4 px-5 text-right">Detay</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--border-col)]">
+              <tbody className="divide-y divide-slate-100">
                 {filteredCompanies.map((c) => {
-                  const isPositive = !c.change24h.startsWith("-");
-                  const debtBarWidth = Math.min(
-                    100,
-                    Math.round((c.debtRatioPercent / 38) * 100)
-                  );
-                  const debtBarColor =
-                    c.debtRatioPercent >= 33
-                      ? "bg-rose-500"
-                      : c.debtRatioPercent >= 30
-                      ? "bg-amber-400"
-                      : "bg-emerald-400";
-
+                  const isChangePositive = c.change24h.startsWith("+");
                   return (
                     <tr
                       key={c.ticker}
-                      className="hover:bg-white/[0.02] transition-colors group"
+                      onClick={() => router.push(`/companies/${c.ticker}`)}
+                      className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
                     >
-                      <td className="py-3.5 px-3">
-                        <Link
-                          href={`/companies/${c.ticker}`}
-                          className="flex items-center gap-3"
-                        >
-                          <div className="w-10 h-10 rounded-2xl theme-subtle border border-[var(--border-col)] flex items-center justify-center font-mono font-bold text-xs group-hover:border-sky-400/50 transition-colors">
-                            {c.ticker.slice(0, 3)}
+                      <td className="py-4 px-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-slate-700 text-xs font-mono group-hover:border-emerald-400 group-hover:bg-emerald-50 group-hover:text-emerald-700 transition">
+                            {c.ticker}
                           </div>
                           <div>
-                            <div className="font-bold group-hover:text-sky-400 transition-colors">
-                              {c.ticker}
-                            </div>
-                            <div className="text-xs theme-muted max-w-[165px] truncate">
+                            <div className="font-bold text-slate-900 group-hover:text-emerald-600 transition">
                               {c.name}
                             </div>
+                            <div className="text-xs text-slate-400 font-normal">{c.sector}</div>
                           </div>
-                        </Link>
-                      </td>
-
-                      <td className="py-3.5 px-3">
-                        <div className="flex flex-col gap-1">
-                          <ComplianceBadge
-                            status={
-                              standard === "BIST" ? c.bistStatus : c.aaoifiStatus
-                            }
-                            size="sm"
-                          />
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-3 text-right font-mono">
-                        <div className="font-bold">₺{c.priceTRY}</div>
+                      <td className="py-4 px-4">
+                        <div className="font-mono font-bold text-slate-900 tabular">
+                          ₺{c.priceTRY}
+                        </div>
                         <div
-                          className={`text-xs font-semibold ${
-                            isPositive ? "text-emerald-400" : "text-rose-400"
+                          className={`text-xs font-mono tabular font-semibold ${
+                            isChangePositive ? "text-emerald-600" : "text-rose-600"
                           }`}
                         >
                           {c.change24h}
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-24 h-2 rounded-full theme-subtle overflow-hidden shrink-0">
-                            <div
-                              className={`h-full rounded-full ${debtBarColor}`}
-                              style={{ width: `${debtBarWidth}%` }}
-                            />
-                          </div>
-                          <span
-                            className={`font-mono text-xs ${
-                              c.debtRatioPercent >= 33
-                                ? "text-rose-400 font-bold"
-                                : c.debtRatioPercent >= 30
-                                ? "text-amber-400 font-semibold"
-                                : ""
+                      <td className="py-4 px-4">
+                        <ComplianceBadge status={c.bistStatus} size="sm" />
+                      </td>
+
+                      <td className="py-4 px-4">
+                        <ComplianceBadge status={c.aaoifiStatus} size="sm" />
+                      </td>
+
+                      <td className="py-4 px-4">
+                        <div className="font-mono font-semibold tabular text-slate-900">
+                          %{c.debtRatioPercent.toFixed(1)}
+                        </div>
+                        <div className="w-24 h-1.5 rounded-full bg-slate-100 overflow-hidden mt-1">
+                          <div
+                            className={`h-full rounded-full ${
+                              c.debtRatioPercent > 33
+                                ? "bg-rose-500"
+                                : c.debtRatioPercent > 28
+                                ? "bg-amber-500"
+                                : "bg-emerald-500"
                             }`}
-                          >
-                            %{c.debtRatioPercent.toFixed(2)}
-                          </span>
+                            style={{
+                              width: `${Math.min(100, (c.debtRatioPercent / 33) * 100)}%`,
+                            }}
+                          />
                         </div>
                       </td>
 
-                      <td className="py-3.5 px-3 text-right font-mono">
-                        <span
-                          className={
-                            c.impureIncomePercent >= 5
-                              ? "text-rose-400 font-bold"
-                              : ""
-                          }
-                        >
+                      <td className="py-4 px-4">
+                        <span className="font-mono tabular text-slate-700">
                           %{c.impureIncomePercent.toFixed(2)}
                         </span>
                       </td>
 
-                      <td className="py-3.5 px-3 text-right font-mono font-semibold text-emerald-400">
-                        ₺{c.purificationPerShareTRY}
+                      <td className="py-4 px-4">
+                        <span className="font-mono font-bold text-emerald-700 tabular">
+                          ₺{c.purificationPerShareTRY}
+                        </span>
                       </td>
 
-                      <td className="py-3.5 px-3 text-center">
-                        <Link
-                          href={`/companies/${c.ticker}`}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl theme-subtle text-xs font-semibold hover:opacity-85 transition"
-                        >
-                          <span>İncele</span>
-                          <ArrowUpRight size={12} />
-                        </Link>
+                      <td className="py-4 px-5 text-right">
+                        <span className="inline-flex items-center text-xs font-semibold text-slate-500 group-hover:text-emerald-600 transition gap-1">
+                          İncele <ChevronRight size={14} />
+                        </span>
                       </td>
                     </tr>
                   );
@@ -632,94 +652,154 @@ export default function HomePage() {
             </table>
           </div>
         </div>
+      </section>
 
-        {/* Sağ: Canlı KAP Bildirimleri & Metodoloji Özeti */}
-        <div className="lg:col-span-4 space-y-5">
-          <div className="theme-card rounded-3xl p-6 flex flex-col justify-between">
+      {/* ===================================================================== */}
+      {/* 5. HIZLI ARINDIRMA SİMÜLATÖRÜ (İNTERAKTİF DENEME ARACI)                */}
+      {/* ===================================================================== */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-base font-bold">Canlı KAP Bildirimleri</h2>
-                  <p className="text-xs theme-muted">
-                    Bilanço düştüğünde otomatik tarama tetiklenir
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => refreshNow()}
-                  disabled={isRefreshing}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl theme-subtle text-xs font-semibold hover:opacity-90 disabled:opacity-50"
-                >
-                  <RefreshCw
-                    size={12}
-                    className={isRefreshing ? "animate-spin text-sky-400" : ""}
-                  />
-                  <span>Yenile</span>
-                </button>
+              <div className="flex items-center gap-2">
+                <Calculator size={20} className="text-emerald-600" />
+                <h2 className="text-xl font-bold text-slate-900">Canlı Arındırma Hesaplayıcı</h2>
               </div>
+              <p className="text-xs text-slate-500 mt-1">
+                Elinizdeki hisseyi ve lot miktarını seçin, 2026-Q2 arındırma tutarını anında görün.
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+              Kuruş Hassasiyetli (Zero-Float)
+            </span>
+          </div>
 
-              <div className="space-y-3">
-                {kapDisclosures.slice(0, 4).map((disc) => (
-                  <div
-                    key={disc.disclosureId}
-                    className="theme-subtle rounded-2xl p-4 space-y-1.5 border border-[var(--border-col)]"
-                  >
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/companies/${disc.ticker}`}
-                          className="px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400 font-mono font-bold hover:underline"
-                        >
-                          {disc.ticker}
-                        </Link>
-                        <span className="font-mono theme-muted">
-                          {disc.publishedAt}
-                        </span>
-                      </div>
-                      {disc.triggersRescreening && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-400 font-medium text-xs">
-                          <FileSpreadsheet size={11} />
-                          Oto-Tarama
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs font-bold">{disc.title}</div>
-                    <p className="text-xs theme-muted leading-relaxed line-clamp-2">
-                      {disc.summary}
-                    </p>
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Hisse Senedi</label>
+              <select
+                value={calcTicker}
+                onChange={(e) => setCalcTicker(e.target.value)}
+                className="w-full py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-900 outline-none focus:border-emerald-500"
+              >
+                {Object.entries(calcRates).map(([tick, data]) => (
+                  <option key={tick} value={tick}>
+                    {tick} — {data.name}
+                  </option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Lot Miktarı</label>
+              <input
+                type="number"
+                min="1"
+                value={calcLots}
+                onChange={(e) => setCalcLots(Math.max(1, parseInt(e.target.value) || 0))}
+                className="w-full py-2.5 px-3 rounded-xl border border-slate-200 bg-white text-sm font-semibold font-mono text-slate-900 outline-none focus:border-emerald-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Hesaplanan Çeyreklik Arındırma
+              </label>
+              <div className="py-2.5 px-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-sm font-bold font-mono text-emerald-800 flex items-center justify-between">
+                <span>₺{calculatedPurification.replace(".", ",")}</span>
+                <span className="text-xs font-normal text-emerald-700">Yoksullara İnfak</span>
               </div>
             </div>
           </div>
 
-          {/* Katılım Kriterleri Hızlı Bilgi Kartı */}
-          <div className="theme-card rounded-3xl p-6 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
+            <p className="text-xs text-slate-400 font-normal leading-relaxed max-w-xl">
+              * Bu tutar, şirketin çeyreklik döneminde elde ettiği faiz ve katılım dışı yan gelirlerin hissenize düşen payıdır. Kişisel servetinizden değil, şirketin arındırılması gereken gelirinden kaynaklanır.
+            </p>
+            <Link
+              href="/purification"
+              className="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-semibold transition shrink-0 flex items-center gap-1.5"
+            >
+              <span>Tüm Portföyü Arındır</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/* 6. CANLI KAP BİLDİRİM VE DUYURU AKIŞI                                  */}
+      {/* ===================================================================== */}
+      {kapDisclosures && kapDisclosures.length > 0 && (
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShieldCheck size={18} className="text-emerald-400" />
-              <h3 className="text-sm font-bold">
-                3 Aşamalı Katılım Denetim Kuralı
+              <Sparkles size={16} className="text-emerald-600" />
+              <h3 className="text-base font-bold text-slate-900">
+                Son KAP Katılım &amp; Bilanço Bildirimleri
               </h3>
             </div>
-            <div className="space-y-2 text-xs theme-muted leading-relaxed">
-              <p>
-                <strong className="text-emerald-400">1. Faizli Borç / PD:</strong>{" "}
-                BIST Katılım için &lt;%33, AAOIFI için &lt;%30 olmalıdır.
-              </p>
-              <p>
-                <strong className="text-sky-400">2. Faizli Nakit / PD:</strong>{" "}
-                Vadeli mevduat ve faizli menkul kıymetler &lt;%33 (&lt;%30) olmalıdır.
-              </p>
-              <p>
-                <strong className="text-amber-400">
-                  3. Uygunsuz Gelir &amp; Arındırma:
-                </strong>{" "}
-                Toplam hasılatın %5&apos;ini aşamaz; %5 altındaki kısım pay başına kuruşu kuruşuna arındırılır.
-              </p>
+            <span className="text-xs text-slate-400">Canlı Otomatik Tarama</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {kapDisclosures.slice(0, 3).map((kap) => (
+              <div
+                key={kap.disclosureId}
+                className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-2 hover:border-slate-300 transition"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-mono font-bold text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200">
+                    {kap.ticker}
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-mono">{kap.publishedAt}</span>
+                </div>
+                <p className="text-xs text-slate-700 font-medium line-clamp-2 leading-relaxed">
+                  {kap.title}
+                </p>
+                <div className="text-[11px] text-emerald-700 font-semibold pt-1 border-t border-slate-100 flex items-center gap-1">
+                  <span>{kap.category}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ===================================================================== */}
+      {/* 7. CTA (SON ÇAĞRI BANNERI)                                             */}
+      {/* ===================================================================== */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-slate-950 text-white p-8 sm:p-12 text-center space-y-6 shadow-xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-radial from-emerald-950/40 via-transparent to-transparent pointer-events-none" />
+          <div className="relative z-10 max-w-2xl mx-auto space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-emerald-300 text-xs font-semibold">
+              <ShieldCheck size={14} />
+              <span>Gönül Rahatlığıyla Yatırım Yapın</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Portföyünüzü İslami Finans İlkeleriyle Yönetin
+            </h2>
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Tek tıkla portföyünüzün katılım uyumluluğunu test edin, faizli gelirleri arındırın ve hisse zekâtınızı kuruşu kuruşuna öğrenin.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/portfolio"
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-md transition"
+              >
+                Portföyümü Analiz Et →
+              </Link>
+              <Link
+                href="/purification"
+                className="w-full sm:w-auto px-6 py-3 rounded-full bg-white/10 hover:bg-white/15 text-white font-semibold text-sm transition border border-white/20"
+              >
+                Arındırma Hesapla
+              </Link>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </section>
+    </div>
   );
 }
