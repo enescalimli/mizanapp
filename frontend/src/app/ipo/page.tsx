@@ -1,406 +1,444 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
   XCircle,
   HelpCircle,
-  ExternalLink,
   Search,
-  TrendingUp,
-  TrendingDown,
-  Calculator,
+  Calendar,
+  Coins,
   ShieldCheck,
+  TrendingUp,
+  SlidersHorizontal,
+  Info,
 } from "lucide-react";
-import { BistIpoItem } from "@/lib/data/realBistIpos";
-import { formatTRY } from "@/lib/decimal/decimal";
+import {
+  BistIpoItem,
+  UPCOMING_AND_ACTIVE_BIST_IPOS,
+} from "@/lib/data/realBistIpos";
 
 export default function IpoCalendarPage() {
-  const [ipos, setIpos] = useState<BistIpoItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT">("ALL");
+  const [ipos, setIpos] = useState<BistIpoItem[]>(UPCOMING_AND_ACTIVE_BIST_IPOS);
+  const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    "ALL" | "COMPLIANT" | "DRAFT" | "NON_COMPLIANT"
+  >("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-  const [stats, setStats] = useState({
-    totalCount: 57,
-    compliantCount: 38,
-    nonCompliantCount: 19,
-    complianceRatePercent: 66.7,
-  });
 
-  // Lot Hesaplama Modülü State'leri
-  const [targetIpo, setTargetIpo] = useState<BistIpoItem | null>(null);
-  const [expectedParticipants, setExpectedParticipants] = useState<number>(2_200_000);
-  const [calculatedLots, setCalculatedLots] = useState<number>(0);
-  const [requiredCapitalTRY, setRequiredCapitalTRY] = useState<number>(0);
+  // Lot Dağıtım Simülasyonu Seçimleri
+  const [selectedSimTicker, setSelectedSimTicker] = useState<string>("DURKN");
+  const [simParticipants, setSimParticipants] = useState<number>(2_000_000);
 
-  useEffect(() => {
-    async function fetchIpos() {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/ipo", { cache: "no-store" });
-        if (res.ok) {
-          const json = await res.json();
-          setIpos(json.ipos || []);
-          if (json.stats) setStats(json.stats);
-          if (json.ipos && json.ipos.length > 0) {
-            setTargetIpo(json.ipos[0]);
-          }
-        }
-      } catch (err) {
-        console.error("IPO fetch error:", err);
-      } finally {
-        setLoading(false);
+  const selectedIpo = useMemo(() => {
+    return (
+      ipos.find((i) => i.ticker === selectedSimTicker) ||
+      ipos[0]
+    );
+  }, [ipos, selectedSimTicker]);
+
+  // Simülatörden hesaplanan tahmini lot
+  const simulatedLotCount = useMemo(() => {
+    if (!selectedIpo || simParticipants <= 0) return 0;
+    return Math.max(
+      1,
+      Math.round(selectedIpo.totalLotCount / simParticipants)
+    );
+  }, [selectedIpo, simParticipants]);
+
+  const simulatedAmountTRY = useMemo(() => {
+    if (!selectedIpo) return 0;
+    return simulatedLotCount * selectedIpo.ipoPriceTRY;
+  }, [selectedIpo, simulatedLotCount]);
+
+  // Filtreleme
+  const filteredIpos = useMemo(() => {
+    const q = searchQuery.trim().toUpperCase();
+    return ipos.filter((item) => {
+      if (activeTab === "COMPLIANT" && !item.isKatilimCompliant) return false;
+      if (activeTab === "DRAFT" && item.ipoStatus !== "TASLAK_SPK") return false;
+      if (activeTab === "NON_COMPLIANT" && item.isKatilimCompliant) return false;
+
+      if (q) {
+        return (
+          item.ticker.toUpperCase().includes(q) ||
+          item.companyName.toUpperCase().includes(q) ||
+          item.sector.toUpperCase().includes(q)
+        );
       }
-    }
-    fetchIpos();
-  }, []);
+      return true;
+    });
+  }, [ipos, activeTab, searchQuery]);
 
-  useEffect(() => {
-    if (targetIpo && expectedParticipants > 0) {
-      const approxLots = Math.max(
-        1,
-        Math.round(targetIpo.totalLotCount / expectedParticipants)
-      );
-      setCalculatedLots(approxLots);
-      setRequiredCapitalTRY(approxLots * targetIpo.currentPriceTRY);
-    }
-  }, [targetIpo, expectedParticipants]);
-
-  const filteredIpos = ipos.filter((item) => {
-    const matchesFilter =
-      filter === "ALL"
-        ? true
-        : filter === "COMPLIANT"
-        ? item.isKatilimCompliant
-        : !item.isKatilimCompliant;
-
-    const matchesSearch =
-      searchQuery === ""
-        ? true
-        : item.ticker.includes(searchQuery.toUpperCase()) ||
-          item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.sector.toLowerCase().includes(searchQuery.toLowerCase());
-
-    return matchesFilter && matchesSearch;
-  });
+  const stats = useMemo(() => {
+    const total = ipos.length;
+    const compliant = ipos.filter((i) => i.isKatilimCompliant).length;
+    const drafts = ipos.filter((i) => i.ipoStatus === "TASLAK_SPK").length;
+    const nonCompliant = ipos.filter((i) => !i.isKatilimCompliant && i.complianceStatus === "NON_COMPLIANT").length;
+    return { total, compliant, drafts, nonCompliant };
+  }, [ipos]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-24 space-y-8">
-      {/* Payno Sky-Mist Hero Header */}
-      <section className="payno-sky-hero p-6 sm:p-10 space-y-6">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-          <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[#182542] text-xs font-semibold">
-              <ShieldCheck size={14} className="text-[#12B76A]" />
-              <span>Borsa İstanbul Resmi XHARZ &amp; XKTUM 7/24 Canlı Senkron</span>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-24 space-y-8">
+      {/* ===================================================================== */}
+      {/* 1. PAYNO SKY-MIST HERO HEADER                                         */}
+      {/* ===================================================================== */}
+      <section className="payno-sky-hero p-8 sm:p-12 relative overflow-hidden">
+        <div className="relative z-10 space-y-4 max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-white text-[#182542] text-xs font-bold shadow-xs">
+            <ShieldCheck size={14} className="text-[#0D9F6E]" />
+            <span>Katılım Finans İlkeleri Bilgi Formuna Göre Doğrulanmıştır</span>
+          </div>
+
+          <h1 className="text-3xl sm:text-5xl font-black text-[#182542] tracking-tight">
+            Halka Arz Edilecek &amp; Güncel Hisseler
+          </h1>
+
+          <p className="text-sm sm:text-base text-[#6E81A0] font-medium leading-relaxed">
+            Talep toplama tarihleri, hisse başına halka arz fiyatı, tahmini kaç lot düşeceği
+            ve <strong className="text-[#182542]">resmi katılım fıkhi uygunluğu</strong> tek bir şeffaf tabloda.
+          </p>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/* 2. 4'LÜ TEMİZ PAYNO KPI KARTLARI                                      */}
+      {/* ===================================================================== */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="payno-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider block">
+            Toplam Halka Arz
+          </span>
+          <div className="text-3xl font-black text-[#182542] font-mono">
+            {stats.total} <span className="text-xs text-[#7B8FA8] font-normal">Şirket</span>
+          </div>
+          <span className="text-[11px] text-[#2E6CF6] font-bold block">
+            Güncel Pipeline
+          </span>
+        </div>
+
+        <div className="payno-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#0D9F6E] uppercase tracking-wider block">
+            Katılıma Uygun (Helal)
+          </span>
+          <div className="text-3xl font-black text-[#0D9F6E] font-mono">
+            {stats.compliant} <span className="text-xs text-[#0D9F6E]/80 font-normal">Şirket</span>
+          </div>
+          <span className="text-[11px] text-[#0D9F6E] font-bold block">
+            ✓ Katılım Onaylı
+          </span>
+        </div>
+
+        <div className="payno-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider block">
+            Taslak İzahname (SPK&apos;da)
+          </span>
+          <div className="text-3xl font-black text-[#F59E0B] font-mono">
+            {stats.drafts} <span className="text-xs text-[#F59E0B]/80 font-normal">Beklenen</span>
+          </div>
+          <span className="text-[11px] text-[#B45309] font-bold block">
+            Onay Sürecinde
+          </span>
+        </div>
+
+        <div className="payno-card p-5 space-y-2">
+          <span className="text-xs font-bold text-[#E11D48] uppercase tracking-wider block">
+            Kapsam Dışı Paylar
+          </span>
+          <div className="text-3xl font-black text-[#E11D48] font-mono">
+            {stats.nonCompliant} <span className="text-xs text-[#E11D48]/80 font-normal">Şirket</span>
+          </div>
+          <span className="text-[11px] text-[#BE123C] font-bold block">
+            Faiz/Borç Eşiği Üstü
+          </span>
+        </div>
+      </section>
+
+      {/* ===================================================================== */}
+      {/* 3. TAHMİNİ KAÇ LOT DÜŞER? HESAPLAMA SİMÜLATÖRÜ                        */}
+      {/* ===================================================================== */}
+      <section className="payno-card p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E6ECF5] pb-5">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-8 rounded-xl bg-[#EEF3F9] text-[#2E6CF6] flex items-center justify-center font-bold">
+                🎯
+              </span>
+              <h2 className="text-lg sm:text-xl font-black text-[#182542] tracking-tight">
+                Tahmini Kaç Lot Düşer? Simülatörü
+              </h2>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-light text-[#182542] tracking-tight">
-              Halka Arz{" "}
-              <span className="font-normal italic font-serif">Katılım</span>{" "}
-              Merkezi
-            </h1>
-            <p className="text-sm text-[#182542]/80 leading-relaxed">
-              BIST Halka Arz Endeksi (XHARZ) kapsamındaki tüm{" "}
-              <strong>{stats.totalCount} şirketin</strong> güncel işlem fiyatı,
-              halka arz getirisi ve XKTUM Katılım Endeksi uygunluk durumu 7/24
-              canlı olarak güncellenir.
+            <p className="text-xs text-[#6E81A0] mt-1 font-medium">
+              Katılımcı sayısına göre hesabınıza geçecek tahmini hisse adedini ve gereken nakit tutarı anında hesaplayın.
             </p>
           </div>
 
-          {/* 4 KPI Mini Bento */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
-            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
-              <span className="text-[10px] font-bold text-[#6E81A0] uppercase">
-                XHARZ Endeksi
-              </span>
-              <span className="text-2xl font-bold text-[#182542] font-mono block mt-1">
-                {stats.totalCount}
+          {/* Şirket Seçici */}
+          <div className="shrink-0 w-full sm:w-auto">
+            <select
+              value={selectedSimTicker}
+              onChange={(e) => setSelectedSimTicker(e.target.value)}
+              className="w-full sm:w-72 px-4 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] text-xs font-bold text-[#182542] focus:outline-none focus:bg-white"
+            >
+              {ipos.map((item) => (
+                <option key={item.ticker} value={item.ticker}>
+                  {item.ticker} — {item.companyName.slice(0, 32)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Simülasyon Kontrolleri ve Sonuç */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Sol: Katılımcı Sayısı Butonları */}
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-xs font-bold text-[#182542] block">
+              Beklenen Başvuru / Katılımcı Sayısı:
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {[
+                { label: "1.5 Milyon Kişi", val: 1_500_000 },
+                { label: "2.0 Milyon Kişi", val: 2_000_000 },
+                { label: "2.5 Milyon Kişi", val: 2_500_000 },
+                { label: "3.0 Milyon Kişi", val: 3_000_000 },
+              ].map((btn) => (
+                <button
+                  key={btn.val}
+                  type="button"
+                  onClick={() => setSimParticipants(btn.val)}
+                  className={`py-3 px-3 rounded-2xl text-xs font-bold transition text-center ${
+                    simParticipants === btn.val
+                      ? "bg-[#182542] text-white shadow-md"
+                      : "bg-[#F3F6FB] text-[#5B6E8C] hover:bg-[#E8EEF6]"
+                  }`}
+                >
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="text-xs text-[#6E81A0] flex items-center gap-1.5 pt-1 font-medium">
+              <Info size={13} className="text-[#2E6CF6]" />
+              <span>
+                {selectedIpo.ticker} için toplam dağıtılacak pay:{" "}
+                <strong className="text-[#182542] font-mono">
+                  {selectedIpo.totalLotCount.toLocaleString("tr-TR")} Lot
+                </strong>{" "}
+                ({selectedIpo.distributionMethod})
               </span>
             </div>
-            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
-              <span className="text-[10px] font-bold text-[#0F7A43] uppercase">
-                Katılım Uygun
-              </span>
-              <span className="text-2xl font-bold text-[#0F7A43] font-mono block mt-1">
-                {stats.compliantCount}
-              </span>
-            </div>
-            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
-              <span className="text-[10px] font-bold text-[#C62E26] uppercase">
-                Kapsam Dışı
-              </span>
-              <span className="text-2xl font-bold text-[#C62E26] font-mono block mt-1">
-                {stats.nonCompliantCount}
+          </div>
+
+          {/* Sağ: Hesaplanan Sonuç Kartı */}
+          <div className="lg:col-span-5 bg-gradient-to-tr from-[#182542] to-[#273B69] text-white rounded-3xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between text-xs text-white/80">
+              <span>{selectedIpo.ticker} Tahmini Dağıtım</span>
+              <span className="font-mono text-emerald-400 font-bold">
+                {selectedIpo.isKatilimCompliant ? "✓ Katılıma Uygun" : "✕ Kapsam Dışı"}
               </span>
             </div>
-            <div className="bg-white/85 backdrop-blur-md border border-white rounded-2xl p-4">
-              <span className="text-[10px] font-bold text-[#254EDA] uppercase">
-                Uygunluk Oranı
-              </span>
-              <span className="text-2xl font-bold text-[#254EDA] font-mono block mt-1">
-                %{stats.complianceRatePercent}
-              </span>
+
+            <div className="flex items-baseline justify-between pt-1">
+              <div>
+                <span className="text-xs text-white/70 block">Düşecek Lot</span>
+                <span className="text-4xl font-black font-mono tracking-tight text-white">
+                  ~{simulatedLotCount}
+                </span>
+                <span className="text-sm text-white/80 font-bold ml-1">Lot</span>
+              </div>
+
+              <div className="text-right">
+                <span className="text-xs text-white/70 block">Gereken Tutar</span>
+                <span className="text-2xl font-bold font-mono text-emerald-300">
+                  ₺{simulatedAmountTRY.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-white/20 flex items-center justify-between text-[11px] text-white/75">
+              <span>Halka Arz Fiyatı: ₺{selectedIpo.ipoPriceTRY.toFixed(2)}</span>
+              <span>T1-T2: {selectedIpo.t1t2Available ? "Kullanılabilir" : "Kullanılamaz"}</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Payno Lot & Teminat Simülatörü */}
-      {targetIpo && (
-        <section className="payno-card p-6 sm:p-7">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-5 border-b border-[#E6ECF5]">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-[#EEF3F9] text-[#182542] flex items-center justify-center">
-                <Calculator size={20} />
+      {/* ===================================================================== */}
+      {/* 4. HALKA ARZ LİSTESİ — FİLTRE VE ARAMA                                */}
+      {/* ===================================================================== */}
+      <section className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          {/* Tab Filtreleri */}
+          <div className="flex flex-wrap items-center gap-2">
+            {[
+              { id: "ALL", label: `Tüm Halka Arzlar (${stats.total})` },
+              { id: "COMPLIANT", label: `✓ Katılıma Uygunlar (${stats.compliant})` },
+              { id: "DRAFT", label: `Taslak İzahname (${stats.drafts})` },
+              { id: "NON_COMPLIANT", label: `Kapsam Dışı (${stats.nonCompliant})` },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                  activeTab === tab.id
+                    ? "bg-[#182542] text-white shadow-sm"
+                    : "bg-white text-[#5B6E8C] border border-[#E6ECF5] hover:text-[#182542]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Arama */}
+          <div className="relative w-full sm:w-72">
+            <Search
+              size={15}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E81A0]"
+            />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Halka arz ara (Örn: DURKN, GUNDG)..."
+              className="w-full pl-9 pr-4 py-2 rounded-full bg-white border border-[#DCE5F2] text-xs font-semibold text-[#182542] placeholder:text-[#6E81A0] focus:outline-none"
+            />
+          </div>
+        </div>
+
+        {/* Kartlar Izgarası */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredIpos.map((item) => (
+            <div
+              key={item.id}
+              className="payno-card p-6 sm:p-7 space-y-5 hover:border-[#CBD8EC] transition"
+            >
+              {/* Üst Satır: Ticker, Durum ve Katılım Rozeti */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#182542] text-white flex items-center justify-center font-mono font-bold text-base shadow-xs">
+                    {item.ticker}
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-[#182542] text-base tracking-tight leading-snug">
+                      {item.companyName}
+                    </h3>
+                    <span className="text-xs text-[#6E81A0] font-medium">
+                      {item.sector}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Katılım Durumu */}
+                <div>
+                  {item.isKatilimCompliant ? (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full payno-badge-mint text-xs font-extrabold shadow-2xs">
+                      <CheckCircle2 size={13} />
+                      <span>Katılıma Uygun</span>
+                    </span>
+                  ) : item.complianceStatus === "UNDER_REVIEW" ? (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full payno-badge-amber text-xs font-extrabold">
+                      <HelpCircle size={13} />
+                      <span>İnceleniyor</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full payno-badge-coral text-xs font-extrabold shadow-2xs">
+                      <XCircle size={13} />
+                      <span>Kapsam Dışı</span>
+                    </span>
+                  )}
+                </div>
               </div>
-              <div>
-                <h2 className="text-base font-bold text-[#182542]">
-                  Bireysele Eşit Dağıtım Lot &amp; Teminat Hesaplayıcı
-                </h2>
-                <p className="text-xs text-[#6E81A0]">
-                  Katılımcı sayısına göre kişi başı düşecek tahmini lot ve
-                  gereken bakiye simülasyonu.
+
+              {/* Temel Bilgiler Şeridi (Fiyat, Tarih, Dağıtım) */}
+              <div className="grid grid-cols-3 gap-2.5 p-3.5 rounded-2xl bg-[#F8FAFD] border border-[#E8EEF6] text-xs">
+                <div>
+                  <span className="text-[10px] text-[#6E81A0] font-bold uppercase block">
+                    Halka Arz Fiyatı
+                  </span>
+                  <span className="text-base font-extrabold text-[#182542] font-mono">
+                    {item.ipoPriceTRY > 0 ? `₺${item.ipoPriceTRY.toFixed(2)}` : "Belirlenecek"}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-[#6E81A0] font-bold uppercase block">
+                    Talep Tarihleri
+                  </span>
+                  <span className="font-bold text-[#182542] text-[11px] leading-tight block">
+                    {item.ipoDates}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-[10px] text-[#6E81A0] font-bold uppercase block">
+                    Toplam Pay (Lot)
+                  </span>
+                  <span className="text-sm font-bold text-[#182542] font-mono block">
+                    {item.totalLotCount.toLocaleString("tr-TR")}
+                  </span>
+                </div>
+              </div>
+
+              {/* Tahmini Lot Dağıtım Tablosu */}
+              <div className="space-y-2">
+                <span className="text-[11px] font-bold text-[#182542] block">
+                  Tahmini Katılımcıya Göre Düşecek Lot Sayısı:
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {item.estimatedLots.map((s) => (
+                    <div
+                      key={s.participants}
+                      className="p-2.5 rounded-xl bg-white border border-[#E6ECF5] text-center"
+                    >
+                      <span className="text-[10px] text-[#6E81A0] font-bold block">
+                        {s.participantsLabel}
+                      </span>
+                      <span className="text-sm font-black text-[#182542] font-mono block mt-0.5">
+                        ~{s.lots} Lot
+                      </span>
+                      <span className="text-[10px] text-[#0D9F6E] font-mono font-bold block">
+                        ₺{s.amountTRY}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Katılım Fıkhi Gerekçesi */}
+              <div className="p-3.5 rounded-2xl bg-[#F3F6FB] border border-[#E2EAF4] space-y-1">
+                <span className="text-[10px] font-extrabold uppercase text-[#182542] block tracking-wide">
+                  Katılım Finans İlkeleri Değerlendirmesi:
+                </span>
+                <p className="text-xs text-[#5B6E8C] leading-relaxed font-medium">
+                  {item.complianceReason}
                 </p>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#182542]">Şirket:</span>
-              <select
-                value={targetIpo.ticker}
-                onChange={(e) => {
-                  const found = ipos.find((i) => i.ticker === e.target.value);
-                  if (found) setTargetIpo(found);
-                }}
-                className="px-4 py-2 rounded-full border border-[#DCE5F2] text-xs font-bold text-[#182542] bg-[#F3F6FB]"
-              >
-                {ipos.map((i) => (
-                  <option key={i.ticker} value={i.ticker}>
-                    {i.ticker} — {i.companyName.slice(0, 32)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-5 items-center">
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs">
-                <span className="font-semibold text-[#182542]">
-                  Tahmini Katılımcı:
-                </span>
-                <span className="font-mono font-bold text-[#254EDA]">
-                  {expectedParticipants.toLocaleString("tr-TR")} Kişi
-                </span>
-              </div>
-              <input
-                type="range"
-                min="500000"
-                max="4500000"
-                step="100000"
-                value={expectedParticipants}
-                onChange={(e) =>
-                  setExpectedParticipants(Number(e.target.value))
-                }
-                className="w-full accent-[#182542] cursor-pointer"
-              />
-              <div className="w-full h-2.5 payno-hatch-track">
-                <div
-                  className="h-full payno-hatch-fill"
-                  style={{
-                    width: `${(expectedParticipants / 4_500_000) * 100}%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="payno-inner-box p-4">
-              <span className="text-[10px] font-bold text-[#6E81A0] uppercase">
-                Kişi Başı Tahmini Pay
-              </span>
-              <div className="text-2xl font-bold text-[#182542] font-mono mt-1">
-                ~{calculatedLots} Lot
-              </div>
-            </div>
-
-            <div className="payno-inner-box p-4">
-              <span className="text-[10px] font-bold text-[#0F7A43] uppercase">
-                Yaklaşık Pozisyon Büyüklüğü
-              </span>
-              <div className="text-2xl font-bold text-[#0F7A43] font-mono mt-1">
-                {formatTRY(requiredCapitalTRY, 2)}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Filtre ve Arama Barı */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="apple-segmented-group">
-          <button
-            onClick={() => setFilter("ALL")}
-            className={`apple-segmented-item ${filter === "ALL" ? "active" : ""}`}
-          >
-            Tüm Halka Arzlar ({ipos.length})
-          </button>
-          <button
-            onClick={() => setFilter("COMPLIANT")}
-            className={`apple-segmented-item ${
-              filter === "COMPLIANT" ? "active" : ""
-            }`}
-          >
-            Katılım Uygun ({stats.compliantCount})
-          </button>
-          <button
-            onClick={() => setFilter("NON_COMPLIANT")}
-            className={`apple-segmented-item ${
-              filter === "NON_COMPLIANT" ? "active" : ""
-            }`}
-          >
-            Kapsam Dışı ({stats.nonCompliantCount})
-          </button>
-        </div>
-
-        <div className="relative w-full sm:w-80">
-          <Search
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6E81A0]"
-            size={15}
-          />
-          <input
-            type="text"
-            placeholder="57 XHARZ halka arz içinde ara..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-full border border-[#DCE5F2] text-xs text-[#182542] bg-white focus:outline-none focus:border-[#182542]"
-          />
-        </div>
-      </div>
-
-      {/* Halka Arz Kartları Grid */}
-      {loading ? (
-        <div className="py-20 flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-2 border-[#182542] border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-semibold text-[#6E81A0] font-mono">
-            BIST XHARZ Halka Arz Endeksi Canlı Taranıyor...
-          </span>
-        </div>
-      ) : filteredIpos.length === 0 ? (
-        <div className="payno-card p-12 text-center">
-          <HelpCircle size={36} className="mx-auto text-[#6E81A0] mb-3" />
-          <h3 className="text-base font-bold text-[#182542]">Sonuç Bulunamadı</h3>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredIpos.map((ipo) => {
-            const isGain = ipo.changeSinceIpoPercent >= 0;
-            return (
-              <div
-                key={ipo.id}
-                className="payno-card p-6 flex flex-col justify-between space-y-4"
-              >
+              {/* Alt Bilgi: Konsorsiyum & Fon Kullanımı */}
+              <div className="text-[11px] text-[#6E81A0] space-y-1 pt-1 border-t border-[#EEF3F9] font-medium">
                 <div>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] flex items-center justify-center font-mono font-bold text-xs text-[#182542]">
-                        {ipo.ticker}
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="text-sm font-bold text-[#182542] truncate max-w-[160px]">
-                          {ipo.companyName}
-                        </h3>
-                        <span className="text-[11px] text-[#6E81A0] block">
-                          {ipo.sector}
-                        </span>
-                      </div>
-                    </div>
-
-                    {ipo.isKatilimCompliant ? (
-                      <span className="px-2.5 py-1 rounded-full payno-badge-mint text-[10px] flex items-center gap-1 shrink-0">
-                        <CheckCircle2 size={11} />
-                        <span>XKTUM Uygun</span>
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-full payno-badge-coral text-[10px] flex items-center gap-1 shrink-0">
-                        <XCircle size={11} />
-                        <span>Kapsam Dışı</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Fiyat & Performans */}
-                  <div className="grid grid-cols-3 gap-2 my-4 p-3.5 payno-inner-box text-xs">
-                    <div>
-                      <span className="text-[10px] text-[#6E81A0] block">
-                        Ref. Fiyat
-                      </span>
-                      <span className="font-mono font-bold text-[#182542]">
-                        ₺{ipo.ipoPriceTRY.toFixed(2)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-[#6E81A0] block">
-                        Canlı Fiyat
-                      </span>
-                      <span className="font-mono font-bold text-[#182542]">
-                        ₺{ipo.currentPriceTRY.toFixed(2)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-[#6E81A0] block">
-                        Performans
-                      </span>
-                      <span
-                        className={`font-mono font-bold flex items-center gap-0.5 ${
-                          isGain ? "text-[#12B76A]" : "text-[#F04438]"
-                        }`}
-                      >
-                        {isGain ? (
-                          <TrendingUp size={12} />
-                        ) : (
-                          <TrendingDown size={12} />
-                        )}
-                        {isGain ? "+" : ""}
-                        {ipo.changeSinceIpoPercent.toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* KAFİF Gerekçesi */}
-                  <div className="p-3.5 rounded-2xl bg-[#F8FAFD] border border-[#E6ECF5] text-[11px] text-[#5B6E8C] leading-relaxed">
-                    <div className="font-bold text-[#182542] mb-1 flex items-center justify-between">
-                      <span>KAFİF &amp; Rasyo Özeti</span>
-                      <span className="font-mono text-[10px]">
-                        Borç: {ipo.kafifSummary.interestDebtRatio}
-                      </span>
-                    </div>
-                    {ipo.complianceReason}
-                  </div>
+                  <strong className="text-[#182542]">Konsorsiyum Lideri:</strong> {item.consortiumLead}
                 </div>
-
-                <div className="pt-3 border-t border-[#EEF3F9] flex items-center justify-between text-xs">
-                  <a
-                    href={ipo.kapUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[#6E81A0] hover:text-[#182542] font-medium"
-                  >
-                    KAP Bildirimleri ↗
-                  </a>
-                  <Link
-                    href={`/companies/${ipo.ticker}`}
-                    className="font-bold text-[#254EDA] hover:underline inline-flex items-center gap-1"
-                  >
-                    <span>Katılım Karnesi</span>
-                    <ExternalLink size={12} />
-                  </Link>
+                <div>
+                  <strong className="text-[#182542]">Fon Kullanımı:</strong> {item.fundUsage}
+                </div>
+                <div>
+                  <strong className="text-[#182542]">T1 - T2 Bakiye:</strong>{" "}
+                  {item.t1t2Available ? (
+                    <span className="text-[#0D9F6E] font-bold">Kullanılabilir</span>
+                  ) : (
+                    <span className="text-[#E11D48] font-bold">Kullanılamaz</span>
+                  )}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
-      )}
+      </section>
     </main>
   );
 }
