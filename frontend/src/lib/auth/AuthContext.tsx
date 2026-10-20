@@ -19,6 +19,7 @@ interface AuthContextType {
   isDemoUser: boolean;
   signIn: (email: string, pass: string) => Promise<{ error: any }>;
   signUp: (email: string, pass: string, name?: string) => Promise<{ error: any }>;
+  signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loginAsDemoUser: () => void;
 }
@@ -185,6 +186,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setSession(null);
   };
 
+  const signInWithGoogle = async (): Promise<{ error: any }> => {
+    if (!isSupabaseConfigured()) {
+      // Supabase OAuth bağlı olmadığında güvenli demo girişini tetikle
+      loginAsDemoUser();
+      return { error: null };
+    }
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/portfolio` : undefined,
+        },
+      });
+      return { error };
+    } catch (err) {
+      return { error: err };
+    }
+  };
+
   const loginAsDemoUser = () => {
     setUser(DEMO_USER);
     setProfile(DEMO_PROFILE);
@@ -204,6 +224,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isDemoUser,
         signIn,
         signUp,
+        signInWithGoogle,
         signOut,
         loginAsDemoUser,
       }}

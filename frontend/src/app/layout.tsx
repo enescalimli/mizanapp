@@ -57,8 +57,8 @@ export default function RootLayout({
                   <Link href="/ipo" className="hover:text-emerald-600 transition">
                     Halka Arz Takvimi
                   </Link>
-                  <Link href="/companies/BIMAS" className="hover:text-emerald-600 transition">
-                    Bilanço X-Ray
+                  <Link href="/rehber" className="hover:text-emerald-600 transition">
+                    Fıkıh &amp; Rehber
                   </Link>
                 </div>
               </div>

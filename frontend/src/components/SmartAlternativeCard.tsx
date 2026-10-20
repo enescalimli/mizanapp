@@ -191,7 +191,7 @@ export const SmartAlternativeCard: React.FC<SmartAlternativeCardProps> = ({
                     href={`/companies/${alt.ticker}`}
                     className="apple-btn-secondary text-xs py-1 px-2.5 rounded-lg"
                   >
-                    X-Ray
+                    Detay
                   </Link>
 
                   {onSwapPosition && (

@@ -284,7 +284,7 @@ export const ComplianceAlertWidget: React.FC<ComplianceAlertWidgetProps> = ({
                   href={`/companies/${alert.ticker}`}
                   className="text-emerald-400 hover:text-emerald-300 font-semibold shrink-0"
                 >
-                  Dipnot X-Ray Raporunu İncele &rarr;
+                  Katılım Analizini İncele &rarr;
                 </Link>
               </div>
 

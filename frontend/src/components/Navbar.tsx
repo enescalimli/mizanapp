@@ -10,12 +10,12 @@ import {
   ArrowRight,
   LogOut,
   User,
-  Radio,
   BarChart3,
   Briefcase,
-  ShieldCheck,
+  Scale,
   Calculator,
   Calendar,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext";
 
@@ -25,11 +25,11 @@ export const Navbar: React.FC = () => {
   const { user, profile, signOut, isDemoUser } = useAuth();
 
   const navLinks = [
-    { href: "/", label: "Hisseler & Tarayıcı", icon: BarChart3 },
-    { href: "/portfolio", label: "Portföy Paneli", icon: Briefcase },
-    { href: "/companies/BIMAS", label: "Bilanço X-Ray", icon: ShieldCheck },
+    { href: "/", label: "Katılım Taraması", icon: BarChart3 },
+    { href: "/ipo", label: "Halka Arzlar", icon: Calendar, badge: "Canlı" },
+    { href: "/rehber", label: "Fıkıh & Rehber", icon: Scale, badge: "Cevazlar" },
     { href: "/purification", label: "Arındırma & Zekât", icon: Calculator },
-    { href: "/ipo", label: "Halka Arz Takvimi", icon: Calendar, badge: "Yeni" },
+    { href: "/portfolio", label: "Portföyüm", icon: Briefcase },
   ];
 
   return (
@@ -38,9 +38,9 @@ export const Navbar: React.FC = () => {
       <div className="bg-slate-900 text-white text-xs py-2 px-4 text-center font-medium">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
           <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>2026-Q2 Dönemi KAP Bilanço ve Katılım Bilgi Formları Taranmıştır</span>
-          <span className="text-slate-500 hidden sm:inline">•</span>
-          <span className="text-emerald-300 hidden sm:inline font-mono">542 Şirket Güncellendi</span>
+          <span>BIST Katılım Endeksi &amp; KAP KAFİF Bildirimleri Anlık Senkronize Edilmektedir</span>
+          <span className="text-slate-500 hidden sm:inline">&bull;</span>
+          <span className="text-emerald-300 hidden sm:inline font-mono">TKBB &amp; AAOIFI Uyumlu</span>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export const Navbar: React.FC = () => {
                   >
                     <span>{link.label}</span>
                     {link.badge && (
-                      <span className="px-1.5 py-0.2 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
                         {link.badge}
                       </span>
                     )}
@@ -99,60 +99,59 @@ export const Navbar: React.FC = () => {
             </nav>
           </div>
 
-          {/* Sağ Aksiyon Butonları & Kullanıcı Durumu */}
-          <div className="flex items-center gap-3">
+          {/* Sağ Eylemler: Giriş Yap / Profil */}
+          <div className="hidden lg:flex items-center gap-4">
             {user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Link
                   href="/portfolio"
-                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 hover:bg-slate-100 transition"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 hover:bg-slate-100 transition-colors"
                 >
-                  <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">
-                    {profile?.full_name
-                      ? profile.full_name[0].toUpperCase()
-                      : user.email
-                      ? user.email[0].toUpperCase()
-                      : "U"}
+                  <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">
+                    {user.email ? user.email.charAt(0).toUpperCase() : "U"}
                   </div>
                   <span className="max-w-[120px] truncate">
                     {profile?.full_name || user.email?.split("@")[0]}
                   </span>
                   {isDemoUser && (
-                    <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-xs font-mono">
+                    <span className="text-[10px] bg-amber-100 text-amber-800 px-1 rounded font-bold">
                       Demo
                     </span>
                   )}
                 </Link>
+
                 <button
-                  type="button"
-                  onClick={signOut}
-                  className="p-2 rounded-full text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition"
+                  onClick={() => signOut()}
                   title="Çıkış Yap"
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors"
                 >
                   <LogOut size={16} />
                 </button>
               </div>
             ) : (
-              <Link
-                href="/auth/login"
-                className="hidden sm:inline-flex text-sm font-semibold text-slate-700 hover:text-slate-950 px-3 py-2"
-              >
-                Giriş Yap
-              </Link>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/auth/login"
+                  className="text-xs font-bold text-slate-700 hover:text-slate-950 px-3 py-2 transition-colors"
+                >
+                  Giriş Yap
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="fintech-btn-primary text-xs py-2.5 px-4 font-bold flex items-center gap-1.5"
+                >
+                  <span>Ücretsiz Başla</span>
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
             )}
+          </div>
 
-            <Link
-              href="/#hisseler"
-              className="px-5 py-2.5 rounded-full bg-slate-950 text-white text-sm font-semibold hover:bg-slate-800 shadow-sm transition-all hover:shadow-md inline-flex items-center gap-1.5"
-            >
-              <span>Ücretsiz Tara</span>
-              <ArrowRight size={14} />
-            </Link>
-
-            {/* Mobil Menü Tetikleyici */}
+          {/* Mobil Menü Butonu */}
+          <div className="flex lg:hidden items-center gap-2">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100"
+              className="p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               aria-label="Menüyü Aç"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -160,61 +159,75 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobil Menü Çekmecesi */}
+        {/* Mobil Açılır Menü */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-b border-slate-200 px-4 py-4 space-y-2 animate-in fade-in duration-150">
-            {navLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center justify-between p-3 rounded-2xl text-sm font-semibold ${
-                    isActive
-                      ? "bg-slate-100 text-slate-950"
-                      : "text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon size={18} className="text-slate-500" />
-                    <span>{link.label}</span>
-                  </div>
-                  {link.badge && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
-                      {link.badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-
-            <div className="pt-3 border-t border-slate-100">
-              {user ? (
-                <div className="flex items-center justify-between py-2 px-3">
-                  <span className="text-sm font-semibold text-slate-700">
-                    {profile?.full_name || user.email}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      signOut();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="text-xs font-bold text-rose-600 hover:underline"
+          <div className="lg:hidden border-b border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3 shadow-lg">
+            <nav className="flex flex-col space-y-1">
+              {navLinks.map((link) => {
+                const IconComponent = link.icon;
+                const isActive =
+                  pathname === link.href ||
+                  (link.href !== "/" && pathname.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold ${
+                      isActive
+                        ? "bg-slate-100 text-slate-950 font-bold"
+                        : "text-slate-600 hover:bg-slate-50"
+                    }`}
                   >
-                    Çıkış Yap
-                  </button>
-                </div>
+                    <div className="flex items-center gap-2.5">
+                      <IconComponent size={16} className="text-slate-500" />
+                      <span>{link.label}</span>
+                    </div>
+                    {link.badge && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                        {link.badge}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+              {user ? (
+                <>
+                  <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl text-xs">
+                    <span className="font-semibold text-slate-800">
+                      {user.email}
+                    </span>
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="text-rose-600 font-bold"
+                    >
+                      Çıkış
+                    </button>
+                  </div>
+                </>
               ) : (
-                <Link
-                  href="/auth/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full py-2.5 rounded-2xl bg-slate-100 text-slate-900 font-bold text-center text-sm"
-                >
-                  Giriş Yap / Kayıt Ol
-                </Link>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-800 hover:bg-slate-50"
+                  >
+                    Giriş Yap
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full text-center py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 shadow-xs"
+                  >
+                    Ücretsiz Başla
+                  </Link>
+                </div>
               )}
             </div>
           </div>

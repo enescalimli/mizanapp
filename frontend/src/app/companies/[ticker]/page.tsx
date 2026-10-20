@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
 import { RatioProgressBar } from "@/components/RatioProgressBar";
-import { FootnoteXRayCard } from "@/components/FootnoteXRayCard";
 import { PurificationCalculatorCard } from "@/components/PurificationCalculatorCard";
 import { SmartAlternativeCard } from "@/components/SmartAlternativeCard";
 import { getSmartAlternativesForTicker } from "@/lib/data/sampleCompanies";
@@ -20,6 +19,9 @@ import {
   HelpCircle,
   ExternalLink,
   Sparkles,
+  PlusCircle,
+  CheckCircle2,
+  Scale,
 } from "lucide-react";
 
 export default function CompanyDetailPage() {
@@ -31,6 +33,7 @@ export default function CompanyDetailPage() {
   const [data, setData] = useState<CompanyDetailScreening | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [addedToPortfolio, setAddedToPortfolio] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -60,13 +63,20 @@ export default function CompanyDetailPage() {
     }
   };
 
+  const handleAddToPortfolio = () => {
+    setAddedToPortfolio(true);
+    setTimeout(() => {
+      router.push("/portfolio");
+    }, 600);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-semibold text-slate-400 font-mono">
-            {ticker} Bilanço ve Dipnot Verileri İnceleniyor...
+          <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-slate-500 font-mono">
+            {ticker} Katılım ve Fıkhi Verileri Yükleniyor...
           </span>
         </div>
       </div>
@@ -75,19 +85,19 @@ export default function CompanyDetailPage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="apple-card max-w-md w-full p-8 text-center space-y-4">
-          <HelpCircle size={36} className="mx-auto text-slate-500" />
-          <h2 className="text-lg font-bold text-white">Şirket Bulunamadı</h2>
-          <p className="text-xs text-slate-400 font-normal">
-            &quot;{ticker}&quot; kodlu şirket için henüz bilanço veya tarama kaydı girilmemiştir.
+      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+        <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-slate-200 shadow-sm">
+          <HelpCircle size={36} className="mx-auto text-slate-400" />
+          <h2 className="text-lg font-bold text-slate-900">Şirket Bulunamadı</h2>
+          <p className="text-xs text-slate-500 font-normal">
+            &quot;{ticker}&quot; kodlu şirket için henüz fıkhi tarama kaydı girilmemiştir.
           </p>
           <Link
             href="/"
-            className="apple-btn-primary text-xs py-2 px-4 inline-flex items-center gap-2"
+            className="fintech-btn-primary text-xs py-2.5 px-4 inline-flex items-center gap-2"
           >
             <ArrowLeft size={13} />
-            <span>Ana Sayfaya Dön</span>
+            <span>Katılım Taramasına Dön</span>
           </Link>
         </div>
       </div>
@@ -97,9 +107,9 @@ export default function CompanyDetailPage() {
   const isBist = standard === "BIST_KATILIM_DIB";
 
   return (
-    <main className="min-h-screen text-slate-900 pb-24">
-      {/* Cupertino Breadcrumb */}
-      <div className="border-b border-slate-200/80 bg-white">
+    <main className="min-h-screen bg-slate-50 text-slate-900 pb-24">
+      {/* Breadcrumb */}
+      <div className="border-b border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <Link href="/" className="hover:text-emerald-700 transition-colors flex items-center gap-1.5 font-medium">
@@ -112,21 +122,29 @@ export default function CompanyDetailPage() {
             <span className="text-slate-900 font-bold font-mono">{ticker}</span>
           </div>
 
-          <button
-            onClick={handleShare}
-            className="apple-btn-secondary text-[11px] py-1 px-2.5 rounded-lg"
-          >
-            <Share2 size={11} />
-            <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleAddToPortfolio}
+              className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <PlusCircle size={13} />
+              <span>{addedToPortfolio ? "Eklendi!" : "Portföye Ekle"}</span>
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-medium transition flex items-center gap-1.5"
+            >
+              <Share2 size={12} />
+              <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        {/* Apple-grade Company Header Card */}
+        {/* Company Header Card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-50/50 rounded-full blur-3xl pointer-events-none" />
-
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
             {/* Title & Info */}
             <div className="flex items-start gap-4">
@@ -154,20 +172,24 @@ export default function CompanyDetailPage() {
               </div>
             </div>
 
-            {/* Apple Segmented Switcher */}
-            <div className="apple-segmented-group">
+            {/* Standard Switcher */}
+            <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
               <button
                 onClick={() => setStandard("BIST_KATILIM_DIB")}
-                className={`apple-segmented-item ${
-                  isBist ? "active text-emerald-700" : ""
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  isBist
+                    ? "bg-white text-emerald-800 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 BIST Katılım (&lt;%33)
               </button>
               <button
                 onClick={() => setStandard("AAOIFI_STD_21")}
-                className={`apple-segmented-item ${
-                  !isBist ? "active text-emerald-700" : ""
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  !isBist
+                    ? "bg-white text-emerald-800 shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 AAOIFI No.21 (&lt;%30)
@@ -183,7 +205,9 @@ export default function CompanyDetailPage() {
                 <span className="font-bold text-amber-900 block mb-0.5">
                   Hoşgörü Süresi Devrede ({data.gracePeriodInfo.consecutiveBreachQuarters}/{data.gracePeriodInfo.maxAllowedQuarters} Çeyrek)
                 </span>
-                <p className="font-normal leading-relaxed text-amber-800">{data.gracePeriodInfo.notes.join(" ")}</p>
+                <p className="font-normal leading-relaxed text-amber-800">
+                  {data.gracePeriodInfo.notes.join(" ")}
+                </p>
               </div>
             </div>
           )}
@@ -242,11 +266,11 @@ export default function CompanyDetailPage() {
           />
         )}
 
-        {/* Denominator Reference Metrics Card */}
+        {/* Reference Metrics Card */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm text-xs">
           <div>
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
-              Spot Piyasa Değeri
+              Piyasa Değeri
             </span>
             <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
               {formatTRY(data.ratios.spotMarketCapTRY, 0)}
@@ -254,15 +278,7 @@ export default function CompanyDetailPage() {
           </div>
           <div>
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
-              24 Aylık Ort. Piyasa Değeri
-            </span>
-            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
-              {formatTRY(data.ratios.mcapMA24mTRY, 0)}
-            </span>
-          </div>
-          <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
-              Toplam Varlıklar (Aktifler)
+              Toplam Aktifler
             </span>
             <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
               {formatTRY(data.ratios.totalAssetsTRY, 0)}
@@ -270,18 +286,23 @@ export default function CompanyDetailPage() {
           </div>
           <div>
             <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
-              Toplam Pay / Sermaye
+              Hisse Başı Arındırma
+            </span>
+            <span className="font-mono tabular-nums font-bold text-emerald-700 text-sm">
+              {data.purificationMetrics.purificationPerShareQuarterTRY} ₺
+            </span>
+          </div>
+          <div>
+            <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+              Hisse Başı Zekat Matrahı
             </span>
             <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
-              {formatTRY(data.purificationMetrics.totalSharesOutstanding, 0).replace("₺", "")} Pay
+              {data.purificationMetrics.zatableNetCurrentAssetsPerShareTRY} ₺
             </span>
           </div>
         </div>
 
-        {/* Footnote X-Ray Component */}
-        <FootnoteXRayCard footnote={data.footnoteVerification} ticker={ticker} />
-
-        {/* Embedded Purification Calculator Card */}
+        {/* Embedded Purification & Zakat Calculator Card */}
         <PurificationCalculatorCard
           ticker={ticker}
           purificationPerShareTRY={data.purificationMetrics.purificationPerShareQuarterTRY}

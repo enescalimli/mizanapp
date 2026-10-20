@@ -281,7 +281,7 @@ export default function HomePage() {
                 href="/companies/BIMAS"
                 className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold border border-slate-200 transition flex items-center gap-1"
               >
-                <span>Bilanço Dipnotu</span>
+                <span>Katılım Karnesi</span>
                 <ChevronRight size={14} />
               </Link>
             </div>

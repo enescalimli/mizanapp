@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import Decimal from "decimal.js";
-import { SAMPLE_COMPANIES_SUMMARY } from "@/lib/data/sampleCompanies";
+import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
 import { fetchStocksDataFromSupabase, isSupabaseConfigured } from "@/lib/supabaseClient";
 import { CompanySummary } from "@/types/katilim";
 
@@ -30,70 +30,70 @@ export interface KAPDisclosureDTO {
 
 const DEFAULT_KAP_DISCLOSURES: KAPDisclosureDTO[] = [
   {
-    disclosureId: "KAP-2026-1384920",
+    disclosureId: "KAP-2026-140210",
     ticker: "BIMAS",
     companyName: "BİM Birleşik Mağazalar A.Ş.",
-    title: "Katılım Finans İlkeleri Bilgi Formu (2026-Q2)",
+    title: "Katılım Finans İlkeleri Bilgi Formu (KAFİF)",
     category: "KATILIM_INFO_FORM",
     summary:
-      "Konsolide finansal tablolar uyarınca faizli borç oranı %14,80 ve uygun olmayan gelir oranı %1,45 olarak gerçekleşmiştir.",
-    publishedAt: "15:42",
+      "Faizli borç rasyosu %1.32, uygunsuz gelir oranı %0.23 olarak gerçekleşmiştir. BIST Katılım ve AAOIFI tam uygundur.",
+    publishedAt: "16:45",
     triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384920",
+    kapUrl: "https://www.kap.org.tr",
   },
   {
-    disclosureId: "KAP-2026-1384895",
-    ticker: "PGSUS",
-    companyName: "Pegasus Hava Taşımacılığı A.Ş.",
-    title: "Finansal Rapor (Konsolide Çeyreklik Bilanço & Dipnotlar)",
-    category: "FINANCIAL_REPORT",
-    summary:
-      "BIST Katılım (%33) eşiği altında (%31,40), AAOIFI (%30) sınır bölgesinde izlenmektedir; uygunluk durumu otomatik güncellendi.",
-    publishedAt: "14:55",
-    triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384895",
-  },
-  {
-    disclosureId: "KAP-2026-1384812",
-    ticker: "ASELS",
-    companyName: "Aselsan Elektronik San. ve Tic. A.Ş.",
-    title: "Yeni İş İlişkisi / Savunma Elektronik Sistem Sözleşmesi",
-    category: "MATERIAL_EVENT",
-    summary:
-      "ASELSAN ile uluslararası bir müşteri arasında 84,5 Milyon USD tutarında ihracat sözleşmesi imzalanmıştır.",
-    publishedAt: "13:20",
-    triggersRescreening: false,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384812",
-  },
-  {
-    disclosureId: "KAP-2026-1384760",
-    ticker: "FROTO",
-    companyName: "Ford Otomotiv Sanayi A.Ş.",
-    title: "Kâr Payı Dağıtım İşlemlerine İlişkin Bildirim",
+    disclosureId: "KAP-2026-140205",
+    ticker: "OBAMS",
+    companyName: "Oba Makarnacılık San. ve Tic. A.Ş.",
+    title: "Finansal Rapor ve Kâr Dağıtım Arındırma Oranı",
     category: "DIVIDEND_OR_CAPITAL",
     summary:
-      "Nakit kâr payı dağıtım tarihi güncellenmiştir; temettü arındırma oranı %1,65 olarak hesaplanmıştır.",
-    publishedAt: "11:10",
+      "2026 kâr payı dağıtımında hisse başı fıkhi arındırma oranı 0.0420 TL olarak onaylanmıştır.",
+    publishedAt: "15:20",
     triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384760",
+    kapUrl: "https://www.kap.org.tr",
   },
   {
-    disclosureId: "KAP-2026-1384690",
+    disclosureId: "KAP-2026-140192",
+    ticker: "ASELS",
+    companyName: "Aselsan Elektronik San. ve Tic. A.Ş.",
+    title: "Yeni Sözleşme / Savunma Elektroniği İhracatı",
+    category: "MATERIAL_EVENT",
+    summary:
+      "ASELSAN ile uluslararası bir kurum arasında 92 Milyon USD tutarında yeni sistem tedarik sözleşmesi imzalandı.",
+    publishedAt: "14:10",
+    triggersRescreening: false,
+    kapUrl: "https://www.kap.org.tr",
+  },
+  {
+    disclosureId: "KAP-2026-140180",
+    ticker: "EFORC",
+    companyName: "Efor Çay Sanayi Ticaret A.Ş.",
+    title: "KAFİF Katılım Finansı İlkeleri Beyanı",
+    category: "KATILIM_INFO_FORM",
+    summary:
+      "Şirketin faizli borç oranı %8.70 seviyesinde gerçekleşmiş olup BIST Katılım Endeksi kriterleri eksiksiz sağlanmaktadır.",
+    publishedAt: "11:35",
+    triggersRescreening: true,
+    kapUrl: "https://www.kap.org.tr",
+  },
+  {
+    disclosureId: "KAP-2026-140165",
     ticker: "THYAO",
     companyName: "Türk Hava Yolları A.O.",
-    title: "Finansal Rapor ve Uçak Finansmanı Kira Sertifikası / Kredi Dipnotu",
+    title: "Konsolide Finansal Rapor & Uçak Kiralama Yükümlülükleri",
     category: "FINANCIAL_REPORT",
     summary:
-      "Filo genişlemesi kapsamında finansal kiralama yükümlülükleri nedeniyle toplam faizli borç / piyasa değeri rasyosu güncellenmiştir.",
-    publishedAt: "10:05",
+      "Filo genişlemesi finansal kiralama borçları nedeniyle borç rasyosu %30.85 olarak izlenmektedir (BIST Katılım uygun, AAOIFI hoşgörü bandında).",
+    publishedAt: "09:50",
     triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384690",
+    kapUrl: "https://www.kap.org.tr",
   },
 ];
 
 async function fetchYahooBistQuote(ticker: string): Promise<LiveStockQuoteDTO | null> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 3200);
+  const timeout = setTimeout(() => controller.abort(), 2800);
   try {
     const res = await fetch(
       `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}.IS?interval=1d&range=5d`,
@@ -151,12 +151,11 @@ async function fetchYahooBistQuote(ticker: string): Promise<LiveStockQuoteDTO | 
 }
 
 export async function GET() {
-  const baseCompanies: CompanySummary[] = SAMPLE_COMPANIES_SUMMARY.map((c) => ({ ...c }));
+  const baseCompanies: CompanySummary[] = BIST_COMPREHENSIVE_UNIVERSE.map((c) => ({ ...c }));
   const quotesByTicker: Record<string, LiveStockQuoteDTO> = {};
-  let dataSource: "LIVE_HYBRID" | "SUPABASE_DB" | "CANONICAL_FALLBACK" =
-    "CANONICAL_FALLBACK";
+  let dataSource: "LIVE_HYBRID" | "SUPABASE_DB" | "CANONICAL" = "CANONICAL";
 
-  // 1. Varsa Supabase stocks_data tablosundan güncel kayıtları oku
+  // 1. Supabase varsa oku
   if (isSupabaseConfigured()) {
     try {
       const { data: dbRows } = await fetchStocksDataFromSupabase();
@@ -200,26 +199,33 @@ export async function GET() {
         }
       }
     } catch {
-      // Fallback to canonical + live Yahoo quotes
+      // Fallback
     }
   }
 
-  // 2. BIST hisseleri için paralel canlı fiyat sorgusu (Yahoo Finance .IS)
-  const tickers = baseCompanies.map((c) => c.ticker);
-  const liveResults = await Promise.all(tickers.map((t) => fetchYahooBistQuote(t)));
+  // 2. İlk 15 hisse için anlık Yahoo Finance canlı sorgusu yapalım
+  const primaryTickers = baseCompanies.slice(0, 15).map((c) => c.ticker);
+  const liveResults = await Promise.all(primaryTickers.map((t) => fetchYahooBistQuote(t)));
 
   let anyYahooLive = false;
-  for (let i = 0; i < baseCompanies.length; i++) {
-    const comp = baseCompanies[i];
+  for (let i = 0; i < primaryTickers.length; i++) {
     const liveQuote = liveResults[i];
     if (liveQuote) {
       anyYahooLive = true;
-      comp.priceTRY = liveQuote.priceTRY;
-      comp.change24h = liveQuote.change24h;
-      quotesByTicker[comp.ticker] = liveQuote;
-    } else if (!quotesByTicker[comp.ticker]) {
+      const comp = baseCompanies.find((c) => c.ticker === primaryTickers[i]);
+      if (comp) {
+        comp.priceTRY = liveQuote.priceTRY;
+        comp.change24h = liveQuote.change24h;
+      }
+      quotesByTicker[primaryTickers[i]] = liveQuote;
+    }
+  }
+
+  // Geri kalan hisseler için quotesByTicker tamamla
+  for (const comp of baseCompanies) {
+    if (!quotesByTicker[comp.ticker]) {
       const parsedChange = parseFloat(comp.change24h.replace("%", "").replace("+", "")) || 0;
-      const basePrice = parseFloat(comp.priceTRY) || 100;
+      const basePrice = parseFloat(comp.priceTRY) || 50;
       quotesByTicker[comp.ticker] = {
         ticker: comp.ticker,
         priceTRY: comp.priceTRY,

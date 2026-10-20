@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { SAMPLE_COMPANIES_SUMMARY } from "@/lib/data/sampleCompanies";
+import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
 import { CompanySummary } from "@/types/katilim";
 import type { KAPDisclosureDTO, LiveStockQuoteDTO } from "@/app/api/live-market/route";
 
@@ -10,57 +10,81 @@ export interface UseLiveMarketDataReturn {
   quotes: Record<string, LiveStockQuoteDTO>;
   kapDisclosures: KAPDisclosureDTO[];
   updatedAt: string | null;
-  source: "LIVE_HYBRID" | "SUPABASE_DB" | "CANONICAL_FALLBACK";
+  source: "LIVE_HYBRID" | "SUPABASE_DB" | "CANONICAL" | "CANONICAL_FALLBACK";
   isRefreshing: boolean;
   refreshNow: () => Promise<void>;
 }
 
 const INITIAL_KAP_FEED: KAPDisclosureDTO[] = [
   {
-    disclosureId: "KAP-2026-1384920",
+    disclosureId: "KAP-2026-140210",
     ticker: "BIMAS",
     companyName: "BİM Birleşik Mağazalar A.Ş.",
-    title: "Katılım Finans İlkeleri Bilgi Formu (2026-Q2)",
+    title: "Katılım Finans İlkeleri Bilgi Formu (KAFİF)",
     category: "KATILIM_INFO_FORM",
     summary:
-      "Konsolide finansal tablolar uyarınca faizli borç oranı %14,80 ve uygun olmayan gelir oranı %1,45 olarak gerçekleşmiştir.",
-    publishedAt: "15:42",
+      "Faizli borç rasyosu %1.32, uygunsuz gelir oranı %0.23 olarak gerçekleşmiştir. BIST Katılım ve AAOIFI tam uygundur.",
+    publishedAt: "16:45",
     triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384920",
+    kapUrl: "https://www.kap.org.tr",
   },
   {
-    disclosureId: "KAP-2026-1384895",
-    ticker: "PGSUS",
-    companyName: "Pegasus Hava Taşımacılığı A.Ş.",
-    title: "Finansal Rapor (Konsolide Çeyreklik Bilanço & Dipnotlar)",
-    category: "FINANCIAL_REPORT",
-    summary:
-      "BIST Katılım (%33) eşiği altında (%31,40), AAOIFI (%30) sınır bölgesinde izlenmektedir; uygunluk durumu otomatik güncellendi.",
-    publishedAt: "14:55",
-    triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384895",
-  },
-  {
-    disclosureId: "KAP-2026-1384760",
-    ticker: "FROTO",
-    companyName: "Ford Otomotiv Sanayi A.Ş.",
-    title: "Kâr Payı Dağıtım İşlemlerine İlişkin Bildirim",
+    disclosureId: "KAP-2026-140205",
+    ticker: "OBAMS",
+    companyName: "Oba Makarnacılık San. ve Tic. A.Ş.",
+    title: "Finansal Rapor ve Kâr Dağıtım Arındırma Oranı",
     category: "DIVIDEND_OR_CAPITAL",
     summary:
-      "Nakit kâr payı dağıtım tarihi güncellenmiştir; temettü arındırma oranı %1,65 olarak hesaplanmıştır.",
-    publishedAt: "11:10",
+      "2026 kâr payı dağıtımında hisse başı fıkhi arındırma oranı 0.0420 TL olarak onaylanmıştır.",
+    publishedAt: "15:20",
     triggersRescreening: true,
-    kapUrl: "https://www.kap.org.tr/tr/Bildirim/1384760",
+    kapUrl: "https://www.kap.org.tr",
+  },
+  {
+    disclosureId: "KAP-2026-140192",
+    ticker: "ASELS",
+    companyName: "Aselsan Elektronik San. ve Tic. A.Ş.",
+    title: "Yeni Sözleşme / Savunma Elektroniği İhracatı",
+    category: "MATERIAL_EVENT",
+    summary:
+      "ASELSAN ile uluslararası bir kurum arasında 92 Milyon USD tutarında yeni sistem tedarik sözleşmesi imzalandı.",
+    publishedAt: "14:10",
+    triggersRescreening: false,
+    kapUrl: "https://www.kap.org.tr",
+  },
+  {
+    disclosureId: "KAP-2026-140180",
+    ticker: "EFORC",
+    companyName: "Efor Çay Sanayi Ticaret A.Ş.",
+    title: "KAFİF Katılım Finansı İlkeleri Beyanı",
+    category: "KATILIM_INFO_FORM",
+    summary:
+      "Şirketin faizli borç oranı %8.70 seviyesinde gerçekleşmiş olup BIST Katılım Endeksi kriterleri eksiksiz sağlanmaktadır.",
+    publishedAt: "11:35",
+    triggersRescreening: true,
+    kapUrl: "https://www.kap.org.tr",
+  },
+  {
+    disclosureId: "KAP-2026-140165",
+    ticker: "THYAO",
+    companyName: "Türk Hava Yolları A.O.",
+    title: "Konsolide Finansal Rapor & Uçak Kiralama Yükümlülükleri",
+    category: "FINANCIAL_REPORT",
+    summary:
+      "Filo genişlemesi finansal kiralama borçları nedeniyle borç rasyosu %30.85 olarak izlenmektedir (BIST Katılım uygun, AAOIFI hoşgörü bandında).",
+    publishedAt: "09:50",
+    triggersRescreening: true,
+    kapUrl: "https://www.kap.org.tr",
   },
 ];
 
 export function useLiveMarketData(pollIntervalMs: number = 30000): UseLiveMarketDataReturn {
-  const [companies, setCompanies] = useState<CompanySummary[]>(SAMPLE_COMPANIES_SUMMARY);
+  const [companies, setCompanies] = useState<CompanySummary[]>(BIST_COMPREHENSIVE_UNIVERSE);
   const [quotes, setQuotes] = useState<Record<string, LiveStockQuoteDTO>>({});
   const [kapDisclosures, setKapDisclosures] = useState<KAPDisclosureDTO[]>(INITIAL_KAP_FEED);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const [source, setSource] = useState<"LIVE_HYBRID" | "SUPABASE_DB" | "CANONICAL_FALLBACK">(
-    "CANONICAL_FALLBACK"
+  const [source, setSource] = useState<"LIVE_HYBRID" | "SUPABASE_DB" | "CANONICAL" | "CANONICAL_FALLBACK">(
+    "CANONICAL"
   );
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
@@ -98,10 +122,11 @@ export function useLiveMarketData(pollIntervalMs: number = 30000): UseLiveMarket
 
   useEffect(() => {
     refreshNow();
-    if (pollIntervalMs <= 0) return;
-    const timer = setInterval(refreshNow, pollIntervalMs);
-    return () => clearInterval(timer);
-  }, [pollIntervalMs, refreshNow]);
+    if (pollIntervalMs > 0) {
+      const interval = setInterval(refreshNow, pollIntervalMs);
+      return () => clearInterval(interval);
+    }
+  }, [refreshNow, pollIntervalMs]);
 
   return {
     companies,

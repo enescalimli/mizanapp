@@ -1,369 +1,429 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Calendar,
   CheckCircle2,
-  AlertOctagon,
+  XCircle,
+  HelpCircle,
   AlertTriangle,
-  Clock,
-  Coins,
-  ShieldCheck,
-  Search,
   ExternalLink,
-  Info,
+  Search,
   Sparkles,
+  TrendingUp,
+  TrendingDown,
+  Layers,
+  Calculator,
+  ShieldCheck,
+  Building2,
+  Coins,
+  RefreshCw,
 } from "lucide-react";
-import { SpotlightCard } from "@/components/SpotlightCard";
-import { IpoCalendarItem, fetchIpoCalendarFromSupabase } from "@/lib/supabaseClient";
+import { BistIpoItem } from "@/lib/data/realBistIpos";
 import { formatTRY } from "@/lib/decimal/decimal";
 
-// Fallback Seed Data (Matches Supabase ipo_calendar initial rows)
-const INITIAL_IPO_DATA: IpoCalendarItem[] = [
-  {
-    id: "ipo-1",
-    company_name: "Mizan Yenilenebilir Enerji A.Ş.",
-    ticker: "MIZAN",
-    ipo_date_range: "22-24 Ekim 2026",
-    ipo_start_date: "2026-10-22",
-    ipo_end_date: "2026-10-24",
-    ipo_price_try: "42.50",
-    total_shares_offered: "45000000",
-    issue_size_try: "1912500000.00",
-    distribution_method: "EŞİT DAĞITIM",
-    lead_consortium: "Vakıf Yatırım Menkul Değerler",
-    katilim_status: "COMPLIANT",
-    is_bist_katilim_suitable: true,
-    prospectus_shariah_decision:
-      "İzahnamenin 2.4 ve 8.1 maddeleri incelenmiş olup, şirketin faaliyet alanı güneş ve rüzgar enerjisi santralleri yatırımıdır. Faizli borç oranı %14.2 olup TKBB ve BIST Katılım kriterlerine (%33) tam uygundur.",
-    fund_usage_shariah_compliant: true,
-    interest_debt_ratio_percent: 14.2,
-    impure_income_ratio_percent: 0.85,
-    prospectus_url: "https://kap.gov.tr/mizan-izahname",
-  },
-  {
-    id: "ipo-2",
-    company_name: "Anadolu Katılım Lojistik A.Ş.",
-    ticker: "AKLOG",
-    ipo_date_range: "28-30 Ekim 2026",
-    ipo_start_date: "2026-10-28",
-    ipo_end_date: "2026-10-30",
-    ipo_price_try: "28.00",
-    total_shares_offered: "60000000",
-    issue_size_try: "1680000000.00",
-    distribution_method: "EŞİT DAĞITIM",
-    lead_consortium: "Halk Yatırım Menkul Değerler",
-    katilim_status: "COMPLIANT",
-    is_bist_katilim_suitable: true,
-    prospectus_shariah_decision:
-      "Şirket uluslararası kara ve demiryolu taşımacılığı yapmaktadır. Halka arzdan elde edilecek net gelirin %80'i elektrikli çekici filosu alımında kullanılacaktır. Faizli kredi kapama payı sınır içindedir.",
-    fund_usage_shariah_compliant: true,
-    interest_debt_ratio_percent: 19.8,
-    impure_income_ratio_percent: 1.4,
-    prospectus_url: "https://kap.gov.tr/aklog-izahname",
-  },
-  {
-    id: "ipo-3",
-    company_name: "Neo Finans Faktoring A.Ş.",
-    ticker: "NEOFA",
-    ipo_date_range: "5-7 Kasım 2026",
-    ipo_start_date: "2026-11-05",
-    ipo_end_date: "2026-11-07",
-    ipo_price_try: "18.50",
-    total_shares_offered: "30000000",
-    issue_size_try: "555000000.00",
-    distribution_method: "ORANSAL DAĞITIM",
-    lead_consortium: "Garanti BBVA Yatırım",
-    katilim_status: "NON_COMPLIANT",
-    is_bist_katilim_suitable: false,
-    prospectus_shariah_decision:
-      "Ana faaliyet konusu geleneksel faktoring ve iskonto/faizli alacak temliki olduğundan TKBB ve AAOIFI standartlarına göre katılım endeksine UYGUN DEĞİLDİR.",
-    fund_usage_shariah_compliant: false,
-    interest_debt_ratio_percent: 84.5,
-    impure_income_ratio_percent: 92.0,
-    prospectus_url: "https://kap.gov.tr/neofa-izahname",
-  },
-  {
-    id: "ipo-4",
-    company_name: "Bereket Tarım ve Gıda Sanayi A.Ş.",
-    ticker: "BERKT",
-    ipo_date_range: "12-14 Kasım 2026",
-    ipo_start_date: "2026-11-12",
-    ipo_end_date: "2026-11-14",
-    ipo_price_try: "34.70",
-    total_shares_offered: "25000000",
-    issue_size_try: "867500000.00",
-    distribution_method: "EŞİT DAĞITIM",
-    lead_consortium: "Ziraat Yatırım",
-    katilim_status: "COMPLIANT_WITH_PURIFICATION",
-    is_bist_katilim_suitable: true,
-    prospectus_shariah_decision:
-      "Sera ve organik tarım faaliyeti yürütmektedir. Faizli borç oranı %24.6, faizli nakit oranı %12.1 ile eşik altındadır. Vadeli mevduattan elde edilen %1.85 faiz geliri için pay başına 0.042 ₺ arındırma şartı bulunmaktadır.",
-    fund_usage_shariah_compliant: true,
-    interest_debt_ratio_percent: 24.6,
-    impure_income_ratio_percent: 1.85,
-    prospectus_url: "https://kap.gov.tr/berkt-izahname",
-  },
-];
-
 export default function IpoCalendarPage() {
-  const [ipoList, setIpoList] = useState<IpoCalendarItem[]>(INITIAL_IPO_DATA);
-  const [filterStatus, setFilterStatus] = useState<string>("ALL");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isFromSupabase, setIsFromSupabase] = useState<boolean>(false);
+  const [ipos, setIpos] = useState<BistIpoItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT">("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [stats, setStats] = useState({
+    totalCount: 0,
+    compliantCount: 0,
+    nonCompliantCount: 0,
+    complianceRatePercent: 0,
+  });
+
+  // Lot Hesaplama Modülü State'leri
+  const [targetIpo, setTargetIpo] = useState<BistIpoItem | null>(null);
+  const [expectedParticipants, setExpectedParticipants] = useState<number>(2_500_000);
+  const [calculatedLots, setCalculatedLots] = useState<number>(0);
+  const [requiredCapitalTRY, setRequiredCapitalTRY] = useState<number>(0);
 
   useEffect(() => {
-    fetchIpoCalendarFromSupabase().then(({ data, error }) => {
-      if (data && data.length > 0) {
-        setIpoList(data);
-        setIsFromSupabase(true);
+    async function fetchIpos() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/ipo");
+        if (res.ok) {
+          const json = await res.json();
+          setIpos(json.ipos || []);
+          setStats(json.stats || {});
+          if (json.ipos && json.ipos.length > 0) {
+            setTargetIpo(json.ipos[0]);
+          }
+        }
+      } catch (err) {
+        console.error("IPO fetch error:", err);
+      } finally {
+        setLoading(false);
       }
-    });
+    }
+    fetchIpos();
   }, []);
 
-  const filteredItems = useMemo(() => {
-    return ipoList.filter((item) => {
-      const matchesSearch =
-        item.company_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.ticker.toLowerCase().includes(searchQuery.toLowerCase());
+  // Hedef IPO veya katılımcı sayısı değiştiğinde lot hesapla
+  useEffect(() => {
+    if (targetIpo && expectedParticipants > 0) {
+      // Bireysele eşit dağıtımda tahmini lot = Toplam Lot / Tahmini Katılımcı
+      const approxLots = Math.max(1, Math.round(targetIpo.totalLotCount / expectedParticipants));
+      setCalculatedLots(approxLots);
+      setRequiredCapitalTRY(approxLots * targetIpo.ipoPriceTRY);
+    }
+  }, [targetIpo, expectedParticipants]);
 
-      if (!matchesSearch) return false;
+  const filteredIpos = ipos.filter((item) => {
+    const matchesFilter =
+      filter === "ALL"
+        ? true
+        : filter === "COMPLIANT"
+        ? item.isKatilimCompliant
+        : !item.isKatilimCompliant;
 
-      if (filterStatus === "COMPLIANT") {
-        return item.katilim_status === "COMPLIANT" || item.katilim_status === "COMPLIANT_WITH_PURIFICATION";
-      }
-      if (filterStatus === "NON_COMPLIANT") {
-        return item.katilim_status === "NON_COMPLIANT";
-      }
-      return true;
-    });
-  }, [ipoList, searchQuery, filterStatus]);
+    const matchesSearch =
+      searchQuery === ""
+        ? true
+        : item.ticker.includes(searchQuery.toUpperCase()) ||
+          item.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.sector.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesFilter && matchesSearch;
+  });
 
   return (
-    <div className="space-y-8 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 pb-4 border-b border-slate-200">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2.5">
-              <Calendar className="text-emerald-700" />
-              <span>Katılım Halka Arz Takvimi</span>
+    <main className="min-h-screen bg-slate-50 text-slate-900 pb-24">
+      {/* Hero Header */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="max-w-3xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+              <ShieldCheck size={14} className="text-emerald-600" />
+              <span>SPK İzahname &amp; KAFİF Onaylı Resmi Veriler</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Borsa İstanbul Halka Arz Katılım Takvimi
             </h1>
+            <p className="text-base text-slate-600 leading-relaxed font-normal">
+              Yeni halka arz edilen tüm şirketlerin Katılım Finansı İlkeleri Bilgi Formu (KAFİF)
+              ve faizsiz finans standartlarına uygunluğu anlık olarak taranır.
+            </p>
+          </div>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="font-mono text-[11px] tabular-nums">
-                {isFromSupabase ? "Supabase Canlı DB" : "Aktif İzahname Analizleri"}
+          {/* Quick Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block">
+                Toplam Taranan Arz
+              </span>
+              <span className="text-2xl font-extrabold text-slate-900 font-mono mt-1 block">
+                {stats.totalCount} Şirket
+              </span>
+            </div>
+            <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4">
+              <span className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider block">
+                Katılım Endeksine Uygun
+              </span>
+              <span className="text-2xl font-extrabold text-emerald-800 font-mono mt-1 block">
+                {stats.compliantCount} Arz (%{stats.complianceRatePercent})
+              </span>
+            </div>
+            <div className="bg-rose-50/70 border border-rose-200 rounded-2xl p-4">
+              <span className="text-[11px] font-semibold text-rose-700 uppercase tracking-wider block">
+                Kapsam Dışı (Uygun Değil)
+              </span>
+              <span className="text-2xl font-extrabold text-rose-800 font-mono mt-1 block">
+                {stats.nonCompliantCount} Arz
+              </span>
+            </div>
+            <div className="bg-blue-50/70 border border-blue-200 rounded-2xl p-4">
+              <span className="text-[11px] font-semibold text-blue-700 uppercase tracking-wider block">
+                Canlı Fiyat Senkronizasyonu
+              </span>
+              <span className="text-2xl font-extrabold text-blue-800 font-mono mt-1 block flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                7/24 Aktif
               </span>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mt-1 font-normal">
-            BIST Halka arzlarının SPK onaylı izahnamelerindeki katılım finans ilkeleri, fon kullanım yeri ve arındırma analizleri.
-          </p>
         </div>
+      </div>
 
-        {/* Filter Controls */}
-        <div className="flex items-center gap-3">
-          <div className="apple-segmented-group">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+        {/* Interactive Lot Calculator Tool */}
+        {targetIpo && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm relative overflow-hidden">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-700">
+                  <Calculator size={24} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900 tracking-tight">
+                    Halka Arz Katılım ve Tahmini Lot Hesaplayıcı
+                  </h2>
+                  <p className="text-xs text-slate-500 font-normal">
+                    Tahmini katılımcı sayısına göre hesabınıza kaç lot düşeceğini ve gereken nakit tutarı anında hesaplayın.
+                  </p>
+                </div>
+              </div>
+
+              {/* Company Selector */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-semibold text-slate-600">Şirket Seçin:</label>
+                <select
+                  value={targetIpo.ticker}
+                  onChange={(e) => {
+                    const found = ipos.find((i) => i.ticker === e.target.value);
+                    if (found) setTargetIpo(found);
+                  }}
+                  className="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  {ipos.map((i) => (
+                    <option key={i.ticker} value={i.ticker}>
+                      {i.ticker} - {i.companyName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
+              {/* Slider Input */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-semibold text-slate-700">Tahmini Katılımcı Sayısı:</span>
+                  <span className="font-mono font-bold text-slate-900">
+                    {expectedParticipants.toLocaleString("tr-TR")} Kişi
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="500000"
+                  max="4500000"
+                  step="100000"
+                  value={expectedParticipants}
+                  onChange={(e) => setExpectedParticipants(Number(e.target.value))}
+                  className="w-full accent-emerald-600 cursor-pointer"
+                />
+                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <span>500 Bin</span>
+                  <span>2.5 Milyon (Ort.)</span>
+                  <span>4.5 Milyon</span>
+                </div>
+              </div>
+
+              {/* Result 1: Calculated Lots */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-center">
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                  Kişi Başı Tahmini Dağıtım
+                </span>
+                <div className="text-2xl font-extrabold text-slate-900 font-mono mt-1">
+                  ~{calculatedLots} Lot
+                  <span className="text-xs font-normal text-slate-500 ml-2">
+                    (@{targetIpo.ipoPriceTRY.toFixed(2)} ₺)
+                  </span>
+                </div>
+              </div>
+
+              {/* Result 2: Required Capital */}
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col justify-center">
+                <span className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">
+                  Gereken Yaklaşık Teminat
+                </span>
+                <div className="text-2xl font-extrabold text-emerald-900 font-mono mt-1">
+                  {formatTRY(requiredCapitalTRY, 2)}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Filter and Search Bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-1.5 bg-slate-200/80 p-1 rounded-2xl w-full sm:w-auto">
             <button
-              type="button"
-              onClick={() => setFilterStatus("ALL")}
-              className={`apple-segmented-item ${
-                filterStatus === "ALL" ? "active text-emerald-700" : ""
+              onClick={() => setFilter("ALL")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                filter === "ALL"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Tümü ({ipoList.length})
+              Tüm Halka Arzlar ({ipos.length})
             </button>
             <button
-              type="button"
-              onClick={() => setFilterStatus("COMPLIANT")}
-              className={`apple-segmented-item ${
-                filterStatus === "COMPLIANT" ? "active text-emerald-700" : ""
+              onClick={() => setFilter("COMPLIANT")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                filter === "COMPLIANT"
+                  ? "bg-emerald-600 text-white shadow-xs"
+                  : "text-slate-600 hover:text-emerald-700"
               }`}
             >
-              Katılıma Uygun
+              <CheckCircle2 size={13} />
+              <span>Katılım Uygun ({stats.compliantCount})</span>
             </button>
             <button
-              type="button"
-              onClick={() => setFilterStatus("NON_COMPLIANT")}
-              className={`apple-segmented-item ${
-                filterStatus === "NON_COMPLIANT" ? "active text-rose-700" : ""
+              onClick={() => setFilter("NON_COMPLIANT")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                filter === "NON_COMPLIANT"
+                  ? "bg-rose-600 text-white shadow-xs"
+                  : "text-slate-600 hover:text-rose-700"
               }`}
             >
-              Kapsam Dışı
+              <XCircle size={13} />
+              <span>Kapsam Dışı ({stats.nonCompliantCount})</span>
             </button>
           </div>
+
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+            <input
+              type="text"
+              placeholder="Hisse kodu, şirket veya sektör..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-slate-300 text-xs text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Search Bar */}
-      <div className="relative max-w-md">
-        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-          <Search size={15} />
-        </div>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Şirket adı veya hisse kodu ile ara (Örn: MIZAN)..."
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs sm:text-sm font-medium focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-400 shadow-2xs"
-        />
-      </div>
+        {/* IPO Cards Grid */}
+        {loading ? (
+          <div className="py-20 flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs font-semibold text-slate-500 font-mono">
+              BIST Halka Arz Verileri Taranıyor...
+            </span>
+          </div>
+        ) : filteredIpos.length === 0 ? (
+          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200">
+            <HelpCircle size={40} className="mx-auto text-slate-400 mb-3" />
+            <h3 className="text-base font-bold text-slate-900">Sonuç Bulunamadı</h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Arama kriterlerinize uyan halka arz kaydı bulunamadı.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredIpos.map((ipo) => {
+              const isGain = ipo.changeSinceIpoPercent >= 0;
+              return (
+                <div
+                  key={ipo.id}
+                  className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all duration-200 hover:shadow-md ${
+                    ipo.isKatilimCompliant
+                      ? "border-slate-200 hover:border-emerald-300"
+                      : "border-slate-200 hover:border-rose-300"
+                  }`}
+                >
+                  {/* Card Header */}
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-14 h-14 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center font-extrabold text-slate-900 font-mono text-base shadow-xs">
+                        {ipo.ticker}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-slate-900 tracking-tight">
+                            {ipo.companyName}
+                          </h3>
+                        </div>
+                        <span className="text-xs text-slate-500 font-normal block mt-0.5">
+                          {ipo.sector} &bull; {ipo.distributionMethod}
+                        </span>
+                      </div>
+                    </div>
 
-      {/* IPO Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {filteredItems.map((item) => {
-          const isCompliant = item.katilim_status === "COMPLIANT";
-          const isWithPurif = item.katilim_status === "COMPLIANT_WITH_PURIFICATION";
-          const isNonCompliant = item.katilim_status === "NON_COMPLIANT";
-
-          return (
-            <SpotlightCard
-              key={item.id}
-              className={`p-6 border ${
-                isNonCompliant
-                  ? "border-rose-200 hover:border-rose-300"
-                  : isWithPurif
-                  ? "border-amber-200 hover:border-amber-300"
-                  : "border-slate-200 hover:border-emerald-300"
-              }`}
-            >
-              {/* Card Header */}
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-slate-900 font-mono tracking-tight">
-                      {item.ticker}
-                    </span>
-                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
-                      {item.distribution_method}
-                    </span>
+                    {/* Katılım Status Badge */}
+                    {ipo.isKatilimCompliant ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shrink-0">
+                        <CheckCircle2 size={13} className="text-emerald-600" />
+                        <span>Katılıma Uygun</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold shrink-0">
+                        <XCircle size={13} className="text-rose-600" />
+                        <span>Kapsam Dışı</span>
+                      </span>
+                    )}
                   </div>
-                  <h3 className="text-xs font-semibold text-slate-700 mt-0.5">
-                    {item.company_name}
-                  </h3>
-                </div>
 
-                {/* Katılım Status Badge */}
-                <div>
-                  {isCompliant ? (
-                    <span className="badge-apple-emerald text-[11px] py-1 px-2.5">
-                      <CheckCircle2 size={13} />
-                      <span>Katılıma Uygun</span>
-                    </span>
-                  ) : isWithPurif ? (
-                    <span className="badge-apple-amber text-[11px] py-1 px-2.5">
-                      <AlertTriangle size={13} />
-                      <span>Arındırma ile Uygun</span>
-                    </span>
-                  ) : (
-                    <span className="badge-apple-rose text-[11px] py-1 px-2.5">
-                      <AlertOctagon size={13} />
-                      <span>Katılıma Uygun Değil</span>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Key IPO Metrics */}
-              <div className="grid grid-cols-3 gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200 mb-4">
-                <div>
-                  <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
-                    Halka Arz Fiyatı
-                  </span>
-                  <span className="text-sm font-bold font-mono text-slate-900 mt-0.5 block tabular-nums">
-                    {formatTRY(item.ipo_price_try, 2)}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
-                    Talep Tarihleri
-                  </span>
-                  <span className="text-xs font-semibold font-mono text-slate-800 mt-1 block">
-                    {item.ipo_date_range}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[9px] uppercase font-semibold text-slate-400 block tracking-wider">
-                    Halka Arz Büyüklüğü
-                  </span>
-                  <span className="text-sm font-bold font-mono text-emerald-700 mt-0.5 block tabular-nums">
-                    {formatTRY(item.issue_size_try, 0)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Financial Ratios Row */}
-              <div className="flex items-center gap-4 text-xs font-mono mb-4 text-slate-500">
-                <div>
-                  <span className="text-[10px] text-slate-400">Faizli Borç Oranı: </span>
-                  <span
-                    className={`font-semibold ${
-                      (item.interest_debt_ratio_percent || 0) <= 33
-                        ? "text-emerald-700"
-                        : "text-rose-700"
-                    }`}
-                  >
-                    %{item.interest_debt_ratio_percent?.toFixed(1) || "0.0"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400">Uygunsuz Gelir: </span>
-                  <span
-                    className={`font-semibold ${
-                      (item.impure_income_ratio_percent || 0) <= 5
-                        ? "text-emerald-700"
-                        : "text-rose-700"
-                    }`}
-                  >
-                    %{item.impure_income_ratio_percent?.toFixed(2) || "0.00"}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400">Fon Yeri: </span>
-                  <span
-                    className={`font-semibold ${
-                      item.fund_usage_shariah_compliant
-                        ? "text-emerald-700"
-                        : "text-rose-700"
-                    }`}
-                  >
-                    {item.fund_usage_shariah_compliant ? "Caiz" : "Uygunsuz"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Shariah Decision Summary */}
-              {item.prospectus_shariah_decision && (
-                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed font-normal">
-                  <div className="flex items-center gap-1.5 text-slate-500 text-[10px] font-semibold uppercase tracking-wider mb-1">
-                    <Info size={12} className="text-emerald-700" />
-                    <span>İzahname Katılım Finans Raporu</span>
+                  {/* Pricing and Return Stats */}
+                  <div className="grid grid-cols-3 gap-3 my-5 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div>
+                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                        Arz Fiyatı
+                      </span>
+                      <span className="text-sm font-bold text-slate-900 font-mono mt-0.5 block">
+                        {ipo.ipoPriceTRY.toFixed(2)} ₺
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                        Güncel Fiyat
+                      </span>
+                      <span className="text-sm font-bold text-slate-900 font-mono mt-0.5 block">
+                        {ipo.currentPriceTRY.toFixed(2)} ₺
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                        Halka Arz Getirisi
+                      </span>
+                      <span
+                        className={`text-sm font-bold font-mono mt-0.5 flex items-center gap-1 ${
+                          isGain ? "text-emerald-700" : "text-rose-700"
+                        }`}
+                      >
+                        {isGain ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
+                        {isGain ? "+" : ""}
+                        {ipo.changeSinceIpoPercent.toFixed(2)}%
+                      </span>
+                    </div>
                   </div>
-                  <p>{item.prospectus_shariah_decision}</p>
-                </div>
-              )}
 
-              {/* Footer / Lead Consortium */}
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                <span>Konsorsiyum Lideri: {item.lead_consortium || "Belirtilmedi"}</span>
-                {item.prospectus_url && (
-                  <a
-                    href={item.prospectus_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-emerald-700 hover:text-emerald-800 flex items-center gap-1 font-semibold"
+                  {/* KAFİF Analysis Box */}
+                  <div
+                    className={`p-4 rounded-2xl text-xs space-y-2 ${
+                      ipo.isKatilimCompliant
+                        ? "bg-emerald-50/60 border border-emerald-200 text-emerald-950"
+                        : "bg-rose-50/60 border border-rose-200 text-rose-950"
+                    }`}
                   >
-                    <span>İzahname (KAP)</span>
-                    <ExternalLink size={11} />
-                  </a>
-                )}
-              </div>
-            </SpotlightCard>
-          );
-        })}
+                    <div className="flex items-center justify-between font-bold">
+                      <span className="flex items-center gap-1.5">
+                        <ShieldCheck size={14} className={ipo.isKatilimCompliant ? "text-emerald-700" : "text-rose-700"} />
+                        KAFİF Fıkhi Uygunluk Analizi
+                      </span>
+                      <span className="font-mono text-[11px] opacity-80">
+                        Borç: {ipo.kafifSummary.interestDebtRatio}
+                      </span>
+                    </div>
+                    <p className="font-normal text-[11.5px] leading-relaxed opacity-90">
+                      {ipo.complianceReason}
+                    </p>
+                  </div>
+
+                  {/* Footer details */}
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span className="font-medium text-slate-600">
+                      {ipo.consortiumLead}
+                    </span>
+                    <Link
+                      href={`/companies/${ipo.ticker}`}
+                      className="font-bold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1"
+                    >
+                      <span>Fıkhi Detay</span>
+                      <ExternalLink size={12} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-    </div>
+    </main>
   );
 }

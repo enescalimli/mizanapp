@@ -168,7 +168,7 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
                         onClick={onClose}
                         className="text-emerald-700 hover:text-emerald-800 font-semibold inline-flex items-center gap-1"
                       >
-                        <span>X-Ray İncele</span>
+                        <span>Katılım Detayı</span>
                         <ExternalLink size={12} />
                       </Link>
                     </div>
