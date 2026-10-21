@@ -4,7 +4,7 @@ import { FloatingBottomBar } from "@/components/FloatingBottomBar";
 import { AuthProvider } from "@/lib/auth/AuthContext";
 
 export const metadata: Metadata = {
-  title: "payno katılım — Borsa İstanbul Helal Hisse Tarama & Arındırma Platformu",
+  title: "mizan katılım — Borsa İstanbul Helal Hisse Tarama & Arındırma Platformu",
   description:
     "BIST Katılım (DİB/TKBB) ve AAOIFI standartlarında hisse uygunluk tarama, KAP bilanço dipnot analizi, kuruşu kuruşuna arındırma ve hisse zekatı hesaplayıcı.",
   icons: {

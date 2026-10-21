@@ -85,25 +85,33 @@ export const LeftDockSidebar: React.FC = () => {
       <div className="flex flex-col items-center gap-3.5">
         <div className="group relative flex items-center">
           <Link
-            href="/portfolio"
-            className="w-10 h-10 rounded-full bg-white/70 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/80 shadow-xs flex items-center justify-center transition-all duration-200 hover:scale-105"
+            href="/ayarlar"
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+              pathname.startsWith("/ayarlar")
+                ? "bg-[#182542] text-white shadow-md shadow-[#182542]/25 scale-105"
+                : "bg-white/70 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/80 shadow-xs hover:scale-105"
+            }`}
           >
-            <Settings size={18} strokeWidth={1.9} />
+            <Settings size={18} strokeWidth={pathname.startsWith("/ayarlar") ? 2.4 : 1.9} />
           </Link>
           <span className="pointer-events-none absolute left-14 z-50 whitespace-nowrap rounded-xl bg-[#182542] px-3 py-1.5 text-xs font-bold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1">
-            Portföy &amp; Bildirim Ayarları
+            Ayarlar &amp; Tercihler
           </span>
         </div>
 
         <div className="group relative flex items-center">
           <Link
             href="/auth/login"
-            className="w-10 h-10 rounded-full bg-white/70 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/80 shadow-xs flex items-center justify-center transition-all duration-200 hover:scale-105"
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
+              pathname.startsWith("/auth")
+                ? "bg-[#182542] text-white shadow-md shadow-[#182542]/25 scale-105"
+                : "bg-white/70 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/80 shadow-xs hover:scale-105"
+            }`}
           >
-            <User size={18} strokeWidth={1.9} />
+            <User size={18} strokeWidth={pathname.startsWith("/auth") ? 2.4 : 1.9} />
           </Link>
           <span className="pointer-events-none absolute left-14 z-50 whitespace-nowrap rounded-xl bg-[#182542] px-3 py-1.5 text-xs font-bold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1">
-            Giriş Yap / Profil
+            Giriş Yap / Hesap
           </span>
         </div>
       </div>

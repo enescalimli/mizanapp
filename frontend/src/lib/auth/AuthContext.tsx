@@ -22,6 +22,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   loginAsDemoUser: () => void;
+  loginWithDetails: (email: string, fullName: string) => void;
 }
 
 const DEMO_USER: User = {
@@ -97,9 +98,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Demo oturumu yerel depodan kontrol et
+    // Demo veya Google oturumunu yerel depodan kontrol et
     const savedDemo = typeof window !== "undefined" ? localStorage.getItem("mizanapp_demo_auth") : null;
-    if (savedDemo === "true") {
+    if (savedDemo) {
+      try {
+        const parsed = JSON.parse(savedDemo);
+        if (parsed && parsed.email) {
+          loginWithDetails(parsed.email, parsed.fullName || parsed.email.split("@")[0]);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Plain string "true"
+      }
       setUser(DEMO_USER);
       setProfile(DEMO_PROFILE);
       setIsDemoUser(true);
@@ -206,11 +217,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const loginAsDemoUser = () => {
-    setUser(DEMO_USER);
-    setProfile(DEMO_PROFILE);
+    loginWithDetails("demo@mizanapp.tr", "Katılım Yatırımcısı (Demo)");
+  };
+
+  const loginWithDetails = (email: string, fullName: string) => {
+    const customUser: User = {
+      id: `usr-${Date.now()}`,
+      app_metadata: { provider: "google" },
+      user_metadata: { full_name: fullName },
+      aud: "authenticated",
+      created_at: new Date().toISOString(),
+      email: email,
+      phone: "",
+      role: "authenticated",
+      updated_at: new Date().toISOString(),
+    };
+    const customProfile: Profile = {
+      id: customUser.id,
+      email: email,
+      full_name: fullName,
+      avatar_url: null,
+      phone_number: "+90 555 123 4567",
+      preferred_standard: "BIST_KATILIM_DIB",
+      purification_ceiling_rounding: true,
+      zakat_calculation_preference: "AUTO",
+      alert_notifications_enabled: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    setUser(customUser);
+    setProfile(customProfile);
     setIsDemoUser(true);
     if (typeof window !== "undefined") {
-      localStorage.setItem("mizanapp_demo_auth", "true");
+      localStorage.setItem("mizanapp_demo_auth", JSON.stringify({ email, fullName }));
     }
   };
 
@@ -227,6 +266,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         signInWithGoogle,
         signOut,
         loginAsDemoUser,
+        loginWithDetails,
       }}
     >
       {children}

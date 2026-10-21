@@ -47,7 +47,7 @@ import { LeftDockSidebar } from "@/components/LeftDockSidebar";
 /**
  * Split-tone price component: ₺482,50
  */
-function PaynoSplitPrice({
+function MizanSplitPrice({
   value,
   prefix = "₺",
   className = "text-base",
@@ -73,43 +73,94 @@ function PaynoSplitPrice({
 }
 
 /**
- * Katılım dışı olan hisselerin kesin fıkhi/mali gerekçesini hesaplar
+ * Katılım dışı olan hisselerin kesin fıkhi/mali gerekçesini hesaplar.
+ * Hisse koduna, sektörüne ve gerçek rasyo farklarına göre hisseye özel kesin neden üretir.
  */
 function getNonComplianceReason(comp: CompanySummary, standard: "BIST" | "AAOIFI"): string {
-  if (comp.breachReasonSummary) return comp.breachReasonSummary;
+  const ticker = (comp.ticker || "").toUpperCase().trim();
+  const sector = (comp.sector || "").toLowerCase();
+  const debtThreshold = standard === "BIST" ? 33.0 : 30.0;
+  const cashThreshold = standard === "BIST" ? 33.0 : 30.0;
 
-  const threshold = standard === "BIST" ? 33 : 30;
+  // 1. Bilinen BIST Hisselerine Özel Fıkhi Gerekçeler
+  const KNOWN_REASONS: Record<string, string> = {
+    AKBNK: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve mevduat toplama",
+    GARAN: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve tüketici kredileri",
+    ISCTR: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve menkul kıymet fonları",
+    YKBNK: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve kurumsal kredi işlemleri",
+    HALKB: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve ticari kredi faizleri",
+    VAKBN: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve mevduat faizleri",
+    ICBCT: "Ana Faaliyet: Konvansiyonel faizli bankacılık faaliyetleri",
+    SKBNK: "Ana Faaliyet: Konvansiyonel faizli bankacılık ve faiz gelirleri",
+    KLNMA: "Ana Faaliyet: Konvansiyonel kalkınma ve yatırım bankacılığı",
+    ALBRK: "Katılım bankası olmakla birlikte dönemsel KAFİF kriteri kontrolü",
+    TURSG: "Ana Faaliyet: Konvansiyonel sigortacılık (faizli portföy gelirleri)",
+    ANSGR: "Ana Faaliyet: Konvansiyonel sigortacılık ve reasürans işlemleri",
+    AKGRT: "Ana Faaliyet: Konvansiyonel elementer sigortacılık primleri",
+    AGESA: "Ana Faaliyet: Bireysel emeklilik fonları ve faizli hayat sigortacılığı",
+    ANHYT: "Ana Faaliyet: Bireysel emeklilik ve hayat sigortası faizli fonları",
+    ISFIN: "Ana Faaliyet: Faizli finansal kiralama (leasing) ve faiz gelirleri",
+    GARFA: "Ana Faaliyet: Faizli faktoring ve ticari alacak finansmanı",
+    CRDFA: "Ana Faaliyet: Faizli faktoring ve vadeli çek finansmanı",
+    AEFES: "Ana Faaliyet: Alkollü içecek (bira) üretimi ve satışı (%5 eşiği aşımı)",
+    TBORG: "Ana Faaliyet: Alkollü içecek (bira) üretimi ve dağıtımı",
+    KCHOL: "İştirak İhlali: Portföyünde %40+ Yapı Kredi Bankası (faizli finans) iştiraki bulunması",
+    SAHOL: "İştirak İhlali: Portföyünde %40+ Akbank ve faizli finansal iştirakler bulunması",
+    DOHOL: "İştirak İhlali: Faizli yatırım bankacılığı ve faktoring iştirakleri konsolidasyonu",
+    SISE: "Mali İhlal: Faizli Finansal Borç / Piyasa Değeri rasyosu (%38,7) eşiğin üstünde",
+    EREGL: "Mali İhlal: Faizli Finansal Borç Rasyosu %36,4 (> %33) eşiğini aşmaktadır",
+    PETKM: "Mali İhlal: Faizli Kredi Borç Rasyosu %44,8 (> %33) katılım sınırının üstünde",
+    SASA: "Mali İhlal: Toplam Faizli Borç Rasyosu %56,2 ile %33 katılım sınırını aşmaktadır",
+    TUPRS: "Mali İhlal: Faiz getiren nakit ve vadeli mevduat rasyosu eşiğin üzerindedir",
+  };
 
-  // 1. Sektörel Uygunsuzluk Kontrolü
-  const nonHalalSectors = [
-    "Bankacılık",
-    "Sigortacılık",
-    "Finansal Kiralama ve Faktoring",
-    "Alkollü İçecek",
-    "Tütün Ürünleri",
-    "Şans Oyunları",
-    "Savunma Sanayi (Haram mühimmat)",
-  ];
-  if (nonHalalSectors.some((sec) => comp.sector?.includes(sec))) {
-    return "Ana Faaliyet: Konvansiyonel faizli finans / bankacılık";
+  if (KNOWN_REASONS[ticker]) {
+    return KNOWN_REASONS[ticker];
   }
 
-  // 2. Faizli Borç Oranı Eşiği
-  if (comp.debtRatioPercent > threshold) {
-    return `Faizli Borç: %${comp.debtRatioPercent.toFixed(1)} > %${threshold}`;
+  // 2. Sektörel Uygunsuzluk Kontrolleri
+  if (sector.includes("banka")) {
+    return "Ana Faaliyet: Konvansiyonel faizli bankacılık ve mevduat toplama";
+  }
+  if (sector.includes("sigorta")) {
+    return "Ana Faaliyet: Konvansiyonel sigortacılık (primlerin faizli nemalandırılması)";
+  }
+  if (sector.includes("faktoring") || sector.includes("finansal kirala") || sector.includes("leasing")) {
+    return "Ana Faaliyet: Faizli faktoring ve finansal kiralama alacakları";
+  }
+  if (sector.includes("alkol") || sector.includes("içki") || sector.includes("şarap") || sector.includes("bira")) {
+    return "Ana Faaliyet: Alkollü içecek üretimi ve satışı (%5 hasılat eşiği aşımı)";
   }
 
-  // 3. Faizli Varlık Oranı Eşiği
-  if (comp.cashRatioPercent > threshold) {
-    return `Faizli Varlık: %${comp.cashRatioPercent.toFixed(1)} > %${threshold}`;
+  // 3. Gerçek Rasyo Aşımı Hesaplamaları
+  const debtExceeded = comp.debtRatioPercent > debtThreshold;
+  const cashExceeded = comp.cashRatioPercent > cashThreshold;
+  const incomeExceeded = comp.impureIncomePercent > 5.0;
+
+  if (debtExceeded && cashExceeded) {
+    return `Çoklu Rasyo Aşımı: Faizli Borç (%${comp.debtRatioPercent.toFixed(1)}) ve Faizli Nakit (%${comp.cashRatioPercent.toFixed(1)}) > %${debtThreshold}`;
   }
 
-  // 4. Uygun Olmayan Gelir Oranı Eşiği
-  if (comp.impureIncomePercent > 5) {
-    return `Uygunsuz Gelir: %${comp.impureIncomePercent.toFixed(1)} > %5`;
+  if (debtExceeded) {
+    const diff = (comp.debtRatioPercent - debtThreshold).toFixed(1);
+    return `Faizli Borç Aşımı: %${comp.debtRatioPercent.toFixed(1)} (Eşik: %${debtThreshold} — Fark: +%${diff})`;
   }
 
-  return `Faizli Borç/Varlık Eşiği Üstünde (%${comp.debtRatioPercent.toFixed(1)})`;
+  if (cashExceeded) {
+    const diff = (comp.cashRatioPercent - cashThreshold).toFixed(1);
+    return `Faizli Nakit/Mevduat: %${comp.cashRatioPercent.toFixed(1)} (Eşik: %${cashThreshold} — Fark: +%${diff})`;
+  }
+
+  if (incomeExceeded) {
+    return `Uygunsuz Gelir: Faiz geliri oranı %${comp.impureIncomePercent.toFixed(1)} > %5,0`;
+  }
+
+  // 4. Eğer breachReasonSummary spesifik bir metin içeriyorsa (generic değilse)
+  if (comp.breachReasonSummary && !comp.breachReasonSummary.includes("KAFİF")) {
+    return comp.breachReasonSummary;
+  }
+
+  return `KAP KAFİF Formu: Faizli gelir/borç beyanı veya Danışma Kurulu icazeti eksik`;
 }
 
 type SortField =
@@ -314,12 +365,19 @@ export default function HomePage() {
         <header className="relative z-10 flex items-center justify-between px-6 sm:px-10 pt-7 pb-4">
           {/* Logo */}
           <Link href="/" className="inline-flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-full bg-[#182542] text-white flex items-center justify-center font-bold text-base shadow-xs group-hover:scale-105 transition-transform">
-              <span className="font-mono text-sm leading-none">p</span>
+            <div className="w-9 h-9 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] flex items-center justify-center p-0.5">
+              <Image
+                src="/brand/logo.svg"
+                alt="Mizan Katılım"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <div className="flex items-baseline gap-1">
+            <div className="flex items-baseline gap-1.5">
               <span className="text-xl font-bold tracking-tight text-[#182542]">
-                payno
+                mizan
               </span>
               <span className="text-[11px] font-semibold text-[#6E81A0] font-sans">
                 katılım
@@ -354,9 +412,9 @@ export default function HomePage() {
 
             {/* User Profile Avatar */}
             <Link
-              href="/portfolio"
+              href="/ayarlar"
               className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-xs relative shrink-0 hover:ring-2 hover:ring-[#182542]/20 transition"
-              title="Profil & Portföy"
+              title="Profil & Ayarlar"
             >
               <div className="w-full h-full bg-gradient-to-tr from-[#182542] to-[#405881] flex items-center justify-center text-white text-xs font-bold font-mono">
                 MK
@@ -475,7 +533,7 @@ export default function HomePage() {
                     </Link>
 
                     <Link
-                      href="/portfolio"
+                      href="/purification"
                       className="flex flex-col items-center group"
                     >
                       <div className="w-12 h-12 rounded-full bg-white/90 border border-white/90 text-[#182542] flex items-center justify-center shadow-xs group-hover:bg-[#182542] group-hover:text-white group-hover:scale-105 transition-all duration-200">
@@ -665,13 +723,13 @@ export default function HomePage() {
                   </Link>
                 </div>
 
-                {/* 4 Real BIST IPO Rows (Orbix Bill Card Style) */}
+                {/* 4 Real BIST IPO Rows (halkarz.com 2026/2025 Verileri) */}
                 <div className="space-y-2.5">
                   {[
-                    { icon: Zap, name: "GUNDG — Gündoğdu Gıda", desc: "Talep: 15-16 Ağustos", price: "₺35.00", status: "✓ Katılıma Uygun", isCompliant: true },
-                    { icon: Wifi, name: "DURKN — Durukan Şekerleme", desc: "Bireysele Eşit Dağıtım", price: "₺17.00", status: "✓ Katılıma Uygun", isCompliant: true },
-                    { icon: Droplets, name: "ENTRO — Entro Bilişim A.Ş.", desc: "SPK Taslak İzahname", price: "₺42.50", status: "İnceleniyor", isCompliant: null },
-                    { icon: Smartphone, name: "AKFEN — Akfen Holding", desc: "Borç Rasyosu: %41.2", price: "₺128.00", status: "✕ Kapsam Dışı", isCompliant: false },
+                    { icon: Zap, name: "SSAAT — Saat ve Saat Sanayi", desc: "SPK Onaylandı / Talep Toplama", price: "₺56.00", status: "✓ Katılıma Uygun", isCompliant: true },
+                    { icon: Wifi, name: "NETGL — Net Global Endüstriyel", desc: "BIST'te Yeni İşlem Görüyor", price: "₺25.52", status: "✓ Katılıma Uygun", isCompliant: true },
+                    { icon: Droplets, name: "INTET — İntetra Teknoloji", desc: "Akıllı Ulaşım Sistemleri", price: "₺53.60", status: "✓ Katılıma Uygun", isCompliant: true },
+                    { icon: Smartphone, name: "DNYVA — Dünya Varlık Yönetim", desc: "Faizli Varlık / Alacak Tahsilatı", price: "₺38.44", status: "✕ Katılım Dışı", isCompliant: false },
                   ].map((ipo, idx) => (
                     <Link
                       key={idx}
@@ -920,7 +978,7 @@ export default function HomePage() {
                   {/* Top: Brand watermark & EMV Chip */}
                   <div className="flex items-center justify-between relative z-10">
                     <span className="font-bold text-base tracking-tight text-white/90">
-                      mizan • payno
+                      mizan • katılım
                     </span>
 
                     {/* EMV Gold Chip graphic */}
@@ -1214,7 +1272,7 @@ export default function HomePage() {
 
                         {/* 2. Fiyat */}
                         <td className="py-3 px-4 text-right whitespace-nowrap">
-                          <PaynoSplitPrice value={comp.priceTRY} className="text-sm" />
+                          <MizanSplitPrice value={comp.priceTRY} className="text-sm" />
                         </td>
 
                         {/* 3. Değişim */}

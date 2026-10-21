@@ -48,7 +48,7 @@ export default function IpoCalendarPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // Lot Dağıtım Simülasyonu
-  const [selectedSimTicker, setSelectedSimTicker] = useState<string>("DURKN");
+  const [selectedSimTicker, setSelectedSimTicker] = useState<string>("SSAAT");
   const [simParticipants, setSimParticipants] = useState<number>(2_000_000);
 
   // 7/24 Live Sync function

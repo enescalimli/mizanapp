@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Search, Bell } from "lucide-react";
 import { LeftDockSidebar } from "./LeftDockSidebar";
@@ -43,12 +44,19 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
         <header className="relative z-10 flex items-center justify-between px-6 sm:px-10 pt-7 pb-4">
           {/* Logo */}
           <Link href="/" className="inline-flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-full bg-[#182542] text-white flex items-center justify-center font-bold text-base shadow-xs group-hover:scale-105 transition-transform">
-              <span className="font-mono text-sm leading-none">p</span>
+            <div className="w-9 h-9 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] flex items-center justify-center p-0.5">
+              <Image
+                src="/brand/logo.svg"
+                alt="Mizan Katılım"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <div className="flex items-baseline gap-1">
+            <div className="flex items-baseline gap-1.5">
               <span className="text-xl font-bold tracking-tight text-[#182542]">
-                payno
+                mizan
               </span>
               <span className="text-[11px] font-semibold text-[#6E81A0] font-sans">
                 {badge}
@@ -79,9 +87,9 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 
             {/* User Profile Avatar */}
             <Link
-              href="/portfolio"
+              href="/ayarlar"
               className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-xs relative shrink-0 hover:ring-2 hover:ring-[#182542]/20 transition"
-              title="Profil & Portföy"
+              title="Profil & Ayarlar"
             >
               <div className="w-full h-full bg-gradient-to-tr from-[#182542] to-[#405881] flex items-center justify-center text-white text-xs font-bold font-mono">
                 MK
@@ -108,7 +116,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
         {/* =================================================================== */}
         <footer className="relative z-10 border-t border-white/80 bg-white/50 backdrop-blur-md px-6 sm:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#8C9BB0]">
           <div>
-            &copy; {new Date().getFullYear()} Payno Katılım Finans &bull; DİB, TKBB ve AAOIFI Standartlarına Uygundur.
+            &copy; {new Date().getFullYear()} Mizan Katılım Finans &bull; DİB, TKBB ve AAOIFI Standartlarına Uygundur.
           </div>
           <div className="font-mono text-[10px]">
             BIST &amp; KAP 7/24 Canlı Motor &bull; Zero-Float Decimal Precision
