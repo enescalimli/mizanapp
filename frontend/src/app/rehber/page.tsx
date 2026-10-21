@@ -656,7 +656,7 @@ export default function RehberPage() {
             <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <h4 className="text-sm font-bold text-emerald-950">
-                  Hisselerinizin Bu Kurallara Uygunluğunu Test Edin
+                  Hisselerinizin Bu Kurallara Uygunluğunu Denetleyin
                 </h4>
                 <p className="text-xs text-emerald-800 font-normal mt-0.5">
                   Borsa İstanbul&apos;daki 540+ hissenin güncel rasyolarını anlık olarak tarayabilirsiniz.

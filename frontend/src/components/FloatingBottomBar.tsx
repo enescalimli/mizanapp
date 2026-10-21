@@ -144,7 +144,7 @@ export const FloatingBottomBar: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-xs font-bold text-[#182542] group-hover:text-[#273869]">
-                      Halka Arz Lot Simülatörü
+                      Halka Arz Dağıtım & Lot Hesaplayıcı
                     </div>
                     <div className="text-[11px] text-[#6E81A0]">
                       Kişi sayısına göre düşecek tahmini lot ve katılım cevazı

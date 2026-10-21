@@ -98,8 +98,9 @@ export const Navbar: React.FC = () => {
                 <span className="text-xs font-bold text-[#182542] max-w-[120px] truncate leading-tight">
                   {profile?.full_name || user.email?.split("@")[0]}
                 </span>
-                <span className="text-[10px] text-[#6E81A0] leading-tight">
-                  {isDemoUser ? "Demo Portföy" : "Aktif Hesap"}
+                <span className="text-[10px] text-emerald-600 font-semibold leading-tight flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                  <span>Aktif Hesap</span>
                 </span>
               </div>
               <button

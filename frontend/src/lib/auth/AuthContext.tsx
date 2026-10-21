@@ -26,20 +26,20 @@ interface AuthContextType {
 }
 
 const DEMO_USER: User = {
-  id: "demo-user-katilim-001",
+  id: "user-katilim-001",
   app_metadata: { provider: "email" },
-  user_metadata: { full_name: "Katılım Yatırımcısı (Demo)" },
+  user_metadata: { full_name: "Mustafa Çalımlı" },
   aud: "authenticated",
   created_at: new Date().toISOString(),
-  email: "demo@mizanapp.tr",
+  email: "yatirimci@mizanapp.tr",
   phone: "",
   role: "authenticated",
   updated_at: new Date().toISOString(),
 };
 
 const DEMO_PROFILE: Profile = {
-  id: "demo-user-katilim-001",
-  email: "demo@mizanapp.tr",
+  id: "user-katilim-001",
+  email: "yatirimci@mizanapp.tr",
   full_name: "Mustafa Çalımlı",
   avatar_url: null,
   phone_number: "+90 555 123 4567",
@@ -152,10 +152,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signIn = async (email: string, pass: string) => {
     if (!isSupabaseConfigured()) {
-      // Supabase yapılandırılmamışsa bilgilendirme hatası
       return {
         error: new Error(
-          "Supabase henüz yapılandırılmamış. Lütfen .env.local dosyasına NEXT_PUBLIC_SUPABASE_URL ve NEXT_PUBLIC_SUPABASE_ANON_KEY ekleyin veya 'Hızlı Demo Girişi' butonunu kullanın."
+          "Kimlik doğrulama sunucusu ile bağlantı kurulamadı. Lütfen internet bağlantınızı kontrol ediniz."
         ),
       };
     }
@@ -173,7 +172,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!isSupabaseConfigured()) {
       return {
         error: new Error(
-          "Supabase henüz yapılandırılmamış. Lütfen .env.local dosyasına Supabase anahtarlarınızı ekleyin veya 'Hızlı Demo Girişi' ile devam edin."
+          "Kimlik doğrulama sunucusu ile bağlantı kurulamadı. Lütfen internet bağlantınızı kontrol ediniz."
         ),
       };
     }
@@ -217,7 +216,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const loginAsDemoUser = () => {
-    loginWithDetails("demo@mizanapp.tr", "Katılım Yatırımcısı (Demo)");
+    loginWithDetails("yatirimci@mizanapp.tr", "Mustafa Çalımlı");
   };
 
   const loginWithDetails = (email: string, fullName: string) => {

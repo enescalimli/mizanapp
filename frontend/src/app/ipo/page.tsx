@@ -96,8 +96,8 @@ export default function IpoCalendarPage() {
     );
   }, [ipos, selectedSimTicker]);
 
-  // Simülatörden hesaplanan tahmini lot
-  const simulatedLotCount = useMemo(() => {
+  // Hesaplanan tahmini lot
+  const estimatedLotCount = useMemo(() => {
     if (!selectedIpo || simParticipants <= 0) return 0;
     return Math.max(
       1,
@@ -105,10 +105,10 @@ export default function IpoCalendarPage() {
     );
   }, [selectedIpo, simParticipants]);
 
-  const simulatedAmountTRY = useMemo(() => {
+  const estimatedAmountTRY = useMemo(() => {
     if (!selectedIpo) return 0;
-    return simulatedLotCount * selectedIpo.ipoPriceTRY;
-  }, [selectedIpo, simulatedLotCount]);
+    return estimatedLotCount * selectedIpo.ipoPriceTRY;
+  }, [selectedIpo, estimatedLotCount]);
 
   // Sorting helper
   const handleSort = (field: SortField) => {
@@ -299,11 +299,11 @@ export default function IpoCalendarPage() {
                 🎯
               </span>
               <h2 className="text-lg sm:text-xl font-black text-[#273869] tracking-tight">
-                Tahmini Kaç Lot Düşer? Simülatörü
+                Tahmini Kaç Lot Düşer? (Lot Dağıtım Hesaplayıcı)
               </h2>
             </div>
             <p className="text-xs text-[#6E81A0] mt-1 font-medium">
-              Katılımcı sayısına göre hesabınıza geçecek tahmini hisse adedini ve gereken nakit tutarı anında simüle edin.
+              Katılımcı sayısına göre hesabınıza geçecek tahmini hisse adedini ve gereken nakit tutarı anında hesaplayın.
             </p>
           </div>
 
@@ -323,7 +323,7 @@ export default function IpoCalendarPage() {
           </div>
         </div>
 
-        {/* Simülasyon Kontrolleri ve Sonuç */}
+        {/* Dağıtım Hesaplama Kontrolleri ve Sonuç */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           {/* Sol: Katılımcı Sayısı Butonları */}
           <div className="lg:col-span-7 space-y-4">
@@ -383,7 +383,7 @@ export default function IpoCalendarPage() {
               <div>
                 <span className="text-xs text-white/70 block">Düşecek Tahmini Lot</span>
                 <span className="text-4xl font-black font-mono tracking-tight text-white">
-                  ~{simulatedLotCount}
+                  ~{estimatedLotCount}
                 </span>
                 <span className="text-sm text-white/80 font-bold ml-1">Lot</span>
               </div>
@@ -391,7 +391,7 @@ export default function IpoCalendarPage() {
               <div className="text-right">
                 <span className="text-xs text-white/70 block">Gereken Nakit Tutar</span>
                 <span className="text-2xl font-bold font-mono text-emerald-300">
-                  ₺{simulatedAmountTRY.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  ₺{estimatedAmountTRY.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             </div>

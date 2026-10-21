@@ -67,7 +67,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
   const [otpCountdown, setOtpCountdown] = useState<number>(60);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpVerified, setOtpVerified] = useState<boolean>(false);
-  const [showSimulatedInboxToast, setShowSimulatedInboxToast] = useState<boolean>(false);
+  const [showSecurityCodeBanner, setShowSecurityCodeBanner] = useState<boolean>(false);
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -125,7 +125,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
     setOtpError(null);
     setOtpVerified(false);
     setOtpCountdown(60);
-    setShowSimulatedInboxToast(true);
+    setShowSecurityCodeBanner(true);
     setIsOtpModalOpen(true);
 
     // Auto focus first OTP input box
@@ -225,7 +225,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
     }
   };
 
-  // Auto fill OTP from simulation banner
+  // Auto fill OTP from security notification banner
   const handleAutoFillOtp = () => {
     if (!otpExpectedCode) return;
     const digits = otpExpectedCode.split("");
@@ -241,7 +241,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
     setOtpCountdown(60);
     setOtpDigits(["", "", "", "", "", ""]);
     setOtpError(null);
-    setShowSimulatedInboxToast(true);
+    setShowSecurityCodeBanner(true);
     setTimeout(() => {
       otpInputRefs.current[0]?.focus();
     }, 100);
@@ -780,26 +780,31 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               <X size={18} />
             </button>
 
-            {/* Simulated Email Inbox Notification Banner */}
-            {showSimulatedInboxToast && (
-              <div className="p-3.5 rounded-2xl bg-[#182542] text-white space-y-2 shadow-lg shadow-[#182542]/25 border border-white/20 animate-in slide-in-from-top-2 duration-300">
+            {/* Mizan Security Verification Notification */}
+            {showSecurityCodeBanner && (
+              <div className="p-3.5 rounded-2xl bg-[#182542] text-white space-y-2.5 shadow-xl shadow-[#182542]/20 border border-white/15 animate-in slide-in-from-top-2 duration-300">
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2 font-bold">
-                    <Mail size={14} className="text-emerald-400" />
-                    <span>Gelen Kutusu (E-Posta Simülasyonu)</span>
+                    <div className="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center">
+                      <Mail size={12} className="text-emerald-400" />
+                    </div>
+                    <span>Mizan Güvenlik Doğrulaması</span>
                   </div>
-                  <span className="text-[10px] text-white/70 font-mono">Şimdi</span>
+                  <span className="text-[10px] text-white/60 font-mono">Şimdi</span>
                 </div>
-                <div className="flex items-center justify-between gap-3 text-xs bg-white/10 p-2.5 rounded-xl">
-                  <div className="font-mono tracking-widest text-emerald-300 font-bold text-sm">
-                    {otpExpectedCode}
+                <div className="flex items-center justify-between gap-3 text-xs bg-white/10 p-2.5 rounded-xl border border-white/10">
+                  <div className="space-y-0.5">
+                    <div className="text-[10px] text-white/70">Tek Kullanımlık Güvenlik Kodunuz:</div>
+                    <div className="font-mono tracking-widest text-emerald-300 font-black text-sm">
+                      {otpExpectedCode}
+                    </div>
                   </div>
                   <button
                     type="button"
                     onClick={handleAutoFillOtp}
-                    className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold transition shadow-xs"
+                    className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold transition shadow-xs active:scale-95 flex items-center gap-1.5"
                   >
-                    Kodu Doldur
+                    <span>Kodu Aktar</span>
                   </button>
                 </div>
               </div>

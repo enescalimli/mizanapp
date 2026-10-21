@@ -751,7 +751,7 @@ export default function SettingsPage() {
                   </span>
                 </div>
                 <p className="text-[11px] text-rose-700 leading-relaxed font-normal">
-                  Tarayıcınızda kayıtlı olan tüm demo portföy pozisyonlarını, arındırma hesaplarını ve önbelleği kalıcı olarak siler.
+                  Tarayıcınızda kayıtlı olan tüm portföy pozisyonlarını, arındırma hesaplarını ve önbelleği kalıcı olarak sıfırlar.
                 </p>
                 <button
                   type="button"
