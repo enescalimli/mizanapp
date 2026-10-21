@@ -38,7 +38,7 @@ const FAQS: FAQItem[] = [
     question: "Borsada hisse senedi alıp satmak dinen caiz midir?",
     answer:
       "Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu ve İslam Fıkıh Akademisi kararlarına göre; şirketin ana faaliyet alanı helal ise (alkol, domuz eti, faizli finansman, kumar, tütün vb. haram unsurlar içermiyorsa) ve finansal tablolarında faizli borç ve gelirler belirlenen fıkhi eşikleri aşmıyorsa, hisse senedi almak o şirkete ortak olmak demektir ve dinen caizdir.",
-    reference: "Diyanet Din İşleri Yüksek Kurulu Fetvaları & AAOIFI Şer'i Standart No: 21",
+    reference: "Diyanet Din İşleri Yüksek Kurulu Fetvaları & TKBB Danışma Kurulu Kararları",
   },
   {
     id: "faq-2",
@@ -86,7 +86,7 @@ const FAQS: FAQItem[] = [
     question: "Hisse senedi arındırması (Purification) nedir ve nasıl hesaplanır?",
     answer:
       "Katılım endeksindeki şirketler ana faaliyeti helal olsa dahi cüzi oranda (en fazla %5) mevduat faizi veya repo geliri elde edebilirler. Yatırımcı, şirketten elde ettiği kâr payından (temettüden) veya hissenin elde tutulduğu süreye isabet eden bu faizli geliri hesaplayıp sevap beklemeksizin ihtiyaç sahiplerine veya hayır kurumlarına bağışlamalıdır.",
-    reference: "AAOIFI Şer'i Standart No: 21, Madde 3/4 & TKBB İlke Kararları",
+    reference: "Diyanet Din İşleri Yüksek Kurulu & TKBB Danışma Kurulu İlke Kararları",
   },
   {
     id: "faq-8",
@@ -220,7 +220,7 @@ export default function RehberPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#273869]/8 text-[#273869] text-xs font-bold">
               <Scale size={14} className="text-[#0D8B52]" />
-              <span>Diyanet, TKBB ve AAOIFI Standartları</span>
+              <span>Diyanet ve TKBB Danışma Kurulu Standartları</span>
             </div>
           </div>
 
@@ -326,17 +326,17 @@ export default function RehberPage() {
 
               <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-3">
                 <div className="w-10 h-10 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-700 font-bold">
-                  AAOIFI
+                  KAFİF
                 </div>
                 <h3 className="text-base font-bold text-slate-900">
-                  AAOIFI Standart No: 21
+                  Katılım Finansı Bilgi Formu
                 </h3>
                 <span className="text-[11px] font-semibold text-slate-500 block">
-                  Uluslararası Şer&apos;i Standartlar
+                  SPK &amp; KAP Resmi Beyanları
                 </span>
                 <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                  Küresel İslami finans kurumlarının çatı standardıdır. Piyasa değeri üzerinden
-                  %30 borç tavanı ve kuruşu kuruşuna arındırmayı şart koşar.
+                  Borsa İstanbul şirketlerinin KAP üzerinden her bilanço döneminde kamuoyuna açıkladığı
+                  ve bağımsız denetimden geçmiş fıkhi rasyo beyannamesidir.
                 </p>
               </div>
             </div>
@@ -394,7 +394,7 @@ export default function RehberPage() {
                         Gerçek bir gayrimenkul veya altyapı varlığının kira gelirine ortaklıktır.
                       </td>
                       <td className="py-4 px-4 font-mono text-[11px] text-slate-500">
-                        TKBB &amp; AAOIFI
+                        DİB &amp; TKBB
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50/60">
@@ -411,7 +411,7 @@ export default function RehberPage() {
                         Ticari kâr payıdır. Varsa cüzi faiz geliri oranı kadar arındırılmalıdır.
                       </td>
                       <td className="py-4 px-4 font-mono text-[11px] text-slate-500">
-                        AAOIFI Standart No: 21
+                        DİB &amp; TKBB Standartları
                       </td>
                     </tr>
                     <tr className="hover:bg-slate-50/60">
@@ -583,7 +583,7 @@ export default function RehberPage() {
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8">
             <div>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                BIST Katılım ve AAOIFI 3 Altın Rasyo Metodolojisi
+                BIST Katılım ve DİB &amp; TKBB 3 Altın Rasyo Metodolojisi
               </h2>
               <p className="text-xs text-slate-500 mt-1 font-normal">
                 Bir şirketin hissesinin caiz sayılabilmesi için sağlaması gereken üç temel matematiksel eşik.

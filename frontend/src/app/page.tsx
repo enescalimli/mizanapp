@@ -145,10 +145,8 @@ export default function HomePage() {
       {/* Main Responsive Body Container (Fluid & Edge-to-Edge Responsive) */}
       <div className="relative z-10 md:pl-20 lg:pl-28 max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         
-        {/* =================================================================== */}
-        {/* TOP FLOATING HEADER: Logo, Live Ticker, Notifications, Profile     */}
-        {/* =================================================================== */}
-        <header className="bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/90 p-4 sm:px-8 sm:py-5 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex items-center justify-between gap-4">
+        {/* Top Floating Header with relative z-50 to ensure notifications appear in front */}
+        <header className="relative z-50 bg-white/70 dark:bg-[#111A2E]/70 backdrop-blur-2xl rounded-3xl border border-white/80 dark:border-white/10 p-4 sm:px-8 sm:py-5 shadow-[0_8px_30px_rgba(24,37,66,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="inline-flex items-center gap-2.5 group shrink-0">
             <div className="w-9 h-9 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] flex items-center justify-center p-0.5">
@@ -739,7 +737,7 @@ export default function HomePage() {
                 {/* Middle */}
                 <div className="relative z-10 py-1 space-y-1">
                   <div className="text-xs font-extrabold text-white tracking-tight">
-                    BIST Katılım (XKTUM) &amp; AAOIFI No: 21
+                    DİB &amp; TKBB Katılım Finans Standartları
                   </div>
                   <div className="text-[10px] text-white/75 leading-relaxed">
                     Faizli Borç Oranı: <strong className="text-emerald-300">&lt; %33</strong> &bull; Uygunsuz Gelir: <strong className="text-emerald-300">&lt; %5</strong>

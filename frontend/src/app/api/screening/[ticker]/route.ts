@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { fetchLiveBistUniverse24x7, getCompanyByTicker } from "@/lib/data/bistUniverse";
 import { CompanyDetailScreening, ScreeningStandardCode } from "@/types/katilim";
+import { getDIBKatilimDetailedBreachReason } from "@/lib/data/dibKatilimEngine";
 import Decimal from "decimal.js";
 
 export const dynamic = "force-dynamic";
@@ -60,6 +61,16 @@ export async function GET(
     }
   }
 
+  const breachAnalysis = getDIBKatilimDetailedBreachReason(
+    univ.ticker,
+    univ.name,
+    univ.sector,
+    univ.debtRatioPercent,
+    univ.cashRatioPercent,
+    univ.impureIncomePercent,
+    univ.bistStatus === "COMPLIANT"
+  );
+
   const company: CompanyDetailScreening = {
     ticker: univ.ticker,
     companyName: univ.name,
@@ -72,7 +83,7 @@ export async function GET(
     isSectorCompliant: univ.bistStatus === "COMPLIANT",
     prohibitedActivitiesFound:
       univ.bistStatus === "NON_COMPLIANT"
-        ? [univ.breachReasonSummary || "Katılım kriterleri dışında faaliyet / rasyo aşımı"]
+        ? [breachAnalysis.summary, breachAnalysis.detail]
         : [],
     gracePeriodInfo: {
       isInGracePeriod: overallStatus === "GRACE_PERIOD_TOLERANCE",

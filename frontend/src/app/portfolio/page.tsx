@@ -383,30 +383,13 @@ export default function PortfolioManagementPage() {
               </div>
             </div>
 
-            {/* Standart Seçici */}
-            <div className="pt-4 border-t border-[#EDF1F4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span className="text-xs font-medium text-[#6E81A0]">
-                Denetim Standardı:
+            {/* Standart Göstergesi */}
+            <div className="pt-4 border-t border-[#EDF1F4] dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span className="text-xs font-medium text-[#6E81A0] dark:text-slate-400">
+                Uygulanan Standart:
               </span>
-              <div className="apple-segmented-group shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setStandard("BIST_KATILIM_DIB")}
-                  className={`apple-segmented-item ${
-                    standard === "BIST_KATILIM_DIB" ? "active" : ""
-                  }`}
-                >
-                  BIST Katılım (&lt;%33)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStandard("AAOIFI_STD_21")}
-                  className={`apple-segmented-item ${
-                    standard === "AAOIFI_STD_21" ? "active" : ""
-                  }`}
-                >
-                  AAOIFI No.21 (&lt;%30)
-                </button>
+              <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-extrabold text-[#182542] dark:text-emerald-400 font-mono">
+                DİB &amp; TKBB Katılım Standartları (%33 Eşik)
               </div>
             </div>
           </div>

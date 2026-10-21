@@ -52,7 +52,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
       <div className="relative z-10 md:pl-20 lg:pl-28 max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
         
         {/* Top Header Floating Glass Bar */}
-        <header className="bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/90 p-4 sm:px-8 sm:py-5 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex items-center justify-between gap-4">
+        <header className="relative z-50 bg-white/70 dark:bg-[#111A2E]/70 backdrop-blur-2xl rounded-3xl border border-white/80 dark:border-white/10 p-4 sm:px-8 sm:py-5 shadow-[0_8px_30px_rgba(24,37,66,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="inline-flex items-center gap-2.5 group shrink-0">
             <div className="w-9 h-9 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] flex items-center justify-center p-0.5">
