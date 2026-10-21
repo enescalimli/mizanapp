@@ -256,9 +256,9 @@ export const FloatingBottomBar: React.FC = () => {
 
       {/* =================================================================== */}
       {/* SLIDE 15: FLOATING BAR WITH ONE RAISED ACTION (ALT BAR)             */}
-      {/* "Active tab: filled navy icon + label. Center FAB breaks grid"      */}
+      {/* Web versiyonunda gizli (md:hidden), yalnızca mobil cihazlarda görünür  */}
       {/* =================================================================== */}
-      <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 select-none">
+      <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 select-none md:hidden">
         <div className="flex items-center bg-white/85 backdrop-blur-2xl border border-white/80 rounded-full px-4 sm:px-6 py-2 shadow-2xl shadow-[#273869]/20 ring-1 ring-black/5 transition-all duration-300">
           
           {/* 1. Ana Sayfa */}
