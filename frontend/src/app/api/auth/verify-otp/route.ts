@@ -8,6 +8,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const email = body.email?.toLowerCase().trim();
     const code = body.code?.trim();
+    const token = body.token?.trim();
 
     if (!email || !code || code.length !== 6) {
       return NextResponse.json(
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = verifyOtp(email, code);
+    const result = verifyOtp(email, code, token);
 
     if (!result.valid) {
       return NextResponse.json(

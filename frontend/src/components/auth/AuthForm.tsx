@@ -54,6 +54,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpVerified, setOtpVerified] = useState<boolean>(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
+  const [otpServerToken, setOtpServerToken] = useState<string>("");
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -106,6 +107,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         setErrorMessage(data.error || "Doğrulama kodu gönderilemedi.");
         setIsLoading(false);
         return;
+      }
+      if (data.otpToken) {
+        setOtpServerToken(data.otpToken);
       }
       setIsOtpModalOpen(true);
       setTimeout(() => {
@@ -188,7 +192,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: otpTargetEmail, code: enteredCode }),
+        body: JSON.stringify({
+          email: otpTargetEmail,
+          code: enteredCode,
+          token: otpServerToken,
+        }),
       });
       const data = await res.json();
 
@@ -226,6 +234,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       });
       const data = await res.json();
       if (data.success) {
+        if (data.otpToken) {
+          setOtpServerToken(data.otpToken);
+        }
         setOtpCountdown(60);
         otpInputRefs.current[0]?.focus();
       } else {

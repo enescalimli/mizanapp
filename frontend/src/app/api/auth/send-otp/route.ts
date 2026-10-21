@@ -20,8 +20,8 @@ export async function POST(request: Request) {
     // 6-digit random cryptographically secure OTP
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Store in-memory with 10-min expiration
-    storeOtp(email, fullName, otpCode);
+    // Store in-memory + generate stateless token for Vercel Serverless
+    const otpToken = storeOtp(email, fullName, otpCode);
 
     // Dispatch real email
     const emailResult = await sendOtpEmail({
@@ -46,6 +46,7 @@ export async function POST(request: Request) {
       success: true,
       message: `${email} adresinize 6 haneli güvenlik doğrulama kodu gönderildi.`,
       email,
+      otpToken,
       dispatched: true,
       deliveryNote: "E-posta başarıyla iletildi.",
     });
