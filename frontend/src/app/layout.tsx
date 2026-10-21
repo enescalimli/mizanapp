@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="tr">
       <body className="antialiased min-h-screen bg-[#F3F6FB] text-[#182542] flex flex-col selection:bg-[#E6F8EF] selection:text-[#0D8B52]">
         <AuthProvider>
-          <Navbar />
+          {/* ÜST BARA GEREK YOK — TÜM NAVİGASYON ŞIK ALT YÜZEN BARDA */}
           <main className="flex-1 pb-24 sm:pb-28">{children}</main>
 
           {/* SLIDE 15: FLOATING BOTTOM BAR WITH RAISED ACTION */}

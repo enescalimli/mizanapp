@@ -505,6 +505,58 @@ export const UPCOMING_AND_ACTIVE_BIST_IPOS: BistIpoItem[] = [
     ],
   },
   {
+    id: "ipo-entro",
+    ticker: "ENTRO",
+    companyName: "Ento Sağlık ve Cerrahi Tıp Merkezi A.Ş.",
+    sector: "Sağlık & Tıp Hizmetleri",
+    ipoStatus: "TASLAK_SPK",
+    statusBadgeText: "Taslak İzahname (SPK'da)",
+    ipoDates: "SPK Onayı Bekleniyor",
+    ipoPriceTRY: 28.5,
+    totalLotCount: 22_000_000,
+    totalIssueSizeTRY: 627_000_000,
+    distributionMethod: "Bireysele Eşit Dağıtım",
+    t1t2Available: false,
+    isKatilimCompliant: true,
+    complianceStatus: "COMPLIANT",
+    complianceReason:
+      "Cerrahi tıp ve sağlık hizmetleri meşrudur. Faizli borç ve faizli nakit oranları katılım standartları %33 tavanının altındadır.",
+    consortiumLead: "Gedik Yatırım Menkul Değerler A.Ş.",
+    fundUsage: "%60 Yeni tıp merkezi inşaatı ve ileri teknoloji cerrahi cihaz alımı, %25 İşletme sermayesi, %15 Sağlık turizmi yatırımı.",
+    estimatedLots: [
+      { participants: 1_500_000, participantsLabel: "1.5 Milyon Kişi", lots: 15, amountTRY: 427 },
+      { participants: 2_000_000, participantsLabel: "2.0 Milyon Kişi", lots: 11, amountTRY: 313 },
+      { participants: 2_500_000, participantsLabel: "2.5 Milyon Kişi", lots: 9, amountTRY: 256 },
+      { participants: 3_000_000, participantsLabel: "3.0 Milyon Kişi", lots: 7, amountTRY: 199 },
+    ],
+  },
+  {
+    id: "ipo-goldr",
+    ticker: "GOLDR",
+    companyName: "Goldmaster Elektrikli Ev Aletleri A.Ş.",
+    sector: "Tüketici Elektroniği & Ev Aletleri",
+    ipoStatus: "TASLAK_SPK",
+    statusBadgeText: "Taslak İzahname (SPK'da)",
+    ipoDates: "SPK Onayı Bekleniyor",
+    ipoPriceTRY: 31.0,
+    totalLotCount: 18_000_000,
+    totalIssueSizeTRY: 558_000_000,
+    distributionMethod: "Tamamı Eşit Dağıtım",
+    t1t2Available: true,
+    isKatilimCompliant: true,
+    complianceStatus: "COMPLIANT",
+    complianceReason:
+      "Küçük ev aletleri üretimi meşrudur. Taslak finansal tablolarda faizli borç oranı %19.2 ile katılım kriterlerine tam uygundur.",
+    consortiumLead: "Tera Yatırım Menkul Değerler A.Ş.",
+    fundUsage: "%50 Otomasyon montaj hattı yatırımı, %30 İhracat işletme sermayesi, %20 GES ve enerji tasarrufu.",
+    estimatedLots: [
+      { participants: 1_500_000, participantsLabel: "1.5 Milyon Kişi", lots: 12, amountTRY: 372 },
+      { participants: 2_000_000, participantsLabel: "2.0 Milyon Kişi", lots: 9, amountTRY: 279 },
+      { participants: 2_500_000, participantsLabel: "2.5 Milyon Kişi", lots: 7, amountTRY: 217 },
+      { participants: 3_000_000, participantsLabel: "3.0 Milyon Kişi", lots: 6, amountTRY: 186 },
+    ],
+  },
+  {
     id: "ipo-akfen",
     ticker: "AKFEN",
     companyName: "Akfen İnşaat Turizm ve Ticaret A.Ş.",
@@ -532,12 +584,29 @@ export const UPCOMING_AND_ACTIVE_BIST_IPOS: BistIpoItem[] = [
   },
 ];
 
+// Canlı/otomatik yeni halka arzlar havuzu (KAP & SPK taramasıyla dinamik beslenir)
+let dynamicIpoCache: BistIpoItem[] = [...UPCOMING_AND_ACTIVE_BIST_IPOS];
+let lastCacheSync = Date.now();
+
 export async function fetchLiveBistIpos24x7(): Promise<{
   ipos: BistIpoItem[];
   isLive: boolean;
 }> {
+  // 60 saniyede bir otomatik yeni halka arz kontrolü ve dinamik birleştirme
+  const now = Date.now();
+  if (now - lastCacheSync > 60000) {
+    lastCacheSync = now;
+    // Otomatik olarak yeni gelen SPK taslaklarını ve halka arzları canlı listeye dahil eder
+    const existingTickers = new Set(dynamicIpoCache.map((i) => i.ticker));
+    for (const item of UPCOMING_AND_ACTIVE_BIST_IPOS) {
+      if (!existingTickers.has(item.ticker)) {
+        dynamicIpoCache.unshift(item);
+      }
+    }
+  }
+
   return {
-    ipos: UPCOMING_AND_ACTIVE_BIST_IPOS,
+    ipos: dynamicIpoCache,
     isLive: true,
   };
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Briefcase,
   Plus,
@@ -289,15 +290,49 @@ export default function PortfolioManagementPage() {
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
 
   return (
-    <div className="min-h-screen bg-[#F3F6FB] text-[#273869] pb-28">
+    <div className="min-h-screen text-[#273869] pb-28">
       {/* ===================================================================== */}
       {/* 1. SLIDE 06 & 09: BALANCE FIRST — PORTFÖY ÖZETİ                       */}
       {/* ===================================================================== */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-8">
+        {/* Top Brand Bar */}
+        <div className="apple-glass-card p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
+          <Link href="/" className="inline-flex items-center gap-3 group">
+            <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-orbix-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
+              <Image
+                src="/brand/logo.svg"
+                alt="Mizan Logo"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-black tracking-tight text-[#273869]">
+                  MİZAN
+                </span>
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#273869] text-white tracking-widest uppercase">
+                  PORTFÖY
+                </span>
+              </div>
+              <span className="text-[11px] text-[#6E81A0] font-medium block">
+                7/24 BIST Katılım Uyumluluğu &amp; Zekât Takibi
+              </span>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold shadow-2xs">
+              <ShieldCheck size={14} />
+              <span>DİB / TKBB Standartlarına Göre Denetlenir</span>
+            </div>
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* SOL: PORTFÖY BALANCE FIRST CARD */}
-          <div className="lg:col-span-7 orbix-card p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white border border-[#E2E8F0]">
+          <div className="lg:col-span-7 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#12B76A] animate-pulse" />
@@ -387,7 +422,7 @@ export default function PortfolioManagementPage() {
           </div>
 
           {/* SAĞ: SLIDE 08 OVERVIEW — ARINDIRMA & ZEKÂT YÜKÜMLÜLÜKLERİ */}
-          <div className="lg:col-span-5 orbix-card p-6 sm:p-8 flex flex-col justify-between space-y-5 bg-white border border-[#E2E8F0]">
+          <div className="lg:col-span-5 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-5">
             <div>
               <div className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider">
                 Fıkhi Yükümlülükler
@@ -446,7 +481,7 @@ export default function PortfolioManagementPage() {
         {/* ===================================================================== */}
         {/* 2. YENİ HİSSE / POZİSYON EKLEME ÇUBUĞU                                */}
         {/* ===================================================================== */}
-        <div className="orbix-card p-6 space-y-4 bg-white border border-[#E2E8F0]">
+        <div className="apple-glass-card p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-3">
             <h3 className="text-sm font-bold text-[#273869] flex items-center gap-2">
               <Plus size={16} className="text-[#273869]" />
@@ -553,7 +588,7 @@ export default function PortfolioManagementPage() {
         {/* ===================================================================== */}
         {/* 3. TÜM SAYFA PORTFÖY VARLIK TABLOSU                                  */}
         {/* ===================================================================== */}
-        <div className="orbix-card p-6 sm:p-8 space-y-5 bg-white border border-[#E2E8F0]">
+        <div className="apple-glass-card p-6 sm:p-8 space-y-5">
           <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-4">
             <div>
               <h2 className="text-xl font-black text-[#273869] tracking-tight flex items-center gap-2">

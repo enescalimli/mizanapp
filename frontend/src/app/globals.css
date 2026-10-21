@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 /* ============================================================================
-   ORBIX STUDIO — PAYNO DESIGN SYSTEM TOKENS (FROM SLIDES 01-15)
+   APPLE DESIGN & ORBIX STUDIO TOKENS — NAVY ATMOSPHERE & FROSTED GLASS
    ============================================================================ */
 
 @layer base {
@@ -15,23 +15,24 @@
     --navy-800: #405881;  /* Secondary Navy / Meta */
     --navy-950: #182542;  /* Deep Ink */
     --gray-50: #edf1f4;   /* Light gray tone */
-    --canvas: #f3f6fb;    /* Product canvas */
+    --canvas: #f4f6fa;    /* Product canvas */
     --accent-green: #12b76a; /* Positive trend strictly */
     --accent-red: #f04438;   /* Negative trend strictly */
     --slate-muted: #6e81a0;  /* Hierarchy through weight, not rainbow color */
-    --border-hairline: #e2e8f0;
+    --border-hairline: rgba(39, 56, 105, 0.08);
   }
 
   html {
-    background-color: #f3f6fb;
+    background-color: #f4f6fa;
     color: #182542;
-    font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
   }
 
   body {
-    background: linear-gradient(180deg, #d8ebfb 0%, #edf4fc 360px, #f3f6fb 760px, #f3f6fb 100%);
+    /* Açık mavi blur kaldırıldı — Klasördeki zengin Lacivert (#273869 / #182542) tonlarında Apple-design aura */
+    background: radial-gradient(110% 70% at 50% -5%, rgba(39, 56, 105, 0.16) 0%, rgba(24, 37, 66, 0.08) 45%, #f4f6fa 85%, #f4f6fa 100%);
     color: #182542;
     min-height: 100vh;
     overflow-x: hidden;
@@ -47,32 +48,59 @@
   letter-spacing: -0.01em;
 }
 
-/* 05 Radius & Elevation: Soft corners, soft shadows. */
+/* ============================================================================
+   APPLE-DESIGN FROSTED GLASS (HAFİF ŞEFFAF ARKA TABLOLAR & KARTLAR)
+   ============================================================================ */
+
+/* 1. Apple Frosted Glass Card */
+.apple-glass-card,
 .orbix-card,
-.payno-card,
-.fintech-card,
-.apple-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px; /* 1g • 24px */
-  box-shadow: 0 10px 30px -10px rgba(39, 56, 105, 0.05), 0 1px 3px rgba(39, 56, 105, 0.02);
+.payno-card {
+  background: rgba(255, 255, 255, 0.74);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 24px;
+  box-shadow:
+    0 16px 40px -12px rgba(39, 56, 105, 0.08),
+    0 2px 6px rgba(39, 56, 105, 0.02),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.apple-glass-card:hover,
 .orbix-card:hover,
-.payno-card:hover,
-.fintech-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 16px 36px -12px rgba(39, 56, 105, 0.09), 0 2px 6px rgba(39, 56, 105, 0.03);
+.payno-card:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(39, 56, 105, 0.15);
+  box-shadow:
+    0 24px 50px -12px rgba(39, 56, 105, 0.12),
+    0 4px 10px rgba(39, 56, 105, 0.04),
+    inset 0 1px 0 0 #ffffff;
 }
 
-/* Sky-Tint Hero Canvas Container (Slide 08 & Behance Cover) */
+/* 2. Apple Translucent Frosted Glass Table Container */
+.apple-glass-table {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  box-shadow:
+    0 20px 48px -15px rgba(39, 56, 105, 0.09),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+}
+
+/* 3. Apple-Navy Ambient Hero Container */
+.apple-navy-hero,
 .payno-sky-hero {
-  background: radial-gradient(120% 120% at 50% 0%, #c4e4fe 0%, #dff0fe 44%, #f3f7fb 88%, #ffffff 100%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
+  background: linear-gradient(135deg, rgba(39, 56, 105, 0.09) 0%, rgba(24, 37, 66, 0.04) 50%, rgba(255, 255, 255, 0.85) 100%);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 28px;
   box-shadow:
-    0 20px 50px -15px rgba(39, 56, 105, 0.08),
+    0 24px 55px -15px rgba(39, 56, 105, 0.1),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
 }
 
@@ -88,8 +116,10 @@
 
 /* Slide 15: Floating Bottom Bar Dock with Raised Center FAB */
 .orbix-floating-dock {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 9999px;
   box-shadow: 0 16px 40px -10px rgba(39, 56, 105, 0.18), 0 2px 8px rgba(39, 56, 105, 0.04);
 }
@@ -122,9 +152,10 @@
 
 .payno-btn-secondary,
 .apple-btn-secondary {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
   color: #273869;
-  border: 1px solid #dce5f2;
+  border: 1px solid rgba(39, 56, 105, 0.14);
   border-radius: 9999px;
   padding: 0.55rem 1.2rem;
   font-weight: 600;
@@ -139,14 +170,14 @@
 
 .payno-btn-secondary:hover,
 .apple-btn-secondary:hover {
-  background: #f8fafd;
-  border-color: #405881;
+  background: #ffffff;
+  border-color: #273869;
 }
 
 /* Micro-pill indicator (Slide 06: Available Limit • $3,600 Left >) */
 .orbix-micro-pill {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background: rgba(39, 56, 105, 0.05);
+  border: 1px solid rgba(39, 56, 105, 0.1);
   border-radius: 9999px;
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
@@ -159,71 +190,46 @@
 }
 
 .orbix-micro-pill:hover {
-  background: #e9eff6;
+  background: rgba(39, 56, 105, 0.1);
   color: #273869;
 }
 
 /* Trend Badges (Red / Green Strictly for Trend Direction) */
 .badge-apple-emerald,
 .payno-badge-mint {
-  background: #e6f8ef;
+  background: rgba(18, 183, 106, 0.12);
   color: #0d8b52;
-  border: 1px solid #bcebd2;
+  border: 1px solid rgba(18, 183, 106, 0.3);
   border-radius: 9999px;
   font-weight: 600;
 }
 
 .badge-apple-rose,
 .payno-badge-coral {
-  background: #feeceb;
+  background: rgba(240, 68, 56, 0.1);
   color: #c62e26;
-  border: 1px solid #fac9c6;
+  border: 1px solid rgba(240, 68, 56, 0.3);
   border-radius: 9999px;
   font-weight: 600;
 }
 
 .badge-apple-amber,
 .payno-badge-amber {
-  background: #fef4e6;
+  background: rgba(245, 158, 11, 0.12);
   color: #b56107;
-  border: 1px solid #fbdba9;
+  border: 1px solid rgba(245, 158, 11, 0.3);
   border-radius: 9999px;
   font-weight: 600;
-}
-
-/* Diagonal Hatched Progress Bar */
-.payno-hatch-track {
-  background-color: #f1f5f9;
-  background-image: repeating-linear-gradient(
-    -55deg,
-    #cbd5e1,
-    #cbd5e1 1.5px,
-    transparent 1.5px,
-    transparent 5px
-  );
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.payno-hatch-fill {
-  background-image: repeating-linear-gradient(
-    -55deg,
-    #273869,
-    #273869 2px,
-    #405881 2px,
-    #405881 5px
-  );
-  border-radius: 9999px;
 }
 
 /* Segmented Pill Selector */
 .apple-segmented-group {
   display: inline-flex;
   align-items: center;
-  background: #edf1f4;
+  background: rgba(39, 56, 105, 0.06);
   padding: 0.25rem;
   border-radius: 9999px;
-  border: 1px solid #dee7f3;
+  border: 1px solid rgba(39, 56, 105, 0.08);
 }
 
 .apple-segmented-item {
@@ -238,7 +244,7 @@
 .apple-segmented-item.active {
   background: #ffffff;
   color: #273869;
-  box-shadow: 0 2px 8px rgba(39, 56, 105, 0.1);
+  box-shadow: 0 2px 8px rgba(39, 56, 105, 0.14);
 }
 
 .tabular {

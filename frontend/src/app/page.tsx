@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -20,11 +21,16 @@ import {
   Calendar,
   BookOpen,
   TrendingUp,
+  ChevronUp,
+  ChevronDown,
+  ArrowUpDown,
+  Sparkles,
 } from "lucide-react";
 import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
+import { CompanySummary } from "@/types/katilim";
 
 /**
- * Payno split-tone price component: ₺482,50
+ * Split-tone price component: ₺482,50
  */
 function PaynoSplitPrice({
   value,
@@ -51,6 +57,57 @@ function PaynoSplitPrice({
   );
 }
 
+/**
+ * Katılım dışı olan hisselerin kesin fıkhi/mali gerekçesini hesaplar
+ */
+function getNonComplianceReason(comp: CompanySummary, standard: "BIST" | "AAOIFI"): string {
+  if (comp.breachReasonSummary) return comp.breachReasonSummary;
+
+  const threshold = standard === "BIST" ? 33 : 30;
+
+  // 1. Sektörel Uygunsuzluk Kontrolü
+  const nonHalalSectors = [
+    "Bankacılık",
+    "Sigortacılık",
+    "Finansal Kiralama ve Faktoring",
+    "Alkollü İçecek",
+    "Tütün Ürünleri",
+    "Şans Oyunları",
+    "Savunma Sanayi (Haram mühimmat)",
+  ];
+  if (nonHalalSectors.some((sec) => comp.sector?.includes(sec))) {
+    return "Ana Faaliyet: Konvansiyonel faizli finans / bankacılık";
+  }
+
+  // 2. Faizli Borç Oranı Eşiği
+  if (comp.debtRatioPercent > threshold) {
+    return `Faizli Borç Oranı (%${comp.debtRatioPercent.toFixed(1)}) > %${threshold} Eşiği Aşıldı`;
+  }
+
+  // 3. Faizli Varlık Oranı Eşiği
+  if (comp.cashRatioPercent > threshold) {
+    return `Faizli Varlık Oranı (%${comp.cashRatioPercent.toFixed(1)}) > %${threshold} Eşiği Aşıldı`;
+  }
+
+  // 4. Uygun Olmayan Gelir Oranı Eşiği
+  if (comp.impureIncomePercent > 5) {
+    return `Uygunsuz Faiz Geliri (%${comp.impureIncomePercent.toFixed(1)}) > %5 Eşiği Aşıldı`;
+  }
+
+  return `Faizli Borç/Varlık Eşiği Üstünde (%${comp.debtRatioPercent.toFixed(1)})`;
+}
+
+type SortField =
+  | "ticker"
+  | "priceTRY"
+  | "change24h"
+  | "status"
+  | "debtRatioPercent"
+  | "cashRatioPercent"
+  | "impureIncomePercent";
+
+type SortDirection = "asc" | "desc";
+
 export default function HomePage() {
   const router = useRouter();
   const {
@@ -70,6 +127,19 @@ export default function HomePage() {
   const [standard, setStandard] = useState<"BIST" | "AAOIFI">("BIST");
   const [visibleLimit, setVisibleLimit] = useState<number>(80);
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
+
+  // Sütun Sıralama State'i
+  const [sortField, setSortField] = useState<SortField>("ticker");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
 
   // Sektör listesi
   const allSectors = useMemo(() => {
@@ -93,7 +163,7 @@ export default function HomePage() {
   );
   const nonCompliantCount = totalCount - compliantCount;
 
-  // Filtrelenmiş 626 şirket
+  // Filtrelenmiş şirketler
   const filteredCompanies = useMemo(() => {
     const q = searchQuery.trim().toUpperCase();
     return companies.filter((c) => {
@@ -114,21 +184,98 @@ export default function HomePage() {
     });
   }, [companies, searchQuery, statusFilter, sectorFilter, standard]);
 
+  // Sıralanmış şirketler
+  const sortedCompanies = useMemo(() => {
+    const list = [...filteredCompanies];
+    list.sort((a, b) => {
+      let comp = 0;
+      if (sortField === "ticker") {
+        comp = a.ticker.localeCompare(b.ticker, "tr");
+      } else if (sortField === "priceTRY") {
+        comp = parseFloat(a.priceTRY || "0") - parseFloat(b.priceTRY || "0");
+      } else if (sortField === "change24h") {
+        const aVal = parseFloat(a.change24h.replace("%", "").replace("+", "") || "0");
+        const bVal = parseFloat(b.change24h.replace("%", "").replace("+", "") || "0");
+        comp = aVal - bVal;
+      } else if (sortField === "status") {
+        const aSt = standard === "BIST" ? a.bistStatus : a.aaoifiStatus;
+        const bSt = standard === "BIST" ? b.bistStatus : b.aaoifiStatus;
+        const aScore = aSt === "COMPLIANT" ? 1 : 0;
+        const bScore = bSt === "COMPLIANT" ? 1 : 0;
+        comp = aScore - bScore;
+      } else if (sortField === "debtRatioPercent") {
+        comp = (a.debtRatioPercent || 0) - (b.debtRatioPercent || 0);
+      } else if (sortField === "cashRatioPercent") {
+        comp = (a.cashRatioPercent || 0) - (b.cashRatioPercent || 0);
+      } else if (sortField === "impureIncomePercent") {
+        comp = (a.impureIncomePercent || 0) - (b.impureIncomePercent || 0);
+      }
+      return sortDirection === "asc" ? comp : -comp;
+    });
+    return list;
+  }, [filteredCompanies, sortField, sortDirection, standard]);
+
   const displayedCompanies = useMemo(
-    () => filteredCompanies.slice(0, visibleLimit),
-    [filteredCompanies, visibleLimit]
+    () => sortedCompanies.slice(0, visibleLimit),
+    [sortedCompanies, visibleLimit]
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-24 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 space-y-8">
+      
       {/* ===================================================================== */}
-      {/* 1. SLIDE 06 & 09: BALANCE FIRST — ONE CARD EVERY TOKEN                 */}
-      {/* "Balance is the largest thing on screen. 4 quick actions, never more" */}
+      {/* 0. APPLE-STYLE BRAND HEADER WITH NAVY LOGO (ÜST BAR YERİNE ENTEGRE)    */}
+      {/* ===================================================================== */}
+      <header className="flex items-center justify-between py-2 border-b border-[#273869]/10">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="w-11 h-11 rounded-2xl bg-[#273869] shadow-orbix-sm p-2 flex items-center justify-center transition-transform group-hover:scale-105 border border-white/20">
+            <Image
+              src="/brand/logo.svg"
+              alt="Mizan Logo"
+              width={34}
+              height={34}
+              className="w-full h-full object-contain"
+              priority
+            />
+          </div>
+          <div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-black tracking-tight text-[#273869]">
+                mizan
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#12B76A]" />
+            </div>
+            <span className="text-[10px] font-semibold tracking-wider uppercase text-[#6E81A0] block -mt-0.5">
+              Katılım Finans Terminali
+            </span>
+          </div>
+        </Link>
+
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full apple-glass-card text-xs font-semibold text-[#405881]">
+            <span className="w-2 h-2 rounded-full bg-[#12B76A] animate-pulse" />
+            <span>7/24 Canlı BIST KAP Akışı</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => refreshNow()}
+            disabled={isRefreshing}
+            className="w-9 h-9 rounded-full apple-glass-card text-[#273869] hover:bg-white flex items-center justify-center transition disabled:opacity-50"
+            title="Verileri Yenile"
+          >
+            <RefreshCw size={15} className={isRefreshing ? "animate-spin" : ""} />
+          </button>
+        </div>
+      </header>
+
+      {/* ===================================================================== */}
+      {/* 1. SLIDE 06 & 09: BALANCE FIRST — APPLE FROSTED GLASS KARTLAR        */}
       {/* ===================================================================== */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         
-        {/* SOL: BALANCE FIRST CARD (Slide 06 & 09) */}
-        <div className="lg:col-span-7 orbix-card p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white border border-[#E2E8F0]">
+        {/* SOL: BALANCE FIRST CARD (Apple Glass Depth) */}
+        <div className="lg:col-span-7 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
           {/* Card Top: Label & Diagonal Arrow Pill Button */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -146,7 +293,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Large Balance Figure (Slide 03 Type Scale: 44px) */}
+          {/* Large Balance Figure (44px) */}
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#273869] font-mono">
@@ -171,7 +318,7 @@ export default function HomePage() {
                 <span className="text-[#8B9BB4]">&gt;</span>
               </span>
 
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E6F8EF] text-[#0D8B52] text-xs font-bold font-mono">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#12B76A]/10 text-[#0D8B52] border border-[#12B76A]/25 text-xs font-bold font-mono">
                 <ArrowUpRight size={13} />
                 <span>+%1,42 Günlük</span>
               </span>
@@ -179,16 +326,16 @@ export default function HomePage() {
           </div>
 
           {/* Slide 09: 4 Quick Actions, Never More */}
-          <div className="pt-4 border-t border-[#EDF1F4]">
-            <div className="text-[11px] font-bold text-[#6E81A0] mb-3">
+          <div className="pt-4 border-t border-[#273869]/10">
+            <div className="text-[11px] font-bold text-[#6E81A0] mb-3 uppercase tracking-wider">
               Hızlı İşlemler
             </div>
             <div className="grid grid-cols-4 gap-2 sm:gap-3">
               <a
                 href="#screener-table"
-                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-[#F8FAFC] hover:bg-[#EDF1F4] border border-[#E2E8F0] transition group text-center"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/60 hover:bg-white border border-white/80 shadow-2xs transition group text-center"
               >
-                <div className="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                <div className="w-10 h-10 rounded-full bg-[#273869]/5 border border-[#273869]/10 text-[#273869] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
                   <Search size={18} />
                 </div>
                 <span className="text-xs font-bold text-[#273869] mt-2 leading-tight">
@@ -203,9 +350,9 @@ export default function HomePage() {
                   const el = document.getElementById("screener-table");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-[#F8FAFC] hover:bg-[#EDF1F4] border border-[#E2E8F0] transition group text-center"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/60 hover:bg-white border border-white/80 shadow-2xs transition group text-center"
               >
-                <div className="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] text-[#0D8B52] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                <div className="w-10 h-10 rounded-full bg-[#12B76A]/10 border border-[#12B76A]/20 text-[#0D8B52] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
                   <ShieldCheck size={18} />
                 </div>
                 <span className="text-xs font-bold text-[#273869] mt-2 leading-tight">
@@ -215,9 +362,9 @@ export default function HomePage() {
 
               <Link
                 href="/ipo"
-                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-[#F8FAFC] hover:bg-[#EDF1F4] border border-[#E2E8F0] transition group text-center"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/60 hover:bg-white border border-white/80 shadow-2xs transition group text-center"
               >
-                <div className="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                <div className="w-10 h-10 rounded-full bg-[#273869]/5 border border-[#273869]/10 text-[#273869] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
                   <Calendar size={18} />
                 </div>
                 <span className="text-xs font-bold text-[#273869] mt-2 leading-tight">
@@ -227,9 +374,9 @@ export default function HomePage() {
 
               <Link
                 href="/rehber"
-                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-[#F8FAFC] hover:bg-[#EDF1F4] border border-[#E2E8F0] transition group text-center"
+                className="flex flex-col items-center justify-center p-3 rounded-2xl bg-white/60 hover:bg-white border border-white/80 shadow-2xs transition group text-center"
               >
-                <div className="w-10 h-10 rounded-full bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
+                <div className="w-10 h-10 rounded-full bg-[#273869]/5 border border-[#273869]/10 text-[#273869] flex items-center justify-center shadow-2xs group-hover:scale-105 transition">
                   <BookOpen size={18} />
                 </div>
                 <span className="text-xs font-bold text-[#273869] mt-2 leading-tight">
@@ -240,8 +387,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* SAĞ: SLIDE 08 SIMPLE FINANCIAL OVERVIEW */}
-        <div className="lg:col-span-5 orbix-card p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white border border-[#E2E8F0]">
+        {/* SAĞ: SLIDE 08 SIMPLE FINANCIAL OVERVIEW (Apple Glass Depth) */}
+        <div className="lg:col-span-5 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
           <div>
             <div className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider">
               Finansal Genel Bakış
@@ -254,9 +401,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Slide 08 Dual Subcards: Total Revenue & Monthly Expense style */}
+          {/* Dual Subcards */}
           <div className="grid grid-cols-2 gap-3.5">
-            <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+            <div className="p-4 rounded-2xl bg-white/60 border border-white/90 shadow-2xs space-y-1.5">
               <span className="text-xs font-medium text-[#6E81A0] block">
                 Katılıma Uygun (XKTUM)
               </span>
@@ -269,7 +416,7 @@ export default function HomePage() {
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+            <div className="p-4 rounded-2xl bg-white/60 border border-white/90 shadow-2xs space-y-1.5">
               <span className="text-xs font-medium text-[#6E81A0] block">
                 Kapsam Dışı Şirketler
               </span>
@@ -283,7 +430,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Slide 08 Single Navy Line Indicator */}
+          {/* Single Navy Line Indicator */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between text-xs font-semibold">
               <span className="text-[#405881]">Katılım Endeksi Kapsamı</span>
@@ -291,7 +438,7 @@ export default function HomePage() {
                 %{((compliantCount / (totalCount || 1)) * 100).toFixed(1)} Uyum Oranı
               </span>
             </div>
-            <div className="w-full h-2 rounded-full bg-[#EDF1F4] overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-[#273869]/10 overflow-hidden">
               <div
                 className="h-full bg-[#273869] rounded-full transition-all duration-500"
                 style={{ width: `${(compliantCount / (totalCount || 1)) * 100}%` }}
@@ -303,21 +450,21 @@ export default function HomePage() {
       </section>
 
       {/* ===================================================================== */}
-      {/* 2. SLIDE 11: ONE ROW SHAPE, REUSED EVERYWHERE (FULL-WIDTH TABLE)       */}
+      {/* 2. APPLE-DESIGN FROSTED GLASS TABLE — SIRALANABİLİR SÜTUNLAR          */}
       {/* ===================================================================== */}
       <section
         id="screener-table"
-        className="orbix-card p-6 sm:p-8 space-y-6 bg-white border border-[#E2E8F0]"
+        className="apple-glass-table p-6 sm:p-8 space-y-6"
       >
-        {/* Üst Bar: Başlık, Arama, Sektör ve Standart Seçici */}
-        <div className="space-y-4 border-b border-[#EDF1F4] pb-6">
+        {/* Üst Kontrol Barı: Başlık, Arama, Sektör ve Standart Seçici */}
+        <div className="space-y-4 border-b border-[#273869]/10 pb-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl sm:text-2xl font-black text-[#273869] tracking-tight">
                   Tüm Borsa İstanbul Hisseleri
                 </h2>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#EDF1F4] text-[#273869] text-xs font-mono font-bold">
+                <span className="px-2.5 py-0.5 rounded-full bg-[#273869]/10 text-[#273869] text-xs font-mono font-bold">
                   {filteredCompanies.length} / {totalCount} Pay
                 </span>
                 {updatedAt && (
@@ -327,7 +474,7 @@ export default function HomePage() {
                 )}
               </div>
               <p className="text-xs text-[#6E81A0] mt-1 font-medium">
-                Hisselerin canlı fiyatı, fıkhi katılım durumu, faizli borç ve varlık rasyoları.
+                Sütun başlıklarına tıklayarak artan/azalan şekilde sıralayabilir, kapsam dışı hisselerin gerekçelerini inceleyebilirsiniz.
               </p>
             </div>
 
@@ -369,7 +516,7 @@ export default function HomePage() {
                   setVisibleLimit(80);
                 }}
                 placeholder="Hisse kodu, şirket adı veya sektör ara (Örn: BIMAS, ASELS, THYAO, EREGL)..."
-                className="w-full pl-11 pr-4 py-3 rounded-full bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-semibold text-[#273869] placeholder:text-[#8B9BB4] focus:outline-none focus:bg-white focus:border-[#273869]"
+                className="w-full pl-11 pr-4 py-3 rounded-full bg-white/70 border border-white/90 text-xs font-semibold text-[#273869] placeholder:text-[#8B9BB4] focus:outline-none focus:bg-white focus:border-[#273869] shadow-2xs"
               />
             </div>
 
@@ -380,7 +527,7 @@ export default function HomePage() {
                   setSectorFilter(e.target.value);
                   setVisibleLimit(80);
                 }}
-                className="w-full px-4 py-3 rounded-full bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-bold text-[#273869] focus:outline-none focus:bg-white"
+                className="w-full px-4 py-3 rounded-full bg-white/70 border border-white/90 text-xs font-bold text-[#273869] focus:outline-none focus:bg-white shadow-2xs"
               >
                 {allSectors.map((sec) => (
                   <option key={sec} value={sec}>
@@ -407,7 +554,7 @@ export default function HomePage() {
                   className={`flex-1 py-3 px-2 rounded-full text-xs font-bold transition text-center whitespace-nowrap ${
                     statusFilter === tab.id
                       ? "bg-[#273869] text-white shadow-orbix-sm"
-                      : "bg-[#F3F6FB] text-[#405881] hover:bg-[#E5EAF2]"
+                      : "bg-white/60 text-[#405881] hover:bg-white"
                   }`}
                 >
                   {tab.label}
@@ -417,21 +564,133 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* FULL-WIDTH RESPONSIVE TABLE (NO HORIZONTAL SCROLL NEEDED) */}
-        <div className="w-full">
+        {/* =================================================================== */}
+        {/* SIRALANABİLİR APPLE FROSTED GLASS TABLO                             */}
+        {/* =================================================================== */}
+        <div className="w-full overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#EDF1F4] text-[11px] font-bold uppercase tracking-wider text-[#6E81A0]">
-                <th className="py-3.5 pr-4">Hisse &amp; Şirket</th>
-                <th className="py-3.5 px-3 text-right">Canlı Fiyat</th>
-                <th className="py-3.5 px-4 text-center">Katılım Uygunluğu</th>
-                <th className="py-3.5 px-4">Faizli Borç Oranı</th>
-                <th className="py-3.5 px-3 text-right">Faizli Varlık</th>
-                <th className="py-3.5 px-3 text-right">Şüpheli Gelir</th>
+              <tr className="border-b border-[#273869]/10 text-[11px] font-bold uppercase tracking-wider text-[#6E81A0] select-none">
+                
+                {/* 1. Hisse & Şirket Sıralama */}
+                <th
+                  onClick={() => handleSort("ticker")}
+                  className="py-3.5 pr-4 cursor-pointer group hover:text-[#273869] transition-colors"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span>Hisse &amp; Şirket</span>
+                    {sortField === "ticker" ? (
+                      sortDirection === "asc" ? (
+                        <ChevronUp size={14} className="text-[#273869]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#273869]" />
+                      )
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-30 group-hover:opacity-100" />
+                    )}
+                  </div>
+                </th>
+
+                {/* 2. Canlı Fiyat Sıralama */}
+                <th
+                  onClick={() => handleSort("priceTRY")}
+                  className="py-3.5 px-3 text-right cursor-pointer group hover:text-[#273869] transition-colors"
+                >
+                  <div className="flex items-center justify-end gap-1.5">
+                    <span>Canlı Fiyat</span>
+                    {sortField === "priceTRY" ? (
+                      sortDirection === "asc" ? (
+                        <ChevronUp size={14} className="text-[#273869]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#273869]" />
+                      )
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-30 group-hover:opacity-100" />
+                    )}
+                  </div>
+                </th>
+
+                {/* 3. Katılım Uygunluğu Sıralama */}
+                <th
+                  onClick={() => handleSort("status")}
+                  className="py-3.5 px-4 text-center cursor-pointer group hover:text-[#273869] transition-colors"
+                >
+                  <div className="flex items-center justify-center gap-1.5">
+                    <span>Katılım Uygunluğu &amp; Gerekçe</span>
+                    {sortField === "status" ? (
+                      sortDirection === "asc" ? (
+                        <ChevronUp size={14} className="text-[#273869]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#273869]" />
+                      )
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-30 group-hover:opacity-100" />
+                    )}
+                  </div>
+                </th>
+
+                {/* 4. Faizli Borç Oranı Sıralama */}
+                <th
+                  onClick={() => handleSort("debtRatioPercent")}
+                  className="py-3.5 px-4 cursor-pointer group hover:text-[#273869] transition-colors"
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span>Faizli Borç Oranı</span>
+                    {sortField === "debtRatioPercent" ? (
+                      sortDirection === "asc" ? (
+                        <ChevronUp size={14} className="text-[#273869]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#273869]" />
+                      )
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-30 group-hover:opacity-100" />
+                    )}
+                  </div>
+                </th>
+
+                {/* 5. Faizli Varlık Sıralama */}
+                <th
+                  onClick={() => handleSort("cashRatioPercent")}
+                  className="py-3.5 px-3 text-right cursor-pointer group hover:text-[#273869] transition-colors"
+                >
+                  <div className="flex items-center justify-end gap-1.5">
+                    <span>Faizli Varlık</span>
+                    {sortField === "cashRatioPercent" ? (
+                      sortDirection === "asc" ? (
+                        <ChevronUp size={14} className="text-[#273869]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#273869]" />
+                      )
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-30 group-hover:opacity-100" />
+                    )}
+                  </div>
+                </th>
+
+                {/* 6. Şüpheli Gelir Sıralama */}
+                <th
+                  onClick={() => handleSort("impureIncomePercent")}
+                  className="py-3.5 px-3 text-right cursor-pointer group hover:text-[#273869] transition-colors"
+                >
+                  <div className="flex items-center justify-end gap-1.5">
+                    <span>Şüpheli Gelir</span>
+                    {sortField === "impureIncomePercent" ? (
+                      sortDirection === "asc" ? (
+                        <ChevronUp size={14} className="text-[#273869]" />
+                      ) : (
+                        <ChevronDown size={14} className="text-[#273869]" />
+                      )
+                    ) : (
+                      <ArrowUpDown size={12} className="opacity-30 group-hover:opacity-100" />
+                    )}
+                  </div>
+                </th>
+
+                {/* 7. Detay */}
                 <th className="py-3.5 pl-4 text-right">Detay</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EDF1F4] text-xs">
+            <tbody className="divide-y divide-[#273869]/[0.06] text-xs">
               {displayedCompanies.map((comp) => {
                 const status =
                   standard === "BIST" ? comp.bistStatus : comp.aaoifiStatus;
@@ -440,21 +699,24 @@ export default function HomePage() {
                 const debtRatio = comp.debtRatioPercent || 0;
                 const threshold = standard === "BIST" ? 33 : 30;
                 const debtFillPercent = Math.min(100, (debtRatio / threshold) * 100);
+                const nonComplianceReason = !isCompliant
+                  ? getNonComplianceReason(comp, standard)
+                  : "";
 
                 return (
                   <tr
                     key={comp.ticker}
                     onClick={() => router.push(`/companies/${comp.ticker}`)}
-                    className="hover:bg-[#F8FAFC] cursor-pointer transition-colors group"
+                    className="hover:bg-[#273869]/[0.035] cursor-pointer transition-colors group"
                   >
-                    {/* 1. Hisse & Şirket — Slide 11 One Row Shape */}
+                    {/* 1. Hisse & Şirket */}
                     <td className="py-4 pr-4">
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-11 h-11 rounded-2xl flex items-center justify-center font-mono font-bold text-xs shrink-0 border shadow-2xs transition-transform group-hover:scale-105 ${
                             isCompliant
-                              ? "bg-[#E6F8EF] border-[#BCEBD2] text-[#0D8B52]"
-                              : "bg-[#F3F6FB] border-[#E2E8F0] text-[#273869]"
+                              ? "bg-[#12B76A]/10 border-[#12B76A]/25 text-[#0D8B52]"
+                              : "bg-[#273869]/5 border-[#273869]/10 text-[#273869]"
                           }`}
                         >
                           {comp.ticker.slice(0, 5)}
@@ -463,7 +725,7 @@ export default function HomePage() {
                           <div className="font-bold text-[#273869] group-hover:text-[#405881] transition-colors flex items-center gap-1.5">
                             <span className="font-mono text-sm">{comp.ticker}</span>
                             {isCompliant && (
-                              <span className="px-1.5 py-0.2 rounded-full bg-[#E6F8EF] text-[#0D8B52] text-[10px] font-bold">
+                              <span className="px-1.5 py-0.2 rounded-full bg-[#12B76A]/10 text-[#0D8B52] border border-[#12B76A]/20 text-[10px] font-bold">
                                 XKTUM
                               </span>
                             )}
@@ -478,7 +740,7 @@ export default function HomePage() {
                       </div>
                     </td>
 
-                    {/* 2. Canlı Fiyat & 24s Değişim (Trend Colors Strictly Red/Green) */}
+                    {/* 2. Canlı Fiyat & 24s Değişim (Strictly Red/Green) */}
                     <td className="py-4 px-3 text-right whitespace-nowrap">
                       <div>
                         <PaynoSplitPrice
@@ -500,27 +762,41 @@ export default function HomePage() {
                       </span>
                     </td>
 
-                    {/* 3. Katılım Durumu Rozeti */}
-                    <td className="py-4 px-4 text-center whitespace-nowrap">
+                    {/* 3. Katılım Durumu Rozeti & KATILIM DIŞI SEBEBİ */}
+                    <td className="py-4 px-4 text-center">
                       {isCompliant ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full payno-badge-mint text-xs font-bold shadow-2xs">
                           <CheckCircle2 size={13} />
                           <span>Katılıma Uygun</span>
                         </span>
                       ) : status === "GRACE_PERIOD_TOLERANCE" ? (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full payno-badge-amber text-xs font-bold">
-                          <AlertTriangle size={13} />
-                          <span>İzlemede</span>
-                        </span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full payno-badge-amber text-xs font-bold">
+                            <AlertTriangle size={13} />
+                            <span>İzlemede (Tolerans)</span>
+                          </span>
+                          <span className="text-[10px] font-medium text-[#B56107] max-w-[220px] truncate">
+                            {nonComplianceReason}
+                          </span>
+                        </div>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full payno-badge-coral text-xs font-bold shadow-2xs">
-                          <XCircle size={13} />
-                          <span>Kapsam Dışı</span>
-                        </span>
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full payno-badge-coral text-xs font-bold shadow-2xs">
+                            <XCircle size={13} />
+                            <span>Kapsam Dışı</span>
+                          </span>
+                          {/* KATILIM DIŞI GEREKÇESİ */}
+                          <span
+                            className="text-[10px] font-semibold text-[#C62E26] max-w-[220px] truncate leading-tight"
+                            title={nonComplianceReason}
+                          >
+                            {nonComplianceReason}
+                          </span>
+                        </div>
                       )}
                     </td>
 
-                    {/* 4. Faizli Borç Oranı (Clean Single Navy Fill) */}
+                    {/* 4. Faizli Borç Oranı */}
                     <td className="py-4 px-4 min-w-[150px]">
                       <div className="flex items-center justify-between text-xs font-mono font-bold mb-1.5">
                         <span
@@ -534,7 +810,7 @@ export default function HomePage() {
                           / %{threshold} Eşik
                         </span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-[#EDF1F4] overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-[#273869]/10 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-300 ${
                             debtRatio <= threshold ? "bg-[#273869]" : "bg-[#F04438]"
@@ -572,7 +848,7 @@ export default function HomePage() {
 
                     {/* 7. Detay Aksiyon Butonu */}
                     <td className="py-4 pl-4 text-right whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white group-hover:bg-[#273869] text-[#273869] group-hover:text-white border border-[#E2E8F0] text-xs font-bold transition shadow-2xs">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/90 group-hover:bg-[#273869] text-[#273869] group-hover:text-white border border-[#273869]/15 text-xs font-bold transition shadow-2xs">
                         <span>İncele</span>
                         <ChevronRight size={13} />
                       </span>
@@ -585,23 +861,23 @@ export default function HomePage() {
         </div>
 
         {/* Daha Fazla Şirket Yükle Butonları */}
-        {visibleLimit < filteredCompanies.length && (
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 border-t border-[#EDF1F4]">
+        {visibleLimit < sortedCompanies.length && (
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 border-t border-[#273869]/10">
             <button
               type="button"
               onClick={() => setVisibleLimit((prev) => prev + 100)}
               className="payno-btn-secondary text-xs px-6 py-2.5"
             >
               +100 Şirket Daha Yükle ({displayedCompanies.length} /{" "}
-              {filteredCompanies.length})
+              {sortedCompanies.length})
             </button>
 
             <button
               type="button"
-              onClick={() => setVisibleLimit(filteredCompanies.length)}
+              onClick={() => setVisibleLimit(sortedCompanies.length)}
               className="payno-btn-primary text-xs px-6 py-2.5"
             >
-              Tümünü Göster ({filteredCompanies.length} Şirket)
+              Tümünü Göster ({sortedCompanies.length} Şirket)
             </button>
           </div>
         )}

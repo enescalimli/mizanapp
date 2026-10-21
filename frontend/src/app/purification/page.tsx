@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Calculator,
   Plus,
@@ -181,42 +182,68 @@ export default function PortfolioPurificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F6FB] text-[#273869] pb-28">
-      {/* Payno Sky-Mist Top Header */}
-      <section className="payno-sky-hero pt-8 pb-12 border-b border-white/60">
+    <div className="min-h-screen text-[#273869] pb-28">
+      {/* Apple Design Header */}
+      <section className="pt-4 pb-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="orbix-card p-8 relative overflow-hidden bg-white border border-[#E2E8F0]">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F8EF] border border-[#BCEBD2] text-[#0D8B52] text-xs font-extrabold">
-                  <ShieldCheck size={14} />
-                  <span>TKBB &amp; AAOIFI No. 21 Uyumlu • 626 BIST Hissesi</span>
+          <div className="apple-glass-card p-6 sm:p-8 relative overflow-hidden space-y-6">
+            {/* Top Brand Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-5">
+              <Link href="/" className="inline-flex items-center gap-3 group">
+                <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-orbix-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
+                  <Image
+                    src="/brand/logo.svg"
+                    alt="Mizan Logo"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#273869] tracking-tight">
-                  Arındırma (Taharet) &amp; <span className="font-orbix-serif italic text-[#405881]">Hisse Zekâtı</span> Merkezi
-                </h1>
-                <p className="text-sm text-[#6E81A0] max-w-3xl leading-relaxed font-medium">
-                  Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
-                  uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D8B52] font-bold">Zero-Float Precision</span>)
-                  arındırın ve niyetinize göre hisse senedi zekâtınızı kesin tutarlarla hesaplayın.
-                </p>
-              </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-black tracking-tight text-[#273869]">
+                      MİZAN
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#273869] text-white tracking-widest uppercase">
+                      ARINDIRMA
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[#6E81A0] font-medium block">
+                    Zero-Float Kuruş Hassasiyetli Fıkhi Arındırma
+                  </span>
+                </div>
+              </Link>
 
               <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-extrabold">
+                  <ShieldCheck size={14} />
+                  <span>TKBB &amp; AAOIFI No. 21 Uyumlu</span>
+                </div>
                 <button
                   onClick={() => window.print()}
-                  className="payno-btn-secondary text-xs"
+                  className="px-3.5 py-2 rounded-full bg-white/80 border border-[#E2E8F0] hover:bg-white text-xs font-bold text-[#273869] flex items-center gap-1.5 shadow-2xs backdrop-blur-md transition"
                 >
                   <Download size={14} />
-                  <span>Yazdır / PDF Rapor</span>
+                  <span>PDF / Yazdır</span>
                 </button>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#273869] tracking-tight">
+                Arındırma (Taharet) &amp; <span className="font-orbix-serif italic text-[#405881]">Hisse Zekâtı</span> Merkezi
+              </h1>
+              <p className="text-sm text-[#6E81A0] max-w-3xl leading-relaxed font-medium">
+                Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
+                uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D8B52] font-bold">Zero-Float Precision</span>)
+                arındırın ve niyetinize göre hisse senedi zekâtınızı kesin tutarlarla hesaplayın.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="space-y-8 pt-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="space-y-8 pt-4 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
       {/* Top Level Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

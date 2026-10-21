@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   BookOpen,
   HelpCircle,
@@ -211,14 +212,43 @@ export default function RehberPage() {
   });
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-24 space-y-8">
-      {/* Payno Sky-Mist Hero Header */}
-      <div className="payno-sky-hero p-6 sm:p-10">
-        <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[#273869] text-xs font-semibold">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 space-y-8">
+      {/* Apple Design Navy Hero Header */}
+      <div className="apple-glass-card p-6 sm:p-10 space-y-6">
+        {/* Top Brand Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-5">
+          <Link href="/" className="inline-flex items-center gap-3 group">
+            <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-orbix-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
+              <Image
+                src="/brand/logo.svg"
+                alt="Mizan Logo"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-black tracking-tight text-[#273869]">
+                  MİZAN
+                </span>
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#273869] text-white tracking-widest uppercase">
+                  REHBER
+                </span>
+              </div>
+              <span className="text-[11px] text-[#6E81A0] font-medium block">
+                İslami Yatırım, Fıkhi Cevazlar &amp; Terimler
+              </span>
+            </div>
+          </Link>
+
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#273869]/8 text-[#273869] text-xs font-bold">
             <Scale size={14} className="text-[#0D8B52]" />
             <span>Diyanet, TKBB ve AAOIFI Standartları</span>
           </div>
+        </div>
+
+        <div className="max-w-3xl space-y-2">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#273869] tracking-tight">
             İslami Finans &amp;{" "}
             <span className="font-orbix-serif italic text-[#405881]">Fıkhi Cevazlar</span>{" "}

@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   BookOpen,
   ArrowUpRight,
+  User,
 } from "lucide-react";
 
 export const FloatingBottomBar: React.FC = () => {
@@ -224,6 +225,30 @@ export const FloatingBottomBar: React.FC = () => {
                 </div>
                 <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
               </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setQuickActionOpen(false);
+                  router.push("/auth/login");
+                }}
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#273869]/8 to-[#182542]/5 hover:from-[#273869]/15 hover:to-[#182542]/10 border border-[#273869]/15 transition group text-left mt-1"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-[#273869] text-white flex items-center justify-center shadow-xs">
+                    <User size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#273869]">
+                      Giriş Yap &amp; Hesap Yönetimi
+                    </div>
+                    <div className="text-[11px] text-[#6E81A0]">
+                      Portföyünüzü ve alarmlarınızı bulutta güvenle saklayın
+                    </div>
+                  </div>
+                </div>
+                <ArrowUpRight size={16} className="text-[#273869] transition" />
+              </button>
             </div>
           </div>
         </div>
@@ -234,7 +259,7 @@ export const FloatingBottomBar: React.FC = () => {
       {/* "Active tab: filled navy icon + label. Center FAB breaks grid"      */}
       {/* =================================================================== */}
       <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 select-none">
-        <div className="flex items-center bg-white/95 backdrop-blur-xl border border-[#E2E8F0] rounded-full px-4 sm:px-6 py-2 shadow-2xl shadow-[#273869]/20 transition-all duration-300">
+        <div className="flex items-center bg-white/85 backdrop-blur-2xl border border-white/80 rounded-full px-4 sm:px-6 py-2 shadow-2xl shadow-[#273869]/20 ring-1 ring-black/5 transition-all duration-300">
           
           {/* 1. Ana Sayfa */}
           <Link

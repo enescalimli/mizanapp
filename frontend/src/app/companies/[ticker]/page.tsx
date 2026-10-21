@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
 import { RatioProgressBar } from "@/components/RatioProgressBar";
-import { PurificationCalculatorCard } from "@/components/PurificationCalculatorCard";
 import { SmartAlternativeCard } from "@/components/SmartAlternativeCard";
 import { getSmartAlternativesForTicker } from "@/lib/data/sampleCompanies";
 import { CompanyDetailScreening, ScreeningStandardCode } from "@/types/katilim";
@@ -107,27 +106,27 @@ export default function CompanyDetailPage() {
   const isBist = standard === "BIST_KATILIM_DIB";
 
   return (
-    <main className="min-h-screen bg-[#F3F6FB] text-[#182542] pb-24">
-      {/* Payno Sky-Mist Header */}
-      <section className="payno-sky-hero pt-6 pb-10 border-b border-white/60">
+    <main className="min-h-screen text-[#182542] pb-24">
+      {/* Apple Design Header */}
+      <section className="pt-6 pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Breadcrumb & Actions */}
           <div className="flex items-center justify-between text-xs text-[#6E81A0]">
             <div className="flex items-center gap-2">
-              <Link href="/" className="hover:text-[#182542] transition-colors flex items-center gap-1.5 font-bold">
+              <Link href="/" className="hover:text-[#273869] transition-colors flex items-center gap-1.5 font-bold">
                 <ArrowLeft size={13} />
                 <span>Hisse Tarayıcı (626)</span>
               </Link>
               <span className="text-[#94A3B8]">/</span>
               <span>Şirketler</span>
               <span className="text-[#94A3B8]">/</span>
-              <span className="text-[#182542] font-extrabold font-mono">{ticker}</span>
+              <span className="text-[#273869] font-extrabold font-mono">{ticker}</span>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={handleAddToPortfolio}
-                className="px-3.5 py-2 rounded-full bg-[#182542] hover:bg-[#22345c] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                className="px-3.5 py-2 rounded-full bg-[#273869] hover:bg-[#182542] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
               >
                 <PlusCircle size={13} />
                 <span>{addedToPortfolio ? "Eklendi!" : "Portföye Ekle"}</span>
@@ -135,7 +134,7 @@ export default function CompanyDetailPage() {
 
               <button
                 onClick={handleShare}
-                className="px-3.5 py-2 rounded-full bg-white hover:bg-[#F8FAFD] text-[#182542] border border-[#E2EAF4] text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-2 rounded-full bg-white/80 hover:bg-white text-[#273869] border border-[#E2EAF4] text-xs font-bold transition flex items-center gap-1.5 shadow-xs backdrop-blur-md"
               >
                 <Share2 size={12} />
                 <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
@@ -144,28 +143,28 @@ export default function CompanyDetailPage() {
           </div>
 
           {/* Company Header Card */}
-          <div className="payno-card p-6 sm:p-8 relative overflow-hidden">
+          <div className="apple-glass-card p-6 sm:p-8 relative overflow-hidden">
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
               {/* Title & Info */}
               <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-[#182542] text-white flex items-center justify-center font-extrabold text-xl font-mono tabular-nums shadow-md">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#273869] to-[#182542] text-white flex items-center justify-center font-extrabold text-xl font-mono tabular-nums shadow-orbix-sm ring-1 ring-white/20">
                   {ticker}
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-3">
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#182542] tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#273869] tracking-tight">
                       {data.companyName}
                     </h1>
                     <ComplianceBadge status={data.overallStatus} size="lg" />
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-[#6E81A0] mt-2 font-medium">
                     <span className="flex items-center gap-1">
-                      <Building2 size={13} className="text-[#2E6CF6]" />
+                      <Building2 size={13} className="text-[#273869]" />
                       {data.sector} &bull; {data.subSector}
                     </span>
                     <span>&bull;</span>
                     <span className="flex items-center gap-1 font-mono tabular-nums">
-                      <Calendar size={13} className="text-[#2E6CF6]" />
+                      <Calendar size={13} className="text-[#273869]" />
                       {data.fiscalPeriod} Bilanço &bull; Değerleme: {data.valuationDate}
                     </span>
                   </div>
@@ -252,6 +251,29 @@ export default function CompanyDetailPage() {
           </div>
         </div>
 
+        {/* Katılım Dışı / Kapsam Dışı Gerekçe Kartı */}
+        {data.overallStatus !== "COMPLIANT" && (
+          <div className="apple-glass-card p-6 border-l-4 border-l-[#F04438] space-y-2 bg-white/80">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C62E26]">
+              <AlertTriangle size={16} />
+              <span>Katılım Endeksi Kapsam Dışı Kalma Gerekçesi</span>
+            </div>
+            <p className="text-sm font-semibold text-[#182542] leading-relaxed">
+              {data.ratios.interestDebt.isCompliant === false
+                ? `Faizli Borç Oranı: ${data.ratios.interestDebt.ratioPercentage} (İzin verilen azami %${data.ratios.interestDebt.thresholdPercentage} eşiği aşılmıştır).`
+                : data.ratios.interestCash.isCompliant === false
+                ? `Faizli Varlık Oranı: ${data.ratios.interestCash.ratioPercentage} (İzin verilen azami %${data.ratios.interestCash.thresholdPercentage} eşiği aşılmıştır).`
+                : data.ratios.impureIncome.isCompliant === false
+                ? `Uygun Olmayan Gelir Oranı: ${data.ratios.impureIncome.ratioPercentage} (İzin verilen azami %5 eşiği aşılmıştır).`
+                : data.prohibitedActivitiesFound && data.prohibitedActivitiesFound.length > 0
+                ? `Faaliyet Alanı Engeli: ${data.prohibitedActivitiesFound.join(", ")} tespit edilmiştir.`
+                : data.gracePeriodInfo?.notes?.length > 0
+                ? data.gracePeriodInfo.notes.join(" ")
+                : "Şirketin finansal tabloları veya ana faaliyet alanı Katılım Standartları kriterlerini karşılamamaktadır."}
+            </p>
+          </div>
+        )}
+
         {/* Smart Alternative Card when company is non-compliant or in grace period */}
         {data.overallStatus !== "COMPLIANT" && (
           <SmartAlternativeCard
@@ -267,50 +289,40 @@ export default function CompanyDetailPage() {
         )}
 
         {/* Reference Metrics Card */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl bg-white border border-slate-200 shadow-sm text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-2xl apple-glass-card text-xs">
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+            <span className="text-[10px] uppercase font-semibold text-[#6E81A0] tracking-wider block mb-1">
               Piyasa Değeri
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
+            <span className="font-mono tabular-nums font-bold text-[#273869] text-sm">
               {formatTRY(data.ratios.spotMarketCapTRY, 0)}
             </span>
           </div>
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+            <span className="text-[10px] uppercase font-semibold text-[#6E81A0] tracking-wider block mb-1">
               Toplam Aktifler
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
+            <span className="font-mono tabular-nums font-bold text-[#273869] text-sm">
               {formatTRY(data.ratios.totalAssetsTRY, 0)}
             </span>
           </div>
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
-              Hisse Başı Arındırma
+            <span className="text-[10px] uppercase font-semibold text-[#6E81A0] tracking-wider block mb-1">
+              Faizli Borç Oranı
             </span>
-            <span className="font-mono tabular-nums font-bold text-emerald-700 text-sm">
-              {data.purificationMetrics.purificationPerShareQuarterTRY} ₺
+            <span className={`font-mono tabular-nums font-bold text-sm ${data.ratios.interestDebt.isCompliant ? "text-[#0D8B52]" : "text-[#C62E26]"}`}>
+              {data.ratios.interestDebt.ratioPercentage}
             </span>
           </div>
           <div>
-            <span className="text-[10px] uppercase font-semibold text-slate-400 tracking-wider block mb-1">
+            <span className="text-[10px] uppercase font-semibold text-[#6E81A0] tracking-wider block mb-1">
               Hisse Başı Zekat Matrahı
             </span>
-            <span className="font-mono tabular-nums font-bold text-slate-900 text-sm">
+            <span className="font-mono tabular-nums font-bold text-[#273869] text-sm">
               {data.purificationMetrics.zatableNetCurrentAssetsPerShareTRY} ₺
             </span>
           </div>
         </div>
-
-        {/* Embedded Purification & Zakat Calculator Card */}
-        <PurificationCalculatorCard
-          ticker={ticker}
-          purificationPerShareTRY={data.purificationMetrics.purificationPerShareQuarterTRY}
-          dividendPurificationRatio={data.purificationMetrics.dividendPurificationRatio}
-          impureIncomeQuarterTRY={data.purificationMetrics.impureIncomeIsolatedQuarterTRY}
-          totalSharesOutstanding={data.purificationMetrics.totalSharesOutstanding}
-          zatableNetAssetsPerShareTRY={data.purificationMetrics.zatableNetCurrentAssetsPerShareTRY}
-        />
       </div>
     </main>
   );
