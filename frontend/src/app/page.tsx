@@ -43,6 +43,7 @@ import {
 import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { CompanySummary } from "@/types/katilim";
 import { LeftDockSidebar } from "@/components/LeftDockSidebar";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 /**
  * Split-tone price component: ₺482,50
@@ -176,6 +177,17 @@ type SortDirection = "asc" | "desc";
 
 export default function HomePage() {
   const router = useRouter();
+  const { user, profile } = useAuth();
+
+  const userInitials = useMemo(() => {
+    const name = profile?.full_name || (user?.user_metadata?.full_name as string) || "Mustafa Çalımlı";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }, [profile?.full_name, user?.user_metadata?.full_name]);
+
   const {
     companies,
     kapDisclosures,
@@ -417,7 +429,7 @@ export default function HomePage() {
               title="Profil & Ayarlar"
             >
               <div className="w-full h-full bg-gradient-to-tr from-[#182542] to-[#405881] flex items-center justify-center text-white text-xs font-bold font-mono">
-                MK
+                {userInitials}
               </div>
             </Link>
           </div>

@@ -47,32 +47,35 @@ export default function IpoCalendarPage() {
   const [sortField, setSortField] = useState<SortField>("isKatilimCompliant");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
-  // Lot Dağıtım Simülasyonu
   const [selectedSimTicker, setSelectedSimTicker] = useState<string>("SSAAT");
   const [simParticipants, setSimParticipants] = useState<number>(2_000_000);
+  const [dataSourceLabel, setDataSourceLabel] = useState<string>("halkarz.com (Canlı Otomatik Akış)");
 
-  // 7/24 Live Sync function
-  const fetchIpos = useCallback(async (isInitial = false) => {
-    if (isInitial) setLoading(true);
+  // 7/24 Live Sync function with automated halkarz.com scraper
+  const fetchIpos = useCallback(async (isInitial = false, forceSync = false) => {
+    if (isInitial || forceSync) setLoading(true);
     try {
-      const res = await fetch("/api/ipo", { cache: "no-store" });
+      const url = forceSync ? "/api/ipo?sync=true" : "/api/ipo";
+      const res = await fetch(url, { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (data.ipos && Array.isArray(data.ipos) && data.ipos.length > 0) {
           setIpos(data.ipos);
           setLastSyncTime(
+            data.lastScrapedTime ||
             new Date().toLocaleTimeString("tr-TR", {
               hour: "2-digit",
               minute: "2-digit",
               second: "2-digit",
             })
           );
+          if (data.source) setDataSourceLabel(data.source);
         }
       }
     } catch (err) {
       console.warn("Live IPO fetch failed, using fallback:", err);
     } finally {
-      if (isInitial) setLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -184,14 +187,14 @@ export default function IpoCalendarPage() {
                 <span>SPK Onaylı İzahname &amp; Katılım Finans İlkeleri Bilgi Formu</span>
               </div>
 
-              {/* Live 7/24 Sync Status */}
+              {/* Live 7/24 Sync Status with automated halkarz.com scraper */}
               <div className="flex items-center gap-2.5">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold shadow-2xs backdrop-blur-md">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0D8B52]"></span>
                   </span>
-                  <span>7/24 Otomatik Canlı Senkronize</span>
+                  <span>{dataSourceLabel}</span>
                   <span className="text-[10px] text-[#0D8B52]/70 font-mono">
                     ({lastSyncTime})
                   </span>
@@ -199,22 +202,19 @@ export default function IpoCalendarPage() {
 
                 <button
                   type="button"
-                  onClick={() => fetchIpos(true)}
+                  onClick={() => fetchIpos(false, true)}
                   disabled={loading}
-                  title="Şimdi Yenile"
-                  className="p-2 rounded-xl bg-white/80 border border-[#E2E8F0] text-[#273869] hover:bg-white hover:shadow-xs transition disabled:opacity-50"
+                  title="halkarz.com Canlı Verilerini Şimdi Tara"
+                  className="px-3 py-1.5 rounded-full bg-white/90 border border-[#E2E8F0] text-xs font-bold text-[#182542] hover:bg-white hover:shadow-xs transition disabled:opacity-50 flex items-center gap-1.5 active:scale-95"
                 >
-                  <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+                  <RefreshCw size={13} className={loading ? "animate-spin text-emerald-600" : "text-[#182542]"} />
+                  <span>{loading ? "Taranıyor..." : "Canlı Güncelle"}</span>
                 </button>
               </div>
             </div>
 
           {/* Title and Intro */}
           <div className="max-w-3xl space-y-2 pt-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#273869]/8 text-[#273869] text-xs font-bold">
-              <ShieldCheck size={14} className="text-[#0D8B52]" />
-              <span>SPK Onaylı İzahname &amp; Katılım Finans İlkeleri Bilgi Formu</span>
-            </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#273869] tracking-tight">
               Halka Arz Edilecek <span className="text-[#405881] font-normal italic">Yeni Hisseler</span>

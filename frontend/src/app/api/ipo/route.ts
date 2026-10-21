@@ -7,8 +7,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const statusFilter = searchParams.get("compliant"); // "true" or "false"
   const q = searchParams.get("q")?.toUpperCase().trim() || "";
+  const forceSync = searchParams.get("sync") === "true";
 
-  const { ipos: ipoList, isLive } = await fetchLiveBistIpos24x7();
+  const { ipos: ipoList, isLive, source, lastScrapedTime } = await fetchLiveBistIpos24x7(forceSync);
 
   let filtered = [...ipoList];
 
@@ -33,6 +34,8 @@ export async function GET(request: Request) {
   return NextResponse.json({
     updatedAt: new Date().toISOString(),
     isLive,
+    source,
+    lastScrapedTime,
     totalIpos: ipoList.length,
     stats: {
       totalCount: ipoList.length,

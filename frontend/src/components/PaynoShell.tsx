@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Search, Bell } from "lucide-react";
 import { LeftDockSidebar } from "./LeftDockSidebar";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 interface PaynoShellProps {
   children: React.ReactNode;
@@ -19,6 +20,16 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   onSearchClick,
 }) => {
   const router = useRouter();
+  const { user, profile } = useAuth();
+
+  const userInitials = useMemo(() => {
+    const name = profile?.full_name || (user?.user_metadata?.full_name as string) || "Mustafa Çalımlı";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }, [profile?.full_name, user?.user_metadata?.full_name]);
 
   const handleSearch = () => {
     if (onSearchClick) {
@@ -92,7 +103,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               title="Profil & Ayarlar"
             >
               <div className="w-full h-full bg-gradient-to-tr from-[#182542] to-[#405881] flex items-center justify-center text-white text-xs font-bold font-mono">
-                MK
+                {userInitials}
               </div>
             </Link>
           </div>
