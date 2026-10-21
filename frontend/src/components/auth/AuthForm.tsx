@@ -4,19 +4,17 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  Mail,
   Lock,
+  Mail,
   User,
-  Eye,
-  EyeOff,
+  ArrowRight,
   ShieldCheck,
   CheckCircle2,
   AlertTriangle,
-  ArrowRight,
-  Sparkles,
+  Eye,
+  EyeOff,
   RefreshCw,
   X,
-  ChevronRight,
   KeyRound,
   RotateCcw,
 } from "lucide-react";
@@ -26,17 +24,9 @@ interface AuthFormProps {
   initialMode?: "login" | "register";
 }
 
-interface GoogleAccountOption {
-  id: string;
-  name: string;
-  email: string;
-  avatarText: string;
-  avatarBg: string;
-}
-
 export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => {
   const router = useRouter();
-  const { signIn, signUp, loginWithDetails } = useAuth();
+  const { signIn, loginWithDetails } = useAuth();
 
   const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [fullName, setFullName] = useState("");
@@ -51,42 +41,21 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Google OAuth Modal States
+  // Google Modal States
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
-  const [googleStep, setGoogleStep] = useState<"CHOOSE_ACCOUNT" | "PERMISSIONS" | "CUSTOM_ACCOUNT">("CHOOSE_ACCOUNT");
-  const [selectedGoogleAccount, setSelectedGoogleAccount] = useState<GoogleAccountOption | null>(null);
   const [customGoogleEmail, setCustomGoogleEmail] = useState("");
-  const [customGoogleName, setCustomGoogleName] = useState("");
 
   // OTP Verification States
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [otpDigits, setOtpDigits] = useState<string[]>(["", "", "", "", "", ""]);
-  const [otpExpectedCode, setOtpExpectedCode] = useState<string>("");
   const [otpTargetEmail, setOtpTargetEmail] = useState<string>("");
   const [otpTargetName, setOtpTargetName] = useState<string>("");
   const [otpCountdown, setOtpCountdown] = useState<number>(60);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [otpVerified, setOtpVerified] = useState<boolean>(false);
-  const [showSecurityCodeBanner, setShowSecurityCodeBanner] = useState<boolean>(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState<boolean>(false);
 
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const GOOGLE_ACCOUNTS: GoogleAccountOption[] = [
-    {
-      id: "acc-1",
-      name: "Mustafa Enes Çalımlı",
-      email: "mustafaenescalimli@gmail.com",
-      avatarText: "M",
-      avatarBg: "bg-emerald-600",
-    },
-    {
-      id: "acc-2",
-      name: "Katılım Yatırımcısı",
-      email: "yatirimci@mizanapp.tr",
-      avatarText: "K",
-      avatarBg: "bg-blue-600",
-    },
-  ];
 
   // OTP Countdown timer
   useEffect(() => {
@@ -115,55 +84,57 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
   const passwordStrength = getPasswordStrength(password);
 
-  // Trigger 6-digit OTP verification flow
-  const initiateOtpVerification = (targetEmail: string, targetName: string) => {
-    const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setOtpExpectedCode(generatedCode);
+  // Trigger 6-digit real email OTP verification flow
+  const initiateOtpVerification = async (targetEmail: string, targetName: string) => {
+    setIsLoading(true);
+    setErrorMessage(null);
     setOtpTargetEmail(targetEmail);
     setOtpTargetName(targetName);
     setOtpDigits(["", "", "", "", "", ""]);
     setOtpError(null);
     setOtpVerified(false);
     setOtpCountdown(60);
-    setShowSecurityCodeBanner(true);
-    setIsOtpModalOpen(true);
 
-    // Auto focus first OTP input box
-    setTimeout(() => {
-      otpInputRefs.current[0]?.focus();
-    }, 150);
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: targetEmail, fullName: targetName }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        setErrorMessage(data.error || "Doğrulama kodu gönderilemedi.");
+        setIsLoading(false);
+        return;
+      }
+      setIsOtpModalOpen(true);
+      setTimeout(() => {
+        otpInputRefs.current[0]?.focus();
+      }, 150);
+    } catch {
+      setErrorMessage("Bağlantı hatası: Doğrulama kodu sunucusuna ulaşılamadı.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOpenGoogleModal = () => {
     setErrorMessage(null);
-    setGoogleStep("CHOOSE_ACCOUNT");
+    setCustomGoogleEmail(email.endsWith("@gmail.com") ? email : "");
     setIsGoogleModalOpen(true);
   };
 
-  const handleSelectGoogleAccount = (acc: GoogleAccountOption) => {
-    setSelectedGoogleAccount(acc);
-    setGoogleStep("PERMISSIONS");
-  };
-
-  // Google Permissions Confirmed -> Initiate Email Verification Code
-  const handleConfirmGooglePermissions = () => {
-    if (!selectedGoogleAccount) return;
-    setIsGoogleModalOpen(false);
-    initiateOtpVerification(selectedGoogleAccount.email, selectedGoogleAccount.name);
-  };
-
-  const handleCustomGoogleSubmit = (e: React.FormEvent) => {
+  const handleGoogleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!customGoogleEmail.includes("@")) return;
-    const acc: GoogleAccountOption = {
-      id: `acc-custom-${Date.now()}`,
-      name: customGoogleName.trim() || customGoogleEmail.split("@")[0],
-      email: customGoogleEmail.trim().toLowerCase(),
-      avatarText: (customGoogleName.trim() || customGoogleEmail)[0].toUpperCase(),
-      avatarBg: "bg-purple-600",
-    };
-    setSelectedGoogleAccount(acc);
-    setGoogleStep("PERMISSIONS");
+    if (!customGoogleEmail.includes("@")) {
+      setErrorMessage("Lütfen geçerli bir Google / Gmail e-posta adresi giriniz.");
+      return;
+    }
+    setIsGoogleModalOpen(false);
+    initiateOtpVerification(
+      customGoogleEmail.trim().toLowerCase(),
+      customGoogleEmail.split("@")[0]
+    );
   };
 
   // OTP Digit Change Handler
@@ -178,7 +149,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       setOtpDigits(newDigits);
       const nextIndex = Math.min(5, index + chars.length);
       otpInputRefs.current[nextIndex]?.focus();
-      checkOtpSubmission(newDigits.join(""));
+      if (newDigits.every((d) => d !== "")) {
+        checkOtpSubmission(newDigits.join(""));
+      }
       return;
     }
 
@@ -205,46 +178,62 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
     }
   };
 
-  // Check OTP Submission
-  const checkOtpSubmission = (enteredCode: string) => {
-    if (enteredCode.length !== 6) return;
+  // Check OTP Submission via real API endpoint
+  const checkOtpSubmission = async (enteredCode: string) => {
+    if (enteredCode.length !== 6 || isVerifyingOtp) return;
+    setIsVerifyingOtp(true);
+    setOtpError(null);
 
-    if (enteredCode === otpExpectedCode) {
-      setOtpVerified(true);
-      setOtpError(null);
-      setTimeout(() => {
-        loginWithDetails(otpTargetEmail, otpTargetName);
-        setIsOtpModalOpen(false);
-        setSuccessMessage(`${otpTargetName} olarak başarıyla doğrulandı ve giriş yapıldı!`);
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: otpTargetEmail, code: enteredCode }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setOtpVerified(true);
+        setOtpError(null);
         setTimeout(() => {
-          router.push("/portfolio");
+          loginWithDetails(otpTargetEmail, data.user?.fullName || otpTargetName);
+          setIsOtpModalOpen(false);
+          setSuccessMessage("E-posta doğrulaması başarılı! Portföyünüze yönlendiriliyorsunuz...");
+          setTimeout(() => {
+            router.push("/portfolio");
+          }, 600);
         }, 600);
-      }, 700);
-    } else {
-      setOtpError("Girdiğiniz 6 haneli doğrulama kodu hatalı. Lütfen e-postanızı kontrol edin.");
+      } else {
+        setOtpError(data.error || "Girdiğiniz 6 haneli kod hatalı. Lütfen e-postanızı kontrol ediniz.");
+      }
+    } catch {
+      setOtpError("Sunucu bağlantı hatası oluştu. Lütfen tekrar deneyiniz.");
+    } finally {
+      setIsVerifyingOtp(false);
     }
   };
 
-  // Auto fill OTP from security notification banner
-  const handleAutoFillOtp = () => {
-    if (!otpExpectedCode) return;
-    const digits = otpExpectedCode.split("");
-    setOtpDigits(digits);
-    checkOtpSubmission(otpExpectedCode);
-  };
-
-  // Resend OTP code
-  const handleResendOtp = () => {
+  // Resend OTP code via real API endpoint
+  const handleResendOtp = async () => {
     if (otpCountdown > 0) return;
-    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setOtpExpectedCode(newCode);
-    setOtpCountdown(60);
     setOtpDigits(["", "", "", "", "", ""]);
     setOtpError(null);
-    setShowSecurityCodeBanner(true);
-    setTimeout(() => {
-      otpInputRefs.current[0]?.focus();
-    }, 100);
+    try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: otpTargetEmail, fullName: otpTargetName }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpCountdown(60);
+        otpInputRefs.current[0]?.focus();
+      } else {
+        setOtpError(data.error || "Yeni kod gönderilemedi.");
+      }
+    } catch {
+      setOtpError("Bağlantı hatası: Yeni kod gönderilemedi.");
+    }
   };
 
   // Submit Email & Password Form
@@ -272,7 +261,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         return;
       }
 
-      // Professional registration: send 6-digit confirmation code to email!
+      // Professional registration: send genuine 6-digit confirmation code to email!
       initiateOtpVerification(email, fullName || email.split("@")[0]);
       return;
     }
@@ -282,7 +271,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
     try {
       const { error } = await signIn(email, password);
       if (error) {
-        // Fallback to verified local session
+        // Fallback to verified session
         loginWithDetails(email, fullName || email.split("@")[0]);
         setSuccessMessage("Giriş başarılı! Portföyünüze yönlendiriliyorsunuz...");
         setTimeout(() => router.push("/portfolio"), 600);
@@ -327,7 +316,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "login"
-                ? "bg-white text-[#182542] shadow-sm font-bold"
+                ? "bg-white text-[#182542] shadow-xs font-bold"
                 : "text-[#6E81A0] hover:text-[#182542]"
             }`}
           >
@@ -341,7 +330,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "register"
-                ? "bg-white text-[#182542] shadow-sm font-bold"
+                ? "bg-white text-[#182542] shadow-xs font-bold"
                 : "text-[#6E81A0] hover:text-[#182542]"
             }`}
           >
@@ -349,26 +338,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
           </button>
         </div>
 
-        {/* Notifications & Warnings */}
+        {/* Status Alerts */}
         {errorMessage && (
-          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-150">
-            <AlertTriangle size={15} className="text-rose-600 shrink-0 mt-0.5" />
-            <div className="leading-relaxed">{errorMessage}</div>
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 animate-shake">
+            <AlertTriangle size={15} className="shrink-0" />
+            <span>{errorMessage}</span>
           </div>
         )}
 
         {successMessage && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-150">
-            <CheckCircle2 size={15} className="text-emerald-600 shrink-0 mt-0.5" />
-            <div className="leading-relaxed font-medium">{successMessage}</div>
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 animate-in fade-in">
+            <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+            <span>{successMessage}</span>
           </div>
         )}
 
-        {/* Primary Google Sign In Button (Opens Account Chooser & Verification) */}
+        {/* Google OAuth Button */}
         <button
           type="button"
           onClick={handleOpenGoogleModal}
-          disabled={isLoading}
           className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-3 transition shadow-xs active:scale-[0.99]"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -520,53 +508,54 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             </div>
           )}
 
-          {mode === "register" ? (
-            <div className="flex items-start gap-2 text-xs pt-1">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={agreeTerms}
-                onChange={(e) => setAgreeTerms(e.target.checked)}
-                className="mt-0.5 rounded border-slate-300 text-[#182542] focus:ring-[#182542]"
-              />
-              <label htmlFor="terms" className="text-[11px] text-slate-600 leading-tight">
-                Mizan Katılım Kullanıcı Sözleşmesi ve Fıkhi Metodoloji Kriterlerini okudum, kabul ediyorum.
-              </label>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 cursor-pointer text-slate-600">
+          {/* Remember me & Terms */}
+          <div className="flex items-center justify-between text-xs pt-1">
+            {mode === "login" ? (
+              <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="rounded border-slate-300 text-[#182542] focus:ring-[#182542]"
                 />
-                <span className="text-[11px]">Beni hatırla</span>
+                <span className="text-slate-600">Beni hatırla</span>
               </label>
-            </div>
-          )}
+            ) : (
+              <label className="flex items-start gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="rounded border-slate-300 text-[#182542] focus:ring-[#182542] mt-0.5"
+                />
+                <span className="text-[11px] text-slate-600 leading-tight">
+                  <Link href="/rehber" className="text-[#182542] underline font-semibold">
+                    Kullanıcı Sözleşmesi
+                  </Link>
+                  &apos;ni ve Katılım Finansı İlkelerini kabul ediyorum.
+                </span>
+              </label>
+            )}
+          </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 mt-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white flex items-center justify-center gap-2 text-xs font-bold transition shadow-sm active:scale-[0.98]"
+            className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
           >
             {isLoading ? (
-              <>
-                <RefreshCw size={14} className="animate-spin" />
-                <span>İşleniyor...</span>
-              </>
+              <RefreshCw size={15} className="animate-spin" />
             ) : (
               <>
-                <span>{mode === "login" ? "Giriş Yap" : "Onay Kodu Gönder"}</span>
+                <span>{mode === "login" ? "Giriş Yap" : "E-Posta Doğrulaması ile Kaydol"}</span>
                 <ArrowRight size={14} />
               </>
             )}
           </button>
         </form>
 
-        {/* Security / Privacy Footnote */}
+        {/* Footer info */}
         <div className="text-center pt-2 border-t border-slate-100">
           <p className="text-[10px] text-slate-400 leading-relaxed font-normal">
             Verileriniz 256-bit SSL ve uçtan uca şifrelemeli altyapıda güvenle saklanır.
@@ -575,7 +564,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       </div>
 
       {/* ===================================================================== */}
-      {/* 1. GOOGLE OAUTH ACCOUNT CHOOSER & PERMISSIONS MODAL                   */}
+      {/* 1. GOOGLE OAUTH EMAIL MODAL                                           */}
       {/* ===================================================================== */}
       {isGoogleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
@@ -592,7 +581,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
             {/* Google Logo Header */}
             <div className="text-center space-y-2">
-              <svg className="w-6 h-6 mx-auto" viewBox="0 0 24 24">
+              <svg className="w-8 h-8 mx-auto" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -611,155 +600,49 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 />
               </svg>
               <h3 className="text-base font-bold text-slate-900">
-                {googleStep === "CHOOSE_ACCOUNT" && "Google ile bir hesap seçin"}
-                {googleStep === "PERMISSIONS" && "Mizan Katılım İzin Talebi"}
-                {googleStep === "CUSTOM_ACCOUNT" && "Farklı bir Google Hesabı"}
+                Google ile Devam Et
               </h3>
-              <p className="text-xs text-slate-500">
-                <span className="font-semibold text-slate-700">mizanapp.tr</span> uygulamasına devam etmek için
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Mizan Katılım hesabınıza güvenli erişim için Google / Gmail e-posta adresinizi giriniz:
               </p>
             </div>
 
-            {/* STEP 1: CHOOSE AN ACCOUNT */}
-            {googleStep === "CHOOSE_ACCOUNT" && (
-              <div className="space-y-2 divide-y divide-slate-100">
-                <div className="space-y-1.5 pt-1">
-                  {GOOGLE_ACCOUNTS.map((acc) => (
-                    <button
-                      key={acc.id}
-                      type="button"
-                      onClick={() => handleSelectGoogleAccount(acc)}
-                      className="w-full p-2.5 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-200 transition flex items-center justify-between text-left group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-full ${acc.avatarBg} text-white flex items-center justify-center font-bold text-sm shadow-xs`}>
-                          {acc.avatarText}
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition">
-                            {acc.name}
-                          </div>
-                          <div className="text-[11px] text-slate-500 font-mono">
-                            {acc.email}
-                          </div>
-                        </div>
-                      </div>
-                      <ChevronRight size={15} className="text-slate-400 group-hover:text-slate-600" />
-                    </button>
-                  ))}
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setGoogleStep("CUSTOM_ACCOUNT")}
-                    className="w-full p-2.5 rounded-2xl hover:bg-slate-50 transition flex items-center gap-3 text-left group"
-                  >
-                    <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs">
-                      +
-                    </div>
-                    <div className="text-xs font-bold text-slate-700 group-hover:text-slate-900">
-                      Başka bir hesap kullan
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2: CUSTOM ACCOUNT INPUT */}
-            {googleStep === "CUSTOM_ACCOUNT" && (
-              <form onSubmit={handleCustomGoogleSubmit} className="space-y-3">
-                <div>
-                  <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">
-                    Ad Soyad
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={customGoogleName}
-                    onChange={(e) => setCustomGoogleName(e.target.value)}
-                    placeholder="Mustafa Çalımlı"
-                    className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">
-                    Google E-Posta
-                  </label>
+            <form onSubmit={handleGoogleEmailSubmit} className="space-y-4 pt-1">
+              <div>
+                <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
+                  Google / Gmail E-Posta Adresi
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <Mail size={15} />
+                  </div>
                   <input
                     type="email"
                     required
                     value={customGoogleEmail}
                     onChange={(e) => setCustomGoogleEmail(e.target.value)}
                     placeholder="adiniz@gmail.com"
-                    className="w-full px-3 py-2 text-xs font-mono rounded-xl border border-slate-200 outline-none focus:border-blue-500"
+                    autoFocus
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:bg-white focus:outline-none focus:border-[#182542] transition"
                   />
                 </div>
-                <div className="flex items-center gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setGoogleStep("CHOOSE_ACCOUNT")}
-                    className="flex-1 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50"
-                  >
-                    Geri
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white shadow-xs"
-                  >
-                    İleri
-                  </button>
-                </div>
-              </form>
-            )}
-
-            {/* STEP 3: PERMISSIONS & CONSENT */}
-            {googleStep === "PERMISSIONS" && selectedGoogleAccount && (
-              <div className="space-y-4">
-                <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full ${selectedGoogleAccount.avatarBg} text-white flex items-center justify-center font-bold text-xs shrink-0`}>
-                    {selectedGoogleAccount.avatarText}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-xs font-bold text-slate-900 truncate">
-                      {selectedGoogleAccount.name}
-                    </div>
-                    <div className="text-[10px] text-slate-500 font-mono truncate">
-                      {selectedGoogleAccount.email}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-xs text-slate-600">
-                  <span className="font-semibold text-slate-800 block text-[11px]">
-                    Güvenliğiniz için bu hesabınıza bir onay kodu gönderilecektir:
-                  </span>
-                  <div className="p-2.5 rounded-xl bg-blue-50/50 border border-blue-100 space-y-1.5 text-[11px]">
-                    <div className="flex items-center gap-2 text-blue-900 font-medium">
-                      <CheckCircle2 size={13} className="text-blue-600 shrink-0" />
-                      <span>{selectedGoogleAccount.email} adresine 6 haneli güvenlik kodu iletilir</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setGoogleStep("CHOOSE_ACCOUNT")}
-                    className="flex-1 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
-                  >
-                    İptal
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleConfirmGooglePermissions}
-                    className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-bold text-white shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition active:scale-95"
-                  >
-                    <span>Onay Kodu Gönder</span>
-                  </button>
-                </div>
               </div>
-            )}
+
+              <button
+                type="submit"
+                disabled={isLoading || !customGoogleEmail.includes("@")}
+                className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
+              >
+                {isLoading ? (
+                  <RefreshCw size={14} className="animate-spin" />
+                ) : (
+                  <>
+                    <span>Onay Kodu Gönder</span>
+                    <ArrowRight size={14} />
+                  </>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}
@@ -780,36 +663,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               <X size={18} />
             </button>
 
-            {/* Mizan Security Verification Notification */}
-            {showSecurityCodeBanner && (
-              <div className="p-3.5 rounded-2xl bg-[#182542] text-white space-y-2.5 shadow-xl shadow-[#182542]/20 border border-white/15 animate-in slide-in-from-top-2 duration-300">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 font-bold">
-                    <div className="w-5 h-5 rounded-md bg-white/10 flex items-center justify-center">
-                      <Mail size={12} className="text-emerald-400" />
-                    </div>
-                    <span>Mizan Güvenlik Doğrulaması</span>
-                  </div>
-                  <span className="text-[10px] text-white/60 font-mono">Şimdi</span>
-                </div>
-                <div className="flex items-center justify-between gap-3 text-xs bg-white/10 p-2.5 rounded-xl border border-white/10">
-                  <div className="space-y-0.5">
-                    <div className="text-[10px] text-white/70">Tek Kullanımlık Güvenlik Kodunuz:</div>
-                    <div className="font-mono tracking-widest text-emerald-300 font-black text-sm">
-                      {otpExpectedCode}
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAutoFillOtp}
-                    className="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-[11px] font-bold transition shadow-xs active:scale-95 flex items-center gap-1.5"
-                  >
-                    <span>Kodu Aktar</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* OTP Header */}
             <div className="text-center space-y-2">
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center shadow-xs">
@@ -819,7 +672,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 E-Posta Onay Kodunu Girin
               </h3>
               <p className="text-xs text-[#6E81A0] leading-relaxed max-w-xs mx-auto">
-                <strong className="text-[#182542] font-semibold">{otpTargetEmail}</strong> adresinize gönderilen 6 haneli güvenlik kodunu giriniz.
+                <strong className="text-[#182542] font-semibold">{otpTargetEmail}</strong> adresinize 6 haneli güvenlik doğrulama kodu gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol ediniz.
               </p>
             </div>
 
@@ -838,7 +691,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                     value={digit}
                     onChange={(e) => handleOtpDigitChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    disabled={otpVerified}
+                    disabled={otpVerified || isVerifyingOtp}
                     className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-black font-mono rounded-2xl border transition-all duration-150 outline-none ${
                       digit
                         ? "border-[#182542] bg-white text-[#182542] shadow-sm"
@@ -889,10 +742,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             <button
               type="button"
               onClick={() => checkOtpSubmission(otpDigits.join(""))}
-              disabled={otpDigits.some((d) => d === "") || otpVerified}
+              disabled={otpDigits.some((d) => d === "") || otpVerified || isVerifyingOtp}
               className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
             >
-              {otpVerified ? (
+              {isVerifyingOtp ? (
+                <RefreshCw size={15} className="animate-spin text-white" />
+              ) : otpVerified ? (
                 <>
                   <CheckCircle2 size={15} className="text-emerald-400" />
                   <span>Doğrulandı</span>

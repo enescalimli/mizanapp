@@ -976,49 +976,58 @@ export default function HomePage() {
                 </button>
               </div>
 
-              {/* PANEL 6: MİZAN KATILIM DİJİTAL KARTI (Orbix Titanium Card Format) */}
+              {/* PANEL 6: MİZAN FIKHİ İCAZET & STANDART SERTİFİKASI */}
               <div className="space-y-2">
                 <span className="text-xs font-bold text-[#182542] block">
-                  Katılım Kartı &amp; Cüzdan
+                  Fıkhi Standart &amp; İcazet Sertifikası
                 </span>
 
                 <div className="w-full aspect-[1.58/1] rounded-2xl p-5 relative overflow-hidden text-white flex flex-col justify-between shadow-xl shadow-[#182542]/20 border border-white/20 bg-gradient-to-br from-[#182542] via-[#24375d] to-[#3a5282]">
-                  {/* Card Background Watermark Graphics */}
+                  {/* Subtle Background Watermark */}
                   <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_30%_30%,#ffffff_0%,transparent_60%)] pointer-events-none" />
                   <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full border border-white/10 pointer-events-none" />
 
-                  {/* Top: Brand watermark & EMV Chip */}
+                  {/* Top: Brand watermark & Verification Seal */}
                   <div className="flex items-center justify-between relative z-10">
                     <span className="font-bold text-base tracking-tight text-white/90">
                       mizan • katılım
                     </span>
 
-                    {/* EMV Gold Chip graphic */}
-                    <div className="w-8 h-6 rounded-md bg-gradient-to-br from-[#E2B96F] via-[#F4D086] to-[#C99C48] border border-amber-300/40 shadow-xs flex items-center justify-center">
-                      <div className="w-6 h-4 border border-amber-800/20 rounded-[2px] grid grid-cols-2 gap-0.5 p-0.5">
-                        <span className="bg-amber-700/10 rounded-[1px]"></span>
-                        <span className="bg-amber-700/10 rounded-[1px]"></span>
-                      </div>
+                    {/* Gold Official Compliance Seal */}
+                    <div className="px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-400/20 to-amber-300/30 border border-amber-300/40 text-amber-200 text-[10px] font-bold flex items-center gap-1.5 shadow-2xs">
+                      <ShieldCheck size={12} className="text-amber-300" />
+                      <span>Fıkhi İcazet Onaylı</span>
                     </div>
                   </div>
 
-                  {/* Bottom: Contactless symbol & TROY / VISA Logos */}
-                  <div className="flex items-end justify-between relative z-10 pt-4">
-                    <div className="space-y-1.5">
-                      <Radio size={16} className="text-white/80 rotate-90" />
-                      <div className="text-[11px] font-mono tracking-widest text-white/70">
-                        ••••  4125
+                  {/* Middle: Standards & Compliance Thresholds */}
+                  <div className="relative z-10 py-1 space-y-1">
+                    <div className="text-xs font-extrabold text-white tracking-tight">
+                      BIST Katılım (XKTUM) &amp; AAOIFI No: 21
+                    </div>
+                    <div className="text-[10px] text-white/75 leading-relaxed">
+                      Faizli Borç Oranı: <strong className="text-emerald-300">&lt; %33</strong> &bull; Uygunsuz Gelir: <strong className="text-emerald-300">&lt; %5</strong>
+                    </div>
+                  </div>
+
+                  {/* Bottom: Official ID & Link to Guidelines */}
+                  <div className="flex items-end justify-between relative z-10 pt-2 border-t border-white/15">
+                    <div className="space-y-0.5">
+                      <div className="text-[9px] text-white/60 uppercase font-mono tracking-wider">
+                        Sertifika Lisans No
                       </div>
-                      <div className="text-[9px] font-semibold text-white/60 uppercase tracking-wider">
-                        BIST Katılım Üyesi
+                      <div className="text-[11px] font-mono font-bold tracking-widest text-emerald-300">
+                        MZ-2026-XKTUM-01
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <span className="text-xl font-black italic tracking-wider text-white font-serif">
-                        TROY
-                      </span>
-                    </div>
+                    <Link
+                      href="/rehber"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[10px] font-bold transition backdrop-blur-xs border border-white/15"
+                    >
+                      <span>Standartları İncele</span>
+                      <ArrowUpRight size={11} />
+                    </Link>
                   </div>
                 </div>
               </div>
