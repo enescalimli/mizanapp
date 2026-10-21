@@ -26,6 +26,7 @@ import {
   Building2,
 } from "lucide-react";
 import { PaynoShell } from "@/components/PaynoShell";
+import { ChurnSurveyModal } from "@/components/ChurnSurveyModal";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 type SettingsTab = "PROFIL" | "FIKIH" | "PIYASA" | "BILDIRIM" | "GIZLILIK";
@@ -82,6 +83,10 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<UserSettingsState>(DEFAULT_SETTINGS);
   const [isSavedToast, setIsSavedToast] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [subscriptionPlan, setSubscriptionPlan] = useState<"PRO" | "FREE">("PRO");
+  const [isChurnModalOpen, setIsChurnModalOpen] = useState(false);
+  const [showPortalDetails, setShowPortalDetails] = useState(false);
+  const [planToast, setPlanToast] = useState<string | null>(null);
 
   // Load settings on mount
   useEffect(() => {
@@ -302,24 +307,108 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Pro Plan Benefits Card */}
-            <div className="p-5 rounded-2xl bg-gradient-to-br from-[#182542] via-[#24375d] to-[#3a5282] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md shadow-[#182542]/15">
-              <div className="space-y-1">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold">
-                  <span>PRO PLAN</span>
+            {/* Self-Service Müşteri Portali & Abonelik Yönetimi */}
+            <div className="space-y-4 pt-2 border-t border-[#EDF1F7]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542]">
+                    Abonelik &amp; Fatura Merkezi
+                  </h4>
+                  <p className="text-[11px] text-[#6E81A0]">
+                    Planınızı yönetin, faturalarınızı indirin veya iptal sürecini başlatın.
+                  </p>
                 </div>
-                <h4 className="text-sm font-bold">Mizan Katılım Pro &bull; Kurumsal Lisans</h4>
-                <p className="text-xs text-white/80 font-normal">
-                  626 BIST hissesi için anlık KAP bildirimleri, limitsiz arındırma ve hisse zekâtı arşivi.
-                </p>
+                {planToast && (
+                  <div className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
+                    {planToast}
+                  </div>
+                )}
               </div>
-              <button
-                type="button"
-                onClick={() => alert("Aboneliğiniz aktif ve 12 ay boyunca geçerlidir.")}
-                className="px-4 py-2 rounded-xl bg-white text-[#182542] text-xs font-bold hover:bg-slate-100 transition shrink-0 shadow-xs"
-              >
-                Aboneliği Yönet
-              </button>
+
+              {subscriptionPlan === "PRO" ? (
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-[#182542] via-[#24375d] to-[#3a5282] text-white space-y-4 shadow-md shadow-[#182542]/15">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold">
+                        <Sparkles size={11} className="text-amber-300" />
+                        <span>MİZAN PRO AKTİF</span>
+                      </div>
+                      <h4 className="text-sm font-bold">Mizan Katılım Pro &bull; Yıllık Plan</h4>
+                      <p className="text-xs text-white/80 font-normal">
+                        626 BIST hissesi için anlık KAP bildirimleri, limitsiz arındırma ve hisse zekâtı arşivi.
+                      </p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-lg font-extrabold font-mono text-emerald-300">₺1.490 / yıl</div>
+                      <div className="text-[10px] text-white/70">Yenilenme: 2027-10-20</div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-white/15 flex flex-wrap items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowPortalDetails(!showPortalDetails)}
+                      className="px-4 py-2 rounded-xl bg-white text-[#182542] text-xs font-bold hover:bg-slate-100 transition shadow-xs flex items-center gap-1.5"
+                    >
+                      <CreditCard size={13} />
+                      <span>{showPortalDetails ? "Detayları Gizle" : "Müşteri Portali & Fatura"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsChurnModalOpen(true)}
+                      className="text-xs text-white/70 hover:text-white underline font-semibold transition"
+                    >
+                      Aboneliği İptal Et
+                    </button>
+                  </div>
+
+                  {showPortalDetails && (
+                    <div className="p-4 rounded-xl bg-black/20 border border-white/10 space-y-3 text-xs animate-in fade-in duration-200">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-white/70">Kayıtlı Ödeme Yöntemi:</span>
+                        <span className="font-mono font-bold text-white">Mastercard &bull;&bull;&bull;&bull; 4242 (SKT: 10/29)</span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-white/70">Son Fatura No:</span>
+                        <span className="font-mono text-emerald-300">MZN-2026-INV-8491 (₺1.490)</span>
+                      </div>
+                      <div className="pt-1 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => alert("Son dönem e-faturanız (PDF) indirildi.")}
+                          className="text-[10px] text-white underline font-bold"
+                        >
+                          E-Arşiv Faturayı İndir (PDF)
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="p-5 rounded-2xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                      ÜCRETSİZ PLAN
+                    </span>
+                    <h4 className="text-xs font-bold text-[#182542]">Mizan Katılım Temel Sürüm</h4>
+                    <p className="text-[11px] text-[#6E81A0]">
+                      Yalnızca 3 hisse arındırma ve temel tarama limitindesiniz.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubscriptionPlan("PRO");
+                      setPlanToast("Mizan PRO üyeliğiniz aktif edildi!");
+                      setTimeout(() => setPlanToast(null), 3500);
+                    }}
+                    className="px-4 py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold transition shadow-xs"
+                  >
+                    Mizan PRO&apos;ya Yükselt (₺149/ay)
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -765,6 +854,27 @@ export default function SettingsPage() {
             </div>
           </div>
         )}
+
+        {/* Churn Retention Survey Modal */}
+        <ChurnSurveyModal
+          isOpen={isChurnModalOpen}
+          onClose={() => setIsChurnModalOpen(false)}
+          onApplyRetentionOffer={(offerType) => {
+            setIsChurnModalOpen(false);
+            if (offerType === "DISCOUNT_30") {
+              setPlanToast("%30 indirim sonraki 3 döneminize başarıyla tanımlandı!");
+            } else if (offerType === "PAUSE_2_MONTHS") {
+              setPlanToast("Aboneliğiniz 60 gün boyunca donduruldu. Ücret kesilmeyecek.");
+            }
+            setTimeout(() => setPlanToast(null), 4000);
+          }}
+          onConfirmCancel={(reason, feedback) => {
+            setIsChurnModalOpen(false);
+            setSubscriptionPlan("FREE");
+            setPlanToast("Aboneliğiniz iptal edildi. Dönem sonuna kadar PRO haklarınız devam eder.");
+            setTimeout(() => setPlanToast(null), 4000);
+          }}
+        />
 
       </div>
     </PaynoShell>

@@ -30,6 +30,7 @@ import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { CompanySummary } from "@/types/katilim";
 import { LeftDockSidebar } from "@/components/LeftDockSidebar";
 import { NotificationPopover } from "@/components/NotificationPopover";
+import { FooterLegal } from "@/components/FooterLegal";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 /**
@@ -771,6 +772,9 @@ export default function HomePage() {
           </div>
 
         </div>
+
+        {/* Kurumsal ve Hukuki Footer */}
+        <FooterLegal />
 
       </div>
     </div>

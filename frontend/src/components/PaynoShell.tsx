@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { LeftDockSidebar } from "./LeftDockSidebar";
 import { NotificationPopover } from "./NotificationPopover";
+import { FooterLegal } from "./FooterLegal";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 interface PaynoShellProps {
@@ -106,6 +107,9 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
         <main className="min-w-0">
           {children}
         </main>
+
+        {/* Kurumsal ve Yasal Footer (Tüm Sayfalarda Uyumlu) */}
+        <FooterLegal />
 
       </div>
     </div>

@@ -52,6 +52,7 @@ yarn-debug.log*
 # Skills cache
 .taste-skill/
 .antigravity/
+skills-lock.json
 yarn-error.log*
 
 # Database data
