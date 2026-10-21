@@ -4,8 +4,9 @@ import React, { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Search, Bell } from "lucide-react";
+import { Search } from "lucide-react";
 import { LeftDockSidebar } from "./LeftDockSidebar";
+import { NotificationPopover } from "./NotificationPopover";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 interface PaynoShellProps {
@@ -35,26 +36,25 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
     if (onSearchClick) {
       onSearchClick();
     } else {
-      router.push("/#screener-table");
+      router.push("/tarayici");
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#EBEEF2] text-[#182542] py-3 sm:py-6 px-2 sm:px-4 md:px-6 flex justify-center selection:bg-[#E6F8EF] selection:text-[#0D8B52]">
-      {/* ===================================================================== */}
-      {/* ORBIX STUDIO / PAYNO CANVAS WRAPPER                                   */}
-      {/* ===================================================================== */}
-      <div className="w-full max-w-[1360px] bg-white/90 backdrop-blur-2xl rounded-[32px] sm:rounded-[40px] shadow-[0_25px_80px_rgba(24,37,66,0.08)] border border-white/95 overflow-hidden relative flex flex-col">
-        
-        {/* Atmospheric Navy Mist Gradient (Top Area in Screenshot) */}
-        <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-r from-transparent via-[#87A8CD]/28 to-[#476B9B]/22 pointer-events-none blur-3xl -z-0" />
+    <div className="min-h-screen bg-[#EBEEF2] text-[#182542] selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative">
+      {/* Background Navy Mist Atmosphere */}
+      <div className="fixed top-0 left-0 right-0 h-96 bg-gradient-to-r from-transparent via-[#87A8CD]/20 to-[#476B9B]/15 pointer-events-none blur-3xl -z-0" />
 
-        {/* =================================================================== */}
-        {/* TOP HEADER: Logo, Search, Notifications, Avatar                     */}
-        {/* =================================================================== */}
-        <header className="relative z-10 flex items-center justify-between px-6 sm:px-10 pt-7 pb-4">
+      {/* Fixed Left Vertical Dock (Desktop only, pinned on viewport) */}
+      <LeftDockSidebar />
+
+      {/* Main Responsive Body Container */}
+      <div className="relative z-10 md:pl-20 lg:pl-28 max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        
+        {/* Top Header Floating Glass Bar */}
+        <header className="bg-white/80 backdrop-blur-2xl rounded-3xl border border-white/90 p-4 sm:px-8 sm:py-5 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2.5 group">
+          <Link href="/" className="inline-flex items-center gap-2.5 group shrink-0">
             <div className="w-9 h-9 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] flex items-center justify-center p-0.5">
               <Image
                 src="/brand/logo.svg"
@@ -66,10 +66,10 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               />
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-xl font-bold tracking-tight text-[#182542]">
+              <span className="text-xl font-black tracking-tight text-[#182542]">
                 mizan
               </span>
-              <span className="text-[11px] font-semibold text-[#6E81A0] font-sans">
+              <span className="text-xs font-semibold text-[#6E81A0]">
                 {badge}
               </span>
             </div>
@@ -86,15 +86,8 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               <Search size={16} />
             </button>
 
-            <button
-              type="button"
-              onClick={() => router.push("/#screener-table")}
-              className="w-9 h-9 rounded-full bg-white/80 hover:bg-white border border-white/90 text-[#6E81A0] hover:text-[#182542] flex items-center justify-center shadow-xs transition relative"
-              title="7/24 Canlı KAP Veri Akışı"
-            >
-              <Bell size={16} />
-              <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#12B76A]" />
-            </button>
+            {/* Interactive Real Notification Popover */}
+            <NotificationPopover />
 
             {/* User Profile Avatar */}
             <Link
@@ -109,30 +102,10 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
           </div>
         </header>
 
-        {/* =================================================================== */}
-        {/* MAIN BODY: Left Vertical Dock + Page Content                        */}
-        {/* =================================================================== */}
-        <div className="relative z-10 flex flex-1 px-4 sm:px-8 pb-8 pt-2 gap-5 sm:gap-7">
-          {/* Left Vertical Dock (Desktop only) */}
-          <LeftDockSidebar />
-
-          {/* Content Area */}
-          <main className="flex-1 min-w-0">
-            {children}
-          </main>
-        </div>
-
-        {/* =================================================================== */}
-        {/* CANVAS FOOTER: Minimalist Legal & Regulatory Strip                  */}
-        {/* =================================================================== */}
-        <footer className="relative z-10 border-t border-white/80 bg-white/50 backdrop-blur-md px-6 sm:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#8C9BB0]">
-          <div>
-            &copy; {new Date().getFullYear()} Mizan Katılım Finans &bull; DİB, TKBB ve AAOIFI Standartlarına Uygundur.
-          </div>
-          <div className="font-mono text-[10px]">
-            BIST &amp; KAP 7/24 Canlı Motor &bull; Zero-Float Decimal Precision
-          </div>
-        </footer>
+        {/* Content Area (Modular translucent glass panels rendered inside pages) */}
+        <main className="min-w-0">
+          {children}
+        </main>
 
       </div>
     </div>
