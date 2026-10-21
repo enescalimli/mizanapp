@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       ? detailedCompany.purificationMetrics.impureIncomeIsolatedQuarterTRY
       : String(Math.round(mcap * (parseFloat(impureIncomeRatio) * 0.03)));
 
-    if (calculationMethod === "DIVIDEND_BASED") {
+    if (calculationMethod === "DIVIDEND_BASED" || (body as any).calculationMethod === "DIVIDEND_PRO_RATA") {
       const divAmount = dividendReceivedTRY || "0.0000";
       const res = calculateDividendPurificationClient(
         divAmount,
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         ticker,
         companyName: detailedCompany?.companyName || univ?.name || ticker,
-        calculationMethod,
+        calculationMethod: "DIVIDEND_BASED",
         dividendReceivedTRY: divAmount,
         impureIncomeRatio,
         purificationRawTRY: res.purificationRaw.toFixed(4),
@@ -77,11 +77,12 @@ export async function POST(request: Request) {
     }
 
     // Default: HOLDING_PERIOD_PRO_RATA
+    const effectiveDaysHeld = Number(daysHeld) > 0 ? Number(daysHeld) : periodTotalDays;
     const res = calculateHoldingPurificationClient(
       impureQuarter,
       totalShares,
-      quantityLots,
-      daysHeld,
+      quantityLots || "100",
+      effectiveDaysHeld,
       periodTotalDays,
       useConservativeCeiling
     );
@@ -90,8 +91,8 @@ export async function POST(request: Request) {
       ticker,
       companyName: detailedCompany?.companyName || univ?.name || ticker,
       calculationMethod: "HOLDING_PERIOD_PRO_RATA",
-      quantityLots,
-      daysHeld,
+      quantityLots: quantityLots || "100",
+      daysHeld: effectiveDaysHeld,
       periodTotalDays,
       proRataFactor: res.proRataFactor.toFixed(6),
       purificationPerShareTRY: res.purificationPerShare.toFixed(8),
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
       breakdownSummary: `(${formatTRY(
         impureQuarter,
         0
-      )} / ${Number(totalShares).toLocaleString("tr-TR")} pay) x ${quantityLots} lot x (${daysHeld} / ${periodTotalDays} gün)`,
+      )} / ${Number(totalShares).toLocaleString("tr-TR")} pay) x ${quantityLots || "100"} lot x (${effectiveDaysHeld} / ${periodTotalDays} gün)`,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
