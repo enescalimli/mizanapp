@@ -24,10 +24,6 @@ import {
   RefreshCw,
   CreditCard,
   Building2,
-  Sun,
-  Moon,
-  Laptop,
-  Zap,
 } from "lucide-react";
 import { PaynoShell } from "@/components/PaynoShell";
 import { useAuth } from "@/lib/auth/AuthContext";
@@ -40,14 +36,11 @@ interface UserSettingsState {
   phone: string;
   investorLevel: "BASLANGIC" | "ORTA" | "ILERI";
   // Fıkıh
-  standard: "BIST";
+  standard: "BIST" | "AAOIFI" | "DJIM";
   useCeilingRounding: boolean;
   purificationMethod: "PRO_RATA" | "DIVIDEND";
   zakatStrategy: "LONG_TERM_DIVIDEND" | "SHORT_TERM_TRADING";
   calendarBasis: "GREGORIAN_365" | "HIJRI_354";
-  // Görünüm & Tema
-  theme: "LIGHT" | "DARK" | "SYSTEM";
-  isPro: boolean;
   // Piyasa
   liveRefreshInterval: number; // seconds
   defaultCurrency: "TRY" | "USD" | "EUR";
@@ -72,8 +65,6 @@ const DEFAULT_SETTINGS: UserSettingsState = {
   purificationMethod: "PRO_RATA",
   zakatStrategy: "LONG_TERM_DIVIDEND",
   calendarBasis: "GREGORIAN_365",
-  theme: "LIGHT",
-  isPro: false,
   liveRefreshInterval: 30,
   defaultCurrency: "TRY",
   numberFormat: "TR",
@@ -96,26 +87,14 @@ export default function SettingsPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("mizan_user_settings");
-      const savedTheme = (localStorage.getItem("mizan_theme") as any) || "LIGHT";
-      const isPro = localStorage.getItem("mizan_is_pro") === "true";
-
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          setSettings((prev) => ({
-            ...prev,
-            ...parsed,
-            theme: savedTheme,
-            isPro,
-          }));
+          setSettings((prev) => ({ ...prev, ...parsed }));
         } catch {
           // ignore
         }
-      } else {
-        setSettings((prev) => ({ ...prev, theme: savedTheme, isPro }));
-      }
-
-      if (profile) {
+      } else if (profile) {
         setSettings((prev) => ({
           ...prev,
           fullName: profile.full_name || prev.fullName,
@@ -124,27 +103,6 @@ export default function SettingsPage() {
       }
     }
   }, [profile]);
-
-  const handleThemeChange = (newTheme: "LIGHT" | "DARK" | "SYSTEM") => {
-    setSettings((prev) => ({ ...prev, theme: newTheme }));
-    if (typeof window !== "undefined") {
-      localStorage.setItem("mizan_theme", newTheme);
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      if (newTheme === "DARK" || (newTheme === "SYSTEM" && prefersDark)) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    }
-  };
-
-  const handleTogglePro = () => {
-    const nextPro = !settings.isPro;
-    setSettings((prev) => ({ ...prev, isPro: nextPro }));
-    if (typeof window !== "undefined") {
-      localStorage.setItem("mizan_is_pro", String(nextPro));
-    }
-  };
 
   const handleSaveSettings = () => {
     if (typeof window !== "undefined") {
@@ -344,46 +302,23 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* SaaS Subscription & Pro Plan Card */}
-            <div className={`p-6 rounded-3xl transition-all border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-lg ${
-              settings.isPro
-                ? "bg-gradient-to-br from-[#182542] via-[#24375d] to-[#3a5282] text-white border-white/20 shadow-purple-950/20"
-                : "bg-white/80 dark:bg-slate-800/80 border-slate-200 dark:border-white/10 text-[#182542] dark:text-white"
-            }`}>
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                    settings.isPro
-                      ? "bg-emerald-400 text-slate-900"
-                      : "bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300"
-                  }`}>
-                    {settings.isPro ? "Mizan PRO Aktif" : "Ücretsiz Bereket Planı"}
-                  </span>
-                  {settings.isPro && (
-                    <span className="text-[11px] text-white/80 font-mono">₺149/ay</span>
-                  )}
+            {/* Pro Plan Benefits Card */}
+            <div className="p-5 rounded-2xl bg-gradient-to-br from-[#182542] via-[#24375d] to-[#3a5282] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md shadow-[#182542]/15">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold">
+                  <span>PRO PLAN</span>
                 </div>
-                <h4 className="text-base font-extrabold">
-                  {settings.isPro ? "Mizan PRO — Tam Sürüm Lisansı" : "Mizan PRO'ya Yükseltin"}
-                </h4>
-                <p className={`text-xs leading-relaxed max-w-xl ${
-                  settings.isPro ? "text-white/80" : "text-slate-500 dark:text-slate-400"
-                }`}>
-                  626 BIST hissesinde sınırsız AI fıkhi risk projeksiyonları, KAP erken bildirimleri, halka arz PDF raporları ve otomatik portföy arındırma motoru.
+                <h4 className="text-sm font-bold">Mizan Katılım Pro &bull; Kurumsal Lisans</h4>
+                <p className="text-xs text-white/80 font-normal">
+                  626 BIST hissesi için anlık KAP bildirimleri, limitsiz arındırma ve hisse zekâtı arşivi.
                 </p>
               </div>
-
               <button
                 type="button"
-                onClick={handleTogglePro}
-                className={`px-5 py-2.5 rounded-2xl text-xs font-black transition shrink-0 shadow-md flex items-center gap-2 ${
-                  settings.isPro
-                    ? "bg-rose-500 hover:bg-rose-600 text-white"
-                    : "bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-purple-500/25"
-                }`}
+                onClick={() => alert("Aboneliğiniz aktif ve 12 ay boyunca geçerlidir.")}
+                className="px-4 py-2 rounded-xl bg-white text-[#182542] text-xs font-bold hover:bg-slate-100 transition shrink-0 shadow-xs"
               >
-                <Zap size={14} />
-                <span>{settings.isPro ? "PRO'yu Kapat (Test)" : "PRO'yu Aktif Et (₺149/ay)"}</span>
+                Aboneliği Yönet
               </button>
             </div>
           </div>
@@ -401,35 +336,62 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            {/* Single Official Standard: DİB & TKBB */}
-            <div className="p-5 rounded-2xl bg-[#182542] dark:bg-slate-800 text-white border border-white/20 shadow-md flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0 mt-0.5">
-                <Scale size={20} className="text-emerald-400" />
-              </div>
-              <div className="space-y-1.5 flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-extrabold">
-                    Diyanet İşleri Başkanlığı &amp; TKBB Katılım Finans Standartları
-                  </h4>
-                  <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
-                    Resmi Standart
-                  </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  id: "BIST",
+                  title: "BIST Katılım Kriteri",
+                  subtitle: "Diyanet & TKBB Danışma Kurulu",
+                  desc: "Borç < %33, Nakit < %33, Uygunsuz Gelir < %5. Türkiye borsası için resmi standarttır.",
+                  badge: "Tavsiye Edilen",
+                },
+                {
+                  id: "AAOIFI",
+                  title: "AAOIFI No. 21",
+                  subtitle: "Uluslararası Şer'i Kurul",
+                  desc: "Borç < %30, Faizli Varlık < %30, Uygunsuz Gelir < %5. Küresel fonlarda yaygındır.",
+                  badge: "Küresel İslami Finans",
+                },
+                {
+                  id: "DJIM",
+                  title: "DJIM Islamic Market",
+                  subtitle: "Dow Jones Metodolojisi",
+                  desc: "Piyasa değeri ağırlıklı 24 aylık ortalama faizli borç eşiği (%33).",
+                  badge: "Endeks Ağırlıklı",
+                },
+              ].map((std) => (
+                <div
+                  key={std.id}
+                  onClick={() => setSettings({ ...settings, standard: std.id as any })}
+                  className={`p-4 rounded-2xl border cursor-pointer transition flex flex-col justify-between space-y-3 ${
+                    settings.standard === std.id
+                      ? "bg-[#182542] text-white border-[#182542] shadow-md shadow-[#182542]/20 scale-[1.01]"
+                      : "bg-white/70 hover:bg-white text-[#182542] border-[#EDF1F7]"
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        settings.standard === std.id ? "bg-white/20 text-white" : "bg-[#EDF1F7] text-[#6E81A0]"
+                      }`}>
+                        {std.badge}
+                      </span>
+                      {settings.standard === std.id && (
+                        <CheckCircle2 size={16} className="text-emerald-400" />
+                      )}
+                    </div>
+                    <h4 className="text-xs font-bold leading-tight">{std.title}</h4>
+                    <p className={`text-[10px] ${settings.standard === std.id ? "text-white/80" : "text-[#6E81A0]"}`}>
+                      {std.subtitle}
+                    </p>
+                  </div>
+                  <p className={`text-[11px] leading-relaxed font-normal ${
+                    settings.standard === std.id ? "text-white/90" : "text-slate-600"
+                  }`}>
+                    {std.desc}
+                  </p>
                 </div>
-                <p className="text-xs text-white/80 leading-relaxed font-normal">
-                  Mizan, Türkiye sermaye piyasalarında tek yetkili kılınan Diyanet Din İşleri Yüksek Kurulu ve Türkiye Katılım Bankaları Birliği (TKBB) Danışma Kurulu standartlarını esas almaktadır:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 text-[11px] font-mono">
-                  <div className="p-2 rounded-lg bg-white/10 text-slate-200">
-                    Faizli Borç: &lt; %33,00
-                  </div>
-                  <div className="p-2 rounded-lg bg-white/10 text-slate-200">
-                    Faizli Varlık: &lt; %33,00
-                  </div>
-                  <div className="p-2 rounded-lg bg-white/10 text-slate-200">
-                    Uygunsuz Gelir: &lt; %5,00
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
 
             {/* Ceiling Rounding Toggle (Şer'i İhtiyat) */}
@@ -539,82 +501,8 @@ export default function SettingsPage() {
             <div>
               <h3 className="text-base font-bold text-[#182542]">Piyasa Veri Motoru &amp; Arayüz</h3>
               <p className="text-xs text-[#6E81A0] mt-0.5">
-                Platform teması, BIST ve KAP canlı veri akış sıklığını ve para birimi tercihlerini yapılandırın.
+                BIST ve KAP canlı veri akış sıklığını ve para birimi tercihlerini yapılandırın.
               </p>
-            </div>
-
-            {/* Theme Selector: Light, Dark, System */}
-            <div className="space-y-3 pb-2 border-b border-slate-100 dark:border-slate-800">
-              <label className="text-[11px] font-bold text-[#6E81A0] dark:text-slate-400 uppercase tracking-wider block">
-                Arayüz Teması (Görünüm)
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button
-                  type="button"
-                  onClick={() => handleThemeChange("LIGHT")}
-                  className={`p-4 rounded-2xl border text-left transition flex items-start gap-3.5 ${
-                    settings.theme === "LIGHT"
-                      ? "bg-[#182542] text-white border-[#182542] shadow-md"
-                      : "bg-white/80 dark:bg-slate-800/80 text-[#182542] dark:text-white border-slate-200 dark:border-white/10 hover:bg-white"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                    settings.theme === "LIGHT" ? "bg-white/20 text-white" : "bg-amber-100 text-amber-600"
-                  }`}>
-                    <Sun size={18} />
-                  </div>
-                  <div>
-                    <span className="text-xs font-extrabold block">Açık Tema</span>
-                    <span className={`text-[10px] block mt-0.5 ${settings.theme === "LIGHT" ? "text-white/80" : "text-[#6E81A0] dark:text-slate-400"}`}>
-                      Ferahlatıcı mavi aurası &amp; buzlu cam
-                    </span>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleThemeChange("DARK")}
-                  className={`p-4 rounded-2xl border text-left transition flex items-start gap-3.5 ${
-                    settings.theme === "DARK"
-                      ? "bg-emerald-600 text-white border-emerald-500 shadow-md"
-                      : "bg-white/80 dark:bg-slate-800/80 text-[#182542] dark:text-white border-slate-200 dark:border-white/10 hover:bg-white"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                    settings.theme === "DARK" ? "bg-white/20 text-white" : "bg-indigo-100 text-indigo-600 dark:bg-slate-700 dark:text-slate-200"
-                  }`}>
-                    <Moon size={18} />
-                  </div>
-                  <div>
-                    <span className="text-xs font-extrabold block">Koyu Tema</span>
-                    <span className={`text-[10px] block mt-0.5 ${settings.theme === "DARK" ? "text-white/80" : "text-[#6E81A0] dark:text-slate-400"}`}>
-                      Gece mavisi ve obsidian cam
-                    </span>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleThemeChange("SYSTEM")}
-                  className={`p-4 rounded-2xl border text-left transition flex items-start gap-3.5 ${
-                    settings.theme === "SYSTEM"
-                      ? "bg-[#182542] text-white border-[#182542] shadow-md"
-                      : "bg-white/80 dark:bg-slate-800/80 text-[#182542] dark:text-white border-slate-200 dark:border-white/10 hover:bg-white"
-                  }`}
-                >
-                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
-                    settings.theme === "SYSTEM" ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200"
-                  }`}>
-                    <Laptop size={18} />
-                  </div>
-                  <div>
-                    <span className="text-xs font-extrabold block">Sistem</span>
-                    <span className={`text-[10px] block mt-0.5 ${settings.theme === "SYSTEM" ? "text-white/80" : "text-[#6E81A0] dark:text-slate-400"}`}>
-                      Cihaz ayarlarına göre dinamik
-                    </span>
-                  </div>
-                </button>
-              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

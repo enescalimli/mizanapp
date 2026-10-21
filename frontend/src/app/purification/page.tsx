@@ -229,7 +229,7 @@ export default function PortfolioPurificationPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-extrabold">
               <ShieldCheck size={14} />
-              <span>DİB &amp; TKBB Katılım Standartları Uyumlu</span>
+              <span>TKBB &amp; AAOIFI No. 21 Uyumlu</span>
             </div>
             <button
               onClick={() => window.print()}

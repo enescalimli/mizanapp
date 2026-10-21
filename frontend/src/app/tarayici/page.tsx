@@ -25,7 +25,6 @@ import { CompanySummary } from "@/types/katilim";
 import { LeftDockSidebar } from "@/components/LeftDockSidebar";
 import { NotificationPopover } from "@/components/NotificationPopover";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { getDIBKatilimDetailedBreachReason } from "@/lib/data/dibKatilimEngine";
 
 type SortField =
   | "ticker"
@@ -52,6 +51,7 @@ export default function TarayiciPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT">("ALL");
   const [sectorFilter, setSectorFilter] = useState("TÜMÜ");
+  const [standard, setStandard] = useState<"BIST" | "AAOIFI">("BIST");
   const [visibleLimit, setVisibleLimit] = useState(80);
   const [sortField, setSortField] = useState<SortField>("ticker");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -89,9 +89,13 @@ export default function TarayiciPage() {
     }
 
     if (statusFilter === "COMPLIANT") {
-      list = list.filter((c) => c.bistStatus === "COMPLIANT");
+      list = list.filter((c) =>
+        standard === "BIST" ? c.bistStatus === "COMPLIANT" : c.aaoifiStatus === "COMPLIANT"
+      );
     } else if (statusFilter === "NON_COMPLIANT") {
-      list = list.filter((c) => c.bistStatus === "NON_COMPLIANT");
+      list = list.filter((c) =>
+        standard === "BIST" ? c.bistStatus === "NON_COMPLIANT" : c.aaoifiStatus === "NON_COMPLIANT"
+      );
     }
 
     if (sectorFilter !== "TÜMÜ") {
@@ -99,7 +103,7 @@ export default function TarayiciPage() {
     }
 
     return list;
-  }, [companies, searchQuery, statusFilter, sectorFilter]);
+  }, [companies, searchQuery, statusFilter, sectorFilter, standard]);
 
   // Sorting
   const sortedCompanies = useMemo(() => {
@@ -109,8 +113,8 @@ export default function TarayiciPage() {
       let valB: any = "";
 
       if (sortField === "status") {
-        valA = a.bistStatus;
-        valB = b.bistStatus;
+        valA = standard === "BIST" ? a.bistStatus : a.aaoifiStatus;
+        valB = standard === "BIST" ? b.bistStatus : b.aaoifiStatus;
       } else if (sortField === "priceTRY") {
         valA = parseFloat(String(a.priceTRY).replace(/[^0-9.-]+/g, "")) || 0;
         valB = parseFloat(String(b.priceTRY).replace(/[^0-9.-]+/g, "")) || 0;
@@ -131,7 +135,7 @@ export default function TarayiciPage() {
       return sortDirection === "asc" ? valA - valB : valB - valA;
     });
     return list;
-  }, [filteredCompanies, sortField, sortDirection]);
+  }, [filteredCompanies, sortField, sortDirection, standard]);
 
   const displayedCompanies = useMemo(
     () => sortedCompanies.slice(0, visibleLimit),
@@ -158,7 +162,9 @@ export default function TarayiciPage() {
 
   const stats = useMemo(() => {
     const total = companies.length;
-    const compliant = companies.filter((c) => c.bistStatus === "COMPLIANT").length;
+    const compliant = companies.filter((c) =>
+      standard === "BIST" ? c.bistStatus === "COMPLIANT" : c.aaoifiStatus === "COMPLIANT"
+    ).length;
     const nonCompliant = total - compliant;
     return {
       total,
@@ -166,20 +172,24 @@ export default function TarayiciPage() {
       nonCompliant,
       ratio: total > 0 ? ((compliant / total) * 100).toFixed(1) : "0",
     };
-  }, [companies]);
+  }, [companies, standard]);
 
   const getComplianceReason = (comp: CompanySummary) => {
-    const isComp = comp.bistStatus === "COMPLIANT";
-    const res = getDIBKatilimDetailedBreachReason(
-      comp.ticker,
-      comp.name,
-      comp.sector,
-      comp.debtRatioPercent,
-      comp.cashRatioPercent,
-      comp.impureIncomePercent,
-      isComp
-    );
-    return res.summary;
+    const isComp = standard === "BIST" ? comp.bistStatus === "COMPLIANT" : comp.aaoifiStatus === "COMPLIANT";
+    if (isComp) {
+      return "BIST Katılım Kriterlerine Uygundur (Finansal rasyolar eşik altındadır).";
+    }
+    const sector = (comp.sector || "").toLowerCase();
+    if (sector.includes("banka")) return "Ana Faaliyet: Konvansiyonel faizli bankacılık ve mevduat.";
+    if (sector.includes("sigorta")) return "Ana Faaliyet: Konvansiyonel sigortacılık primi faizlendirimi.";
+    if (sector.includes("alkol") || sector.includes("bira")) return "Ana Faaliyet: Alkollü içecek üretimi / satışı.";
+    if (comp.debtRatioPercent > 33.0) {
+      return `Faizli Borç Aşımı: %${comp.debtRatioPercent.toFixed(1)} (Eşik: %33,0 — Fark: +%${(comp.debtRatioPercent - 33.0).toFixed(1)})`;
+    }
+    if (comp.cashRatioPercent > 33.0) {
+      return `Faizli Menkul / Nakit Aşımı: %${comp.cashRatioPercent.toFixed(1)} (Eşik: %33,0)`;
+    }
+    return "Fıkhi finansal rasyo eşikleri aşılmıştır.";
   };
 
   return (
@@ -264,17 +274,30 @@ export default function TarayiciPage() {
               </p>
             </div>
 
-            {/* Fıkhi Standart Rozeti: Sadece DİB & TKBB */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-white/10 shrink-0 self-start md:self-auto shadow-2xs">
-              <Scale size={15} className="text-emerald-600 dark:text-emerald-400" />
-              <div className="text-left">
-                <span className="block text-[9px] uppercase font-bold text-[#6E81A0] dark:text-slate-400 tracking-wider">
-                  Uygulanan Standart
-                </span>
-                <span className="text-xs font-black text-[#182542] dark:text-white font-mono">
-                  DİB &amp; TKBB Katılım Standartları (%33 Eşik)
-                </span>
-              </div>
+            {/* Fıkhi Standart Switcher */}
+            <div className="inline-flex p-1 rounded-2xl bg-[#EDF1F7] border border-white shrink-0 self-start md:self-auto">
+              <button
+                type="button"
+                onClick={() => setStandard("BIST")}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition ${
+                  standard === "BIST"
+                    ? "bg-[#182542] text-white shadow-xs"
+                    : "text-[#6E81A0] hover:text-[#182542]"
+                }`}
+              >
+                BIST Katılım (Max %33)
+              </button>
+              <button
+                type="button"
+                onClick={() => setStandard("AAOIFI")}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition ${
+                  standard === "AAOIFI"
+                    ? "bg-[#182542] text-white shadow-xs"
+                    : "text-[#6E81A0] hover:text-[#182542]"
+                }`}
+              >
+                AAOIFI No:21 (Max %30)
+              </button>
             </div>
           </div>
 
@@ -425,7 +448,8 @@ export default function TarayiciPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {displayedCompanies.map((comp) => {
-                  const isCompliant = comp.bistStatus === "COMPLIANT";
+                  const isCompliant =
+                    standard === "BIST" ? comp.bistStatus === "COMPLIANT" : comp.aaoifiStatus === "COMPLIANT";
                   const isPositiveChange = String(comp.change24h).startsWith("+");
 
                   return (
@@ -492,7 +516,7 @@ export default function TarayiciPage() {
                       <td className="py-3.5 px-4 text-right font-mono">
                         <span
                           className={`font-bold ${
-                            comp.debtRatioPercent > 33.0
+                            comp.debtRatioPercent > (standard === "BIST" ? 33.0 : 30.0)
                               ? "text-rose-600"
                               : "text-[#182542]"
                           }`}
@@ -505,7 +529,7 @@ export default function TarayiciPage() {
                       <td className="py-3.5 px-4 text-right font-mono">
                         <span
                           className={`font-bold ${
-                            comp.cashRatioPercent > 33.0
+                            comp.cashRatioPercent > (standard === "BIST" ? 33.0 : 30.0)
                               ? "text-rose-600"
                               : "text-[#182542]"
                           }`}
