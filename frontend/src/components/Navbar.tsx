@@ -36,7 +36,7 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Sol: Payno Tarzı Minimalist Geometrik Marka & Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-10 h-10 rounded-2xl bg-white/90 border border-white shadow-sm p-1.5 flex items-center justify-center transition-transform group-hover:scale-105">
+          <div className="w-10 h-10 rounded-2xl bg-white border border-[#E2E8F0] shadow-orbix-sm p-1.5 flex items-center justify-center transition-transform group-hover:scale-105">
             <Image
               src="/brand/logo.svg"
               alt="Mizan"
@@ -47,7 +47,7 @@ export const Navbar: React.FC = () => {
             />
           </div>
           <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-light tracking-tight text-[#182542]">
+            <span className="text-2xl font-bold tracking-tight text-[#273869]">
               mizan
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-[#12B76A]" />
@@ -66,8 +66,8 @@ export const Navbar: React.FC = () => {
                 href={link.href}
                 className={`px-4 py-2 rounded-full text-xs transition-all duration-200 flex items-center gap-1.5 ${
                   isActive
-                    ? "bg-white text-[#182542] font-bold shadow-[0_2px_10px_rgba(24,37,66,0.08)]"
-                    : "text-[#182542]/75 hover:text-[#182542] font-medium hover:bg-white/40"
+                    ? "bg-white text-[#273869] font-bold shadow-orbix-sm"
+                    : "text-[#405881] hover:text-[#273869] font-medium hover:bg-white/50"
                 }`}
               >
                 <span>{link.label}</span>
@@ -75,8 +75,8 @@ export const Navbar: React.FC = () => {
                   <span
                     className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
                       isActive
-                        ? "bg-[#182542] text-white"
-                        : "bg-white/75 text-[#182542]"
+                        ? "bg-[#273869] text-white"
+                        : "bg-[#EDF1F4] text-[#273869]"
                     }`}
                   >
                     {link.count}
@@ -91,7 +91,7 @@ export const Navbar: React.FC = () => {
         <div className="hidden lg:flex items-center gap-2.5 shrink-0">
           {user ? (
             <div className="flex items-center gap-2 payno-glass-pill p-1.5 pl-3">
-              <div className="w-7 h-7 rounded-full bg-[#182542] text-white flex items-center justify-center text-xs font-bold">
+              <div className="w-7 h-7 rounded-full bg-[#273869] text-white flex items-center justify-center text-xs font-bold">
                 {user.email ? user.email.charAt(0).toUpperCase() : "M"}
               </div>
               <div className="flex flex-col pr-1">
@@ -105,7 +105,7 @@ export const Navbar: React.FC = () => {
               <button
                 onClick={() => signOut()}
                 title="Çıkış Yap"
-                className="w-8 h-8 rounded-full bg-white hover:bg-rose-50 text-[#182542] hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs"
+                className="w-8 h-8 rounded-full bg-white hover:bg-rose-50 text-[#405881] hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs"
               >
                 <LogOut size={14} />
               </button>
@@ -114,16 +114,16 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center gap-2">
               <Link
                 href="/auth/login"
-                className="px-4 py-2.5 rounded-full text-xs font-semibold text-[#182542] hover:bg-white/50 transition"
+                className="px-4 py-2.5 rounded-full text-xs font-semibold text-[#405881] hover:text-[#273869] hover:bg-white/50 transition"
               >
                 Giriş Yap
               </Link>
               <Link
                 href="/auth/register"
-                className="px-5 py-2.5 rounded-full bg-white text-[#182542] text-xs font-bold shadow-[0_6px_20px_rgba(24,37,66,0.08)] border border-white hover:scale-[1.02] transition flex items-center gap-1.5"
+                className="px-5 py-2.5 rounded-full bg-[#273869] text-white text-xs font-bold shadow-orbix-sm hover:bg-[#1e2c54] hover:scale-[1.02] transition flex items-center gap-1.5"
               >
                 <span>Hesap Oluştur</span>
-                <ArrowUpRight size={14} className="text-[#273B69]" />
+                <ArrowUpRight size={14} className="text-white" />
               </Link>
             </div>
           )}

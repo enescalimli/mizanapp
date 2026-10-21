@@ -181,23 +181,23 @@ export default function PortfolioPurificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F3F6FB] text-[#182542] pb-24">
+    <div className="min-h-screen bg-[#F3F6FB] text-[#273869] pb-28">
       {/* Payno Sky-Mist Top Header */}
       <section className="payno-sky-hero pt-8 pb-12 border-b border-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="payno-card p-8 relative overflow-hidden">
+          <div className="orbix-card p-8 relative overflow-hidden bg-white border border-[#E2E8F0]">
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="space-y-3">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EDFBF5] border border-[#BBF7D0] text-[#0D9F6E] text-xs font-extrabold">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6F8EF] border border-[#BCEBD2] text-[#0D8B52] text-xs font-extrabold">
                   <ShieldCheck size={14} />
                   <span>TKBB &amp; AAOIFI No. 21 Uyumlu • 626 BIST Hissesi</span>
                 </div>
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#182542] tracking-tight">
-                  Arındırma (Taharet) &amp; Hisse Zekâtı Merkezi
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#273869] tracking-tight">
+                  Arındırma (Taharet) &amp; <span className="font-orbix-serif italic text-[#405881]">Hisse Zekâtı</span> Merkezi
                 </h1>
                 <p className="text-sm text-[#6E81A0] max-w-3xl leading-relaxed font-medium">
                   Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
-                  uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D9F6E] font-bold">Zero-Float Precision</span>)
+                  uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D8B52] font-bold">Zero-Float Precision</span>)
                   arındırın ve niyetinize göre hisse senedi zekâtınızı kesin tutarlarla hesaplayın.
                 </p>
               </div>
@@ -205,7 +205,7 @@ export default function PortfolioPurificationPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => window.print()}
-                  className="apple-btn-secondary text-xs"
+                  className="payno-btn-secondary text-xs"
                 >
                   <Download size={14} />
                   <span>Yazdır / PDF Rapor</span>
@@ -220,61 +220,61 @@ export default function PortfolioPurificationPage() {
 
       {/* Top Level Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mb-2">
+        <div className="orbix-card p-5 bg-white border border-[#E2E8F0]">
+          <span className="text-[10px] font-bold text-[#6E81A0] uppercase tracking-wider block mb-2">
             TOPLAM PORTFÖY DEĞERİ
           </span>
-          <div className="text-3xl font-extrabold text-slate-900 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-[#273869] tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioTotals.totalMarketValue, 2)}
           </div>
-          <p className="text-[11px] text-slate-500 mt-2 font-normal">
+          <p className="text-[11px] text-[#6E81A0] mt-2 font-normal">
             {positions.length} hisse pozisyonu
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
-          <span className="text-[10px] font-semibold text-amber-700 uppercase tracking-widest block mb-2">
+        <div className="orbix-card p-5 bg-white border border-[#E2E8F0]">
+          <span className="text-[10px] font-bold text-[#405881] uppercase tracking-wider block mb-2">
             ÖDENECEK TOPLAM ARINDIRMA
           </span>
-          <div className="text-3xl font-extrabold text-amber-700 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-[#273869] tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioTotals.totalPurification, 2)}
           </div>
-          <p className="text-[11px] text-slate-500 mt-2 font-normal">
+          <p className="text-[11px] text-[#6E81A0] mt-2 font-normal">
             Portföyün %{portfolioTotals.purificationRatioOfPortfolio.toFixed(4)} kadarı
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
-          <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest block mb-2">
+        <div className="orbix-card p-5 bg-white border border-[#E2E8F0]">
+          <span className="text-[10px] font-bold text-[#0D8B52] uppercase tracking-wider block mb-2">
             HİSSE ZEKATI TUTARI (%2.5)
           </span>
-          <div className="text-3xl font-extrabold text-emerald-700 tracking-tight font-mono tabular-nums">
+          <div className="text-3xl font-extrabold text-[#0D8B52] tracking-tight font-mono tabular-nums">
             {formatTRY(portfolioTotals.totalZakat, 2)}
           </div>
-          <p className="text-[11px] text-slate-500 mt-2 font-normal">
+          <p className="text-[11px] text-[#6E81A0] mt-2 font-normal">
             {zakatIntent === "trading" ? "Ticari Al-Sat Matrahı" : "Dönen Varlıklar Matrahı"}
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest block mb-2">
+        <div className="orbix-card p-5 bg-white border border-[#E2E8F0]">
+          <span className="text-[10px] font-bold text-[#6E81A0] uppercase tracking-wider block mb-2">
             FIKHİ İHTİYAT &amp; YUVARLAMA
           </span>
           <div className="mt-2 flex items-center justify-between">
             <div>
-              <span className="text-sm font-semibold text-slate-900">
+              <span className="text-sm font-semibold text-[#273869]">
                 {useCeilingRounding ? "Tavan Yuvarlama" : "Standart"}
               </span>
-              <p className="text-[11px] text-slate-500 font-normal">
+              <p className="text-[11px] text-[#6E81A0] font-normal">
                 {useCeilingRounding ? "Kuruşlar yukarı tamamlanır" : "En yakın kuruşa"}
               </p>
             </div>
             <button
               onClick={() => setUseCeilingRounding(!useCeilingRounding)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition ${
+              className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
                 useCeilingRounding
-                  ? "bg-slate-100 text-slate-900 border-slate-300"
-                  : "bg-white text-slate-500 border-slate-200"
+                  ? "bg-[#273869] text-white border-[#273869]"
+                  : "bg-white text-[#6E81A0] border-[#E2E8F0]"
               }`}
             >
               {useCeilingRounding ? "Aktif" : "Pasif"}

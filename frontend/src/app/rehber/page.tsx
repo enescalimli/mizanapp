@@ -215,16 +215,16 @@ export default function RehberPage() {
       {/* Payno Sky-Mist Hero Header */}
       <div className="payno-sky-hero p-6 sm:p-10">
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[#182542] text-xs font-semibold">
-            <Scale size={14} className="text-[#12B76A]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-[#273869] text-xs font-semibold">
+            <Scale size={14} className="text-[#0D8B52]" />
             <span>Diyanet, TKBB ve AAOIFI Standartları</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-light text-[#182542] tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#273869] tracking-tight">
             İslami Finans &amp;{" "}
-            <span className="font-normal italic font-serif">Fıkhi Cevazlar</span>{" "}
+            <span className="font-orbix-serif italic text-[#405881]">Fıkhi Cevazlar</span>{" "}
             Rehberi
           </h1>
-          <p className="text-sm text-[#182542]/80 leading-relaxed font-normal">
+          <p className="text-sm text-[#6E81A0] leading-relaxed font-normal">
             Borsa İstanbul&apos;da helal kazanç esasları, yetkili kurulların fıkhi cevazları,
             faizsiz finans terimleri ve yatırımcıların en çok merak ettiği sorular.
           </p>
@@ -236,8 +236,8 @@ export default function RehberPage() {
             onClick={() => setActiveTab("CEVAZLAR")}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === "CEVAZLAR"
-                ? "bg-[#182542] text-white shadow-sm"
-                : "bg-white/75 text-[#182542] hover:bg-white"
+                ? "bg-[#273869] text-white shadow-orbix-sm"
+                : "bg-white text-[#405881] border border-[#E2E8F0] hover:text-[#273869]"
             }`}
           >
             <ShieldCheck size={14} />
@@ -247,8 +247,8 @@ export default function RehberPage() {
             onClick={() => setActiveTab("TERIMLER")}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === "TERIMLER"
-                ? "bg-[#182542] text-white shadow-sm"
-                : "bg-white/75 text-[#182542] hover:bg-white"
+                ? "bg-[#273869] text-white shadow-orbix-sm"
+                : "bg-white text-[#405881] border border-[#E2E8F0] hover:text-[#273869]"
             }`}
           >
             <BookOpen size={14} />
@@ -258,8 +258,8 @@ export default function RehberPage() {
             onClick={() => setActiveTab("SSS")}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === "SSS"
-                ? "bg-[#182542] text-white shadow-sm"
-                : "bg-white/75 text-[#182542] hover:bg-white"
+                ? "bg-[#273869] text-white shadow-orbix-sm"
+                : "bg-white text-[#405881] border border-[#E2E8F0] hover:text-[#273869]"
             }`}
           >
             <HelpCircle size={14} />
@@ -269,8 +269,8 @@ export default function RehberPage() {
             onClick={() => setActiveTab("RASYO")}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === "RASYO"
-                ? "bg-[#182542] text-white shadow-sm"
-                : "bg-white/75 text-[#182542] hover:bg-white"
+                ? "bg-[#273869] text-white shadow-orbix-sm"
+                : "bg-white text-[#405881] border border-[#E2E8F0] hover:text-[#273869]"
             }`}
           >
             <Calculator size={14} />

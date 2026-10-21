@@ -1,17 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500;1,6..72,600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   ORBIX STUDIO — PAYNO DESIGN SYSTEM TOKENS (FROM SLIDES 01-15)
+   ============================================================================ */
+
 @layer base {
   :root {
-    --payno-ink: #182542;
-    --payno-navy: #273b69;
-    --payno-slate: #6e81a0;
-    --payno-sky-top: #c7e6fd;
-    --payno-sky-mid: #e4f2fe;
-    --payno-canvas: #f3f6fb;
-    --payno-mint: #12b76a;
-    --payno-coral: #f04438;
+    /* 01 Color — One navy. Two accents. That's it. */
+    --navy-900: #273869;  /* Dominant Primary Navy */
+    --navy-800: #405881;  /* Secondary Navy / Meta */
+    --navy-950: #182542;  /* Deep Ink */
+    --gray-50: #edf1f4;   /* Light gray tone */
+    --canvas: #f3f6fb;    /* Product canvas */
+    --accent-green: #12b76a; /* Positive trend strictly */
+    --accent-red: #f04438;   /* Negative trend strictly */
+    --slate-muted: #6e81a0;  /* Hierarchy through weight, not rainbow color */
+    --border-hairline: #e2e8f0;
   }
 
   html {
@@ -23,91 +31,167 @@
   }
 
   body {
-    background: linear-gradient(180deg, #d4ecfe 0%, #eaf4fe 320px, #f3f6fb 720px, #f3f6fb 100%);
+    background: linear-gradient(180deg, #d8ebfb 0%, #edf4fc 360px, #f3f6fb 760px, #f3f6fb 100%);
     color: #182542;
     min-height: 100vh;
     overflow-x: hidden;
   }
 }
 
-/* ============================================================================
-   PAYNO BY ORBIX STUDIO — DESIGN SYSTEM UTILITIES
-   ============================================================================ */
-
-/* 1. Payno Sky-Mist Hero Container */
-.payno-sky-hero {
-  background: radial-gradient(120% 100% at 50% 0%, #bfe2fd 0%, #dff0fe 48%, #f4f8fc 85%, #ffffff 100%);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  border-radius: 36px;
-  box-shadow:
-    0 24px 60px -15px rgba(24, 37, 66, 0.07),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+/* 02 & 03 Typography Serif Italic Accent Class */
+.font-orbix-serif,
+.orbix-italic {
+  font-family: "Newsreader", "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
-/* 2. Payno Floating Frosted Pill Navbar */
-.payno-glass-pill {
-  background: rgba(255, 255, 255, 0.58);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 9999px;
-  box-shadow: 0 8px 32px rgba(24, 37, 66, 0.05);
-}
-
-/* 3. Payno Bento Card (Orbix Dashboard Style) */
+/* 05 Radius & Elevation: Soft corners, soft shadows. */
+.orbix-card,
 .payno-card,
 .fintech-card,
 .apple-card {
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-  border: 1px solid #e6ecf5;
-  border-radius: 26px;
-  box-shadow:
-    0 10px 30px -10px rgba(24, 37, 66, 0.04),
-    0 1px 3px rgba(24, 37, 66, 0.02);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px; /* 1g • 24px */
+  box-shadow: 0 10px 30px -10px rgba(39, 56, 105, 0.05), 0 1px 3px rgba(39, 56, 105, 0.02);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.orbix-card:hover,
 .payno-card:hover,
 .fintech-card:hover {
-  border-color: #cbd8ec;
-  box-shadow:
-    0 18px 40px -12px rgba(24, 37, 66, 0.08),
-    0 2px 6px rgba(24, 37, 66, 0.03);
+  border-color: #cbd5e1;
+  box-shadow: 0 16px 36px -12px rgba(39, 56, 105, 0.09), 0 2px 6px rgba(39, 56, 105, 0.03);
 }
 
-/* 4. Payno Inner Soft Metric Box (Like Total Revenue / Monthly Expense inside phone mockup) */
-.payno-inner-box {
-  background: linear-gradient(180deg, #f7f9fc 0%, #eef3f9 100%);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 20px;
-  box-shadow: inset 0 1px 2px rgba(24, 37, 66, 0.03);
-}
-
-/* 5. Payno Brushed Metallic Platinum Card (From Payno Cards screen) */
-.payno-platinum-card {
-  background: linear-gradient(140deg, #1e315c 0%, #3d588c 45%, #8ba5ce 82%, #dce7f7 100%);
-  color: #ffffff;
+/* Sky-Tint Hero Canvas Container (Slide 08 & Behance Cover) */
+.payno-sky-hero {
+  background: radial-gradient(120% 120% at 50% 0%, #c4e4fe 0%, #dff0fe 44%, #f3f7fb 88%, #ffffff 100%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
   border-radius: 28px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 22px 48px -12px rgba(24, 37, 66, 0.26);
-  position: relative;
-  overflow: hidden;
+  box-shadow:
+    0 20px 50px -15px rgba(39, 56, 105, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
 }
 
-.payno-platinum-card::before {
-  content: "";
-  position: absolute;
-  width: 280px;
-  height: 280px;
+/* Floating Frosted Pill Navbar & Glass Container */
+.payno-glass-pill {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 9999px;
-  border: 28px solid rgba(255, 255, 255, 0.07);
-  top: -80px;
-  right: -60px;
-  pointer-events: none;
+  box-shadow: 0 8px 30px rgba(39, 56, 105, 0.06);
 }
 
-/* 6. Payno Signature Diagonal Hatched Progress Bar */
+/* Slide 15: Floating Bottom Bar Dock with Raised Center FAB */
+.orbix-floating-dock {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  box-shadow: 0 16px 40px -10px rgba(39, 56, 105, 0.18), 0 2px 8px rgba(39, 56, 105, 0.04);
+}
+
+/* Primary Navy Buttons (Navy 900 #273869) */
+.payno-btn-primary,
+.fintech-btn-primary,
+.apple-btn-primary {
+  background: #273869;
+  color: #ffffff;
+  border-radius: 9999px;
+  padding: 0.625rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  box-shadow: 0 8px 20px -4px rgba(39, 56, 105, 0.28);
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.payno-btn-primary:hover,
+.fintech-btn-primary:hover,
+.apple-btn-primary:hover {
+  background: #1e2c54;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px -4px rgba(39, 56, 105, 0.38);
+}
+
+.payno-btn-secondary,
+.apple-btn-secondary {
+  background: #ffffff;
+  color: #273869;
+  border: 1px solid #dce5f2;
+  border-radius: 9999px;
+  padding: 0.55rem 1.2rem;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  box-shadow: 0 2px 8px rgba(39, 56, 105, 0.04);
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.payno-btn-secondary:hover,
+.apple-btn-secondary:hover {
+  background: #f8fafd;
+  border-color: #405881;
+}
+
+/* Micro-pill indicator (Slide 06: Available Limit • $3,600 Left >) */
+.orbix-micro-pill {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #405881;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.orbix-micro-pill:hover {
+  background: #e9eff6;
+  color: #273869;
+}
+
+/* Trend Badges (Red / Green Strictly for Trend Direction) */
+.badge-apple-emerald,
+.payno-badge-mint {
+  background: #e6f8ef;
+  color: #0d8b52;
+  border: 1px solid #bcebd2;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.badge-apple-rose,
+.payno-badge-coral {
+  background: #feeceb;
+  color: #c62e26;
+  border: 1px solid #fac9c6;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.badge-apple-amber,
+.payno-badge-amber {
+  background: #fef4e6;
+  color: #b56107;
+  border: 1px solid #fbdba9;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+/* Diagonal Hatched Progress Bar */
 .payno-hatch-track {
   background-color: #f1f5f9;
   background-image: repeating-linear-gradient(
@@ -124,96 +208,19 @@
 .payno-hatch-fill {
   background-image: repeating-linear-gradient(
     -55deg,
-    #182542,
-    #182542 2px,
-    #365187 2px,
-    #365187 5px
+    #273869,
+    #273869 2px,
+    #405881 2px,
+    #405881 5px
   );
   border-radius: 9999px;
 }
 
-/* 7. Payno Buttons */
-.payno-btn-primary,
-.fintech-btn-primary,
-.apple-btn-primary {
-  background: #182542;
-  color: #ffffff;
-  border-radius: 9999px;
-  padding: 0.625rem 1.35rem;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  box-shadow: 0 8px 20px -4px rgba(24, 37, 66, 0.25);
-  transition: all 0.18s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.payno-btn-primary:hover,
-.fintech-btn-primary:hover,
-.apple-btn-primary:hover {
-  background: #253861;
-  transform: translateY(-1px);
-  box-shadow: 0 12px 24px -4px rgba(24, 37, 66, 0.32);
-}
-
-.payno-btn-secondary,
-.apple-btn-secondary {
-  background: #ffffff;
-  color: #182542;
-  border: 1px solid #dce5f2;
-  border-radius: 9999px;
-  padding: 0.55rem 1.2rem;
-  font-weight: 600;
-  font-size: 0.8125rem;
-  box-shadow: 0 2px 8px rgba(24, 37, 66, 0.04);
-  transition: all 0.18s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-}
-
-.payno-btn-secondary:hover,
-.apple-btn-secondary:hover {
-  background: #f8fafd;
-  border-color: #b9cae2;
-}
-
-/* 8. Payno Status Badges */
-.badge-apple-emerald,
-.payno-badge-mint {
-  background: #e6f8ef;
-  color: #0f7a43;
-  border: 1px solid #bcebd2;
-  border-radius: 9999px;
-  font-weight: 600;
-}
-
-.badge-apple-amber,
-.payno-badge-amber {
-  background: #fef4e6;
-  color: #b56107;
-  border: 1px solid #fbdba9;
-  border-radius: 9999px;
-  font-weight: 600;
-}
-
-.badge-apple-rose,
-.payno-badge-coral {
-  background: #feeceb;
-  color: #c62e26;
-  border: 1px solid #fac9c6;
-  border-radius: 9999px;
-  font-weight: 600;
-}
-
-/* 9. Segmented Group (Payno Pill Switcher) */
+/* Segmented Pill Selector */
 .apple-segmented-group {
   display: inline-flex;
   align-items: center;
-  background: #eef3f9;
+  background: #edf1f4;
   padding: 0.25rem;
   border-radius: 9999px;
   border: 1px solid #dee7f3;
@@ -224,14 +231,14 @@
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #5b6e8c;
+  color: #405881;
   transition: all 0.18s ease;
 }
 
 .apple-segmented-item.active {
   background: #ffffff;
-  color: #182542;
-  box-shadow: 0 2px 8px rgba(24, 37, 66, 0.08);
+  color: #273869;
+  box-shadow: 0 2px 8px rgba(39, 56, 105, 0.1);
 }
 
 .tabular {

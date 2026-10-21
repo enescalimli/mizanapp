@@ -11,17 +11,36 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        // Payno / Orbix Studio Color System (Slide 01)
+        navy: {
+          50: "#F3F6FB",
+          100: "#EDF1F4", // Gray 50 from Slide 01
+          700: "#4F6A99",
+          800: "#405881", // Navy 800 from Slide 01 (#405881)
+          900: "#273869", // Navy 900 from Slide 01 (#273869 - Primary Navy)
+          950: "#182542", // Navy 950 deep ink
+        },
+        payno: {
+          ink: "#182542",
+          navy: "#273869",
+          slate: "#405881",
+          muted: "#6E81A0",
+          canvas: "#F3F6FB",
+          surface: "#EDF1F4",
+          hairline: "#E2E8F0",
+          mint: "#12B76A", // Trend Up only
+          coral: "#F04438", // Trend Down only
+        },
         canvas: {
-          DEFAULT: "#030712",
-          deep: "#02040a",
-          subtle: "#0b0f19",
+          DEFAULT: "#F3F6FB",
+          subtle: "#EDF1F4",
         },
         surface: {
-          DEFAULT: "rgba(13, 19, 34, 0.72)",
-          elevated: "rgba(22, 30, 50, 0.8)",
-          glass: "rgba(255, 255, 255, 0.03)",
+          DEFAULT: "#FFFFFF",
+          elevated: "#FFFFFF",
+          muted: "#F8FAFC",
         },
-        hairline: "rgba(255, 255, 255, 0.08)",
+        hairline: "#E2E8F0",
         emerald: {
           50: "#ecfdf5",
           100: "#d1fae5",
@@ -36,16 +55,30 @@ const config: Config = {
           950: "#022c22",
         },
       },
+      borderRadius: {
+        // Slide 05: xs 8px, md 16px, lg 24px, full pill
+        xs: "8px",
+        md: "16px",
+        lg: "24px",
+        xl: "28px",
+        pill: "9999px",
+      },
       fontFamily: {
         sans: [
+          '"Plus Jakarta Sans"',
+          '"Inter"',
           "-apple-system",
           "BlinkMacSystemFont",
           '"SF Pro Display"',
-          '"SF Pro Text"',
-          '"Geist"',
-          '"Inter"',
           "system-ui",
           "sans-serif",
+        ],
+        serif: [
+          '"Newsreader"',
+          '"Playfair Display"',
+          '"Instrument Serif"',
+          "Georgia",
+          "serif",
         ],
         mono: [
           '"SF Mono"',
@@ -57,18 +90,16 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        "apple-glass": "0 8px 32px 0 rgba(0, 0, 0, 0.42), inset 0 1px 0 0 rgba(255, 255, 255, 0.09)",
-        "apple-card": "0 4px 20px -2px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.07)",
-        "apple-elevated": "0 20px 48px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.12)",
-        "emerald-glow": "0 0 28px -4px rgba(16, 185, 129, 0.35)",
-        "amber-glow": "0 0 28px -4px rgba(245, 158, 11, 0.3)",
-        "rose-glow": "0 0 28px -4px rgba(244, 63, 94, 0.3)",
+        // Slide 05: Soft corners, soft shadows
+        "orbix-sm": "0 2px 8px -2px rgba(39, 56, 105, 0.06), 0 1px 3px rgba(39, 56, 105, 0.03)",
+        "orbix-md": "0 12px 28px -6px rgba(39, 56, 105, 0.08), 0 2px 6px rgba(39, 56, 105, 0.03)",
+        "orbix-lg": "0 24px 48px -12px rgba(39, 56, 105, 0.12), 0 4px 12px rgba(39, 56, 105, 0.04)",
+        "orbix-fab": "0 12px 28px -4px rgba(39, 56, 105, 0.38), 0 4px 10px rgba(39, 56, 105, 0.2)",
+        "orbix-dock": "0 16px 40px -10px rgba(39, 56, 105, 0.18), 0 2px 8px rgba(39, 56, 105, 0.04)",
       },
       animation: {
         "pulse-subtle": "pulseSubtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "shimmer-fast": "shimmer 1.5s infinite",
-        "tick-up": "tickUp 0.8s ease-out forwards",
-        "tick-down": "tickDown 0.8s ease-out forwards",
       },
       keyframes: {
         pulseSubtle: {
@@ -77,14 +108,6 @@ const config: Config = {
         },
         shimmer: {
           "100%": { transform: "translateX(100%)" },
-        },
-        tickUp: {
-          "0%": { backgroundColor: "rgba(16, 185, 129, 0.32)" },
-          "100%": { backgroundColor: "transparent" },
-        },
-        tickDown: {
-          "0%": { backgroundColor: "rgba(244, 63, 94, 0.32)" },
-          "100%": { backgroundColor: "transparent" },
         },
       },
     },

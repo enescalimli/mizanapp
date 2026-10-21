@@ -18,6 +18,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Calendar,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   PortfolioHoldingItem,
@@ -284,142 +286,170 @@ export default function PortfolioManagementPage() {
     };
   }, [holdings, livePrices, standard, useCeilingRounding]);
 
+  const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
+
   return (
-    <div className="min-h-screen bg-[#F3F6FB] text-[#182542] pb-24">
+    <div className="min-h-screen bg-[#F3F6FB] text-[#273869] pb-28">
       {/* ===================================================================== */}
-      {/* 1. PAYNO SKY-MIST PORTFÖY HERO                                        */}
+      {/* 1. SLIDE 06 & 09: BALANCE FIRST — PORTFÖY ÖZETİ                       */}
       {/* ===================================================================== */}
-      <section className="payno-sky-hero p-8 sm:p-12 border-b border-white/60">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-3 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-white text-xs font-bold text-[#182542] shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-[#0D9F6E] animate-pulse" />
-              <span>Canlı BIST Fiyat Akışı ({lastTickTime})</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* SOL: PORTFÖY BALANCE FIRST CARD */}
+          <div className="lg:col-span-7 orbix-card p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-white border border-[#E2E8F0]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#12B76A] animate-pulse" />
+                <span className="text-xs font-semibold tracking-wide text-[#405881]">
+                  Katılım Portföy &amp; Cüzdan Canlı Bakiye
+                </span>
+                <span className="text-xs font-mono text-[#8B9BB4]">({lastTickTime})</span>
+              </div>
               <button
                 type="button"
                 onClick={tickLivePrices}
-                className="hover:text-[#2E6CF6] text-[#6E81A0] transition p-0.5"
+                className="w-9 h-9 rounded-full bg-[#F3F6FB] hover:bg-[#EDF1F4] text-[#273869] flex items-center justify-center transition shadow-2xs"
                 title="Fiyatları Yenile"
               >
-                <RefreshCw size={12} />
+                <RefreshCw size={15} />
               </button>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-black text-[#182542] tracking-tight">
-              Katılım Portföy &amp; Cüzdan
-            </h1>
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#273869] font-mono">
+                  {balanceVisible ? formatTRY(portfolioAnalysis.totalMarketValue, 2) : "•••••••• ₺"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setBalanceVisible(!balanceVisible)}
+                  className="text-[#8B9BB4] hover:text-[#273869] transition p-1"
+                >
+                  {balanceVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
 
-            <p className="text-xs sm:text-sm text-[#6E81A0] font-medium leading-relaxed">
-              Hisselerinizin anlık fıkhi katılım uygunluğu, takvim günü bazlı şüpheli kazanç arındırması ve hisse zekâtı.
-            </p>
-          </div>
+              <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                <span className="orbix-micro-pill">
+                  <span>Helal Oranı</span>
+                  <span className="text-[#8B9BB4]">•</span>
+                  <span className="text-[#273869] font-bold">%{portfolioAnalysis.halalWeightPercent.toFixed(1)}</span>
+                  <span className="text-[#8B9BB4]">&gt;</span>
+                </span>
 
-          {/* Standart Seçici */}
-          <div className="apple-segmented-group shrink-0">
-            <button
-              type="button"
-              onClick={() => setStandard("BIST_KATILIM_DIB")}
-              className={`apple-segmented-item ${
-                standard === "BIST_KATILIM_DIB" ? "active" : ""
-              }`}
-            >
-              BIST Katılım (&lt;%33)
-            </button>
-            <button
-              type="button"
-              onClick={() => setStandard("AAOIFI_STD_21")}
-              className={`apple-segmented-item ${
-                standard === "AAOIFI_STD_21" ? "active" : ""
-              }`}
-            >
-              AAOIFI No.21 (&lt;%30)
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ===================================================================== */}
-      {/* 2. 4'LÜ SADELEŞTİRİLMİŞ PAYNO PORTFÖY KPI KARTLARI                     */}
-      {/* ===================================================================== */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 1. Portföy Değeri */}
-          <div className="payno-card p-6 space-y-2">
-            <span className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider block">
-              Portföy Canlı Değeri
-            </span>
-            <div className="text-3xl font-black text-[#182542] font-mono tracking-tight">
-              {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold font-mono ${
+                    portfolioAnalysis.totalPnlTRY.gte(0)
+                      ? "bg-[#E6F8EF] text-[#0D8B52]"
+                      : "bg-[#FEECEB] text-[#C62E26]"
+                  }`}
+                >
+                  {portfolioAnalysis.totalPnlTRY.gte(0) ? (
+                    <ArrowUpRight size={13} />
+                  ) : (
+                    <ArrowDownRight size={13} />
+                  )}
+                  <span>
+                    {portfolioAnalysis.totalPnlTRY.gte(0) ? "+" : ""}
+                    {formatTRY(portfolioAnalysis.totalPnlTRY, 2)} ({portfolioAnalysis.totalPnlPercent.toFixed(2)}%)
+                  </span>
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-mono font-bold">
-              <span
-                className={`inline-flex items-center gap-0.5 ${
-                  portfolioAnalysis.totalPnlTRY.gte(0)
-                    ? "text-[#0D9F6E]"
-                    : "text-[#E11D48]"
+
+            {/* Standart Seçici */}
+            <div className="pt-4 border-t border-[#EDF1F4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span className="text-xs font-medium text-[#6E81A0]">
+                Denetim Standardı:
+              </span>
+              <div className="apple-segmented-group shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setStandard("BIST_KATILIM_DIB")}
+                  className={`apple-segmented-item ${
+                    standard === "BIST_KATILIM_DIB" ? "active" : ""
+                  }`}
+                >
+                  BIST Katılım (&lt;%33)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStandard("AAOIFI_STD_21")}
+                  className={`apple-segmented-item ${
+                    standard === "AAOIFI_STD_21" ? "active" : ""
+                  }`}
+                >
+                  AAOIFI No.21 (&lt;%30)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* SAĞ: SLIDE 08 OVERVIEW — ARINDIRMA & ZEKÂT YÜKÜMLÜLÜKLERİ */}
+          <div className="lg:col-span-5 orbix-card p-6 sm:p-8 flex flex-col justify-between space-y-5 bg-white border border-[#E2E8F0]">
+            <div>
+              <div className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider">
+                Fıkhi Yükümlülükler
+              </div>
+              <h2 className="text-2xl font-bold text-[#273869] tracking-tight mt-1">
+                Arındırma &amp; <span className="font-orbix-serif italic text-[#405881]">Zekât</span>
+              </h2>
+              <p className="text-xs text-[#6E81A0] mt-1 leading-relaxed">
+                Elde tutulan gün (pro-rata) ve dönen varlık oranına göre şer&apos;i yükümlülükler.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3.5">
+              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                <span className="text-xs font-medium text-[#6E81A0] block">
+                  Satış Anı Arındırma
+                </span>
+                <div className="text-2xl font-bold text-[#273869] font-mono">
+                  {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
+                </div>
+                <span className="text-[10px] text-[#8B9BB4] block">
+                  Bugün satılırsa infak
+                </span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                <span className="text-xs font-medium text-[#6E81A0] block">
+                  Hisse Zekâtı (%2,5)
+                </span>
+                <div className="text-2xl font-bold text-[#273869] font-mono">
+                  {formatTRY(portfolioAnalysis.totalZakatPayable, 2)}
+                </div>
+                <span className="text-[10px] text-[#8B9BB4] block">
+                  Dönen varlık bazlı
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-[#EDF1F4]">
+              <span className="text-[#6E81A0]">Şer&apos;i Yuvarlama:</span>
+              <button
+                type="button"
+                onClick={() => setUseCeilingRounding(!useCeilingRounding)}
+                className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
+                  useCeilingRounding
+                    ? "bg-[#273869] text-white border-[#273869]"
+                    : "bg-white text-[#6E81A0] border-[#E2E8F0]"
                 }`}
               >
-                {portfolioAnalysis.totalPnlTRY.gte(0) ? (
-                  <ArrowUpRight size={13} />
-                ) : (
-                  <ArrowDownRight size={13} />
-                )}
-                {portfolioAnalysis.totalPnlTRY.gte(0) ? "+" : ""}
-                {formatTRY(portfolioAnalysis.totalPnlTRY, 2)} (
-                {portfolioAnalysis.totalPnlPercent.toFixed(2)}%)
-              </span>
+                {useCeilingRounding ? "Tavan (İhtiyatlı)" : "Standart"}
+              </button>
             </div>
-          </div>
-
-          {/* 2. Katılım Uygunluk Ağırlığı */}
-          <div className="payno-card p-6 space-y-2">
-            <span className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider block">
-              Katılım Uygunluk Oranı
-            </span>
-            <div className="text-3xl font-black text-[#0D9F6E] font-mono tracking-tight">
-              %{portfolioAnalysis.halalWeightPercent.toFixed(1)}
-            </div>
-            <span className="text-xs font-bold text-[#0D9F6E] block">
-              {portfolioAnalysis.halalWeightPercent.eq(100)
-                ? "✓ Portföyün Tamamı Katılıma Uygun"
-                : "⚠️ Bazı Hisseler Kapsam Dışı"}
-            </span>
-          </div>
-
-          {/* 3. Satış Anı Arındırma Bedeli */}
-          <div className="payno-card p-6 space-y-2">
-            <span className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider block">
-              Satış Anı Arındırma
-            </span>
-            <div className="text-3xl font-black text-[#B45309] font-mono tracking-tight">
-              {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
-            </div>
-            <p className="text-[11px] text-[#6E81A0] font-medium">
-              Bugün satılırsa infak edilecek net şüpheli kazanç
-            </p>
-          </div>
-
-          {/* 4. Hisse Senedi Zekâtı */}
-          <div className="payno-card p-6 space-y-2">
-            <span className="text-xs font-bold text-[#2E6CF6] uppercase tracking-wider block">
-              Hisse Zekâtı (%2,5)
-            </span>
-            <div className="text-3xl font-black text-[#2E6CF6] font-mono tracking-tight">
-              {formatTRY(portfolioAnalysis.totalZakatPayable, 2)}
-            </div>
-            <p className="text-[11px] text-[#6E81A0] font-medium">
-              Al-Sat &amp; Temettü niyetine göre zekata tabi varlık
-            </p>
           </div>
         </div>
 
         {/* ===================================================================== */}
-        {/* 3. YENİ HİSSE / POZİSYON EKLEME ÇUBUĞU                                */}
+        {/* 2. YENİ HİSSE / POZİSYON EKLEME ÇUBUĞU                                */}
         {/* ===================================================================== */}
-        <div className="payno-card p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#E6ECF5] pb-3">
-            <h3 className="text-sm font-bold text-[#182542] flex items-center gap-2">
-              <Plus size={16} className="text-[#2E6CF6]" />
+        <div className="orbix-card p-6 space-y-4 bg-white border border-[#E2E8F0]">
+          <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-3">
+            <h3 className="text-sm font-bold text-[#273869] flex items-center gap-2">
+              <Plus size={16} className="text-[#273869]" />
               <span>Portföye Yeni Hisse Ekle</span>
             </h3>
             <span className="text-xs text-[#6E81A0] font-medium">
@@ -433,13 +463,13 @@ export default function PortfolioManagementPage() {
           >
             {/* 1. Hisse Kodu */}
             <div>
-              <label className="text-[11px] font-bold text-[#182542] block mb-1">
+              <label className="text-[11px] font-bold text-[#273869] block mb-1">
                 Hisse Kodu
               </label>
               <select
                 value={newTicker}
                 onChange={(e) => handleSelectNewTicker(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] text-xs font-bold text-[#182542] focus:outline-none focus:bg-white"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-bold text-[#273869] focus:outline-none focus:bg-white"
               >
                 {SAMPLE_COMPANIES_SUMMARY.map((c) => (
                   <option key={c.ticker} value={c.ticker}>
@@ -451,7 +481,7 @@ export default function PortfolioManagementPage() {
 
             {/* 2. Lot Adedi */}
             <div>
-              <label className="text-[11px] font-bold text-[#182542] block mb-1">
+              <label className="text-[11px] font-bold text-[#273869] block mb-1">
                 Lot Adedi
               </label>
               <input
@@ -459,13 +489,13 @@ export default function PortfolioManagementPage() {
                 min="1"
                 value={newLots}
                 onChange={(e) => setNewLots(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] text-xs font-mono font-bold text-[#182542] focus:outline-none focus:bg-white"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-mono font-bold text-[#273869] focus:outline-none focus:bg-white"
               />
             </div>
 
             {/* 3. Alış Maliyeti */}
             <div>
-              <label className="text-[11px] font-bold text-[#182542] block mb-1">
+              <label className="text-[11px] font-bold text-[#273869] block mb-1">
                 Ort. Maliyet (₺)
               </label>
               <input
@@ -473,26 +503,26 @@ export default function PortfolioManagementPage() {
                 step="0.01"
                 value={newAvgCost}
                 onChange={(e) => setNewAvgCost(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] text-xs font-mono font-bold text-[#182542] focus:outline-none focus:bg-white"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-mono font-bold text-[#273869] focus:outline-none focus:bg-white"
               />
             </div>
 
             {/* 4. Alış Tarihi */}
             <div>
-              <label className="text-[11px] font-bold text-[#182542] block mb-1">
+              <label className="text-[11px] font-bold text-[#273869] block mb-1">
                 Alış Tarihi
               </label>
               <input
                 type="date"
                 value={newPurchaseDate}
                 onChange={(e) => setNewPurchaseDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] text-xs font-mono font-bold text-[#182542] focus:outline-none focus:bg-white"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-mono font-bold text-[#273869] focus:outline-none focus:bg-white"
               />
             </div>
 
             {/* 5. Zekât Niyeti */}
             <div>
-              <label className="text-[11px] font-bold text-[#182542] block mb-1">
+              <label className="text-[11px] font-bold text-[#273869] block mb-1">
                 Zekât Niyeti
               </label>
               <select
@@ -500,7 +530,7 @@ export default function PortfolioManagementPage() {
                 onChange={(e) =>
                   setNewZakatIntent(e.target.value as ZakatIntentionType)
                 }
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#DCE5F2] text-xs font-bold text-[#182542] focus:outline-none focus:bg-white"
+                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-bold text-[#273869] focus:outline-none focus:bg-white"
               >
                 <option value="LONG_TERM_DIVIDEND">Uzun Vade (Temettü)</option>
                 <option value="TRADING_SHORT_TERM">Kısa Vade (Al-Sat)</option>
@@ -521,51 +551,36 @@ export default function PortfolioManagementPage() {
         </div>
 
         {/* ===================================================================== */}
-        {/* 4. TÜM SAYFA PORTFÖY VARLIK TABLOSU                                  */}
+        {/* 3. TÜM SAYFA PORTFÖY VARLIK TABLOSU                                  */}
         {/* ===================================================================== */}
-        <div className="payno-card p-6 sm:p-8 space-y-5">
-          <div className="flex items-center justify-between border-b border-[#E6ECF5] pb-4">
+        <div className="orbix-card p-6 sm:p-8 space-y-5 bg-white border border-[#E2E8F0]">
+          <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-4">
             <div>
-              <h2 className="text-xl font-black text-[#182542] tracking-tight flex items-center gap-2">
-                <Briefcase size={18} className="text-[#2E6CF6]" />
+              <h2 className="text-xl font-black text-[#273869] tracking-tight flex items-center gap-2">
+                <Briefcase size={18} className="text-[#273869]" />
                 <span>Portföy Pozisyonları ({holdings.length} Hisse)</span>
               </h2>
               <p className="text-xs text-[#6E81A0] mt-1 font-medium">
                 Alış tarihi ile otomatik gün hesabı, canlı BIST fiyatları ve anlık satış arındırma bedeli.
               </p>
             </div>
-
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-[#6E81A0]">Şer&apos;i Yuvarlama:</span>
-              <button
-                type="button"
-                onClick={() => setUseCeilingRounding(!useCeilingRounding)}
-                className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
-                  useCeilingRounding
-                    ? "bg-[#182542] text-white border-[#182542]"
-                    : "bg-white text-[#6E81A0] border-[#DCE5F2]"
-                }`}
-              >
-                {useCeilingRounding ? "Tavan (İhtiyat)" : "Standart"}
-              </button>
-            </div>
           </div>
 
           <div className="w-full">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#E6ECF5] text-[11px] font-bold uppercase tracking-wider text-[#6E81A0]">
+                <tr className="border-b border-[#EDF1F4] text-[11px] font-bold uppercase tracking-wider text-[#6E81A0]">
                   <th className="py-3.5 pr-4">Hisse Senedi</th>
                   <th className="py-3.5 px-3 text-center">Katılım Durumu</th>
                   <th className="py-3.5 px-3">Lot &amp; Maliyet</th>
                   <th className="py-3.5 px-3 text-right">Canlı Değer</th>
                   <th className="py-3.5 px-3 text-right">Kâr / Zarar</th>
                   <th className="py-3.5 px-3">Süre (Pro-Rata)</th>
-                  <th className="py-3.5 px-3 text-right text-[#B45309]">Satış Arındırma</th>
+                  <th className="py-3.5 px-3 text-right text-[#273869]">Satış Arındırma</th>
                   <th className="py-3.5 pl-4 text-center">İşlem</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EEF3F9] text-xs font-normal">
+              <tbody className="divide-y divide-[#EDF1F4] text-xs font-normal">
                 {portfolioAnalysis.rows.map((row) => (
                   <tr
                     key={row.id}
@@ -577,8 +592,8 @@ export default function PortfolioManagementPage() {
                         <div
                           className={`w-10 h-10 rounded-2xl flex items-center justify-center font-mono font-bold text-xs shrink-0 border ${
                             row.isCompliant
-                              ? "bg-[#E6F8EF] border-[#BCEBD2] text-[#0D9F6E]"
-                              : "bg-[#FEECEB] border-[#FAC9C6] text-[#E11D48]"
+                              ? "bg-[#E6F8EF] border-[#BCEBD2] text-[#0D8B52]"
+                              : "bg-[#FEECEB] border-[#FAC9C6] text-[#C62E26]"
                           }`}
                         >
                           {row.ticker}
@@ -586,7 +601,7 @@ export default function PortfolioManagementPage() {
                         <div>
                           <Link
                             href={`/companies/${row.ticker}`}
-                            className="font-bold text-[#182542] hover:text-[#2E6CF6] font-mono text-sm block"
+                            className="font-bold text-[#273869] hover:text-[#405881] font-mono text-sm block"
                           >
                             {row.ticker}
                           </Link>
@@ -614,20 +629,20 @@ export default function PortfolioManagementPage() {
 
                     {/* Lot & Maliyet */}
                     <td className="py-4 px-3 whitespace-nowrap font-mono">
-                      <span className="font-bold text-[#182542]">
+                      <span className="font-bold text-[#273869]">
                         {row.lots} Lot
                       </span>
-                      <span className="block text-[11px] text-[#7B8FA8]">
+                      <span className="block text-[11px] text-[#8B9BB4]">
                         Maliyet: ₺{row.avgCostTRY}
                       </span>
                     </td>
 
                     {/* Canlı Piyasa Değeri */}
                     <td className="py-4 px-3 text-right whitespace-nowrap font-mono">
-                      <span className="font-bold text-sm text-[#182542]">
+                      <span className="font-bold text-sm text-[#273869]">
                         {formatTRY(row.marketValue, 2)}
                       </span>
-                      <span className="block text-[11px] text-[#7B8FA8]">
+                      <span className="block text-[11px] text-[#8B9BB4]">
                         Fiyat: {formatTRY(row.livePrice, 2)}
                       </span>
                     </td>
@@ -636,7 +651,7 @@ export default function PortfolioManagementPage() {
                     <td className="py-4 px-3 text-right whitespace-nowrap font-mono">
                       <span
                         className={`font-bold ${
-                          row.pnlTRY.gte(0) ? "text-[#0D9F6E]" : "text-[#E11D48]"
+                          row.pnlTRY.gte(0) ? "text-[#0D8B52]" : "text-[#C62E26]"
                         }`}
                       >
                         {row.pnlTRY.gte(0) ? "+" : ""}
@@ -644,7 +659,7 @@ export default function PortfolioManagementPage() {
                       </span>
                       <span
                         className={`block text-[11px] ${
-                          row.pnlTRY.gte(0) ? "text-[#0D9F6E]" : "text-[#E11D48]"
+                          row.pnlTRY.gte(0) ? "text-[#0D8B52]" : "text-[#C62E26]"
                         }`}
                       >
                         ({row.pnlTRY.gte(0) ? "+" : ""}
@@ -654,20 +669,20 @@ export default function PortfolioManagementPage() {
 
                     {/* Süre & Pro-Rata */}
                     <td className="py-4 px-3 whitespace-nowrap font-mono text-[11px]">
-                      <span className="font-semibold text-[#182542]">
+                      <span className="font-semibold text-[#273869]">
                         {row.totalDaysHeld} Gün
                       </span>
-                      <span className="block text-[#0D9F6E] font-medium">
+                      <span className="block text-[#0D8B52] font-medium">
                         {row.daysHeldInQuarter}/90 Pro-Rata
                       </span>
                     </td>
 
                     {/* Satış Anı Arındırma Tutarı */}
                     <td className="py-4 px-3 text-right whitespace-nowrap font-mono">
-                      <span className="font-bold text-sm text-[#B45309]">
+                      <span className="font-bold text-sm text-[#273869]">
                         {formatTRY(row.exitPurificationPayable, 2)}
                       </span>
-                      <span className="block text-[10px] text-[#7B8FA8]">
+                      <span className="block text-[10px] text-[#8B9BB4]">
                         {formatTRY(row.purificationPerShare, 4)} /pay
                       </span>
                     </td>
@@ -677,7 +692,7 @@ export default function PortfolioManagementPage() {
                       <button
                         type="button"
                         onClick={() => handleRemoveHolding(row.id)}
-                        className="p-1.5 rounded-lg text-[#6E81A0] hover:text-[#E11D48] hover:bg-rose-50 transition"
+                        className="p-1.5 rounded-lg text-[#8B9BB4] hover:text-[#C62E26] hover:bg-rose-50 transition"
                         title="Pozisyonu Kaldır"
                       >
                         <Trash2 size={15} />
