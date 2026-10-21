@@ -111,7 +111,7 @@ export async function sendOtpEmail({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          from: process.env.MAIL_FROM || "Mizan Katılım <onay@mizanapp.tr>",
+          from: process.env.MAIL_FROM || "Mizan Katılım <onboarding@resend.dev>",
           to: [toEmail],
           subject: `${otpCode} - Mizan Katılım Güvenlik Onay Kodunuz`,
           html: generateOtpEmailHtml(recipientName, otpCode),
@@ -121,6 +121,19 @@ export async function sendOtpEmail({
       if (res.ok) {
         const data = await res.json();
         return { success: true, messageId: data.id };
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        console.warn("Resend API returned non-200:", errData);
+        if (errData?.message && errData.message.includes("You can only send testing emails to your own email address")) {
+          const allowedEmail = errData.message.match(/\(([^)]+)\)/)?.[1] || "mizanapptr@gmail.com";
+          return {
+            success: false,
+            error: `Resend test modundadır. Kod yalnızca hesap sahibi e-postanıza (${allowedEmail}) gönderilebilir. Tüm e-postalara göndermek için resend.com üzerinde alan adı doğrulaması yapabilirsiniz.`,
+          };
+        }
+        if (errData?.message) {
+          return { success: false, error: errData.message };
+        }
       }
     } catch (err: any) {
       console.warn("Resend API dispatch failed, trying SMTP:", err?.message);

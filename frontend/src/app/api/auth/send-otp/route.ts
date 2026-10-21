@@ -32,15 +32,22 @@ export async function POST(request: Request) {
 
     console.log(`[AUTH-OTP] Code generated for ${email}: ${otpCode}. Delivery success: ${emailResult.success}`);
 
+    if (!emailResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: emailResult.error || "E-posta gönderimi başarısız oldu. Lütfen e-posta adresinizi kontrol ediniz.",
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       message: `${email} adresinize 6 haneli güvenlik doğrulama kodu gönderildi.`,
       email,
-      dispatched: emailResult.success,
-      // If server could not send (e.g. no SMTP configured), communicate cleanly
-      deliveryNote: emailResult.success
-        ? "E-posta başarıyla iletildi."
-        : "SMTP yapılandırması bekleniyor. Geliştirici konsoluna kaydedildi.",
+      dispatched: true,
+      deliveryNote: "E-posta başarıyla iletildi.",
     });
   } catch (err: any) {
     console.error("[AUTH-OTP] Send error:", err);
