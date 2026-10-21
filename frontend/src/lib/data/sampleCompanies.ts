@@ -836,9 +836,10 @@ for (const summary of SAMPLE_COMPANIES_SUMMARY) {
 }
 
 export function getCompanySummary(ticker: string): CompanySummary | undefined {
-  return SAMPLE_COMPANIES_SUMMARY.find(
-    (c) => c.ticker.toUpperCase() === ticker.toUpperCase()
-  );
+  const norm = ticker.toUpperCase().trim();
+  const sample = SAMPLE_COMPANIES_SUMMARY.find((c) => c.ticker === norm);
+  if (sample) return sample;
+  return BIST_COMPREHENSIVE_UNIVERSE.find((c) => c.ticker === norm);
 }
 
 export function evaluateCompanyStatusForStandard(
@@ -911,8 +912,18 @@ export function getSmartAlternativesForTicker(
   const target = getCompanySummary(ticker);
   if (!target) return [];
 
+  const universe = [...SAMPLE_COMPANIES_SUMMARY, ...BIST_COMPREHENSIVE_UNIVERSE];
+  const seenTickers = new Set<string>();
+  const deduplicatedUniverse: CompanySummary[] = [];
+  for (const c of universe) {
+    if (!seenTickers.has(c.ticker)) {
+      seenTickers.add(c.ticker);
+      deduplicatedUniverse.push(c);
+    }
+  }
+
   // Same sector compliant companies first
-  const sameSectorCompliant = SAMPLE_COMPANIES_SUMMARY.filter((c) => {
+  const sameSectorCompliant = deduplicatedUniverse.filter((c) => {
     const status =
       standard === "BIST_KATILIM_DIB" ? c.bistStatus : c.aaoifiStatus;
     return (
@@ -928,7 +939,7 @@ export function getSmartAlternativesForTicker(
   );
 
   // If fewer than 2 in same sector, supplement with top industrial/tech compliant leaders
-  const fallbackCompliant = SAMPLE_COMPANIES_SUMMARY.filter((c) => {
+  const fallbackCompliant = deduplicatedUniverse.filter((c) => {
     const status =
       standard === "BIST_KATILIM_DIB" ? c.bistStatus : c.aaoifiStatus;
     return (

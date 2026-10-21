@@ -27,6 +27,7 @@ import {
   BistIpoItem,
   UPCOMING_AND_ACTIVE_BIST_IPOS,
 } from "@/lib/data/realBistIpos";
+import { PaynoShell } from "@/components/PaynoShell";
 
 type ViewMode = "cards" | "table";
 type SortField = "ticker" | "ipoPriceTRY" | "totalLotCount" | "isKatilimCompliant";
@@ -165,67 +166,48 @@ export default function IpoCalendarPage() {
   }, [ipos]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-28 space-y-8">
-      {/* ===================================================================== */}
-      {/* 1. APPLE DESIGN NAVY HERO HEADER (Integrated Brand & Live Sync)       */}
-      {/* ===================================================================== */}
-      <section className="apple-glass-card p-6 sm:p-10 relative overflow-hidden">
-        {/* Ambient glow */}
-        <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#273869]/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-[#0D8B52]/10 blur-3xl pointer-events-none" />
+    <PaynoShell badge="halka arz">
+      <div className="space-y-6">
+        {/* ===================================================================== */}
+        {/* 1. APPLE DESIGN NAVY HERO HEADER (Integrated Brand & Live Sync)       */}
+        {/* ===================================================================== */}
+        <section className="bg-white/70 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] relative overflow-hidden">
+          {/* Ambient glow */}
+          <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-[#273869]/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-[#0D8B52]/10 blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 space-y-5">
-          {/* Top Brand Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-5">
-            <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-orbix-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
-                <Image
-                  src="/brand/logo.svg"
-                  alt="Mizan Logo"
-                  fill
-                  className="object-cover"
-                  priority
-                />
+          <div className="relative z-10 space-y-5">
+            {/* Top Brand Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#273869]/8 text-[#273869] text-xs font-bold">
+                <ShieldCheck size={14} className="text-[#0D8B52]" />
+                <span>SPK Onaylı İzahname &amp; Katılım Finans İlkeleri Bilgi Formu</span>
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-base font-black tracking-tight text-[#273869]">
-                    MİZAN
+
+              {/* Live 7/24 Sync Status */}
+              <div className="flex items-center gap-2.5">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold shadow-2xs backdrop-blur-md">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0D8B52]"></span>
                   </span>
-                  <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#273869] text-white tracking-widest uppercase">
-                    PRO
+                  <span>7/24 Otomatik Canlı Senkronize</span>
+                  <span className="text-[10px] text-[#0D8B52]/70 font-mono">
+                    ({lastSyncTime})
                   </span>
                 </div>
-                <span className="text-[11px] text-[#6E81A0] font-medium block">
-                  BIST Katılım Finans &amp; Halka Arz Radarı
-                </span>
-              </div>
-            </Link>
 
-            {/* Live 7/24 Sync Status */}
-            <div className="flex items-center gap-2.5">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold shadow-2xs backdrop-blur-md">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#0D8B52]"></span>
-                </span>
-                <span>7/24 Otomatik Canlı Senkronize</span>
-                <span className="text-[10px] text-[#0D8B52]/70 font-mono">
-                  ({lastSyncTime})
-                </span>
+                <button
+                  type="button"
+                  onClick={() => fetchIpos(true)}
+                  disabled={loading}
+                  title="Şimdi Yenile"
+                  className="p-2 rounded-xl bg-white/80 border border-[#E2E8F0] text-[#273869] hover:bg-white hover:shadow-xs transition disabled:opacity-50"
+                >
+                  <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+                </button>
               </div>
-
-              <button
-                type="button"
-                onClick={() => fetchIpos(true)}
-                disabled={loading}
-                title="Şimdi Yenile"
-                className="p-2 rounded-xl bg-white/80 border border-[#E2E8F0] text-[#273869] hover:bg-white hover:shadow-xs transition disabled:opacity-50"
-              >
-                <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-              </button>
             </div>
-          </div>
 
           {/* Title and Intro */}
           <div className="max-w-3xl space-y-2 pt-1">
@@ -809,6 +791,7 @@ export default function IpoCalendarPage() {
           </div>
         )}
       </section>
-    </main>
+      </div>
+    </PaynoShell>
   );
 }

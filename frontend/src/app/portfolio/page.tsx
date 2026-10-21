@@ -33,6 +33,8 @@ import {
   evaluateCompanyStatusForStandard,
   getCompanySummary,
 } from "@/lib/data/sampleCompanies";
+import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
+import { PaynoShell } from "@/components/PaynoShell";
 import {
   Decimal,
   toDecimal,
@@ -89,8 +91,8 @@ export default function PortfolioManagementPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Portföy Pozisyonları
-  const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>([
+  // Portföy Pozisyonları (Varsayılan + LocalStorage Senkronize)
+  const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [
     {
       id: "h-1",
       ticker: "BIMAS",
@@ -127,7 +129,33 @@ export default function PortfolioManagementPage() {
       purificationMethod: "holding",
       zakatIntent: "TRADING_SHORT_TERM",
     },
-  ]);
+  ];
+
+  const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>(DEFAULT_HOLDINGS);
+
+  // Initial load from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("mizan_user_holdings");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setHoldings(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not load holdings from localStorage", e);
+    }
+  }, []);
+
+  const saveHoldings = (newHoldings: PortfolioHoldingItem[]) => {
+    setHoldings(newHoldings);
+    try {
+      localStorage.setItem("mizan_user_holdings", JSON.stringify(newHoldings));
+    } catch (e) {
+      console.warn("Could not save holdings to localStorage", e);
+    }
+  };
 
   // Yeni Pozisyon Formu
   const [newTicker, setNewTicker] = useState<string>("TUPRS");
@@ -158,11 +186,11 @@ export default function PortfolioManagementPage() {
       zakatIntent: newZakatIntent,
     };
 
-    setHoldings((prev) => [...prev, item]);
+    saveHoldings([...holdings, item]);
   };
 
   const handleRemoveHolding = (id: string) => {
-    setHoldings((prev) => prev.filter((h) => h.id !== id));
+    saveHoldings(holdings.filter((h) => h.id !== id));
   };
 
   // Portföy Analiz Hesaplamaları
@@ -290,46 +318,8 @@ export default function PortfolioManagementPage() {
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
 
   return (
-    <div className="min-h-screen text-[#273869] pb-28">
-      {/* ===================================================================== */}
-      {/* 1. SLIDE 06 & 09: BALANCE FIRST — PORTFÖY ÖZETİ                       */}
-      {/* ===================================================================== */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 space-y-8">
-        {/* Top Brand Bar */}
-        <div className="apple-glass-card p-5 sm:p-6 flex flex-wrap items-center justify-between gap-4">
-          <Link href="/" className="inline-flex items-center gap-3 group">
-            <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-orbix-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
-              <Image
-                src="/brand/logo.svg"
-                alt="Mizan Logo"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-black tracking-tight text-[#273869]">
-                  MİZAN
-                </span>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#273869] text-white tracking-widest uppercase">
-                  PORTFÖY
-                </span>
-              </div>
-              <span className="text-[11px] text-[#6E81A0] font-medium block">
-                7/24 BIST Katılım Uyumluluğu &amp; Zekât Takibi
-              </span>
-            </div>
-          </Link>
-
-          <div className="flex items-center gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold shadow-2xs">
-              <ShieldCheck size={14} />
-              <span>DİB / TKBB Standartlarına Göre Denetlenir</span>
-            </div>
-          </div>
-        </div>
-        
+    <PaynoShell badge="portföy">
+      <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           {/* SOL: PORTFÖY BALANCE FIRST CARD */}
           <div className="lg:col-span-7 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
@@ -506,9 +496,9 @@ export default function PortfolioManagementPage() {
                 onChange={(e) => handleSelectNewTicker(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-bold text-[#273869] focus:outline-none focus:bg-white"
               >
-                {SAMPLE_COMPANIES_SUMMARY.map((c) => (
+                {(BIST_COMPREHENSIVE_UNIVERSE.length > 0 ? BIST_COMPREHENSIVE_UNIVERSE : SAMPLE_COMPANIES_SUMMARY).map((c) => (
                   <option key={c.ticker} value={c.ticker}>
-                    {c.ticker} — {c.name.slice(0, 24)}
+                    {c.ticker} — {c.name.slice(0, 26)}
                   </option>
                 ))}
               </select>
@@ -740,6 +730,6 @@ export default function PortfolioManagementPage() {
           </div>
         </div>
       </div>
-    </div>
+    </PaynoShell>
   );
 }

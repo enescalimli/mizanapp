@@ -147,6 +147,60 @@ export default function HomePage() {
   const [selectedQuickTicker, setSelectedQuickTicker] = useState<string>("BIMAS");
   const [sendAmountInput, setSendAmountInput] = useState<string>("10.000");
   const [currencyCode, setCurrencyCode] = useState<"TRY" | "LOT">("TRY");
+  const [isQuickPickerOpen, setIsQuickPickerOpen] = useState<boolean>(false);
+  const [quickSearchQuery, setQuickSearchQuery] = useState<string>("");
+
+  // Seçili Hızlı Tarama Şirketi
+  const selectedQuickCompany = useMemo(() => {
+    const found = companies.find((c) => c.ticker === selectedQuickTicker);
+    if (found) return found;
+    return (
+      companies[0] || {
+        ticker: "BIMAS",
+        name: "BİM Birleşik Mağazalar A.Ş.",
+        sector: "Perakende Ticaret",
+        bistStatus: "COMPLIANT" as const,
+        aaoifiStatus: "COMPLIANT" as const,
+        debtRatioPercent: 12.4,
+        cashRatioPercent: 8.2,
+        impureIncomePercent: 1.1,
+        priceTRY: "₺482.50",
+        change24h: "+1.25%",
+        purificationPerShareTRY: "₺0.14",
+      }
+    );
+  }, [companies, selectedQuickTicker]);
+
+  // Hızlı Hisse Seçici Filtresi
+  const quickFilteredList = useMemo(() => {
+    if (!quickSearchQuery.trim()) return companies.slice(0, 10);
+    const q = quickSearchQuery.toUpperCase();
+    return companies
+      .filter(
+        (c) =>
+          c.ticker.toUpperCase().includes(q) ||
+          c.name.toUpperCase().includes(q)
+      )
+      .slice(0, 10);
+  }, [companies, quickSearchQuery]);
+
+  // Tutar Hesabı
+  const numericSendAmount = useMemo(() => {
+    const clean = sendAmountInput.replace(/\./g, "").replace(",", ".");
+    return parseFloat(clean) || 0;
+  }, [sendAmountInput]);
+
+  const quickCalculatedLot = useMemo(() => {
+    if (currencyCode === "LOT") return numericSendAmount;
+    const priceVal = parseFloat(String(selectedQuickCompany.priceTRY).replace(/[^0-9.-]+/g, "")) || 1;
+    return priceVal > 0 ? Math.floor(numericSendAmount / priceVal) : 0;
+  }, [numericSendAmount, currencyCode, selectedQuickCompany]);
+
+  const quickCalculatedTRY = useMemo(() => {
+    if (currencyCode === "TRY") return numericSendAmount;
+    const priceVal = parseFloat(String(selectedQuickCompany.priceTRY).replace(/[^0-9.-]+/g, "")) || 0;
+    return numericSendAmount * priceVal;
+  }, [numericSendAmount, currencyCode, selectedQuickCompany]);
 
   // Sütun Sıralama State'i
   const [sortField, setSortField] = useState<SortField>("ticker");
@@ -668,50 +722,127 @@ export default function HomePage() {
                   Hızlı Katılım Denetimi
                 </h3>
 
-                {/* Stock Selector Row (Like Courtney Henry Card) */}
-                <div className="p-3 rounded-2xl bg-white/80 border border-white/95 flex items-center justify-between shadow-2xs">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center text-xs font-bold font-mono">
-                      {selectedQuickTicker.slice(0, 3)}
+                {/* Stock Selector Row / Inline Search Popover */}
+                {isQuickPickerOpen ? (
+                  <div className="space-y-3 p-3.5 rounded-2xl bg-white/95 border border-[#182542]/15 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#182542]">Hisse Seçin (626 BIST)</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsQuickPickerOpen(false);
+                          setQuickSearchQuery("");
+                        }}
+                        className="text-[11px] font-bold text-[#8C9BB0] hover:text-[#182542]"
+                      >
+                        Kapat
+                      </button>
                     </div>
-                    <div>
-                      <div className="text-xs font-bold text-[#182542] leading-tight">
-                        {selectedQuickTicker} — BİM Mağazalar
-                      </div>
-                      <div className="text-[10px] text-[#8C9BB0]">
-                        KOD: {selectedQuickTicker} • BIST30
-                      </div>
+                    <div className="relative">
+                      <Search size={13} className="absolute left-2.5 top-2.5 text-[#8C9BB0]" />
+                      <input
+                        type="text"
+                        value={quickSearchQuery}
+                        onChange={(e) => setQuickSearchQuery(e.target.value)}
+                        placeholder="Kod veya şirket ara (örn: THYAO)..."
+                        autoFocus
+                        className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-[#F4F6F9] border border-transparent focus:border-[#182542]/20 outline-none text-[#182542] placeholder-[#8C9BB0]"
+                      />
+                    </div>
+                    <div className="max-h-48 overflow-y-auto divide-y divide-[#EDF1F7] pr-1">
+                      {quickFilteredList.map((c) => (
+                        <button
+                          key={c.ticker}
+                          type="button"
+                          onClick={() => {
+                            setSelectedQuickTicker(c.ticker);
+                            setIsQuickPickerOpen(false);
+                            setQuickSearchQuery("");
+                          }}
+                          className="w-full text-left py-2 px-1 hover:bg-[#F4F6F9] rounded-lg transition flex items-center justify-between group"
+                        >
+                          <div>
+                            <span className="text-xs font-bold text-[#182542] block group-hover:text-[#273869]">
+                              {c.ticker}
+                            </span>
+                            <span className="text-[10px] text-[#8C9BB0] block truncate max-w-[150px]">
+                              {c.name}
+                            </span>
+                          </div>
+                          <span
+                            className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                              (standard === "BIST" ? c.bistStatus : c.aaoifiStatus) === "COMPLIANT"
+                                ? "bg-[#0D8B52]/10 text-[#0D8B52]"
+                                : "bg-[#DC2626]/10 text-[#DC2626]"
+                            }`}
+                          >
+                            {(standard === "BIST" ? c.bistStatus : c.aaoifiStatus) === "COMPLIANT"
+                              ? "Katılım Uygun"
+                              : "Katılım Dışı"}
+                          </span>
+                        </button>
+                      ))}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const el = document.getElementById("screener-table");
-                      if (el) el.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="text-[11px] font-bold text-[#405881] hover:text-[#182542]"
-                  >
-                    Değiştir
-                  </button>
-                </div>
+                ) : (
+                  <div className="p-3 rounded-2xl bg-white/80 border border-white/95 flex items-center justify-between shadow-2xs">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center text-xs font-bold font-mono shrink-0">
+                        {selectedQuickCompany.ticker.slice(0, 3)}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-bold text-[#182542] leading-tight truncate">
+                          {selectedQuickCompany.ticker} — {selectedQuickCompany.name}
+                        </div>
+                        <div className="text-[10px] text-[#8C9BB0] truncate">
+                          {selectedQuickCompany.sector} &bull; {selectedQuickCompany.priceTRY}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsQuickPickerOpen(true)}
+                      className="text-[11px] font-bold text-[#405881] hover:text-[#182542] shrink-0 ml-2"
+                    >
+                      Değiştir
+                    </button>
+                  </div>
+                )}
 
                 {/* Enter Amount Input (Yatırım Tutarı) */}
-                <div className="space-y-1">
-                  <span className="text-[11px] font-medium text-[#8C9BB0] block">
-                    Yatırım Tutarı / Lot Hesabı
-                  </span>
-                  <div className="flex items-baseline justify-between border-b border-[#EDF1F7] pb-2">
-                    <div className="flex items-baseline">
-                      <span className="text-3xl font-black text-[#182542] font-mono tracking-tight">
-                        ₺{sendAmountInput}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-medium text-[#8C9BB0]">
+                      Yatırım Tutarı / Lot Hesabı
+                    </span>
+                    <span className="text-[10px] font-bold text-[#405881] font-mono">
+                      {currencyCode === "TRY"
+                        ? `≈ ${quickCalculatedLot.toLocaleString("tr-TR")} Lot`
+                        : `≈ ₺${quickCalculatedTRY.toLocaleString("tr-TR", { maximumFractionDigits: 2 })}`}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-2">
+                    <div className="flex items-center gap-1 flex-1">
+                      <span className="text-2xl font-black text-[#182542] font-mono">
+                        {currencyCode === "TRY" ? "₺" : "#"}
                       </span>
-                      <span className="w-0.5 h-6 bg-[#182542] ml-0.5 animate-pulse" />
+                      <input
+                        type="text"
+                        value={sendAmountInput}
+                        onChange={(e) => {
+                          const clean = e.target.value.replace(/[^0-9.,]/g, "");
+                          setSendAmountInput(clean);
+                        }}
+                        placeholder={currencyCode === "TRY" ? "10.000" : "100"}
+                        className="w-full text-2xl font-black text-[#182542] font-mono tracking-tight bg-transparent border-none outline-none focus:ring-0 p-0 text-[#182542]"
+                      />
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setCurrencyCode((c) => (c === "TRY" ? "LOT" : "TRY"))}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 border border-white/90 text-[11px] font-bold text-[#182542] shadow-2xs"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/90 border border-white/90 text-[11px] font-bold text-[#182542] shadow-2xs hover:bg-[#F4F6F9] transition shrink-0 ml-2"
                     >
                       <span>{currencyCode === "TRY" ? "🇹🇷 TRY ₺" : "📊 LOT"}</span>
                       <ChevronDown size={11} className="text-[#8C9BB0]" />
@@ -725,7 +856,20 @@ export default function HomePage() {
                     <Info size={11} />
                     <span>Fıkhi Durum</span>
                   </div>
-                  <span className="font-bold text-[#0D8B52]">✓ %100 Katılıma Uygun</span>
+                  {(standard === "BIST" ? selectedQuickCompany.bistStatus : selectedQuickCompany.aaoifiStatus) === "COMPLIANT" ? (
+                    <span className="font-bold text-[#0D8B52] flex items-center gap-1">
+                      <CheckCircle2 size={12} />
+                      Katılıma Uygun
+                    </span>
+                  ) : (
+                    <span
+                      className="font-bold text-[#DC2626] flex items-center gap-1 max-w-[180px] truncate justify-end"
+                      title={getNonComplianceReason(selectedQuickCompany, standard)}
+                    >
+                      <XCircle size={12} className="shrink-0" />
+                      <span className="truncate">Katılım Dışı</span>
+                    </span>
+                  )}
                 </div>
 
                 {/* Endeks Kriteri Seçici */}
@@ -754,10 +898,10 @@ export default function HomePage() {
                 {/* Continue Solid Button -> Hisse Raporuna Yönlendir */}
                 <button
                   type="button"
-                  onClick={() => router.push(`/companies/${selectedQuickTicker}`)}
+                  onClick={() => router.push(`/companies/${selectedQuickCompany.ticker}`)}
                   className="w-full py-3.5 rounded-full bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs shadow-md shadow-[#182542]/25 transition active:scale-95 text-center flex items-center justify-center gap-1.5"
                 >
-                  <span>Fıkhi Raporu İncele</span>
+                  <span>{selectedQuickCompany.ticker} Fıkhi Raporu</span>
                   <ArrowUpRight size={14} />
                 </button>
               </div>

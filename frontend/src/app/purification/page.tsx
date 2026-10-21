@@ -25,7 +25,9 @@ import {
   Decimal,
   calculateDaysHeld,
 } from "@/lib/decimal/decimal";
-import { SAMPLE_COMPANIES_SUMMARY, DETAILED_COMPANIES_DATABASE } from "@/lib/data/sampleCompanies";
+import { SAMPLE_COMPANIES_SUMMARY, DETAILED_COMPANIES_DATABASE, getCompanySummary } from "@/lib/data/sampleCompanies";
+import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
+import { PaynoShell } from "@/components/PaynoShell";
 
 interface PortfolioPosition {
   id: string;
@@ -37,7 +39,7 @@ interface PortfolioPosition {
 }
 
 export default function PortfolioPurificationPage() {
-  const [positions, setPositions] = useState<PortfolioPosition[]>([
+  const DEFAULT_POSITIONS: PortfolioPosition[] = [
     {
       id: "pos-1",
       ticker: "BIMAS",
@@ -62,7 +64,33 @@ export default function PortfolioPurificationPage() {
       receivedDividendTRY: "3750",
       method: "dividend",
     },
-  ]);
+  ];
+
+  const [positions, setPositions] = useState<PortfolioPosition[]>(DEFAULT_POSITIONS);
+
+  // Initial load from localStorage
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("mizan_purification_positions");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setPositions(parsed);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not load positions from localStorage", e);
+    }
+  }, []);
+
+  const savePositions = (newPositions: PortfolioPosition[]) => {
+    setPositions(newPositions);
+    try {
+      localStorage.setItem("mizan_purification_positions", JSON.stringify(newPositions));
+    } catch (e) {
+      console.warn("Could not save positions to localStorage", e);
+    }
+  };
 
   const [zakatIntent, setZakatIntent] = useState<"trading" | "long_term">("long_term");
   const [useCeilingRounding, setUseCeilingRounding] = useState<boolean>(true);
@@ -71,18 +99,27 @@ export default function PortfolioPurificationPage() {
   // Calculate detailed figures for each position using Decimal.js
   const analyzedPositions = useMemo(() => {
     return positions.map((pos) => {
-      const summary = SAMPLE_COMPANIES_SUMMARY.find((c) => c.ticker === pos.ticker);
+      const summary = getCompanySummary(pos.ticker);
       const detail = DETAILED_COMPANIES_DATABASE[pos.ticker];
 
-      const price = toDecimal(summary?.priceTRY || "100.00");
+      const price = toDecimal(summary?.priceTRY || "50.00");
       const lots = toDecimal(pos.lots || "0");
       const marketValue = lots.times(price);
 
       // Purification calculation
-      const impureQuarter = toDecimal(detail?.purificationMetrics.impureIncomeIsolatedQuarterTRY || "1000000");
-      const totalShares = toDecimal(detail?.purificationMetrics.totalSharesOutstanding || "10000000");
+      const impureRatio = toDecimal(
+        detail?.purificationMetrics.dividendPurificationRatio ||
+          (toDecimal(summary?.impureIncomePercent || 1.5).div(100)).toFixed(4)
+      );
+      const totalShares = toDecimal(
+        detail?.purificationMetrics.totalSharesOutstanding || "100000000"
+      );
+      const impureQuarter = toDecimal(
+        detail?.purificationMetrics.impureIncomeIsolatedQuarterTRY ||
+          totalShares.times(price).times(impureRatio).times(0.03).round().toString()
+      );
       const pShareQuarter = impureQuarter.dividedBy(totalShares);
-      const divPurificationRatio = toDecimal(detail?.purificationMetrics.dividendPurificationRatio || "0.01");
+      const divPurificationRatio = impureRatio;
 
       // Automatically calculate days held from purchaseDate
       const { totalDaysHeld, daysHeldInQuarter, formattedPurchaseDate } =
@@ -106,7 +143,11 @@ export default function PortfolioPurificationPage() {
       if (zakatIntent === "trading") {
         zakatBaseTRY = marketValue;
       } else {
-        const zatablePerShare = toDecimal(detail?.purificationMetrics.zatableNetCurrentAssetsPerShareTRY || "10.00");
+        const zatablePerShare = toDecimal(
+          detail?.purificationMetrics.zatableNetCurrentAssetsPerShareTRY ||
+            summary?.zatableNetAssetsPerShareTRY ||
+            "15.00"
+        );
         zakatBaseTRY = lots.times(zatablePerShare);
       }
       const zakatPayable = zakatBaseTRY.times("0.025").toDecimalPlaces(2, Decimal.ROUND_HALF_UP);
@@ -159,89 +200,57 @@ export default function PortfolioPurificationPage() {
       id: `pos-${Date.now()}`,
       ticker: selectedAddTicker,
       lots: "100",
-      purchaseDate: "2026-08-01",
+      purchaseDate: new Date().toISOString().slice(0, 10),
       receivedDividendTRY: "1000",
       method: "holding",
     };
-    setPositions([...positions, newPos]);
+    savePositions([...positions, newPos]);
   };
 
   const removePosition = (id: string) => {
-    setPositions(positions.filter((p) => p.id !== id));
+    savePositions(positions.filter((p) => p.id !== id));
   };
 
   const updatePosition = (id: string, field: keyof PortfolioPosition, value: any) => {
-    setPositions(
-      positions.map((p) => {
-        if (p.id === id) {
-          return { ...p, [field]: value };
-        }
-        return p;
-      })
-    );
+    const updated = positions.map((p) => {
+      if (p.id === id) {
+        return { ...p, [field]: value };
+      }
+      return p;
+    });
+    savePositions(updated);
   };
 
   return (
-    <div className="min-h-screen text-[#273869] pb-28">
-      {/* Apple Design Header */}
-      <section className="pt-4 pb-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="apple-glass-card p-6 sm:p-8 relative overflow-hidden space-y-6">
-            {/* Top Brand Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-5">
-              <Link href="/" className="inline-flex items-center gap-3 group">
-                <div className="relative w-11 h-11 rounded-2xl overflow-hidden shadow-orbix-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
-                  <Image
-                    src="/brand/logo.svg"
-                    alt="Mizan Logo"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-base font-black tracking-tight text-[#273869]">
-                      MİZAN
-                    </span>
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#273869] text-white tracking-widest uppercase">
-                      ARINDIRMA
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-[#6E81A0] font-medium block">
-                    Zero-Float Kuruş Hassasiyetli Fıkhi Arındırma
-                  </span>
-                </div>
-              </Link>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-extrabold">
-                  <ShieldCheck size={14} />
-                  <span>TKBB &amp; AAOIFI No. 21 Uyumlu</span>
-                </div>
-                <button
-                  onClick={() => window.print()}
-                  className="px-3.5 py-2 rounded-full bg-white/80 border border-[#E2E8F0] hover:bg-white text-xs font-bold text-[#273869] flex items-center gap-1.5 shadow-2xs backdrop-blur-md transition"
-                >
-                  <Download size={14} />
-                  <span>PDF / Yazdır</span>
-                </button>
-              </div>
+    <PaynoShell badge="arındırma">
+      <div className="space-y-6">
+        {/* Apple Design Header */}
+        <section className="bg-white/70 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] relative overflow-hidden space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#273869]/10 pb-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-extrabold">
+              <ShieldCheck size={14} />
+              <span>TKBB &amp; AAOIFI No. 21 Uyumlu</span>
             </div>
-
-            <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#273869] tracking-tight">
-                Arındırma (Taharet) &amp; <span className="font-orbix-serif italic text-[#405881]">Hisse Zekâtı</span> Merkezi
-              </h1>
-              <p className="text-sm text-[#6E81A0] max-w-3xl leading-relaxed font-medium">
-                Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
-                uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D8B52] font-bold">Zero-Float Precision</span>)
-                arındırın ve niyetinize göre hisse senedi zekâtınızı kesin tutarlarla hesaplayın.
-              </p>
-            </div>
+            <button
+              onClick={() => window.print()}
+              className="px-3.5 py-2 rounded-full bg-white/80 border border-[#E2E8F0] hover:bg-white text-xs font-bold text-[#273869] flex items-center gap-1.5 shadow-2xs backdrop-blur-md transition"
+            >
+              <Download size={14} />
+              <span>PDF / Yazdır</span>
+            </button>
           </div>
-        </div>
-      </section>
+
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#273869] tracking-tight">
+              Arındırma (Taharet) &amp; <span className="font-orbix-serif italic text-[#405881]">Hisse Zekâtı</span> Merkezi
+            </h1>
+            <p className="text-xs sm:text-sm text-[#6E81A0] max-w-3xl leading-relaxed font-medium">
+              Katılım hassasiyeti taşıyan yatırımcılar için portföydeki hisselerin
+              uygunsuz faiz ve şüpheli gelirlerini kuruşu kuruşuna (<span className="text-[#0D8B52] font-bold">Zero-Float Precision</span>)
+              arındırın ve niyetinize göre hisse senedi zekâtınızı kesin tutarlarla hesaplayın.
+            </p>
+          </div>
+        </section>
 
       <div className="space-y-8 pt-4 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -608,7 +617,8 @@ export default function PortfolioPurificationPage() {
           </div>
         </div>
       </div>
-      </div>
     </div>
+  </div>
+</PaynoShell>
   );
 }
