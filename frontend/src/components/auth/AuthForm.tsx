@@ -206,9 +206,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         setTimeout(() => {
           loginWithDetails(otpTargetEmail, data.user?.fullName || otpTargetName);
           setIsOtpModalOpen(false);
-          setSuccessMessage("E-posta doğrulaması başarılı! Portföyünüze yönlendiriliyorsunuz...");
+          setSuccessMessage("E-posta doğrulaması başarılı! Uygulamaya yönlendiriliyorsunuz...");
           setTimeout(() => {
-            router.push("/portfolio");
+            router.push("/dashboard");
           }, 600);
         }, 600);
       } else {
@@ -284,11 +284,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       if (error) {
         // Fallback to verified session
         loginWithDetails(email, fullName || email.split("@")[0]);
-        setSuccessMessage("Giriş başarılı! Portföyünüze yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/portfolio"), 600);
+        setSuccessMessage("Giriş başarılı! Uygulamaya yönlendiriliyorsunuz...");
+        setTimeout(() => router.push("/dashboard"), 600);
       } else {
-        setSuccessMessage("Giriş başarılı! Portföyünüze yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/portfolio"), 600);
+        setSuccessMessage("Giriş başarılı! Uygulamaya yönlendiriliyorsunuz...");
+        setTimeout(() => router.push("/dashboard"), 600);
       }
     } catch (err: any) {
       setErrorMessage(err.message || "Beklenmeyen bir hata oluştu.");

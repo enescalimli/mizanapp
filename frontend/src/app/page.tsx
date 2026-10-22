@@ -160,7 +160,7 @@ export default function LandingPage() {
 
             {/* Midas-Style High-Contrast CTA */}
             <Link
-              href="/dashboard"
+              href="/auth/login"
               className="px-4 sm:px-5 py-2.5 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-[#070B14] text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md shadow-[#182542]/20 dark:shadow-emerald-500/20 active:scale-95 transition-all"
             >
               <span>Uygulamaya Git</span>
@@ -208,7 +208,7 @@ export default function LandingPage() {
             {/* Dual CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto pt-2">
               <Link
-                href="/dashboard"
+                href="/auth/login"
                 className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-[#070B14] text-base font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-[#182542]/25 dark:shadow-emerald-500/25 active:scale-95 transition-all"
               >
                 <span>Ücretsiz Başla</span>
@@ -816,7 +816,7 @@ export default function LandingPage() {
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
-              href="/dashboard"
+              href="/auth/login"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-[#070B14] font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 active:scale-95 transition-all"
             >
               <span>Uygulamayı Aç — Ücretsiz</span>
