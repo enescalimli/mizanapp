@@ -27,6 +27,9 @@ export const FloatingBottomBar: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
   const [quickActionOpen, setQuickActionOpen] = useState(false);
 
+  // Landing sayfasında (pazarlama karşılama sayfasında) mobil barı gizle
+  if (pathname === "/") return null;
+
   // Close modal on escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -293,9 +296,9 @@ export const FloatingBottomBar: React.FC = () => {
           
           {/* 1. Ana Sayfa */}
           <Link
-            href="/"
+            href="/dashboard"
             className={`flex flex-col items-center justify-center px-2.5 py-1 min-w-[50px] rounded-full transition-all duration-150 ${
-              pathname === "/"
+              pathname === "/dashboard" || pathname === "/"
                 ? "text-[#182542] dark:text-white"
                 : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
@@ -303,15 +306,15 @@ export const FloatingBottomBar: React.FC = () => {
             <div className="relative">
               <Home
                 size={20}
-                strokeWidth={pathname === "/" ? 2.5 : 1.8}
+                strokeWidth={pathname === "/dashboard" || pathname === "/" ? 2.5 : 1.8}
               />
-              {pathname === "/" && (
+              {(pathname === "/dashboard" || pathname === "/") && (
                 <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#182542] dark:bg-white" />
               )}
             </div>
             <span
               className={`text-[10px] mt-0.5 transition-all ${
-                pathname === "/" ? "font-bold text-[#182542] dark:text-white" : "font-medium text-[#8C93A3] dark:text-[#94A3B8]"
+                pathname === "/dashboard" || pathname === "/" ? "font-bold text-[#182542] dark:text-white" : "font-medium text-[#8C93A3] dark:text-[#94A3B8]"
               }`}
             >
               Ana Sayfa

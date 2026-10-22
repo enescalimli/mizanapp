@@ -51,7 +51,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   };
 
   const navItems = [
-    { label: "Genel Bakış", href: "/" },
+    { label: "Genel Bakış", href: "/dashboard" },
     { label: "Tarayıcı (626)", href: "/tarayici" },
     { label: "Portföy & Arındırma", href: "/portfolio" },
     { label: "Halka Arz", href: "/ipo" },
@@ -59,7 +59,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   ];
 
   const isNavActive = (href: string) => {
-    if (href === "/") return pathname === "/";
+    if (href === "/dashboard") return pathname === "/dashboard" || pathname === "/";
     return pathname.startsWith(href);
   };
 
@@ -77,7 +77,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
         <header className="flex items-center justify-between gap-2.5 sm:gap-4 flex-wrap">
           
           {/* Sol Logo & Marka Adı (Proje dosyasındaki lacivert squircle logo) */}
-          <Link href="/" className="inline-flex items-center gap-2.5 group shrink-0">
+          <Link href="/dashboard" className="inline-flex items-center gap-2.5 group shrink-0">
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] dark:bg-[#0F172A] border border-white/20 p-0.5 flex items-center justify-center">
               <Image
                 src="/brand/logo.svg"

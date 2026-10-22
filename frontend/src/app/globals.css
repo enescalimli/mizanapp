@@ -355,3 +355,26 @@ html.dark .apple-segmented-item.active {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* ============================================================================
+   MARQUEE TICKER ANIMATION (Midas-style live ticker)
+   ============================================================================ */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
