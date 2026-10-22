@@ -338,42 +338,44 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* 6 INTERACTIVE NAVIGATION TABS                                       */}
+        {/* 6 INTERACTIVE NAVIGATION TABS (V14 Pill Container)                  */}
         {/* =================================================================== */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-          {[
-            { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
-            { id: "KARNE", label: "Şirket Karnesi (24 Puan)", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
-            { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
-            { id: "FINANSALLAR", label: "Finansallar & DuPont", icon: FileSpreadsheet },
-            { id: "TEMETTU_RAKIP", label: "Temettü & Rakipler", icon: Users2 },
-            { id: "AI_ANALIZ", label: "Mizan AI Raporu", icon: Sparkles, badge: isSampleFreeStock ? "Açık Demo" : "PRO" },
-          ].map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id as CompanyDetailTab)}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition shrink-0 ${
-                  isActive
-                    ? "bg-[#182542] text-white shadow-md shadow-[#182542]/20 scale-100"
-                    : "bg-white/80 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/90 shadow-2xs"
-                }`}
-              >
-                <Icon size={14} />
-                <span>{tab.label}</span>
-                {tab.badge && (
-                  <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-md ${
-                    isActive ? "bg-amber-400 text-slate-900" : "bg-amber-100 text-amber-800"
-                  }`}>
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="flex items-center justify-start sm:justify-center overflow-x-auto py-1 scrollbar-none">
+          <div className="bg-white rounded-full p-1 border border-slate-200/60 shadow-xs flex items-center gap-1 shrink-0">
+            {[
+              { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
+              { id: "KARNE", label: "Şirket Karnesi", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
+              { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
+              { id: "FINANSALLAR", label: "Finansallar & DuPont", icon: FileSpreadsheet },
+              { id: "TEMETTU_RAKIP", label: "Temettü & Rakipler", icon: Users2 },
+              { id: "AI_ANALIZ", label: "Mizan AI Raporu", icon: Sparkles, badge: isSampleFreeStock ? "Demo" : "PRO" },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as CompanyDetailTab)}
+                  className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition shrink-0 ${
+                    isActive
+                      ? "bg-[#15161A] text-white shadow-xs"
+                      : "text-[#646A78] hover:text-[#15161A] hover:bg-slate-100/60"
+                  }`}
+                >
+                  <Icon size={13} />
+                  <span>{tab.label}</span>
+                  {tab.badge && (
+                    <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-md ${
+                      isActive ? "bg-[#FF5B26] text-white" : "bg-amber-100 text-amber-900"
+                    }`}>
+                      {tab.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* =================================================================== */}

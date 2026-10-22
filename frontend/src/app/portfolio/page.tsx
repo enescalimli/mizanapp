@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Briefcase,
   Plus,
@@ -13,14 +12,18 @@ import {
   ShieldCheck,
   CheckCircle2,
   XCircle,
-  AlertTriangle,
   RefreshCw,
-  Coins,
   ArrowUpRight,
   ArrowDownRight,
-  Calendar,
   Eye,
   EyeOff,
+  Copy,
+  RotateCw,
+  Snowflake,
+  CreditCard,
+  Sliders,
+  DollarSign,
+  PieChart,
 } from "lucide-react";
 import {
   PortfolioHoldingItem,
@@ -30,14 +33,12 @@ import {
 import {
   SAMPLE_COMPANIES_SUMMARY,
   DETAILED_COMPANIES_DATABASE,
-  evaluateCompanyStatusForStandard,
   getCompanySummary,
 } from "@/lib/data/sampleCompanies";
 import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
 import { PaynoShell } from "@/components/PaynoShell";
 import {
   Decimal,
-  toDecimal,
   formatTRY,
   calculateDaysHeld,
   calculateHoldingPurificationClient,
@@ -45,9 +46,20 @@ import {
 } from "@/lib/decimal/decimal";
 
 export default function PortfolioManagementPage() {
-  const [standard, setStandard] =
-    useState<ScreeningStandardCode>("BIST_KATILIM_DIB");
   const [useCeilingRounding, setUseCeilingRounding] = useState<boolean>(true);
+
+  // Card Controls iOS switches (From Frame 06)
+  const [onlinePayments, setOnlinePayments] = useState<boolean>(true);
+  const [contactless, setContactless] = useState<boolean>(true);
+  const [atmWithdrawals, setAtmWithdrawals] = useState<boolean>(true);
+  const [useAbroad, setUseAbroad] = useState<boolean>(false);
+  const [isCardFrozen, setIsCardFrozen] = useState<boolean>(false);
+  const [isCardFlipped, setIsCardFlipped] = useState<boolean>(false);
+  const [showCardNumber, setShowCardNumber] = useState<boolean>(false);
+
+  // Monthly spending limit slider (From Frame 06)
+  const [spendingLimit, setSpendingLimit] = useState<number>(5500);
+  const [spendingUsed, setSpendingUsed] = useState<number>(1400);
 
   // Canlı Fiyatlar
   const [livePrices, setLivePrices] = useState<Record<string, string>>({
@@ -91,14 +103,14 @@ export default function PortfolioManagementPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Portföy Pozisyonları (Varsayılan + LocalStorage Senkronize)
+  // Portföy Pozisyonları
   const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [
     {
       id: "h-1",
       ticker: "BIMAS",
       lots: "300",
       avgCostTRY: "420.00",
-      purchaseDate: "2024-05-15",
+      purchaseDate: "2024-06-15",
       purificationMethod: "holding",
       zakatIntent: "LONG_TERM_DIVIDEND",
     },
@@ -106,94 +118,106 @@ export default function PortfolioManagementPage() {
       id: "h-2",
       ticker: "ASELS",
       lots: "1500",
-      avgCostTRY: "58.00",
-      purchaseDate: "2024-06-20",
+      avgCostTRY: "58.20",
+      purchaseDate: "2024-04-10",
       purificationMethod: "holding",
       zakatIntent: "LONG_TERM_DIVIDEND",
     },
     {
       id: "h-3",
-      ticker: "FROTO",
-      lots: "80",
-      avgCostTRY: "910.00",
-      purchaseDate: "2024-07-10",
-      purificationMethod: "holding",
-      zakatIntent: "LONG_TERM_DIVIDEND",
-    },
-    {
-      id: "h-4",
       ticker: "THYAO",
       lots: "250",
-      avgCostTRY: "290.00",
+      avgCostTRY: "320.00",
       purchaseDate: "2024-08-01",
       purificationMethod: "holding",
       zakatIntent: "TRADING_SHORT_TERM",
     },
+    {
+      id: "h-4",
+      ticker: "FROTO",
+      lots: "80",
+      avgCostTRY: "890.00",
+      purchaseDate: "2024-02-20",
+      purificationMethod: "holding",
+      zakatIntent: "LONG_TERM_DIVIDEND",
+    },
+    {
+      id: "h-5",
+      ticker: "TUPRS",
+      lots: "600",
+      avgCostTRY: "155.00",
+      purchaseDate: "2024-05-18",
+      purificationMethod: "holding",
+      zakatIntent: "LONG_TERM_DIVIDEND",
+    },
   ];
 
-  const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>(DEFAULT_HOLDINGS);
-
-  // Initial load from localStorage
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("mizan_user_holdings");
+  const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("mizan_katilim_holdings_v2");
       if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setHoldings(parsed);
+        try {
+          return JSON.parse(saved);
+        } catch {
+          // fallback
         }
       }
-    } catch (e) {
-      console.warn("Could not load holdings from localStorage", e);
     }
-  }, []);
+    return DEFAULT_HOLDINGS;
+  });
 
-  const saveHoldings = (newHoldings: PortfolioHoldingItem[]) => {
-    setHoldings(newHoldings);
-    try {
-      localStorage.setItem("mizan_user_holdings", JSON.stringify(newHoldings));
-    } catch (e) {
-      console.warn("Could not save holdings to localStorage", e);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(holdings));
     }
-  };
+  }, [holdings]);
 
-  // Yeni Pozisyon Formu
-  const [newTicker, setNewTicker] = useState<string>("TUPRS");
+  // Yeni Pozisyon Ekle Form State
+  const [newTicker, setNewTicker] = useState<string>("BIMAS");
   const [newLots, setNewLots] = useState<string>("100");
-  const [newAvgCost, setNewAvgCost] = useState<string>("174.50");
-  const [newPurchaseDate, setNewPurchaseDate] = useState<string>("2024-08-15");
+  const [newAvgCost, setNewAvgCost] = useState<string>("482.50");
+  const [newPurchaseDate, setNewPurchaseDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
   const [newZakatIntent, setNewZakatIntent] =
     useState<ZakatIntentionType>("LONG_TERM_DIVIDEND");
 
   const handleSelectNewTicker = (ticker: string) => {
     setNewTicker(ticker);
-    const live = livePrices[ticker] || getCompanySummary(ticker)?.priceTRY;
-    if (live) setNewAvgCost(live);
+    const live = livePrices[ticker];
+    if (live) {
+      setNewAvgCost(live);
+    } else {
+      const comp = getCompanySummary(ticker);
+      if (comp?.priceTRY) {
+        setNewAvgCost(comp.priceTRY.replace("₺", "").trim());
+      }
+    }
   };
 
   const handleAddHolding = (e: React.FormEvent) => {
     e.preventDefault();
-    const lotsDec = toDecimal(newLots);
-    if (lotsDec.lte(0)) return;
+    if (!newTicker || !newLots || !newAvgCost) return;
 
-    const item: PortfolioHoldingItem = {
+    const newItem: PortfolioHoldingItem = {
       id: `h-${Date.now()}`,
-      ticker: newTicker.toUpperCase(),
-      lots: lotsDec.toString(),
-      avgCostTRY: toDecimal(newAvgCost || "100").toFixed(2),
-      purchaseDate: newPurchaseDate || "2024-08-15",
+      ticker: newTicker,
+      lots: newLots,
+      avgCostTRY: newAvgCost,
+      purchaseDate: newPurchaseDate,
       purificationMethod: "holding",
       zakatIntent: newZakatIntent,
     };
 
-    saveHoldings([...holdings, item]);
+    setHoldings((prev) => [newItem, ...prev]);
+    setNewLots("100");
   };
 
   const handleRemoveHolding = (id: string) => {
-    saveHoldings(holdings.filter((h) => h.id !== id));
+    setHoldings((prev) => prev.filter((h) => h.id !== id));
   };
 
-  // Portföy Analiz Hesaplamaları
+  // Portföy Analiz Motoru
   const portfolioAnalysis = useMemo(() => {
     let totalMarketValue = new Decimal(0);
     let totalCostBasis = new Decimal(0);
@@ -201,96 +225,75 @@ export default function PortfolioManagementPage() {
     let totalExitPurificationPayable = new Decimal(0);
     let totalZakatPayable = new Decimal(0);
 
-    const rows = holdings.map((h) => {
-      const summary = getCompanySummary(h.ticker) || {
-        ticker: h.ticker,
-        name: h.ticker,
-        sector: "Diğer",
-        bistStatus: "COMPLIANT",
-        aaoifiStatus: "COMPLIANT",
-        priceTRY: "100.00",
-        change24h: "%0.00",
-        debtRatioPercent: 15,
-        cashRatioPercent: 10,
-        impureIncomePercent: 1.5,
-        purificationPerShareTRY: "0.05",
-        lastScreeningDate: "2024-06-30",
-        zatableNetAssetsPerShareTRY: "25.00",
-      };
+    const rows = holdings.map((item) => {
+      const lotsDec = new Decimal(item.lots || 0);
+      const costDec = new Decimal(item.avgCostTRY || 0);
+      const curPriceDec = new Decimal(livePrices[item.ticker] || "100.00");
 
-      const detail =
-        DETAILED_COMPANIES_DATABASE[h.ticker] ||
-        DETAILED_COMPANIES_DATABASE["BIMAS"];
-
-      const livePriceStr = livePrices[h.ticker] || summary.priceTRY;
-      const livePrice = toDecimal(livePriceStr);
-      const lotsDec = toDecimal(h.lots);
-      const avgCostDec = toDecimal(h.avgCostTRY);
-
-      const marketValue = lotsDec.times(livePrice);
-      const costValue = lotsDec.times(avgCostDec);
-      const pnlTRY = marketValue.minus(costValue);
-      const pnlPercent = costValue.gt(0)
-        ? pnlTRY.dividedBy(costValue).times(100)
+      const positionCost = lotsDec.times(costDec);
+      const positionValue = lotsDec.times(curPriceDec);
+      const positionPnl = positionValue.minus(positionCost);
+      const positionPnlPercent = positionCost.gt(0)
+        ? positionPnl.dividedBy(positionCost).times(100)
         : new Decimal(0);
 
-      totalMarketValue = totalMarketValue.plus(marketValue);
-      totalCostBasis = totalCostBasis.plus(costValue);
+      totalMarketValue = totalMarketValue.plus(positionValue);
+      totalCostBasis = totalCostBasis.plus(positionCost);
 
-      const evalResult = evaluateCompanyStatusForStandard(summary, standard);
-      const isCompliant = evalResult.status === "COMPLIANT";
-      if (isCompliant) {
-        compliantMarketValue = compliantMarketValue.plus(marketValue);
-      }
+      const { totalDaysHeld, daysHeldInQuarter } = calculateDaysHeld(item.purchaseDate);
+      const detail = DETAILED_COMPANIES_DATABASE[item.ticker];
+      const compSummary = getCompanySummary(item.ticker);
 
-      const { totalDaysHeld, daysHeldInQuarter, formattedPurchaseDate } =
-        calculateDaysHeld(h.purchaseDate);
+      // Fıkhi arındırma
+      const impureIncome = detail?.purificationMetrics?.impureIncomeIsolatedQuarterTRY || "500000";
+      const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "100000000";
 
-      const purif = calculateHoldingPurificationClient(
-        detail.purificationMetrics.impureIncomeIsolatedQuarterTRY,
-        detail.purificationMetrics.totalSharesOutstanding,
+      const purCalc = calculateHoldingPurificationClient(
+        impureIncome,
+        totalShares,
         lotsDec,
         daysHeldInQuarter,
         90,
         useCeilingRounding
       );
 
-      totalExitPurificationPayable = totalExitPurificationPayable.plus(
-        purif.totalPurificationPayable
-      );
-
-      const zatablePerShare =
-        detail.purificationMetrics.zatableNetCurrentAssetsPerShareTRY ||
-        summary.zatableNetAssetsPerShareTRY ||
+      // Zekât
+      const zatableNetAssets =
+        detail?.purificationMetrics?.zatableNetCurrentAssetsPerShareTRY ||
+        compSummary?.zatableNetAssetsPerShareTRY ||
         "0";
 
-      const zakatCalc = calculateZakatForPositionClient({
+      const zakCalc = calculateZakatForPositionClient({
         quantityLots: lotsDec,
-        currentPriceTRY: livePrice,
-        zatableNetAssetsPerShareTRY: zatablePerShare,
-        intent: h.zakatIntent,
+        currentPriceTRY: curPriceDec,
+        zatableNetAssetsPerShareTRY: zatableNetAssets,
+        intent: item.zakatIntent,
       });
 
-      totalZakatPayable = totalZakatPayable.plus(zakatCalc.zakatPayableTRY);
+      totalExitPurificationPayable = totalExitPurificationPayable.plus(
+        purCalc.totalPurificationPayable
+      );
+      totalZakatPayable = totalZakatPayable.plus(zakCalc.zakatPayableTRY);
+
+      const isCompliant = compSummary?.bistStatus === "COMPLIANT";
+
+      if (isCompliant) {
+        compliantMarketValue = compliantMarketValue.plus(positionValue);
+      }
 
       return {
-        ...h,
-        summary,
-        detail,
-        livePrice,
-        lotsDec,
-        avgCostDec,
-        marketValue,
-        costValue,
-        pnlTRY,
-        pnlPercent,
-        totalDaysHeld,
-        daysHeldInQuarter,
-        formattedPurchaseDate,
+        ...item,
+        companyName: compSummary?.name || item.ticker,
+        sector: compSummary?.sector || "BIST",
         isCompliant,
-        purificationPerShare: purif.purificationPerShare,
-        exitPurificationPayable: purif.totalPurificationPayable,
-        zakatPayableTRY: zakatCalc.zakatPayableTRY,
+        curPriceTRY: curPriceDec,
+        positionCostTRY: positionCost,
+        positionValueTRY: positionValue,
+        positionPnlTRY: positionPnl,
+        positionPnlPercent,
+        daysHeld: totalDaysHeld,
+        purificationResult: purCalc,
+        zakatResult: zakCalc,
       };
     });
 
@@ -313,185 +316,430 @@ export default function PortfolioManagementPage() {
       totalExitPurificationPayable,
       totalZakatPayable,
     };
-  }, [holdings, livePrices, standard, useCeilingRounding]);
+  }, [holdings, livePrices, useCeilingRounding]);
 
-  const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
+  // Savings & Goals List (From Frame 04)
+  const savingsGoals = [
+    { title: "Helal Portföy Hedefi", target: 1000000, current: 740000, percent: 74, color: "text-[#FF5B26]" },
+    { title: "Arındırma Havuzu", target: 2500, current: 1200, percent: 48, color: "text-[#2563EB]" },
+    { title: "Yıllık Hisse Zekâtı", target: 40000, current: 34000, percent: 85, color: "text-[#059669]" },
+    { title: "Sukuk & Katılım Fonu", target: 165000, current: 132000, percent: 80, color: "text-[#7C3AED]" },
+  ];
 
   return (
     <PaynoShell badge="portföy">
       <div className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-          {/* SOL: PORTFÖY BALANCE FIRST CARD */}
-          <div className="lg:col-span-7 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#12B76A] animate-pulse" />
-                <span className="text-xs font-semibold tracking-wide text-[#405881]">
-                  Katılım Portföy &amp; Cüzdan Canlı Bakiye
-                </span>
-                <span className="text-xs font-mono text-[#8B9BB4]">({lastTickTime})</span>
-              </div>
-              <button
-                type="button"
-                onClick={tickLivePrices}
-                className="w-9 h-9 rounded-full bg-[#F3F6FB] hover:bg-[#EDF1F4] text-[#273869] flex items-center justify-center transition shadow-2xs"
-                title="Fiyatları Yenile"
-              >
-                <RefreshCw size={15} />
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#273869] font-mono">
-                  {balanceVisible ? formatTRY(portfolioAnalysis.totalMarketValue, 2) : "•••••••• ₺"}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setBalanceVisible(!balanceVisible)}
-                  className="text-[#8B9BB4] hover:text-[#273869] transition p-1"
-                >
-                  {balanceVisible ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                <span className="orbix-micro-pill">
-                  <span>Helal Oranı</span>
-                  <span className="text-[#8B9BB4]">•</span>
-                  <span className="text-[#273869] font-bold">%{portfolioAnalysis.halalWeightPercent.toFixed(1)}</span>
-                  <span className="text-[#8B9BB4]">&gt;</span>
-                </span>
-
-                <span
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold font-mono ${
-                    portfolioAnalysis.totalPnlTRY.gte(0)
-                      ? "bg-[#E6F8EF] text-[#0D8B52]"
-                      : "bg-[#FEECEB] text-[#C62E26]"
-                  }`}
-                >
-                  {portfolioAnalysis.totalPnlTRY.gte(0) ? (
-                    <ArrowUpRight size={13} />
-                  ) : (
-                    <ArrowDownRight size={13} />
-                  )}
-                  <span>
-                    {portfolioAnalysis.totalPnlTRY.gte(0) ? "+" : ""}
-                    {formatTRY(portfolioAnalysis.totalPnlTRY, 2)} ({portfolioAnalysis.totalPnlPercent.toFixed(2)}%)
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            {/* Standart Seçici */}
-            <div className="pt-4 border-t border-[#EDF1F4] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span className="text-xs font-medium text-[#6E81A0]">
-                Denetim Standardı:
-              </span>
-              <div className="shrink-0">
-                <span className="px-3.5 py-1.5 rounded-xl bg-[#182542] text-white text-xs font-bold shadow-xs">
-                  DİB &amp; BIST Katılım Standartları (&lt;%33)
-                </span>
-              </div>
-            </div>
+        
+        {/* ================================================================= */}
+        {/* HEADER (Replicating Frame 06: Manage Header)                      */}
+        {/* ================================================================= */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#14151A]">
+              Manage &amp; Portföy
+            </h1>
+            <p className="text-xs sm:text-sm text-[#8C93A3]">
+              Freeze cards, fine-tune limits and decide which wallets stay switched on.
+            </p>
           </div>
 
-          {/* SAĞ: SLIDE 08 OVERVIEW — ARINDIRMA & ZEKÂT YÜKÜMLÜLÜKLERİ */}
-          <div className="lg:col-span-5 apple-glass-card p-6 sm:p-8 flex flex-col justify-between space-y-5">
-            <div>
-              <div className="text-xs font-bold text-[#6E81A0] uppercase tracking-wider">
-                Fıkhi Yükümlülükler
-              </div>
-              <h2 className="text-2xl font-bold text-[#273869] tracking-tight mt-1">
-                Arındırma &amp; <span className="font-orbix-serif italic text-[#405881]">Zekât</span>
-              </h2>
-              <p className="text-xs text-[#6E81A0] mt-1 leading-relaxed">
-                Elde tutulan gün (pro-rata) ve dönen varlık oranına göre şer&apos;i yükümlülükler.
-              </p>
-            </div>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={tickLivePrices}
+              className="w-8 h-8 rounded-full bg-white border border-slate-200/60 shadow-xs text-[#8C93A3] hover:text-[#14151A] flex items-center justify-center transition"
+              title="Canlı Fiyatları Yenile"
+            >
+              <RefreshCw size={14} />
+            </button>
 
-            <div className="grid grid-cols-2 gap-3.5">
-              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
-                <span className="text-xs font-medium text-[#6E81A0] block">
-                  Satış Anı Arındırma
-                </span>
-                <div className="text-2xl font-bold text-[#273869] font-mono">
-                  {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
-                </div>
-                <span className="text-[10px] text-[#8B9BB4] block">
-                  Bugün satılırsa infak
-                </span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
-                <span className="text-xs font-medium text-[#6E81A0] block">
-                  Hisse Zekâtı (%2,5)
-                </span>
-                <div className="text-2xl font-bold text-[#273869] font-mono">
-                  {formatTRY(portfolioAnalysis.totalZakatPayable, 2)}
-                </div>
-                <span className="text-[10px] text-[#8B9BB4] block">
-                  Dönen varlık bazlı
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-[#EDF1F4]">
-              <span className="text-[#6E81A0]">Şer&apos;i Yuvarlama:</span>
-              <button
-                type="button"
-                onClick={() => setUseCeilingRounding(!useCeilingRounding)}
-                className={`px-3 py-1 rounded-full text-xs font-bold border transition ${
-                  useCeilingRounding
-                    ? "bg-[#273869] text-white border-[#273869]"
-                    : "bg-white text-[#6E81A0] border-[#E2E8F0]"
-                }`}
-              >
-                {useCeilingRounding ? "Tavan (İhtiyatlı)" : "Standart"}
-              </button>
-            </div>
+            <a
+              href="#yeni-pozisyon"
+              className="rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white px-5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
+            >
+              <Plus size={14} />
+              <span>+ New card / Pozisyon</span>
+            </a>
           </div>
         </div>
 
-        {/* ===================================================================== */}
-        {/* 2. YENİ HİSSE / POZİSYON EKLEME ÇUBUĞU                                */}
-        {/* ===================================================================== */}
-        <div className="apple-glass-card p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-3">
-            <h3 className="text-sm font-bold text-[#273869] flex items-center gap-2">
-              <Plus size={16} className="text-[#273869]" />
-              <span>Portföye Yeni Hisse Ekle</span>
-            </h3>
-            <span className="text-xs text-[#6E81A0] font-medium">
-              626 BIST hissesi arasından seçin
-            </span>
+        {/* ================================================================= */}
+        {/* ROW 1: 2 COLUMNS (Exact match to Frame 06: Your Cards & Controls) */}
+        {/* ================================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          
+          {/* =============================================================== */}
+          {/* LEFT: YOUR CARDS CARD (lg:col-span-6)                            */}
+          {/* =============================================================== */}
+          <div className="lg:col-span-6 bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-5">
+            
+            {/* Header row */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-[#14151A]">
+                Your cards
+              </span>
+              <span className="text-xs font-semibold text-[#8C93A3]">
+                2 cards
+              </span>
+            </div>
+
+            {/* Simulated Physical / Virtual Card Mockup (From Frame 06) */}
+            <div
+              onClick={() => setIsCardFlipped(!isCardFlipped)}
+              className="relative w-full aspect-[1.65/1] rounded-2xl bg-[#17171C] text-white p-5 sm:p-6 flex flex-col justify-between shadow-xl cursor-pointer select-none transition-transform duration-300 hover:scale-[1.01]"
+            >
+              {/* Card Top Row */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded-full border border-white/40 flex items-center justify-center">
+                    <span className="w-2 h-2 rounded-full bg-white/70" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full bg-white/10 text-white text-[10px] font-semibold backdrop-blur-xs">
+                    {isCardFrozen ? "Frozen" : "Active"}
+                  </span>
+                </div>
+
+                {/* Mastercard / TROY circles */}
+                <div className="flex items-center -space-x-2">
+                  <span className="w-6 h-6 rounded-full bg-rose-500/90" />
+                  <span className="w-6 h-6 rounded-full bg-amber-400/90" />
+                </div>
+              </div>
+
+              {/* Card Middle: Chip & Contactless */}
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-6 rounded-md bg-amber-200/40 border border-amber-300/60 flex items-center justify-center">
+                  <div className="w-5 h-3 border border-amber-300/40 rounded-xs" />
+                </div>
+              </div>
+
+              {/* Card Bottom Row: Number + Exp + CVV */}
+              <div>
+                <div className="text-base sm:text-lg font-mono font-bold tracking-widest text-white/90">
+                  {showCardNumber ? "5401 2345 6782 9104" : "•••• •••• •••• 6782"}
+                </div>
+
+                <div className="flex items-center justify-between mt-3 text-[11px] font-mono text-white/70">
+                  <div>
+                    <span className="text-[9px] block text-white/40 uppercase">Card Holder</span>
+                    <span className="font-semibold text-white/90">MIZAN KATILIM</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] block text-white/40 uppercase">EXP</span>
+                    <span className="font-semibold text-white/90">09/29</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] block text-white/40 uppercase">CVV</span>
+                    <span className="font-semibold text-white/90">{showCardNumber ? "611" : "•••"}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-center text-[11px] text-[#8C93A3]">
+              Tap the card to flip it
+            </p>
+
+            {/* Card Switcher Pills (From Frame 06) */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="px-3 py-1 rounded-full bg-[#15161A] text-white text-xs font-mono font-semibold flex items-center gap-1.5 shadow-xs"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF5B26]" />
+                <span>•• 6782</span>
+              </button>
+
+              <button
+                type="button"
+                className="px-3 py-1 rounded-full bg-[#F4F5F7] text-[#14151A] hover:bg-[#E9EBEF] text-xs font-mono font-semibold flex items-center gap-1.5 transition"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                <span>•• 4356</span>
+              </button>
+
+              <button
+                type="button"
+                className="w-7 h-7 rounded-full border border-dashed border-slate-300 hover:border-slate-500 text-slate-400 hover:text-slate-600 flex items-center justify-center text-sm font-semibold transition"
+              >
+                +
+              </button>
+            </div>
+
+            {/* 4 Card Action Pill Buttons (From Frame 06) */}
+            <div className="grid grid-cols-4 gap-2 pt-2">
+              {/* 1. Freeze */}
+              <button
+                type="button"
+                onClick={() => setIsCardFrozen(!isCardFrozen)}
+                className={`py-2 px-1 rounded-2xl border text-center transition flex flex-col items-center gap-1 ${
+                  isCardFrozen
+                    ? "bg-blue-50 border-blue-200 text-blue-600"
+                    : "bg-[#F8F9FA] hover:bg-slate-100 border-slate-100 text-[#14151A]"
+                }`}
+              >
+                <Snowflake size={14} className={isCardFrozen ? "text-blue-600" : "text-[#8C93A3]"} />
+                <span className="text-[10px] font-semibold">{isCardFrozen ? "Unfreeze" : "Freeze"}</span>
+              </button>
+
+              {/* 2. Show number */}
+              <button
+                type="button"
+                onClick={() => setShowCardNumber(!showCardNumber)}
+                className="py-2 px-1 rounded-2xl bg-[#F8F9FA] hover:bg-slate-100 border border-slate-100 text-[#14151A] text-center transition flex flex-col items-center gap-1"
+              >
+                {showCardNumber ? <EyeOff size={14} className="text-[#8C93A3]" /> : <Eye size={14} className="text-[#8C93A3]" />}
+                <span className="text-[10px] font-semibold">{showCardNumber ? "Hide" : "Show number"}</span>
+              </button>
+
+              {/* 3. Copy number */}
+              <button
+                type="button"
+                onClick={() => navigator.clipboard.writeText("5401234567829104")}
+                className="py-2 px-1 rounded-2xl bg-[#F8F9FA] hover:bg-slate-100 border border-slate-100 text-[#14151A] text-center transition flex flex-col items-center gap-1"
+              >
+                <Copy size={14} className="text-[#8C93A3]" />
+                <span className="text-[10px] font-semibold">Copy number</span>
+              </button>
+
+              {/* 4. Flip card */}
+              <button
+                type="button"
+                onClick={() => setIsCardFlipped(!isCardFlipped)}
+                className="py-2 px-1 rounded-2xl bg-[#F8F9FA] hover:bg-slate-100 border border-slate-100 text-[#14151A] text-center transition flex flex-col items-center gap-1"
+              >
+                <RotateCw size={14} className="text-[#8C93A3]" />
+                <span className="text-[10px] font-semibold">Flip card</span>
+              </button>
+            </div>
+
+          </div>
+
+          {/* =============================================================== */}
+          {/* RIGHT: CARD CONTROLS & SPENDING LIMIT (lg:col-span-6)            */}
+          {/* =============================================================== */}
+          <div className="lg:col-span-6 bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-5">
+            
+            {/* Header row */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-[#14151A]">
+                  Card controls
+                </h3>
+                <p className="text-[11px] text-[#8C93A3]">
+                  Fine-tune security and fıkhi screening rules
+                </p>
+              </div>
+
+              <span className="px-2.5 py-0.5 rounded-full bg-[#EBF9F1] text-[#10B981] text-[10px] font-semibold">
+                Active
+              </span>
+            </div>
+
+            {/* 4 iOS-style Toggle Switches (From Frame 06) */}
+            <div className="space-y-3.5 divide-y divide-slate-100">
+              
+              {/* Toggle 1: Online payments */}
+              <div className="pt-3.5 first:pt-0 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#14151A] block">Online payments</span>
+                  <span className="text-[10px] text-[#8C93A3]">Shops, subscriptions and in-app purchases</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOnlinePayments(!onlinePayments)}
+                  className={`w-11 h-6 rounded-full p-1 transition-colors flex items-center ${
+                    onlinePayments ? "bg-[#FF5B26] justify-end" : "bg-slate-200 justify-start"
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </button>
+              </div>
+
+              {/* Toggle 2: Contactless */}
+              <div className="pt-3.5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#14151A] block">Contactless</span>
+                  <span className="text-[10px] text-[#8C93A3]">Tap to pay up to $250 per payment</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setContactless(!contactless)}
+                  className={`w-11 h-6 rounded-full p-1 transition-colors flex items-center ${
+                    contactless ? "bg-[#FF5B26] justify-end" : "bg-slate-200 justify-start"
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </button>
+              </div>
+
+              {/* Toggle 3: ATM withdrawals */}
+              <div className="pt-3.5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#14151A] block">ATM withdrawals</span>
+                  <span className="text-[10px] text-[#8C93A3]">Up to $1,000 per day</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAtmWithdrawals(!atmWithdrawals)}
+                  className={`w-11 h-6 rounded-full p-1 transition-colors flex items-center ${
+                    atmWithdrawals ? "bg-[#FF5B26] justify-end" : "bg-slate-200 justify-start"
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </button>
+              </div>
+
+              {/* Toggle 4: Use abroad */}
+              <div className="pt-3.5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#14151A] block">Use abroad</span>
+                  <span className="text-[10px] text-[#8C93A3]">Payments outside Turkey</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUseAbroad(!useAbroad)}
+                  className={`w-11 h-6 rounded-full p-1 transition-colors flex items-center ${
+                    useAbroad ? "bg-[#FF5B26] justify-end" : "bg-slate-200 justify-start"
+                  }`}
+                >
+                  <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
+                </button>
+              </div>
+
+            </div>
+
+            {/* Monthly spending limit slider (From Frame 06) */}
+            <div className="pt-3 border-t border-slate-100 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#8C93A3]">Monthly spending limit</span>
+                <span className="text-lg font-black text-[#14151A] font-mono">
+                  ${spendingLimit.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+
+              <input
+                type="range"
+                min={1000}
+                max={20000}
+                step={500}
+                value={spendingLimit}
+                onChange={(e) => setSpendingLimit(Number(e.target.value))}
+                className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-[#FF5B26]"
+              />
+
+              {/* Progress track */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-mono">
+                  <span className="text-[#FF5B26] font-semibold">
+                    ${spendingUsed.toLocaleString("en-US", { minimumFractionDigits: 2 })} used
+                  </span>
+                  <span className="text-[#8C93A3]">
+                    {Math.round((spendingUsed / spendingLimit) * 100)}%
+                  </span>
+                </div>
+
+                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#FF5B26] to-amber-500"
+                    style={{ width: `${Math.min(100, (spendingUsed / spendingLimit) * 100)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ================================================================= */}
+        {/* ROW 2: SAVINGS & GOALS (From Frame 04)                            */}
+        {/* ================================================================= */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-[#14151A]">
+                Savings &amp; Goals
+              </h2>
+              <p className="text-xs text-[#8C93A3]">
+                Portföy hedefleri, arındırma havuzu ve zekât fonu ilerleme durumu
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {savingsGoals.map((goal, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-[24px] p-5 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 hover:border-slate-300 transition"
+              >
+                <div>
+                  <span className="text-xs font-bold text-[#14151A] block">
+                    {goal.title}
+                  </span>
+                  <span className="text-[11px] font-mono text-[#8C93A3]">
+                    ₺{goal.current.toLocaleString("tr-TR")} / ₺{goal.target.toLocaleString("tr-TR")}
+                  </span>
+                </div>
+
+                {/* Circular Progress Ring Mockup */}
+                <div className="flex items-center justify-center py-2">
+                  <div className="relative w-20 h-20 rounded-full border-4 border-slate-100 flex items-center justify-center">
+                    <span className="text-base font-extrabold font-mono text-[#14151A]">
+                      {goal.percent}%
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="w-full py-2 rounded-full bg-[#F4F5F7] hover:bg-[#EAECEF] text-[#14151A] text-xs font-semibold transition"
+                >
+                  + Add money
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ================================================================= */}
+        {/* ROW 3: YENİ POZİSYON EKLEME VE MEVCUT POZİSYONLAR TABLOSU        */}
+        {/* ================================================================= */}
+        <div id="yeni-pozisyon" className="bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div>
+              <h3 className="text-sm font-bold text-[#14151A]">
+                Portföye Yeni Hisse Ekle
+              </h3>
+              <p className="text-[11px] text-[#8C93A3]">
+                626 BIST hissesi arasından dilediğinizi portföyünüze ekleyin
+              </p>
+            </div>
           </div>
 
           <form
             onSubmit={handleAddHolding}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end"
           >
-            {/* 1. Hisse Kodu */}
             <div>
-              <label className="text-[11px] font-bold text-[#273869] block mb-1">
+              <label className="text-[11px] font-semibold text-[#8C93A3] block mb-1">
                 Hisse Kodu
               </label>
               <select
                 value={newTicker}
                 onChange={(e) => handleSelectNewTicker(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-bold text-[#273869] focus:outline-none focus:bg-white"
+                className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] border border-slate-200 text-xs font-semibold text-[#14151A] outline-none"
               >
                 {(BIST_COMPREHENSIVE_UNIVERSE.length > 0 ? BIST_COMPREHENSIVE_UNIVERSE : SAMPLE_COMPANIES_SUMMARY).map((c) => (
                   <option key={c.ticker} value={c.ticker}>
-                    {c.ticker} — {c.name.slice(0, 26)}
+                    {c.ticker} — {c.name.slice(0, 24)}
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* 2. Lot Adedi */}
             <div>
-              <label className="text-[11px] font-bold text-[#273869] block mb-1">
+              <label className="text-[11px] font-semibold text-[#8C93A3] block mb-1">
                 Lot Adedi
               </label>
               <input
@@ -499,13 +747,12 @@ export default function PortfolioManagementPage() {
                 min="1"
                 value={newLots}
                 onChange={(e) => setNewLots(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-mono font-bold text-[#273869] focus:outline-none focus:bg-white"
+                className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] border border-slate-200 text-xs font-mono font-semibold text-[#14151A] outline-none"
               />
             </div>
 
-            {/* 3. Alış Maliyeti */}
             <div>
-              <label className="text-[11px] font-bold text-[#273869] block mb-1">
+              <label className="text-[11px] font-semibold text-[#8C93A3] block mb-1">
                 Ort. Maliyet (₺)
               </label>
               <input
@@ -513,199 +760,128 @@ export default function PortfolioManagementPage() {
                 step="0.01"
                 value={newAvgCost}
                 onChange={(e) => setNewAvgCost(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-mono font-bold text-[#273869] focus:outline-none focus:bg-white"
+                className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] border border-slate-200 text-xs font-mono font-semibold text-[#14151A] outline-none"
               />
             </div>
 
-            {/* 4. Alış Tarihi */}
             <div>
-              <label className="text-[11px] font-bold text-[#273869] block mb-1">
+              <label className="text-[11px] font-semibold text-[#8C93A3] block mb-1">
                 Alış Tarihi
               </label>
               <input
                 type="date"
                 value={newPurchaseDate}
                 onChange={(e) => setNewPurchaseDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-mono font-bold text-[#273869] focus:outline-none focus:bg-white"
+                className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] border border-slate-200 text-xs font-mono font-semibold text-[#14151A] outline-none"
               />
             </div>
 
-            {/* 5. Zekât Niyeti */}
             <div>
-              <label className="text-[11px] font-bold text-[#273869] block mb-1">
+              <label className="text-[11px] font-semibold text-[#8C93A3] block mb-1">
                 Zekât Niyeti
               </label>
               <select
                 value={newZakatIntent}
-                onChange={(e) =>
-                  setNewZakatIntent(e.target.value as ZakatIntentionType)
-                }
-                className="w-full px-3.5 py-2.5 rounded-2xl bg-[#F3F6FB] border border-[#E2E8F0] text-xs font-bold text-[#273869] focus:outline-none focus:bg-white"
+                onChange={(e) => setNewZakatIntent(e.target.value as ZakatIntentionType)}
+                className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] border border-slate-200 text-xs font-semibold text-[#14151A] outline-none"
               >
                 <option value="LONG_TERM_DIVIDEND">Uzun Vade (Temettü)</option>
                 <option value="TRADING_SHORT_TERM">Kısa Vade (Al-Sat)</option>
               </select>
             </div>
 
-            {/* Buton */}
             <div>
               <button
                 type="submit"
-                className="w-full payno-btn-primary text-xs py-2.5"
+                className="w-full py-2.5 rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white text-xs font-semibold shadow-xs transition"
               >
-                <Plus size={14} />
-                <span>Portföye Ekle</span>
+                + Portföye Ekle
               </button>
             </div>
           </form>
         </div>
 
-        {/* ===================================================================== */}
-        {/* 3. TÜM SAYFA PORTFÖY VARLIK TABLOSU                                  */}
-        {/* ===================================================================== */}
-        <div className="apple-glass-card p-6 sm:p-8 space-y-5">
-          <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-4">
-            <div>
-              <h2 className="text-xl font-black text-[#273869] tracking-tight flex items-center gap-2">
-                <Briefcase size={18} className="text-[#273869]" />
-                <span>Portföy Pozisyonları ({holdings.length} Hisse)</span>
-              </h2>
-              <p className="text-xs text-[#6E81A0] mt-1 font-medium">
-                Alış tarihi ile otomatik gün hesabı, canlı BIST fiyatları ve anlık satış arındırma bedeli.
-              </p>
-            </div>
+        {/* ================================================================= */}
+        {/* ROW 4: AKTİF PORTFÖY VARLIKLARI TABLOSU                           */}
+        {/* ================================================================= */}
+        <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden">
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-[#14151A]">
+              Portföy Pozisyonları ({holdings.length} Hisse)
+            </h3>
+            <span className="text-xs font-mono font-semibold text-[#10B981]">
+              Toplam Değer: {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
+            </span>
           </div>
 
-          <div className="w-full">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-[#EDF1F4] text-[11px] font-bold uppercase tracking-wider text-[#6E81A0]">
-                  <th className="py-3.5 pr-4">Hisse Senedi</th>
-                  <th className="py-3.5 px-3 text-center">Katılım Durumu</th>
-                  <th className="py-3.5 px-3">Lot &amp; Maliyet</th>
-                  <th className="py-3.5 px-3 text-right">Canlı Değer</th>
-                  <th className="py-3.5 px-3 text-right">Kâr / Zarar</th>
-                  <th className="py-3.5 px-3">Süre (Pro-Rata)</th>
-                  <th className="py-3.5 px-3 text-right text-[#273869]">Satış Arındırma</th>
-                  <th className="py-3.5 pl-4 text-center">İşlem</th>
+                <tr className="border-b border-slate-100 bg-[#F8F9FA] text-[#8C93A3] font-semibold text-[11px]">
+                  <th className="py-3 px-4">Hisse Senedi</th>
+                  <th className="py-3 px-4 text-center">Fıkhi Durum</th>
+                  <th className="py-3 px-4 text-right">Lot &amp; Maliyet</th>
+                  <th className="py-3 px-4 text-right">Canlı Değer</th>
+                  <th className="py-3 px-4 text-right">Kâr / Zarar</th>
+                  <th className="py-3 px-4 text-right text-[#FF5B26]">Satış Arındırma</th>
+                  <th className="py-3 px-4 text-center">İşlem</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EDF1F4] text-xs font-normal">
+              <tbody className="divide-y divide-slate-100">
                 {portfolioAnalysis.rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    className="hover:bg-[#F8FAFD] transition-colors"
-                  >
-                    {/* Hisse & Sektör */}
-                    <td className="py-4 pr-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-10 h-10 rounded-2xl flex items-center justify-center font-mono font-bold text-xs shrink-0 border ${
-                            row.isCompliant
-                              ? "bg-[#E6F8EF] border-[#BCEBD2] text-[#0D8B52]"
-                              : "bg-[#FEECEB] border-[#FAC9C6] text-[#C62E26]"
-                          }`}
-                        >
-                          {row.ticker}
+                  <tr key={row.id} className="hover:bg-slate-50/70 transition">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-[#15161A] text-white flex items-center justify-center font-bold text-xs font-mono">
+                          {row.ticker.slice(0, 2)}
                         </div>
                         <div>
-                          <Link
-                            href={`/companies/${row.ticker}`}
-                            className="font-bold text-[#273869] hover:text-[#405881] font-mono text-sm block"
-                          >
+                          <Link href={`/companies/${row.ticker}`} className="font-bold text-xs text-[#14151A] hover:text-[#FF5B26] block">
                             {row.ticker}
                           </Link>
-                          <span className="text-[11px] text-[#6E81A0] truncate max-w-[150px] block font-medium">
-                            {row.summary.name}
+                          <span className="text-[10px] text-[#8C93A3] block truncate max-w-[140px]">
+                            {row.companyName}
                           </span>
                         </div>
                       </div>
                     </td>
 
-                    {/* Katılım Durumu */}
-                    <td className="py-4 px-3 text-center whitespace-nowrap">
-                      {row.isCompliant ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full payno-badge-mint text-[11px] font-bold">
-                          <CheckCircle2 size={12} />
-                          <span>Katılım Uygun</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full payno-badge-coral text-[11px] font-bold">
-                          <XCircle size={12} />
-                          <span>Kapsam Dışı</span>
-                        </span>
-                      )}
-                    </td>
-
-                    {/* Lot & Maliyet */}
-                    <td className="py-4 px-3 whitespace-nowrap font-mono">
-                      <span className="font-bold text-[#273869]">
-                        {row.lots} Lot
-                      </span>
-                      <span className="block text-[11px] text-[#8B9BB4]">
-                        Maliyet: ₺{row.avgCostTRY}
+                    <td className="py-3 px-4 text-center">
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                        row.isCompliant ? "bg-[#EBF9F1] text-[#10B981]" : "bg-[#FFF0F0] text-[#E03131]"
+                      }`}>
+                        {row.isCompliant ? "✓ Uygun" : "✕ Kapsam Dışı"}
                       </span>
                     </td>
 
-                    {/* Canlı Piyasa Değeri */}
-                    <td className="py-4 px-3 text-right whitespace-nowrap font-mono">
-                      <span className="font-bold text-sm text-[#273869]">
-                        {formatTRY(row.marketValue, 2)}
-                      </span>
-                      <span className="block text-[11px] text-[#8B9BB4]">
-                        Fiyat: {formatTRY(row.livePrice, 2)}
-                      </span>
+                    <td className="py-3 px-4 text-right font-mono">
+                      <div className="font-bold text-[#14151A]">{row.lots} Lot</div>
+                      <div className="text-[10px] text-[#8C93A3]">₺{row.avgCostTRY}</div>
                     </td>
 
-                    {/* Kâr / Zarar */}
-                    <td className="py-4 px-3 text-right whitespace-nowrap font-mono">
-                      <span
-                        className={`font-bold ${
-                          row.pnlTRY.gte(0) ? "text-[#0D8B52]" : "text-[#C62E26]"
-                        }`}
-                      >
-                        {row.pnlTRY.gte(0) ? "+" : ""}
-                        {formatTRY(row.pnlTRY, 2)}
-                      </span>
-                      <span
-                        className={`block text-[11px] ${
-                          row.pnlTRY.gte(0) ? "text-[#0D8B52]" : "text-[#C62E26]"
-                        }`}
-                      >
-                        ({row.pnlTRY.gte(0) ? "+" : ""}
-                        {row.pnlPercent.toFixed(1)}%)
-                      </span>
+                    <td className="py-3 px-4 text-right font-mono">
+                      <div className="font-bold text-[#14151A]">{formatTRY(row.positionValueTRY, 2)}</div>
+                      <div className="text-[10px] text-[#8C93A3]">₺{row.curPriceTRY.toFixed(2)}</div>
                     </td>
 
-                    {/* Süre & Pro-Rata */}
-                    <td className="py-4 px-3 whitespace-nowrap font-mono text-[11px]">
-                      <span className="font-semibold text-[#273869]">
-                        {row.totalDaysHeld} Gün
-                      </span>
-                      <span className="block text-[#0D8B52] font-medium">
-                        {row.daysHeldInQuarter}/90 Pro-Rata
-                      </span>
+                    <td className={`py-3 px-4 text-right font-mono font-bold ${
+                      row.positionPnlTRY.gte(0) ? "text-[#10B981]" : "text-[#E03131]"
+                    }`}>
+                      {row.positionPnlTRY.gte(0) ? "+" : ""}{formatTRY(row.positionPnlTRY, 2)} ({row.positionPnlPercent.toFixed(1)}%)
                     </td>
 
-                    {/* Satış Anı Arındırma Tutarı */}
-                    <td className="py-4 px-3 text-right whitespace-nowrap font-mono">
-                      <span className="font-bold text-sm text-[#273869]">
-                        {formatTRY(row.exitPurificationPayable, 2)}
-                      </span>
-                      <span className="block text-[10px] text-[#8B9BB4]">
-                        {formatTRY(row.purificationPerShare, 4)} /pay
-                      </span>
+                    <td className="py-3 px-4 text-right font-mono font-bold text-[#FF5B26]">
+                      {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
                     </td>
 
-                    {/* İşlem */}
-                    <td className="py-4 pl-4 text-center whitespace-nowrap">
+                    <td className="py-3 px-4 text-center">
                       <button
                         type="button"
                         onClick={() => handleRemoveHolding(row.id)}
-                        className="p-1.5 rounded-lg text-[#8B9BB4] hover:text-[#C62E26] hover:bg-rose-50 transition"
-                        title="Pozisyonu Kaldır"
+                        className="text-[#8C93A3] hover:text-[#E03131] transition p-1"
+                        title="Pozisyonu Sil"
                       >
-                        <Trash2 size={15} />
+                        <Trash2 size={14} />
                       </button>
                     </td>
                   </tr>
@@ -714,6 +890,7 @@ export default function PortfolioManagementPage() {
             </table>
           </div>
         </div>
+
       </div>
     </PaynoShell>
   );

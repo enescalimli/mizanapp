@@ -23,17 +23,17 @@
   }
 
   html {
-    background-color: #f4f6fa;
-    color: #182542;
+    background-color: #EEF0F4;
+    color: #14151A;
     font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
   }
 
   body {
-    /* Açık mavi blur kaldırıldı — Klasördeki zengin Lacivert (#273869 / #182542) tonlarında Apple-design aura */
-    background: radial-gradient(110% 70% at 50% -5%, rgba(39, 56, 105, 0.16) 0%, rgba(24, 37, 66, 0.08) 45%, #f4f6fa 85%, #f4f6fa 100%);
-    color: #182542;
+    /* Vertix Dashboard V14 Soft Neutral Gray Matte Canvas */
+    background-color: #EEF0F4;
+    color: #14151A;
     min-height: 100vh;
     overflow-x: hidden;
   }

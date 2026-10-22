@@ -1,107 +1,156 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Home,
-  BarChart3,
+  Sun,
+  Moon,
+  LayoutGrid,
   Calendar,
-  Briefcase,
-  Calculator,
-  BookOpen,
-  Settings,
+  Mail,
+  FileText,
+  PieChart,
   Scale,
+  Settings,
+  HelpCircle,
+  LogOut,
 } from "lucide-react";
 
 export const LeftDockSidebar: React.FC = () => {
   const pathname = usePathname();
+  const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
 
   const navItems = [
     {
-      label: "Ana Sayfa",
+      label: "Genel Bakış",
       href: "/",
-      icon: Home,
+      icon: LayoutGrid,
       isActive: pathname === "/",
     },
     {
-      label: "Hisse Tarayıcı (626 BIST)",
-      href: "/tarayici",
-      icon: BarChart3,
-      isActive: pathname.startsWith("/tarayici"),
-    },
-    {
-      label: "Halka Arz Takvimi (2026)",
+      label: "Halka Arz Takvimi",
       href: "/ipo",
       icon: Calendar,
       isActive: pathname.startsWith("/ipo"),
     },
     {
+      label: "Fıkhi Bildirimler & Bülten",
+      href: "/ayarlar?tab=notifications",
+      icon: Mail,
+      isActive: pathname.startsWith("/ayarlar") && pathname.includes("tab=notifications"),
+    },
+    {
+      label: "626 BIST Katılım Tarayıcı",
+      href: "/tarayici",
+      icon: FileText,
+      isActive: pathname.startsWith("/tarayici"),
+    },
+    {
       label: "Katılım Portföyüm",
       href: "/portfolio",
-      icon: Briefcase,
+      icon: PieChart,
       isActive: pathname.startsWith("/portfolio"),
     },
     {
-      label: "Fıkhi Arındırma",
-      href: "/purification",
-      icon: Calculator,
-      isActive: pathname === "/purification",
-    },
-    {
-      label: "Zekât Hesaplayıcı",
+      label: "Fıkhi Arındırma & Zekât",
       href: "/purification",
       icon: Scale,
-      isActive: false,
+      isActive: pathname.startsWith("/purification"),
     },
     {
-      label: "Fıkhi Standart & İcazetler",
-      href: "/rehber",
-      icon: BookOpen,
-      isActive: pathname.startsWith("/rehber"),
+      label: "Ayarlar & Tercihler",
+      href: "/ayarlar",
+      icon: Settings,
+      isActive: pathname.startsWith("/ayarlar") && !pathname.includes("tab=notifications"),
     },
   ];
 
   return (
-    <aside className="fixed left-3 lg:left-6 top-24 bottom-6 z-40 hidden md:flex flex-col justify-between items-center py-4 px-2 bg-white/75 backdrop-blur-2xl rounded-3xl border border-white/85 shadow-[0_12px_40px_rgba(24,37,66,0.06)] select-none pointer-events-auto transition-all">
-      {/* Üst Navigasyon Grubu */}
-      <div className="flex flex-col items-center gap-2.5">
-        {navItems.map((item) => (
-          <div key={item.label} className="group relative flex items-center">
-            <Link
-              href={item.href}
-              className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200 ${
-                item.isActive
-                  ? "bg-[#182542] text-white shadow-md shadow-[#182542]/25 scale-105"
-                  : "bg-white/70 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/80 shadow-2xs hover:scale-105"
-              }`}
-            >
-              <item.icon size={18} strokeWidth={item.isActive ? 2.4 : 1.9} />
-            </Link>
-
-            {/* Hover Tooltip (Yalnızca üstüne gelindiğinde yazı çıkar) */}
-            <span className="pointer-events-none absolute left-14 z-50 whitespace-nowrap rounded-xl bg-[#182542] px-3 py-1.5 text-xs font-bold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1">
-              {item.label}
-            </span>
-          </div>
-        ))}
+    <aside className="fixed left-4 lg:left-6 top-8 bottom-8 z-40 hidden md:flex flex-col justify-between items-center select-none pointer-events-auto">
+      {/* 1. Üst Mini Kapsül: Açık / Koyu Tema Anahtarı (V14 Stili) */}
+      <div className="bg-white rounded-full p-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-200/70 flex flex-col items-center gap-1.5">
+        <button
+          type="button"
+          onClick={() => setThemeMode("light")}
+          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+            themeMode === "light"
+              ? "bg-[#15161A] text-white shadow-xs"
+              : "text-[#9AA0AE] hover:text-[#15161A]"
+          }`}
+          title="Açık Mod"
+        >
+          <Sun size={14} strokeWidth={2.2} />
+        </button>
+        <button
+          type="button"
+          onClick={() => setThemeMode("dark")}
+          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+            themeMode === "dark"
+              ? "bg-[#15161A] text-white shadow-xs"
+              : "text-[#9AA0AE] hover:text-[#15161A]"
+          }`}
+          title="Koyu Mod (Yakında)"
+        >
+          <Moon size={14} strokeWidth={2.2} />
+        </button>
       </div>
 
-      {/* Alt Grup: Ayarlar */}
-      <div className="flex flex-col items-center gap-2.5 pt-2 border-t border-slate-200/60 w-full">
+      {/* 2. Ana Navigasyon Kapsülü: Dikey İkon Dock (V14 Stili) */}
+      <div className="bg-white rounded-full py-3.5 px-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] border border-slate-200/70 flex flex-col items-center gap-3">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <div key={item.label} className="group relative flex items-center">
+              <Link
+                href={item.href}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 ${
+                  item.isActive
+                    ? "bg-[#15161A] text-white shadow-sm scale-105"
+                    : "text-[#8C93A3] hover:text-[#15161A] hover:bg-slate-100/70"
+                }`}
+              >
+                <Icon size={16} strokeWidth={item.isActive ? 2.4 : 1.9} />
+              </Link>
+
+              {/* Hover Tooltip */}
+              <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#15161A] px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
+                {item.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 3. Alt Mini Kapsül: Yardım / Rehber ve Çıkış */}
+      <div className="bg-white rounded-full py-2 px-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-200/70 flex flex-col items-center gap-2">
         <div className="group relative flex items-center">
           <Link
-            href="/ayarlar"
-            className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200 ${
-              pathname.startsWith("/ayarlar")
-                ? "bg-[#182542] text-white shadow-md shadow-[#182542]/25 scale-105"
-                : "bg-white/70 hover:bg-white text-[#6E81A0] hover:text-[#182542] border border-white/80 shadow-2xs hover:scale-105"
+            href="/rehber"
+            className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+              pathname.startsWith("/rehber")
+                ? "bg-[#15161A] text-white shadow-xs"
+                : "text-[#8C93A3] hover:text-[#15161A] hover:bg-slate-100/70"
             }`}
+            title="Fıkhi Standart & Rehber"
           >
-            <Settings size={18} strokeWidth={pathname.startsWith("/ayarlar") ? 2.4 : 1.9} />
+            <HelpCircle size={15} strokeWidth={2} />
           </Link>
-          <span className="pointer-events-none absolute left-14 z-50 whitespace-nowrap rounded-xl bg-[#182542] px-3 py-1.5 text-xs font-bold text-white shadow-xl opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-1">
-            Ayarlar &amp; Tercihler
+          <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#15161A] px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
+            Fıkhi Standart &amp; SSS
+          </span>
+        </div>
+
+        <div className="group relative flex items-center">
+          <Link
+            href="/auth/logout"
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[#8C93A3] hover:text-[#E03131] hover:bg-red-50/70 transition-all"
+            title="Oturumu Kapat"
+          >
+            <LogOut size={15} strokeWidth={2} />
+          </Link>
+          <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#15161A] px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
+            Çıkış Yap
           </span>
         </div>
       </div>
