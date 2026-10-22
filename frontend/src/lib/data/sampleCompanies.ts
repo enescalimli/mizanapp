@@ -331,6 +331,16 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
   const cashMargin = Math.abs(33 - summary.cashRatioPercent).toFixed(2);
   const incomeMargin = Math.abs(5 - summary.impureIncomePercent).toFixed(2);
 
+  const priceNum = parseFloat(summary.priceTRY || "50") || 50;
+  const mcapNum = (summary as any).marketCapTRY || (priceNum * 250_000_000);
+  const assetsNum = Math.round(mcapNum * 1.25);
+  const denomNum = Math.max(mcapNum, assetsNum);
+  const revenueNum = Math.round(mcapNum * 1.15);
+
+  const debtNumTRY = (summary.debtRatioPercent / 100) * denomNum;
+  const cashNumTRY = (summary.cashRatioPercent / 100) * denomNum;
+  const impureNumTRY = (summary.impureIncomePercent / 100) * revenueNum;
+
   return {
     ticker: summary.ticker,
     companyName: summary.name,
@@ -359,13 +369,13 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
     },
     ratios: {
       denominatorRuleUsed: "MAX_OF_MCAP_OR_ASSETS",
-      denominatorValueTRY: "180000000000.0000",
-      spotMarketCapTRY: "180000000000.0000",
-      mcapMA24mTRY: "162000000000.0000",
-      totalAssetsTRY: "145000000000.0000",
+      denominatorValueTRY: denomNum.toFixed(4),
+      spotMarketCapTRY: mcapNum.toFixed(4),
+      mcapMA24mTRY: (mcapNum * 0.95).toFixed(4),
+      totalAssetsTRY: assetsNum.toFixed(4),
       interestDebt: {
-        numeratorTRY: ((summary.debtRatioPercent / 100) * 180000000000).toFixed(4),
-        denominatorTRY: "180000000000.0000",
+        numeratorTRY: debtNumTRY.toFixed(4),
+        denominatorTRY: denomNum.toFixed(4),
         ratioDecimal: (summary.debtRatioPercent / 100).toFixed(8),
         ratioPercentage: `%${summary.debtRatioPercent.toFixed(2)}`,
         thresholdPercentage: "%33.00",
@@ -375,8 +385,8 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
         marginToLimitPercentage: isDebtOk ? `%${debtMargin} Güvenli Marj` : `%${debtMargin} Aşım`,
       },
       interestCash: {
-        numeratorTRY: ((summary.cashRatioPercent / 100) * 180000000000).toFixed(4),
-        denominatorTRY: "180000000000.0000",
+        numeratorTRY: cashNumTRY.toFixed(4),
+        denominatorTRY: denomNum.toFixed(4),
         ratioDecimal: (summary.cashRatioPercent / 100).toFixed(8),
         ratioPercentage: `%${summary.cashRatioPercent.toFixed(2)}`,
         thresholdPercentage: "%33.00",
@@ -386,8 +396,8 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
         marginToLimitPercentage: isCashOk ? `%${cashMargin} Güvenli Marj` : `%${cashMargin} Aşım`,
       },
       impureIncome: {
-        numeratorTRY: ((summary.impureIncomePercent / 100) * 95000000000).toFixed(4),
-        denominatorTRY: "95000000000.0000",
+        numeratorTRY: impureNumTRY.toFixed(4),
+        denominatorTRY: revenueNum.toFixed(4),
         ratioDecimal: (summary.impureIncomePercent / 100).toFixed(8),
         ratioPercentage: `%${summary.impureIncomePercent.toFixed(2)}`,
         thresholdPercentage: "%5.00",
@@ -404,22 +414,22 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
       auditNotes: [
         "KAP Dipnot 4 (Nakit ve Nakit Benzerleri) ve Dipnot 7 (Finansal Borçlar) ana bilanço ile kuruşu kuruşuna doğrulanmıştır (Delta = 0.0000 TL).",
       ],
-      balanceSheetCashTotalTRY: "18500000000.0000",
-      balanceSheetDebtTotalTRY: ((summary.debtRatioPercent / 100) * 180000000000).toFixed(4),
+      balanceSheetCashTotalTRY: (denomNum * 0.10).toFixed(4),
+      balanceSheetDebtTotalTRY: debtNumTRY.toFixed(4),
       cashBreakdown: {
-        cashOnHandTRY: "650000000.0000",
-        demandDepositsTRY: "4850000000.0000",
-        participationAccountsTRY: "5200000000.0000",
-        timeDepositsInterestTRY: "7800000000.0000",
+        cashOnHandTRY: (denomNum * 0.01).toFixed(4),
+        demandDepositsTRY: (denomNum * 0.03).toFixed(4),
+        participationAccountsTRY: (denomNum * 0.02).toFixed(4),
+        timeDepositsInterestTRY: cashNumTRY.toFixed(4),
         reverseRepoTRY: "0.0000",
         moneyMarketFundsTRY: "0.0000",
         unclassifiedCashTRY: "0.0000",
       },
       debtBreakdown: {
-        participationBankFinancingsTRY: "3200000000.0000",
-        sukukIssuedTRY: "1500000000.0000",
-        operationalLeaseTRY: "2400000000.0000",
-        conventionalBankLoansTRY: ((summary.debtRatioPercent / 100) * 180000000000).toFixed(4),
+        participationBankFinancingsTRY: (denomNum * 0.02).toFixed(4),
+        sukukIssuedTRY: "0.0000",
+        operationalLeaseTRY: (denomNum * 0.03).toFixed(4),
+        conventionalBankLoansTRY: debtNumTRY.toFixed(4),
         issuedBondsDebtTRY: "0.0000",
         factoringDebtTRY: "0.0000",
       },

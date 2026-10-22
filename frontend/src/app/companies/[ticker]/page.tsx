@@ -87,7 +87,13 @@ export default function CompanyDetailPage() {
     async function loadData() {
       setLoading(true);
       try {
-        const res = await fetch(`/api/screening/${ticker}?standard=${standard}`);
+        const res = await fetch(`/api/screening/${ticker}?standard=${standard}&_t=${Date.now()}`, {
+          cache: "no-store",
+          headers: {
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+          },
+        });
         if (res.ok) {
           const json = await res.json();
           setData(json);
@@ -671,7 +677,7 @@ export default function CompanyDetailPage() {
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Fiyat / Serbest Nakit</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.valuation.priceToFcf}x</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.valuation.priceToFcf === "A/D" ? "A/D" : `${dRatios.valuation.priceToFcf}x`}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Hisse Başına Kâr (EPS)</span>
@@ -778,6 +784,7 @@ export default function CompanyDetailPage() {
             ticker={ticker}
             companyName={data.companyName}
             isCompliant={data.overallStatus === "COMPLIANT"}
+            liveScreeningData={data}
           />
         )}
 

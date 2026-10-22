@@ -38,12 +38,14 @@ interface FinancialReportsTabProps {
   ticker: string;
   companyName: string;
   isCompliant: boolean;
+  liveScreeningData?: any;
 }
 
 export function FinancialReportsTab({
   ticker,
   companyName,
   isCompliant,
+  liveScreeningData,
 }: FinancialReportsTabProps) {
   const [statementType, setStatementType] = useState<StatementType>("BILANCO");
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([
@@ -57,10 +59,10 @@ export function FinancialReportsTab({
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [showGrowthDeltas, setShowGrowthDeltas] = useState<boolean>(true);
 
-  // Load all historical periods for this ticker
+  // Load all historical periods for this ticker anchored to live KAP screening data
   const allPeriodsData = useMemo(() => {
-    return getCompanyMultiPeriodFinancials(ticker);
-  }, [ticker]);
+    return getCompanyMultiPeriodFinancials(ticker, liveScreeningData);
+  }, [ticker, liveScreeningData]);
 
   // Format currency according to scale unit
   const formatAmount = (num: number, isPercent: boolean = false) => {

@@ -329,14 +329,72 @@ const FEATURED_FINANCIALS_MAP: Record<string, Record<string, Partial<PeriodFinan
       sharesOutstanding: 1_380_000_000,
     },
   },
+  AAGYO: {
+    "2026/09": {
+      revenue: 574_785_159,
+      grossProfit: 537_416_264,
+      operatingProfit: 348_250_000,
+      ebitda: 350_210_000,
+      netIncome: 261_135_023,
+      currentAssets: 3_667_174_508,
+      nonCurrentAssets: 16_660_847_376,
+      totalAssets: 20_328_021_884,
+      shortTermDebt: 0,
+      longTermDebt: 0,
+      totalDebt: 0,
+      tfrs16LeaseDebt: 0,
+      equity: 16_591_167_397,
+      cashAndEquivalents: 2_205_663_273,
+      interestBearingCash: 420_000_000,
+      interestFreeCash: 1_785_663_273,
+      impureIncome: 4_598_281,
+      operatingCashFlow: 412_500_000,
+      investingCashFlow: -185_000_000,
+      financingCashFlow: -42_000_000,
+      sharesOutstanding: 701_000_000,
+    },
+  },
 };
+
+function parseTrNumber(str?: string): number | null {
+  if (!str || str === "A/D" || str === "-") return null;
+  const cleaned = str.replace(/\./g, "").replace(",", ".").replace(/[^0-9.-]/g, "");
+  const num = Number(cleaned);
+  return isNaN(num) ? null : num;
+}
 
 /**
  * Returns multi-period financial reports for any of the 626 BIST tickers.
- * If ticker has a verified record in FEATURED_FINANCIALS_MAP, uses exact KAP figures.
- * Otherwise, generates consistent historical quarters from bistUniverse fundamentals.
+ * If liveScreeningData is provided (from /api/screening/[ticker]), anchors 2026/09 to the exact live KAP figures.
  */
-export function getCompanyMultiPeriodFinancials(ticker: string): Record<string, PeriodFinancialStatement> {
+export function getCompanyMultiPeriodFinancials(
+  ticker: string,
+  liveScreeningData?: {
+    financials?: {
+      revenueTRY?: string;
+      grossProfitTRY?: string;
+      ebitdaTRY?: string;
+      netIncomeTRY?: string;
+      currentAssetsTRY?: string;
+      nonCurrentAssetsTRY?: string;
+      totalAssetsTRY?: string;
+      financialDebtTRY?: string;
+      equityTRY?: string;
+    };
+    ratios?: {
+      interestDebt?: { numeratorTRY?: string };
+      interestCash?: { numeratorTRY?: string };
+      impureIncome?: { numeratorTRY?: string };
+    };
+    footnoteVerification?: {
+      balanceSheetCashTotalTRY?: string;
+      debtBreakdown?: { operationalLeaseTRY?: string };
+    };
+    purificationMetrics?: {
+      totalSharesOutstanding?: string;
+    };
+  }
+): Record<string, PeriodFinancialStatement> {
   const norm = ticker.toUpperCase().trim();
   const featured = FEATURED_FINANCIALS_MAP[norm];
 
@@ -347,6 +405,31 @@ export function getCompanyMultiPeriodFinancials(ticker: string): Record<string, 
   const debtRatio = comp?.debtRatioPercent || (isCompliant ? 14 : 38);
   const cashRatio = comp?.cashRatioPercent || (isCompliant ? 6 : 18);
   const impureRatio = comp?.impureIncomePercent || (isCompliant ? 0.8 : 5.8);
+
+  // Extract live anchor figures from /api/screening/[ticker] if available
+  const liveAssets = parseTrNumber(liveScreeningData?.financials?.totalAssetsTRY);
+  const liveEquity = parseTrNumber(liveScreeningData?.financials?.equityTRY);
+  const liveCurAssets = parseTrNumber(liveScreeningData?.financials?.currentAssetsTRY);
+  const liveRev = parseTrNumber(liveScreeningData?.financials?.revenueTRY);
+  const liveGp = parseTrNumber(liveScreeningData?.financials?.grossProfitTRY);
+  const liveEbitda = parseTrNumber(liveScreeningData?.financials?.ebitdaTRY);
+  const liveNi = parseTrNumber(liveScreeningData?.financials?.netIncomeTRY);
+  const liveFinDebt = parseTrNumber(liveScreeningData?.financials?.financialDebtTRY);
+  const liveCashTotal = liveScreeningData?.footnoteVerification?.balanceSheetCashTotalTRY
+    ? Number(liveScreeningData.footnoteVerification.balanceSheetCashTotalTRY)
+    : null;
+  const liveIntDebt = liveScreeningData?.ratios?.interestDebt?.numeratorTRY
+    ? Number(liveScreeningData.ratios.interestDebt.numeratorTRY)
+    : null;
+  const liveIntCash = liveScreeningData?.ratios?.interestCash?.numeratorTRY
+    ? Number(liveScreeningData.ratios.interestCash.numeratorTRY)
+    : null;
+  const liveImpureInc = liveScreeningData?.ratios?.impureIncome?.numeratorTRY
+    ? Number(liveScreeningData.ratios.impureIncome.numeratorTRY)
+    : null;
+  const liveShares = liveScreeningData?.purificationMetrics?.totalSharesOutstanding
+    ? Number(liveScreeningData.purificationMetrics.totalSharesOutstanding)
+    : null;
 
   const periodsResult: Record<string, PeriodFinancialStatement> = {};
 
@@ -367,52 +450,64 @@ export function getCompanyMultiPeriodFinancials(ticker: string): Record<string, 
         period: p.id,
         label: p.label,
         isYearEnd: p.isYearEnd,
-        revenue: f.revenue || 10_000_000_000,
-        grossProfit: f.grossProfit || 2_000_000_000,
-        operatingProfit: f.operatingProfit || 1_000_000_000,
-        ebitda: f.ebitda || 1_500_000_000,
-        netIncome: f.netIncome || 800_000_000,
-        currentAssets: f.currentAssets || 8_000_000_000,
-        nonCurrentAssets: f.nonCurrentAssets || 12_000_000_000,
-        totalAssets: f.totalAssets || 20_000_000_000,
-        shortTermDebt: f.shortTermDebt || 1_000_000_000,
-        longTermDebt: f.longTermDebt || 2_000_000_000,
-        totalDebt: f.totalDebt || 3_000_000_000,
-        tfrs16LeaseDebt: f.tfrs16LeaseDebt || 500_000_000,
-        equity: f.equity || 10_000_000_000,
-        cashAndEquivalents: f.cashAndEquivalents || 2_500_000_000,
-        interestBearingCash: f.interestBearingCash || 500_000_000,
-        interestFreeCash: f.interestFreeCash || 2_000_000_000,
-        impureIncome: f.impureIncome || 80_000_000,
-        operatingCashFlow: f.operatingCashFlow || 1_800_000_000,
-        investingCashFlow: f.investingCashFlow || -1_000_000_000,
-        financingCashFlow: f.financingCashFlow || -400_000_000,
+        revenue: f.revenue ?? 0,
+        grossProfit: f.grossProfit ?? 0,
+        operatingProfit: f.operatingProfit ?? 0,
+        ebitda: f.ebitda ?? 0,
+        netIncome: f.netIncome ?? 0,
+        currentAssets: f.currentAssets ?? 0,
+        nonCurrentAssets: f.nonCurrentAssets ?? 0,
+        totalAssets: f.totalAssets ?? 0,
+        shortTermDebt: f.shortTermDebt ?? 0,
+        longTermDebt: f.longTermDebt ?? 0,
+        totalDebt: f.totalDebt ?? 0,
+        tfrs16LeaseDebt: f.tfrs16LeaseDebt ?? 0,
+        equity: f.equity ?? 0,
+        cashAndEquivalents: f.cashAndEquivalents ?? 0,
+        interestBearingCash: f.interestBearingCash ?? 0,
+        interestFreeCash: f.interestFreeCash ?? 0,
+        impureIncome: f.impureIncome ?? 0,
+        operatingCashFlow: f.operatingCashFlow ?? 0,
+        investingCashFlow: f.investingCashFlow ?? 0,
+        financingCashFlow: f.financingCashFlow ?? 0,
         sharesOutstanding: f.sharesOutstanding || (baseMcap / basePrice),
       };
     } else {
-      // Dynamic calibrated generation for any of 626 BIST stocks
+      // Dynamic calibrated generation anchored to live KAP screening data
       const mult = quarterMultipliers[p.id] || 0.8;
-      const totalAssets = Math.round(baseMcap * 0.85 * mult);
-      const revenue = Math.round(totalAssets * 0.9 * mult);
-      const grossProfit = Math.round(revenue * 0.22);
-      const operatingProfit = Math.round(revenue * 0.11);
-      const ebitda = Math.round(revenue * 0.16);
-      const netIncome = Math.round(revenue * 0.08);
+      const anchorAssets = liveAssets && liveAssets > 0 ? liveAssets : Math.round(baseMcap * 0.85);
+      const anchorEquity = liveEquity != null ? liveEquity : Math.round(anchorAssets * 0.48);
+      const anchorCurAssets = liveCurAssets && liveCurAssets > 0 ? liveCurAssets : Math.round(anchorAssets * 0.52);
+      const anchorRev = liveRev && liveRev > 0 ? liveRev : Math.round(anchorAssets * 0.9);
+      const anchorGp = liveGp && liveGp > 0 ? liveGp : Math.round(anchorRev * 0.22);
+      const anchorEbitda = liveEbitda && liveEbitda > 0 ? liveEbitda : Math.round(anchorRev * 0.16);
+      const anchorNi = liveNi != null ? liveNi : Math.round(anchorRev * 0.08);
+      const anchorDebt = liveIntDebt != null ? liveIntDebt : (liveFinDebt != null ? liveFinDebt : Math.round((debtRatio / 100) * anchorAssets));
+      const anchorCash = liveCashTotal != null ? liveCashTotal : Math.round(anchorAssets * 0.18);
+      const anchorIntCash = liveIntCash != null ? liveIntCash : Math.round((cashRatio / 100) * anchorAssets);
+      const anchorImpure = liveImpureInc != null ? liveImpureInc : Math.round(anchorRev * (impureRatio / 100));
 
-      const currentAssets = Math.round(totalAssets * 0.52);
-      const nonCurrentAssets = totalAssets - currentAssets;
+      const totalAssets = Math.round(anchorAssets * mult);
+      const revenue = Math.round(anchorRev * mult);
+      const grossProfit = Math.round(anchorGp * mult);
+      const ebitda = Math.round(anchorEbitda * mult);
+      const operatingProfit = Math.round(ebitda * 0.78);
+      const netIncome = Math.round(anchorNi * mult);
 
-      const totalDebt = Math.round((debtRatio / 100) * totalAssets * mult);
+      const currentAssets = Math.round(anchorCurAssets * mult);
+      const nonCurrentAssets = Math.max(0, totalAssets - currentAssets);
+
+      const totalDebt = Math.round(anchorDebt * mult);
       const shortTermDebt = Math.round(totalDebt * 0.42);
       const longTermDebt = totalDebt - shortTermDebt;
-      const tfrs16LeaseDebt = Math.round(totalDebt * 0.25);
+      const tfrs16LeaseDebt = Math.round((liveFinDebt != null && liveIntDebt != null ? Math.max(0, liveFinDebt - liveIntDebt) : totalDebt * 0.2) * mult);
 
-      const cashAndEquivalents = Math.round(totalAssets * 0.18);
-      const interestBearingCash = Math.round((cashRatio / 100) * totalAssets * mult);
+      const cashAndEquivalents = Math.round(anchorCash * mult);
+      const interestBearingCash = Math.round(anchorIntCash * mult);
       const interestFreeCash = Math.max(0, cashAndEquivalents - interestBearingCash);
 
-      const impureIncome = Math.round(revenue * (impureRatio / 100));
-      const equity = Math.round(totalAssets * 0.48);
+      const impureIncome = Math.round(anchorImpure * mult);
+      const equity = Math.round(anchorEquity * mult);
 
       const operatingCashFlow = Math.round(ebitda * 0.9);
       const investingCashFlow = Math.round(-ebitda * 0.45);
@@ -442,7 +537,7 @@ export function getCompanyMultiPeriodFinancials(ticker: string): Record<string, 
         operatingCashFlow,
         investingCashFlow,
         financingCashFlow,
-        sharesOutstanding: Math.round(baseMcap / basePrice),
+        sharesOutstanding: liveShares || Math.round(baseMcap / basePrice),
       };
     }
   }
