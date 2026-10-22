@@ -140,46 +140,46 @@ export const FloatingBottomBar: React.FC = () => {
                   setQuickActionOpen(false);
                   router.push("/ipo");
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-[#F0F4FA] border border-[#E2E8F0] transition group text-left"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Calendar size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#182542] group-hover:text-[#273869]">
-                      Halka Arz Dağıtım & Lot Hesaplayıcı
+                    <div className="text-xs font-bold text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400">
+                      Halka Arz Dağıtım &amp; Lot Hesaplayıcı
                     </div>
-                    <div className="text-[11px] text-[#6E81A0]">
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                       Kişi sayısına göre düşecek tahmini lot ve katılım cevazı
                     </div>
                   </div>
                 </div>
-                <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
+                <ArrowUpRight size={16} className="text-[#8B9BB4] dark:text-[#94A3B8] group-hover:text-[#273869] dark:group-hover:text-blue-400 transition" />
               </button>
 
               <button
                 type="button"
                 onClick={() => {
                   setQuickActionOpen(false);
-                  router.push("/purification");
+                  router.push("/portfolio?tab=arindirma");
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-[#F0F4FA] border border-[#E2E8F0] transition group text-left"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Calculator size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#182542] group-hover:text-[#273869]">
+                    <div className="text-xs font-bold text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400">
                       Kuruş Hassasiyetli Arındırma
                     </div>
-                    <div className="text-[11px] text-[#6E81A0]">
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                       Temettü ve sermaye kazancındaki şüpheli payı arındır
                     </div>
                   </div>
                 </div>
-                <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
+                <ArrowUpRight size={16} className="text-[#8B9BB4] dark:text-[#94A3B8] group-hover:text-[#273869] dark:group-hover:text-blue-400 transition" />
               </button>
 
               <button
@@ -188,22 +188,22 @@ export const FloatingBottomBar: React.FC = () => {
                   setQuickActionOpen(false);
                   router.push("/portfolio");
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-[#F0F4FA] border border-[#E2E8F0] transition group text-left"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Briefcase size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#182542] group-hover:text-[#273869]">
+                    <div className="text-xs font-bold text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400">
                       Portföy &amp; Zekât Takibi
                     </div>
-                    <div className="text-[11px] text-[#6E81A0]">
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                       Dönen varlık bazlı 1/40 hisse zekâtı ve portföy sağlığı
                     </div>
                   </div>
                 </div>
-                <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
+                <ArrowUpRight size={16} className="text-[#8B9BB4] dark:text-[#94A3B8] group-hover:text-[#273869] dark:group-hover:text-blue-400 transition" />
               </button>
 
               <button
@@ -212,22 +212,22 @@ export const FloatingBottomBar: React.FC = () => {
                   setQuickActionOpen(false);
                   router.push("/rehber");
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-[#F0F4FA] border border-[#E2E8F0] transition group text-left"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <BookOpen size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#182542] group-hover:text-[#273869]">
+                    <div className="text-xs font-bold text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400">
                       Fıkhi Cevazlar &amp; SSS
                     </div>
-                    <div className="text-[11px] text-[#6E81A0]">
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                       DİB Din İşleri Yüksek Kurulu ve TKBB danışma kararları
                     </div>
                   </div>
                 </div>
-                <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
+                <ArrowUpRight size={16} className="text-[#8B9BB4] dark:text-[#94A3B8] group-hover:text-[#273869] dark:group-hover:text-blue-400 transition" />
               </button>
 
               {/* Tema Değiştirme Butonu (Mobil) */}

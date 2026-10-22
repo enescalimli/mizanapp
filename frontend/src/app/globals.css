@@ -89,6 +89,31 @@
     inset 0 1px 0 0 #ffffff;
 }
 
+/* Dark Mode Frosted Glass Styles */
+html.dark .apple-glass-card,
+html.dark .orbix-card,
+html.dark .payno-card {
+  background: rgba(22, 31, 50, 0.78);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 16px 40px -12px rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+html.dark .apple-glass-card:hover,
+html.dark .orbix-card:hover,
+html.dark .payno-card:hover {
+  background: rgba(26, 37, 60, 0.88);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 24px 50px -12px rgba(0, 0, 0, 0.5),
+    0 4px 10px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
 /* 2. Apple Translucent Frosted Glass Table Container */
 .apple-glass-table {
   background: rgba(255, 255, 255, 0.78);
@@ -99,6 +124,14 @@
   box-shadow:
     0 20px 48px -15px rgba(39, 56, 105, 0.09),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
+}
+
+html.dark .apple-glass-table {
+  background: rgba(22, 31, 50, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 20px 48px -15px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
 }
 
 /* 3. Apple-Navy Ambient Hero Container */
@@ -114,6 +147,15 @@
     inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
 }
 
+html.dark .apple-navy-hero,
+html.dark .payno-sky-hero {
+  background: linear-gradient(135deg, rgba(24, 37, 66, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 24px 55px -15px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
 /* Floating Frosted Pill Navbar & Glass Container */
 .payno-glass-pill {
   background: rgba(255, 255, 255, 0.78);
@@ -124,6 +166,12 @@
   box-shadow: 0 8px 30px rgba(39, 56, 105, 0.06);
 }
 
+html.dark .payno-glass-pill {
+  background: rgba(22, 31, 50, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
 /* Slide 15: Floating Bottom Bar Dock with Raised Center FAB */
 .orbix-floating-dock {
   background: rgba(255, 255, 255, 0.92);
@@ -132,6 +180,12 @@
   border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 9999px;
   box-shadow: 0 16px 40px -10px rgba(39, 56, 105, 0.18), 0 2px 8px rgba(39, 56, 105, 0.04);
+}
+
+html.dark .orbix-floating-dock {
+  background: rgba(17, 23, 38, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Primary Navy Buttons (Navy 900 #273869) */
@@ -184,6 +238,21 @@
   border-color: #273869;
 }
 
+html.dark .payno-btn-secondary,
+html.dark .apple-btn-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  color: #F1F3F7;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .payno-btn-secondary:hover,
+html.dark .apple-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
 /* Micro-pill indicator (Slide 06: Available Limit • $3,600 Left >) */
 .orbix-micro-pill {
   background: rgba(39, 56, 105, 0.05);
@@ -202,6 +271,17 @@
 .orbix-micro-pill:hover {
   background: rgba(39, 56, 105, 0.1);
   color: #273869;
+}
+
+html.dark .orbix-micro-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94A3B8;
+}
+
+html.dark .orbix-micro-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 /* Trend Badges (Red / Green Strictly for Trend Direction) */
@@ -242,6 +322,11 @@
   border: 1px solid rgba(39, 56, 105, 0.08);
 }
 
+html.dark .apple-segmented-group {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .apple-segmented-item {
   padding: 0.4rem 0.95rem;
   border-radius: 9999px;
@@ -251,10 +336,20 @@
   transition: all 0.18s ease;
 }
 
+html.dark .apple-segmented-item {
+  color: #94A3B8;
+}
+
 .apple-segmented-item.active {
   background: #ffffff;
   color: #273869;
   box-shadow: 0 2px 8px rgba(39, 56, 105, 0.14);
+}
+
+html.dark .apple-segmented-item.active {
+  background: #273869;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .tabular {

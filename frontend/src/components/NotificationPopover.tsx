@@ -68,7 +68,7 @@ const INITIAL_NOTIFICATIONS: MizanNotification[] = [
       "Nakit temettü dağıtımında hisse başı fıkhi arındırma tutarı ₺0,0420 olarak güncellenmiştir.",
     time: "3 saat önce",
     isUnread: false,
-    linkHref: "/purification",
+    linkHref: "/portfolio?tab=arindirma",
   },
   {
     id: "notif-5",
@@ -141,38 +141,38 @@ export const NotificationPopover: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-9 h-9 rounded-full border transition-all duration-200 flex items-center justify-center relative ${
+        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-all duration-200 flex items-center justify-center relative ${
           isOpen
-            ? "bg-[#182542] text-white border-[#182542] shadow-md scale-105"
-            : "bg-white/80 hover:bg-white text-[#6E81A0] hover:text-[#182542] border-white/90 shadow-xs"
+            ? "bg-[#182542] dark:bg-[#273869] text-white border-[#182542] dark:border-[#273869] shadow-md scale-105"
+            : "bg-white dark:bg-[#161F32] hover:bg-slate-50 dark:hover:bg-[#1c273e] text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border-slate-200/60 dark:border-white/10 shadow-xs"
         }`}
         title="Canlı Bildirimler & Fıkhi Alarmlar"
         aria-label="Bildirimler"
       >
-        <Bell size={16} />
+        <Bell size={15} />
         {unreadCount > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+          <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#12B76A] border-2 border-white"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#12B76A] border-2 border-white dark:border-[#161F32]"></span>
           </span>
         )}
       </button>
 
       {/* Popover Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-[360px] sm:w-[420px] bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/90 shadow-[0_20px_60px_rgba(24,37,66,0.15)] z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-[400px] max-w-[calc(100vw-24px)] bg-white/95 dark:bg-[#161F32]/95 backdrop-blur-2xl rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_rgba(24,37,66,0.18)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           
           {/* Header */}
-          <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between">
+          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-[#182542] text-white flex items-center justify-center shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center shadow-xs">
                 <Bell size={15} />
               </div>
               <div>
-                <h3 className="text-sm font-extrabold text-[#182542]">
+                <h3 className="text-sm font-extrabold text-[#182542] dark:text-white">
                   Bildirimler &amp; Canlı Akış
                 </h3>
-                <span className="text-[10px] text-[#6E81A0] font-mono">
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
                   {unreadCount > 0 ? `${unreadCount} okunmamış bildirim` : "Tüm bildirimler güncel"}
                 </span>
               </div>
@@ -183,7 +183,7 @@ export const NotificationPopover: React.FC = () => {
                 <button
                   type="button"
                   onClick={markAllAsRead}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[#182542] text-[11px] font-bold transition flex items-center gap-1"
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white text-[11px] font-bold transition flex items-center gap-1"
                   title="Tümünü Okundu Say"
                 >
                   <Check size={12} />
@@ -193,7 +193,7 @@ export const NotificationPopover: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10 transition"
               >
                 <X size={16} />
               </button>
@@ -201,7 +201,7 @@ export const NotificationPopover: React.FC = () => {
           </div>
 
           {/* Category Filter Tabs */}
-          <div className="flex items-center gap-1.5 px-4 pt-3 pb-2 border-b border-slate-100 overflow-x-auto text-[11px] font-bold">
+          <div className="flex items-center gap-1.5 px-4 pt-3 pb-2 border-b border-slate-100 dark:border-white/10 overflow-x-auto text-[11px] font-bold">
             {[
               { id: "ALL", label: `Tümü (${notifications.length})` },
               { id: "ALARM", label: "Fıkhi Alarm" },
@@ -214,8 +214,8 @@ export const NotificationPopover: React.FC = () => {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3 py-1 rounded-full whitespace-nowrap transition-all ${
                   activeTab === tab.id
-                    ? "bg-[#182542] text-white shadow-xs"
-                    : "bg-slate-100 hover:bg-slate-200 text-[#6E81A0]"
+                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                    : "bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
                 }`}
               >
                 {tab.label}
@@ -224,9 +224,9 @@ export const NotificationPopover: React.FC = () => {
           </div>
 
           {/* Notification List */}
-          <div className="max-h-[380px] overflow-y-auto divide-y divide-slate-100 p-2">
+          <div className="max-h-[380px] overflow-y-auto divide-y divide-slate-100 dark:divide-white/5 p-2">
             {filteredNotifications.length === 0 ? (
-              <div className="py-10 text-center text-xs text-slate-400">
+              <div className="py-10 text-center text-xs text-slate-400 dark:text-slate-500">
                 Bu kategoride henüz yeni bildirim bulunmuyor.
               </div>
             ) : (
@@ -234,8 +234,8 @@ export const NotificationPopover: React.FC = () => {
                 <div
                   key={notif.id}
                   onClick={() => markSingleAsRead(notif.id)}
-                  className={`p-3 rounded-2xl transition-all cursor-pointer flex items-start gap-3 hover:bg-slate-50/80 ${
-                    notif.isUnread ? "bg-slate-50/50" : ""
+                  className={`p-3 rounded-2xl transition-all cursor-pointer flex items-start gap-3 hover:bg-slate-50/80 dark:hover:bg-white/[0.04] ${
+                    notif.isUnread ? "bg-slate-50/50 dark:bg-white/[0.02]" : ""
                   }`}
                 >
                   {/* Category Icon */}
@@ -267,20 +267,20 @@ export const NotificationPopover: React.FC = () => {
                     <div className="flex items-center justify-between gap-1 mb-0.5">
                       <div className="flex items-center gap-1.5 truncate">
                         {notif.ticker && (
-                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#182542] text-white">
+                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#182542] dark:bg-[#273869] text-white">
                             {notif.ticker}
                           </span>
                         )}
-                        <span className="text-xs font-bold text-[#182542] truncate">
+                        <span className="text-xs font-bold text-[#182542] dark:text-white truncate">
                           {notif.title}
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-400 shrink-0 font-mono">
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500 shrink-0 font-mono">
                         {notif.time}
                       </span>
                     </div>
 
-                    <p className="text-[11px] text-[#6E81A0] leading-snug line-clamp-2">
+                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-snug line-clamp-2">
                       {notif.summary}
                     </p>
 
@@ -288,7 +288,7 @@ export const NotificationPopover: React.FC = () => {
                       <Link
                         href={notif.linkHref}
                         onClick={() => setIsOpen(false)}
-                        className="inline-flex items-center gap-1 text-[10px] font-bold text-[#182542] hover:underline mt-1.5"
+                        className="inline-flex items-center gap-1 text-[10px] font-bold text-[#182542] dark:text-blue-400 hover:underline mt-1.5"
                       >
                         <span>Detayları İncele</span>
                         <ChevronRight size={10} />
@@ -306,11 +306,11 @@ export const NotificationPopover: React.FC = () => {
           </div>
 
           {/* Footer */}
-          <div className="p-3 bg-slate-50/80 border-t border-slate-100 text-center">
+          <div className="p-3 bg-slate-50/80 dark:bg-white/5 border-t border-slate-100 dark:border-white/10 text-center">
             <Link
               href="/ayarlar"
               onClick={() => setIsOpen(false)}
-              className="text-xs font-bold text-[#182542] hover:underline"
+              className="text-xs font-bold text-[#182542] dark:text-blue-400 hover:underline"
             >
               Bildirim ve Alarm Tercihlerini Düzenle &rarr;
             </Link>

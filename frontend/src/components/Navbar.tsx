@@ -26,8 +26,7 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { href: "/", label: "Hisse Tarayıcı", icon: BarChart3, count: "626" },
     { href: "/ipo", label: "Halka Arzlar", icon: Calendar, count: "Yeni" },
-    { href: "/portfolio", label: "Portföy & Cüzdan", icon: Briefcase },
-    { href: "/purification", label: "Arındırma & Zekât", icon: Calculator },
+    { href: "/portfolio", label: "Portföy & Arındırma", icon: Briefcase },
     { href: "/rehber", label: "Fıkıh & Cevazlar", icon: Scale },
   ];
 

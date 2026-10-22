@@ -299,18 +299,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="p-7 sm:p-9 border border-white/85 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 backdrop-blur-2xl space-y-6">
+      <div className="p-7 sm:p-9 border border-white/85 dark:border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 dark:bg-[#161F32]/90 backdrop-blur-2xl space-y-6">
         
         {/* Header / Brand */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-semibold mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-semibold mb-3">
             <ShieldCheck size={14} />
             <span>Mizan Güvenli Giriş</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-[#182542] tracking-tight">
+          <h2 className="text-2xl font-extrabold text-[#182542] dark:text-white tracking-tight">
             {mode === "login" ? "Hesabınıza Giriş Yapın" : "Yeni Katılım Hesabı Aç"}
           </h2>
-          <p className="text-xs text-[#6E81A0] mt-1.5 font-normal">
+          <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-1.5 font-normal">
             {mode === "login"
               ? "Katılım portföyünüze ve kuruşu kuruşuna arındırma verilerinize erişin."
               : "DİB ve BIST Katılım standartlarında şer'i portföy takibine hemen başlayın."}
@@ -318,7 +318,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex p-1 rounded-xl bg-[#EDF1F7] border border-white">
+        <div className="flex p-1 rounded-xl bg-[#EDF1F7] dark:bg-white/5 border border-white dark:border-white/10">
           <button
             type="button"
             onClick={() => {
@@ -327,8 +327,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "login"
-                ? "bg-white text-[#182542] shadow-xs font-bold"
-                : "text-[#6E81A0] hover:text-[#182542]"
+                ? "bg-white dark:bg-[#273869] text-[#182542] dark:text-white shadow-xs font-bold"
+                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
           >
             Giriş Yap
@@ -341,8 +341,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "register"
-                ? "bg-white text-[#182542] shadow-xs font-bold"
-                : "text-[#6E81A0] hover:text-[#182542]"
+                ? "bg-white dark:bg-[#273869] text-[#182542] dark:text-white shadow-xs font-bold"
+                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
           >
             Kayıt Ol
@@ -351,15 +351,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
         {/* Status Alerts */}
         {errorMessage && (
-          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 animate-shake">
+          <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-2 animate-shake">
             <AlertTriangle size={15} className="shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {successMessage && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 animate-in fade-in">
-            <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+          <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs flex items-center gap-2 animate-in fade-in">
+            <CheckCircle2 size={15} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
             <span>{successMessage}</span>
           </div>
         )}
@@ -368,7 +368,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         <button
           type="button"
           onClick={handleOpenGoogleModal}
-          className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-xs font-bold flex items-center justify-center gap-3 transition shadow-xs active:scale-[0.99]"
+          className="w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white text-xs font-bold flex items-center justify-center gap-3 transition shadow-xs active:scale-[0.99]"
         >
           <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
             <path
@@ -394,10 +394,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         {/* Divider */}
         <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200" />
+            <div className="w-full border-t border-slate-200 dark:border-white/10" />
           </div>
           <div className="relative flex justify-center text-[10px] uppercase font-semibold">
-            <span className="bg-white px-3 text-slate-400">veya e-posta ile</span>
+            <span className="bg-white dark:bg-[#161F32] px-3 text-slate-400 dark:text-[#94A3B8]">veya e-posta ile</span>
           </div>
         </div>
 
@@ -405,7 +405,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "register" && (
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1.5">
                 Ad Soyad
               </label>
               <div className="relative">
@@ -418,14 +418,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Örn: Mustafa Çalımlı"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-[#182542] transition placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
                 />
               </div>
             </div>
           )}
 
           <div>
-            <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
+            <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1.5">
               E-Posta Adresi
             </label>
             <div className="relative">
@@ -438,14 +438,14 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@yatirim.com"
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-[#182542] transition placeholder:text-slate-400"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block">
                 Şifre
               </label>
               {mode === "login" && (
@@ -454,7 +454,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   onClick={() =>
                     alert("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.")
                   }
-                  className="text-[10px] text-[#273869] hover:underline font-semibold"
+                  className="text-[10px] text-[#273869] dark:text-indigo-300 hover:underline font-semibold"
                 >
                   Şifremi Unuttum
                 </button>
@@ -470,12 +470,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-[#182542] transition placeholder:text-slate-400"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
               >
                 {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
               </button>
@@ -484,11 +484,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             {/* Password strength bar for registration */}
             {mode === "register" && password && (
               <div className="mt-2 space-y-1">
-                <div className="flex items-center justify-between text-[10px] text-slate-500">
+                <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400">
                   <span>Şifre Gücü:</span>
                   <span className="font-semibold">{passwordStrength.text}</span>
                 </div>
-                <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                <div className="w-full h-1 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
                   <div
                     className={`h-full ${passwordStrength.color} transition-all duration-300`}
                     style={{ width: `${(passwordStrength.score / 3) * 100}%` }}
@@ -500,7 +500,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
           {mode === "register" && (
             <div>
-              <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
+              <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1.5">
                 Şifre Tekrar
               </label>
               <div className="relative">
@@ -513,7 +513,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-[#182542] transition placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -527,9 +527,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-slate-300 text-[#182542] focus:ring-[#182542]"
+                  className="rounded border-slate-300 dark:border-white/20 text-[#182542] focus:ring-[#182542]"
                 />
-                <span className="text-slate-600">Beni hatırla</span>
+                <span className="text-slate-600 dark:text-[#94A3B8]">Beni hatırla</span>
               </label>
             ) : (
               <label className="flex items-start gap-2 cursor-pointer select-none">
@@ -537,10 +537,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   type="checkbox"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="rounded border-slate-300 text-[#182542] focus:ring-[#182542] mt-0.5"
+                  className="rounded border-slate-300 dark:border-white/20 text-[#182542] focus:ring-[#182542] mt-0.5"
                 />
-                <span className="text-[11px] text-slate-600 leading-tight">
-                  <Link href="/rehber" className="text-[#182542] underline font-semibold">
+                <span className="text-[11px] text-slate-600 dark:text-[#94A3B8] leading-tight">
+                  <Link href="/rehber" className="text-[#182542] dark:text-blue-400 underline font-semibold">
                     Kullanıcı Sözleşmesi
                   </Link>
                   &apos;ni ve Katılım Finansı İlkelerini kabul ediyorum.
@@ -553,7 +553,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
+            className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
           >
             {isLoading ? (
               <RefreshCw size={15} className="animate-spin" />
@@ -567,8 +567,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         </form>
 
         {/* Footer info */}
-        <div className="text-center pt-2 border-t border-slate-100">
-          <p className="text-[10px] text-slate-400 leading-relaxed font-normal">
+        <div className="text-center pt-2 border-t border-slate-100 dark:border-white/10">
+          <p className="text-[10px] text-slate-400 dark:text-[#94A3B8] leading-relaxed font-normal">
             Verileriniz 256-bit SSL ve uçtan uca şifrelemeli altyapıda güvenle saklanır.
           </p>
         </div>
@@ -579,13 +579,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       {/* ===================================================================== */}
       {isGoogleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="relative w-full max-w-sm bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-sm bg-white dark:bg-[#161F32] rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-white/10 space-y-5 animate-in zoom-in-95 duration-150">
             
             {/* Modal Close Button */}
             <button
               type="button"
               onClick={() => setIsGoogleModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
             >
               <X size={18} />
             </button>
@@ -610,17 +610,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 Google ile Devam Et
               </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs text-slate-500 dark:text-[#94A3B8] leading-relaxed">
                 Mizan Katılım hesabınıza güvenli erişim için Google / Gmail e-posta adresinizi giriniz:
               </p>
             </div>
 
             <form onSubmit={handleGoogleEmailSubmit} className="space-y-4 pt-1">
               <div>
-                <label className="text-[10px] uppercase font-semibold text-slate-500 tracking-wider block mb-1.5">
+                <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1.5">
                   Google / Gmail E-Posta Adresi
                 </label>
                 <div className="relative">
@@ -634,7 +634,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                     onChange={(e) => setCustomGoogleEmail(e.target.value)}
                     placeholder="adiniz@gmail.com"
                     autoFocus
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-mono focus:bg-white focus:outline-none focus:border-[#182542] transition"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:bg-white dark:focus:bg-white/10 focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition"
                   />
                 </div>
               </div>
@@ -642,7 +642,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               <button
                 type="submit"
                 disabled={isLoading || !customGoogleEmail.includes("@")}
-                className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
+                className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
               >
                 {isLoading ? (
                   <RefreshCw size={14} className="animate-spin" />
@@ -663,27 +663,27 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       {/* ===================================================================== */}
       {isOtpModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 space-y-6 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#161F32] rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-white/10 space-y-6 animate-in zoom-in-95 duration-150">
             
             {/* Modal Close Button */}
             <button
               type="button"
               onClick={() => setIsOtpModalOpen(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
             >
               <X size={18} />
             </button>
 
             {/* OTP Header */}
             <div className="text-center space-y-2">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 mx-auto flex items-center justify-center shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center shadow-xs">
                 <KeyRound size={24} />
               </div>
-              <h3 className="text-lg font-extrabold text-[#182542]">
+              <h3 className="text-lg font-extrabold text-[#182542] dark:text-white">
                 E-Posta Onay Kodunu Girin
               </h3>
-              <p className="text-xs text-[#6E81A0] leading-relaxed max-w-xs mx-auto">
-                <strong className="text-[#182542] font-semibold">{otpTargetEmail}</strong> adresinize 6 haneli güvenlik doğrulama kodu gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol ediniz.
+              <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed max-w-xs mx-auto">
+                <strong className="text-[#182542] dark:text-white font-semibold">{otpTargetEmail}</strong> adresinize 6 haneli güvenlik doğrulama kodu gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol ediniz.
               </p>
             </div>
 
@@ -705,10 +705,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                     disabled={otpVerified || isVerifyingOtp}
                     className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-black font-mono rounded-2xl border transition-all duration-150 outline-none ${
                       digit
-                        ? "border-[#182542] bg-white text-[#182542] shadow-sm"
-                        : "border-slate-200 bg-slate-50 text-slate-800 focus:border-[#182542] focus:bg-white"
-                    } ${otpError ? "border-rose-400 bg-rose-50/50" : ""} ${
-                      otpVerified ? "border-emerald-500 bg-emerald-50 text-emerald-800" : ""
+                        ? "border-[#182542] dark:border-blue-400 bg-white dark:bg-white/10 text-[#182542] dark:text-white shadow-sm"
+                        : "border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:border-[#182542] dark:focus:border-blue-400 focus:bg-white dark:focus:bg-white/10"
+                    } ${otpError ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/40" : ""} ${
+                      otpVerified ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300" : ""
                     }`}
                   />
                 ))}
@@ -716,32 +716,32 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
               {/* Error / Verified State */}
               {otpError && (
-                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center gap-2 justify-center animate-shake">
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-800 dark:text-rose-300 text-xs flex items-center gap-2 justify-center animate-shake">
                   <AlertTriangle size={14} className="shrink-0" />
                   <span>{otpError}</span>
                 </div>
               )}
 
               {otpVerified && (
-                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 justify-center animate-in zoom-in-95">
-                  <CheckCircle2 size={16} className="text-emerald-600" />
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2 justify-center animate-in zoom-in-95">
+                  <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
                   <span>Kod başarıyla doğrulandı! Güvenli oturum açılıyor...</span>
                 </div>
               )}
             </div>
 
             {/* Resend & Timer */}
-            <div className="text-center pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-[#6E81A0]">
+            <div className="text-center pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs text-[#6E81A0] dark:text-[#94A3B8]">
               <span>Kodu almadınız mı?</span>
               {otpCountdown > 0 ? (
-                <span className="font-mono text-[11px] font-semibold text-slate-500">
+                <span className="font-mono text-[11px] font-semibold text-slate-500 dark:text-slate-400">
                   Tekrar gönder ({otpCountdown}s)
                 </span>
               ) : (
                 <button
                   type="button"
                   onClick={handleResendOtp}
-                  className="font-bold text-[#182542] hover:underline inline-flex items-center gap-1"
+                  className="font-bold text-[#182542] dark:text-white hover:underline inline-flex items-center gap-1"
                 >
                   <RotateCcw size={12} />
                   <span>Yeni Kod Gönder</span>
@@ -754,7 +754,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               type="button"
               onClick={() => checkOtpSubmission(otpDigits.join(""))}
               disabled={otpDigits.some((d) => d === "") || otpVerified || isVerifyingOtp}
-              className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
+              className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
             >
               {isVerifyingOtp ? (
                 <RefreshCw size={15} className="animate-spin text-white" />

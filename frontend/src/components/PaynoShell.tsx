@@ -53,8 +53,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   const navItems = [
     { label: "Genel Bakış", href: "/" },
     { label: "Tarayıcı (626)", href: "/tarayici" },
-    { label: "Portföyüm", href: "/portfolio" },
-    { label: "Arındırma & Zekât", href: "/purification" },
+    { label: "Portföy & Arındırma", href: "/portfolio" },
     { label: "Halka Arz", href: "/ipo" },
     { label: "Fıkhi Rehber", href: "/rehber" },
   ];

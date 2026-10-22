@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Calculator,
   Plus,
@@ -39,6 +40,11 @@ interface PortfolioPosition {
 }
 
 export default function PortfolioPurificationPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/portfolio?tab=arindirma");
+  }, [router]);
   const DEFAULT_POSITIONS: PortfolioPosition[] = [
     {
       id: "pos-1",

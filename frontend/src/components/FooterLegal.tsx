@@ -57,7 +57,7 @@ export const FooterLegal: React.FC = () => {
               </Link>
             </li>
             <li>
-              <Link href="/purification" className="hover:text-[#182542] transition">
+              <Link href="/portfolio?tab=arindirma" className="hover:text-[#182542] transition">
                 Kuruşu Kuruşuna Arındırma Hesaplayıcı
               </Link>
             </li>

@@ -48,16 +48,16 @@ export const LeftDockSidebar: React.FC = () => {
       isActive: pathname.startsWith("/tarayici"),
     },
     {
-      label: "Katılım Portföyüm",
+      label: "Portföy & Arındırma",
       href: "/portfolio",
       icon: PieChart,
       isActive: pathname.startsWith("/portfolio"),
     },
     {
-      label: "Fıkhi Arındırma & Zekât",
-      href: "/purification",
+      label: "Halka Arz Takvimi",
+      href: "/ipo",
       icon: Scale,
-      isActive: pathname.startsWith("/purification"),
+      isActive: pathname.startsWith("/ipo"),
     },
     {
       label: "Ayarlar & Tercihler",

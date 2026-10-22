@@ -34,8 +34,6 @@ export default function HomePage() {
 
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
   const [currency, setCurrency] = useState<"TRY" | "USD">("TRY");
-  const [monthlyLimit, setMonthlyLimit] = useState<number>(5500);
-  const [limitUsed, setLimitUsed] = useState<number>(1400);
 
   // Quick stock screener inline state
   const [quickSearch, setQuickSearch] = useState<string>("");
@@ -226,7 +224,7 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href="/purification"
+                href="/portfolio?tab=arindirma"
                 className="rounded-full bg-[#F4F5F7] dark:bg-white/10 hover:bg-[#EAECEF] dark:hover:bg-white/15 text-[#182542] dark:text-white py-2.5 px-3 text-xs font-bold flex items-center justify-center gap-1.5 transition text-center"
               >
                 <Scale size={14} />
@@ -443,91 +441,14 @@ export default function HomePage() {
         </div>
 
         {/* ================================================================= */}
-        {/* 2. SATIR: ARINDIRMA LİMİTİ & SON KATILIM İŞLEMLERİ                */}
+        {/* 2. SATIR: SON KATILIM İŞLEMLERİ & FIKHİ PİYASA BAKIŞI             */}
         {/* ================================================================= */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* =============================================================== */}
-          {/* SOL: AYLIK ARINDIRMA LİMİTİ (lg:col-span-5)                      */}
+          {/* SOL: SON KATILIM İŞLEMLERİ & KAP BİLDİRİMLERİ (lg:col-span-8)   */}
           {/* =============================================================== */}
-          <div className="lg:col-span-5 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
-            
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                  Aylık Arındırma &amp; Risk Limiti
-                </h3>
-                <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                  Fıkhi arındırma bütçesi ve şüpheli gelir tavanı
-                </p>
-              </div>
-
-              <div className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[10px] font-bold">
-                Aktif Limit
-              </div>
-            </div>
-
-            <div className="flex items-baseline justify-between">
-              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                Tanımlı Tavan Limit
-              </span>
-              <span className="text-2xl sm:text-3xl font-black text-[#182542] dark:text-white font-mono">
-                ₺{monthlyLimit.toLocaleString("tr-TR")},00
-              </span>
-            </div>
-
-            {/* Slider (Lacivert / Zümrüt Vurgulu) */}
-            <div className="space-y-2">
-              <div className="relative flex items-center">
-                <input
-                  type="range"
-                  min={1000}
-                  max={20000}
-                  step={500}
-                  value={monthlyLimit}
-                  onChange={(e) => setMonthlyLimit(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-100 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#182542] dark:accent-[#273869]"
-                />
-              </div>
-
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8]">
-                <span>₺1.000</span>
-                <span>₺20.000</span>
-              </div>
-            </div>
-
-            {/* İlerleme Çubuğu */}
-            <div className="p-3.5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-2">
-              <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-[#182542] dark:text-white font-mono font-bold">
-                  ₺{limitUsed.toLocaleString("tr-TR")} kullanıldı
-                </span>
-                <span className="text-[#6E81A0] dark:text-[#94A3B8] text-[11px]">
-                  %{Math.round((limitUsed / monthlyLimit) * 100)}
-                </span>
-              </div>
-
-              <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#182542] to-[#273869] dark:from-[#273869] dark:to-blue-500 transition-all duration-300"
-                  style={{ width: `${Math.min(100, (limitUsed / monthlyLimit) * 100)}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs pt-1">
-              <span className="text-[#6E81A0] dark:text-[#94A3B8] text-[11px]">Otomatik arındırma güvenliği</span>
-              <div className="w-10 h-6 bg-[#182542] dark:bg-[#273869] rounded-full p-1 cursor-pointer flex items-center justify-end shadow-xs">
-                <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
-              </div>
-            </div>
-
-          </div>
-
-          {/* =============================================================== */}
-          {/* SAĞ: SON KATILIM İŞLEMLERİ (GERÇEK BİST HİSSE LOGOLARI İLE)       */}
-          {/* =============================================================== */}
-          <div className="lg:col-span-7 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
+          <div className="lg:col-span-8 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
             <div className="flex items-center justify-between">
               <div>
@@ -535,7 +456,7 @@ export default function HomePage() {
                   Son Katılım İşlemleri &amp; KAP Bildirimleri
                 </h3>
                 <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                  BIST hisselerinin çeyreklik arındırma ve icazet takibi
+                  BIST hisselerinin çeyreklik arındırma, temettü ve icazet takibi
                 </p>
               </div>
 
@@ -549,14 +470,14 @@ export default function HomePage() {
             </div>
 
             {/* Gerçek Logolu Hisse Listesi */}
-            <div className="space-y-2.5 divide-y divide-slate-100 dark:divide-white/5">
+            <div className="space-y-3 divide-y divide-slate-100 dark:divide-white/5">
               {recentActivities.map((act) => (
                 <div
                   key={act.ticker}
-                  className="pt-2.5 first:pt-0 flex items-center justify-between gap-3 group"
+                  className="pt-3 first:pt-0 flex items-center justify-between gap-3 group"
                 >
                   {/* Sol: Gerçek Hisse Logosu + Detaylar */}
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3.5 min-w-0">
                     <StockLogo
                       ticker={act.ticker}
                       name={act.name}
@@ -567,7 +488,7 @@ export default function HomePage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/companies/${act.ticker}`}
-                          className="text-xs font-extrabold text-[#182542] dark:text-white hover:text-blue-600 transition truncate"
+                          className="text-xs font-extrabold text-[#182542] dark:text-white hover:text-blue-500 transition truncate"
                         >
                           {act.ticker}
                         </Link>
@@ -599,7 +520,7 @@ export default function HomePage() {
             </div>
 
             {/* Alt Canlı Piyasa Çubuğu */}
-            <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
+            <div className="pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-2">
               <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                 Canlı BIST Verisi: {updatedAt ? new Date(updatedAt).toLocaleTimeString("tr-TR") : "Güncel"}
               </span>
@@ -609,6 +530,77 @@ export default function HomePage() {
                 className="px-4 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold shadow-xs transition"
               >
                 Hisse Taramaya Git &rarr;
+              </Link>
+            </div>
+
+          </div>
+
+          {/* =============================================================== */}
+          {/* SAĞ: BİST KATILIM PİYASASI & FIKHİ ÖZET (lg:col-span-4)          */}
+          {/* =============================================================== */}
+          <div className="lg:col-span-4 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
+            
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                  BIST Katılım Standartları
+                </h3>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[10px] font-bold">
+                  DİB &amp; TKBB
+                </span>
+              </div>
+              <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                Borsa İstanbul 3 Altın Rasyo Denetimi
+              </p>
+            </div>
+
+            {/* 3 Rasyo Özeti */}
+            <div className="space-y-2.5">
+              <div className="p-3 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#182542] dark:text-white block">Faizli Borç Eşiği</span>
+                  <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Toplam Piyasa Değeri Oranı</span>
+                </div>
+                <span className="text-xs font-mono font-black text-[#182542] dark:text-white bg-slate-200/60 dark:bg-white/10 px-2 py-0.5 rounded-lg">
+                  ≤ %33
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#182542] dark:text-white block">Faizli Nakit &amp; Menkul</span>
+                  <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Faiz Getirili Varlık Oranı</span>
+                </div>
+                <span className="text-xs font-mono font-black text-[#182542] dark:text-white bg-slate-200/60 dark:bg-white/10 px-2 py-0.5 rounded-lg">
+                  ≤ %33
+                </span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#182542] dark:text-white block">Uygun Olmayan Gelir</span>
+                  <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Hasılat &amp; Yan Gelir Oranı</span>
+                </div>
+                <span className="text-xs font-mono font-black text-[#182542] dark:text-white bg-slate-200/60 dark:bg-white/10 px-2 py-0.5 rounded-lg">
+                  ≤ %5
+                </span>
+              </div>
+            </div>
+
+            {/* Hızlı Aksiyon */}
+            <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
+              <Link
+                href="/portfolio?tab=arindirma"
+                className="text-xs font-bold text-[#0D8B52] dark:text-emerald-400 hover:underline flex items-center gap-1"
+              >
+                <span>Arındırma Hesapla &rarr;</span>
+              </Link>
+
+              <Link
+                href="/rehber"
+                className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white transition"
+              >
+                Metodoloji &rarr;
               </Link>
             </div>
 
