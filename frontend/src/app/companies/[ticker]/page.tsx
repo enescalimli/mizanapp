@@ -11,6 +11,7 @@ import { CompanyDetailScreening, ScreeningStandardCode } from "@/types/katilim";
 import { formatTRY } from "@/lib/decimal/decimal";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
+import { FinancialReportsTab } from "@/components/FinancialReportsTab";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
   ArrowLeft,
@@ -351,7 +352,7 @@ export default function CompanyDetailPage() {
               { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
               { id: "KARNE", label: "Şirket Karnesi", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
               { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
-              { id: "FINANSALLAR", label: "Finansallar & DuPont", icon: FileSpreadsheet },
+              { id: "FINANSALLAR", label: "Finansal Raporlar & Tablolar", icon: FileSpreadsheet },
               { id: "TEMETTU_RAKIP", label: "Temettü & Rakipler", icon: Users2 },
               { id: "AI_ANALIZ", label: "Mizan AI Raporu", icon: Sparkles, badge: isSampleFreeStock ? "Demo" : "PRO" },
             ].map((tab) => {
@@ -770,104 +771,14 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 4: FINANSALLAR & DUPONT ANALİZİ                                 */}
+        {/* TAB 4: AYRINTILI FİNANSAL RAPORLAR, BİLANÇO & KAFİF                  */}
         {/* =================================================================== */}
-        {activeTab === "FINANSALLAR" && fin && dupont && (
-          <div className="space-y-6">
-            {/* DuPont Analizi Kartı */}
-            <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
-              <div className="flex items-center justify-between border-b border-[#EDF1F7] dark:border-white/10 pb-3">
-                <div className="space-y-0.5">
-                  <h3 className="text-base font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                    <Split size={16} className="text-indigo-600 dark:text-indigo-400" />
-                    <span>DuPont Analizi (Özkaynak Kârlılığının Anatomisi)</span>
-                  </h3>
-                  <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">ROE = Net Kâr Marjı &times; Aktif Devir Hızı &times; Finansal Kaldıraç</p>
-                </div>
-                <span className="text-xs font-mono font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 px-3 py-1 rounded-xl">
-                  ROE: %{dupont.calculatedRoePercent}
-                </span>
-              </div>
-
-              {/* DuPont Flow Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center text-xs">
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-[#6E81A0] dark:text-[#94A3B8] block">1. Net Kâr Marjı</span>
-                  <div className="text-lg font-mono font-extrabold text-[#182542] dark:text-white">%{dupont.netMarginPercent.toFixed(1)}</div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">Satış Kârlılığı</span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-[#6E81A0] dark:text-[#94A3B8] block">2. Aktif Devir Hızı</span>
-                  <div className="text-lg font-mono font-extrabold text-[#182542] dark:text-white">{dupont.assetTurnover}x</div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">Varlık Verimliliği</span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-[#6E81A0] dark:text-[#94A3B8] block">3. Finansal Kaldıraç</span>
-                  <div className="text-lg font-mono font-extrabold text-[#182542] dark:text-white">{dupont.leverageMultiplier}x</div>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400">Aktif / Özkaynak</span>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/50 space-y-1">
-                  <span className="text-[10px] uppercase font-bold text-indigo-900 dark:text-indigo-200 block">Hesaplanan ROE</span>
-                  <div className="text-lg font-mono font-extrabold text-indigo-700 dark:text-indigo-400">%{dupont.calculatedRoePercent}</div>
-                  <span className="text-[10px] text-indigo-800 dark:text-indigo-300 font-semibold">Özkaynak Getirisi</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bilanço ve Gelir Tabloları */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3">
-                <span className="text-xs font-extrabold uppercase text-[#182542] dark:text-white block border-b border-slate-100 dark:border-white/10 pb-2">
-                  Gelir Tablosu Kalemleri
-                </span>
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Satış Gelirleri (Hasılat)</span>
-                    <span className="font-mono font-bold text-[#182542] dark:text-white">₺{fin.revenueTRY}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Brüt Kâr</span>
-                    <span className="font-mono font-bold text-[#182542] dark:text-white">₺{fin.grossProfitTRY}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">FAVÖK (EBITDA)</span>
-                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">₺{fin.ebitdaTRY}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Net Dönem Kârı</span>
-                    <span className="font-mono font-bold text-[#182542] dark:text-white">₺{fin.netIncomeTRY}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3">
-                <span className="text-xs font-extrabold uppercase text-[#182542] dark:text-white block border-b border-slate-100 dark:border-white/10 pb-2">
-                  Bilanço Kalemleri
-                </span>
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Dönen Varlıklar</span>
-                    <span className="font-mono font-bold text-[#182542] dark:text-white">₺{fin.currentAssetsTRY}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Duran Varlıklar</span>
-                    <span className="font-mono font-bold text-[#182542] dark:text-white">₺{fin.nonCurrentAssetsTRY}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Finansal Borçlar (Toplam)</span>
-                    <span className="font-mono font-bold text-rose-700 dark:text-rose-400">₺{fin.financialDebtTRY}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-slate-600 dark:text-[#94A3B8]">Özkaynaklar (Ana Ortaklık)</span>
-                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">₺{fin.equityTRY}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        {activeTab === "FINANSALLAR" && (
+          <FinancialReportsTab
+            ticker={ticker}
+            companyName={data.companyName}
+            isCompliant={data.overallStatus === "COMPLIANT"}
+          />
         )}
 
         {/* =================================================================== */}

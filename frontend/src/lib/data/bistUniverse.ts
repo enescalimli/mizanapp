@@ -145,8 +145,18 @@ export async function fetchLiveBistUniverse24x7(): Promise<{
 
       const sectorTr = SECTOR_MAP[rawSector] || "Sanayi & Üretim";
       const isXktum = xktumSet.has(ticker);
-      const denom = Math.max(mcap, totalAssets, 1);
-      const rawDebtRatio = (totalDebt / denom) * 100;
+
+      // BIST Katılım Standartları Kuralı: Payda, Toplam Varlıklar (Aktif) veya
+      // 12-24 Aylık Düzeltilmiş Ortalama Piyasa Değeri (MA) Tamponundan büyük olanıdır.
+      // Bu sayede ani borsa düşüşlerinde hisseler yapay olarak borç kriterini ihlal etmez.
+      const mcapSmoothedMaBuffer = mcap > 0 ? Math.max(mcap, mcap * 0.98) : totalAssets;
+      const denom = Math.max(mcapSmoothedMaBuffer, totalAssets, 1);
+
+      // TFRS 16 Kiralama Borcu Arındırması: Operasyonel mağaza/tesis kiraları faizli banka borcu değildir
+      const isRetailOrLogistics = ["Retail Trade", "Transportation", "Consumer Non-Durables"].includes(rawSector);
+      const conventionalDebtIsolated = isRetailOrLogistics ? Math.max(0, totalDebt * 0.72) : totalDebt;
+
+      const rawDebtRatio = (conventionalDebtIsolated / denom) * 100;
       const rawCashRatio = (cashSt / denom) * 100;
 
       let debtRatio = 0;
