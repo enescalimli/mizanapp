@@ -3,6 +3,7 @@ import "./globals.css";
 import { FloatingBottomBar } from "@/components/FloatingBottomBar";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { AuthProvider } from "@/lib/auth/AuthContext";
+import { ThemeProvider } from "@/lib/theme/ThemeContext";
 
 export const viewport: Viewport = {
   themeColor: "#182542",
@@ -71,17 +72,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
-      <body className="antialiased min-h-screen bg-[#EEF0F4] text-[#14151A] selection:bg-[#FFE8E0] selection:text-[#FF5B26]">
-        <AuthProvider>
-          {children}
+    <html lang="tr" suppressHydrationWarning>
+      <body className="antialiased min-h-screen bg-[#EEF0F4] dark:bg-[#0B0F17] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200">
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
 
-          {/* Granüler Çerez İzin Banner'ı */}
-          <CookieConsentBanner />
+            {/* Granüler Çerez İzin Banner'ı */}
+            <CookieConsentBanner />
 
-          {/* Mobil Alt Menü Barı */}
-          <FloatingBottomBar />
-        </AuthProvider>
+            {/* Mobil Alt Menü Barı */}
+            <FloatingBottomBar />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

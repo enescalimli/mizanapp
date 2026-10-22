@@ -16,11 +16,15 @@ import {
   BookOpen,
   ArrowUpRight,
   User,
+  Sun,
+  Moon,
 } from "lucide-react";
+import { useTheme } from "@/lib/theme/ThemeContext";
 
 export const FloatingBottomBar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const { isDark, toggleTheme } = useTheme();
   const [quickActionOpen, setQuickActionOpen] = useState(false);
 
   // Close modal on escape
@@ -226,28 +230,55 @@ export const FloatingBottomBar: React.FC = () => {
                 <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
               </button>
 
+              {/* Tema Değiştirme Butonu (Mobil) */}
+              <button
+                type="button"
+                onClick={() => {
+                  toggleTheme();
+                  setQuickActionOpen(false);
+                }}
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-[#E2E8F0] dark:border-white/10 text-[#182542] dark:text-white flex items-center justify-center shadow-xs">
+                    {isDark ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-[#182542]" />}
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-[#182542] dark:text-white">
+                      {isDark ? "Açık Temaya Geç" : "Karanlık Temaya Geç"}
+                    </div>
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      Göz yormayan karanlık veya aydınlık arayüz
+                    </div>
+                  </div>
+                </div>
+                <span className="text-xs font-bold font-mono text-[#6E81A0] dark:text-[#94A3B8]">
+                  {isDark ? "Koyu" : "Açık"}
+                </span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => {
                   setQuickActionOpen(false);
                   router.push("/auth/login");
                 }}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#273869]/8 to-[#182542]/5 hover:from-[#273869]/15 hover:to-[#182542]/10 border border-[#273869]/15 transition group text-left mt-1"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#273869]/10 to-[#182542]/5 dark:from-blue-950/40 dark:to-slate-900/40 border border-[#273869]/15 dark:border-white/10 transition group text-left mt-1"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#273869] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center shadow-xs">
                     <User size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#273869]">
+                    <div className="text-xs font-bold text-[#182542] dark:text-white">
                       Giriş Yap &amp; Hesap Yönetimi
                     </div>
-                    <div className="text-[11px] text-[#6E81A0]">
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                       Portföyünüzü ve alarmlarınızı bulutta güvenle saklayın
                     </div>
                   </div>
                 </div>
-                <ArrowUpRight size={16} className="text-[#273869] transition" />
+                <ArrowUpRight size={16} className="text-[#182542] dark:text-white transition" />
               </button>
             </div>
           </div>
@@ -255,19 +286,18 @@ export const FloatingBottomBar: React.FC = () => {
       )}
 
       {/* =================================================================== */}
-      {/* SLIDE 15: FLOATING BAR WITH ONE RAISED ACTION (ALT BAR)             */}
-      {/* Web versiyonunda gizli (md:hidden), yalnızca mobil cihazlarda görünür  */}
+      {/* V14 FLOATING MOBILE BAR                                             */}
       {/* =================================================================== */}
-      <div className="fixed bottom-5 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 select-none md:hidden">
-        <div className="flex items-center bg-white/95 backdrop-blur-2xl border border-slate-200/80 rounded-full px-4 sm:px-6 py-2 shadow-2xl ring-1 ring-black/5 transition-all duration-300">
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 select-none md:hidden w-[94%] max-w-sm">
+        <div className="flex items-center justify-between bg-white/95 dark:bg-[#161F32]/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-full px-3 py-2 shadow-xl ring-1 ring-black/5 transition-all duration-300">
           
           {/* 1. Ana Sayfa */}
           <Link
             href="/"
-            className={`flex flex-col items-center justify-center px-3.5 py-1 min-w-[60px] sm:min-w-[68px] rounded-full transition-all duration-150 ${
+            className={`flex flex-col items-center justify-center px-2.5 py-1 min-w-[50px] rounded-full transition-all duration-150 ${
               pathname === "/"
-                ? "text-[#15161A]"
-                : "text-[#8C93A3] hover:text-[#15161A]"
+                ? "text-[#182542] dark:text-white"
+                : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
           >
             <div className="relative">
@@ -276,12 +306,12 @@ export const FloatingBottomBar: React.FC = () => {
                 strokeWidth={pathname === "/" ? 2.5 : 1.8}
               />
               {pathname === "/" && (
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#15161A]" />
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#182542] dark:bg-white" />
               )}
             </div>
             <span
-              className={`text-[10px] mt-1 transition-all ${
-                pathname === "/" ? "font-bold text-[#15161A]" : "font-medium text-[#8C93A3]"
+              className={`text-[10px] mt-0.5 transition-all ${
+                pathname === "/" ? "font-bold text-[#182542] dark:text-white" : "font-medium text-[#8C93A3] dark:text-[#94A3B8]"
               }`}
             >
               Ana Sayfa
@@ -291,33 +321,33 @@ export const FloatingBottomBar: React.FC = () => {
           {/* 2. Tarayıcı */}
           <Link
             href="/tarayici"
-            className={`flex flex-col items-center justify-center px-3.5 py-1 min-w-[60px] sm:min-w-[68px] rounded-full transition-all duration-150 ${
+            className={`flex flex-col items-center justify-center px-2.5 py-1 min-w-[50px] rounded-full transition-all duration-150 ${
               pathname.startsWith("/tarayici")
-                ? "text-[#15161A]"
-                : "text-[#8C93A3] hover:text-[#15161A]"
+                ? "text-[#182542] dark:text-white"
+                : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
           >
             <BarChart3 size={20} strokeWidth={pathname.startsWith("/tarayici") ? 2.5 : 1.8} />
-            <span className={`text-[10px] mt-1 transition-all ${
-              pathname.startsWith("/tarayici") ? "font-bold text-[#15161A]" : "font-medium text-[#8C93A3]"
+            <span className={`text-[10px] mt-0.5 transition-all ${
+              pathname.startsWith("/tarayici") ? "font-bold text-[#182542] dark:text-white" : "font-medium text-[#8C93A3] dark:text-[#94A3B8]"
             }`}>
               Tarayıcı
             </span>
           </Link>
 
-          {/* 3. CENTER RAISED ACTION FAB */}
-          <div className="relative px-2 sm:px-3 flex flex-col items-center">
+          {/* 3. CENTER RAISED ACTION FAB (Lacivert) */}
+          <div className="relative px-1 flex flex-col items-center">
             <button
               type="button"
               onClick={() => setQuickActionOpen((prev) => !prev)}
               aria-label="Hızlı İşlemler"
-              className={`w-12 h-12 sm:w-13 sm:h-13 -mt-6 sm:-mt-7 rounded-full bg-[#FF5B26] text-white flex items-center justify-center shadow-lg shadow-[#FF5B26]/30 border-4 border-[#EEF0F4] transition-all duration-200 hover:scale-105 active:scale-95 ${
-                quickActionOpen ? "rotate-45 bg-[#15161A]" : ""
+              className={`w-12 h-12 -mt-6 rounded-full bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center shadow-lg shadow-[#182542]/30 border-4 border-[#EEF0F4] dark:border-[#0B0F17] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                quickActionOpen ? "rotate-45" : ""
               }`}
             >
               <Plus size={22} strokeWidth={2.6} className="transition-transform duration-200" />
             </button>
-            <span className="text-[10px] mt-1 font-semibold text-[#8C93A3] hidden sm:block">
+            <span className="text-[9px] mt-0.5 font-bold text-[#6E81A0] dark:text-[#94A3B8]">
               Hızlı İşlem
             </span>
           </div>
@@ -325,10 +355,10 @@ export const FloatingBottomBar: React.FC = () => {
           {/* 4. Halka Arz */}
           <Link
             href="/ipo"
-            className={`flex flex-col items-center justify-center px-3.5 py-1 min-w-[60px] sm:min-w-[68px] rounded-full transition-all duration-150 ${
+            className={`flex flex-col items-center justify-center px-2.5 py-1 min-w-[50px] rounded-full transition-all duration-150 ${
               pathname.startsWith("/ipo")
-                ? "text-[#15161A]"
-                : "text-[#8C93A3] hover:text-[#15161A]"
+                ? "text-[#182542] dark:text-white"
+                : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
           >
             <div className="relative">
@@ -337,12 +367,12 @@ export const FloatingBottomBar: React.FC = () => {
                 strokeWidth={pathname.startsWith("/ipo") ? 2.5 : 1.8}
               />
               {pathname.startsWith("/ipo") && (
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#15161A]" />
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#182542] dark:bg-white" />
               )}
             </div>
             <span
-              className={`text-[10px] mt-1 transition-all ${
-                pathname.startsWith("/ipo") ? "font-bold text-[#15161A]" : "font-medium text-[#8C93A3]"
+              className={`text-[10px] mt-0.5 transition-all ${
+                pathname.startsWith("/ipo") ? "font-bold text-[#182542] dark:text-white" : "font-medium text-[#8C93A3] dark:text-[#94A3B8]"
               }`}
             >
               Halka Arz
@@ -352,10 +382,10 @@ export const FloatingBottomBar: React.FC = () => {
           {/* 5. Portföy */}
           <Link
             href="/portfolio"
-            className={`flex flex-col items-center justify-center px-3.5 py-1 min-w-[60px] sm:min-w-[68px] rounded-full transition-all duration-150 ${
+            className={`flex flex-col items-center justify-center px-2.5 py-1 min-w-[50px] rounded-full transition-all duration-150 ${
               pathname.startsWith("/portfolio")
-                ? "text-[#15161A]"
-                : "text-[#8C93A3] hover:text-[#15161A]"
+                ? "text-[#182542] dark:text-white"
+                : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
             }`}
           >
             <div className="relative">
@@ -364,12 +394,12 @@ export const FloatingBottomBar: React.FC = () => {
                 strokeWidth={pathname.startsWith("/portfolio") ? 2.5 : 1.8}
               />
               {pathname.startsWith("/portfolio") && (
-                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#15161A]" />
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#182542] dark:bg-white" />
               )}
             </div>
             <span
-              className={`text-[10px] mt-1 transition-all ${
-                pathname.startsWith("/portfolio") ? "font-bold text-[#15161A]" : "font-medium text-[#8C93A3]"
+              className={`text-[10px] mt-0.5 transition-all ${
+                pathname.startsWith("/portfolio") ? "font-bold text-[#182542] dark:text-white" : "font-medium text-[#8C93A3] dark:text-[#94A3B8]"
               }`}
             >
               Portföy

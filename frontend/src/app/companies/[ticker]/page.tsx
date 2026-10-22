@@ -10,6 +10,7 @@ import { getSmartAlternativesForTicker } from "@/lib/data/sampleCompanies";
 import { CompanyDetailScreening, ScreeningStandardCode } from "@/types/katilim";
 import { formatTRY } from "@/lib/decimal/decimal";
 import { PaynoShell } from "@/components/PaynoShell";
+import { StockLogo } from "@/components/StockLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
   ArrowLeft,
@@ -236,9 +237,13 @@ export default function CompanyDetailPage() {
             
             {/* Ticker & Info */}
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#182542] to-[#273869] text-white flex items-center justify-center font-extrabold text-lg font-mono tabular-nums shadow-sm shrink-0">
-                {ticker}
-              </div>
+              <StockLogo
+                ticker={ticker}
+                name={data.companyName}
+                size="xl"
+                priority
+                className="shadow-sm"
+              />
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2.5">
                   <h1 className="text-xl sm:text-2xl font-extrabold text-[#182542] tracking-tight">
@@ -944,15 +949,20 @@ export default function CompanyDetailPage() {
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-mono">
                       {peers.map((p) => (
-                        <tr key={p.ticker} className="hover:bg-slate-50/50 transition">
-                          <td className="py-2.5 px-3 font-bold text-[#182542]">
-                            <div className="flex items-center gap-1.5">
-                              <span>{p.ticker}</span>
-                              {p.ticker === ticker && (
-                                <span className="text-[9px] bg-indigo-100 text-indigo-800 px-1.5 py-0.2 rounded font-sans">Mevcut</span>
-                              )}
+                        <tr key={p.ticker} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition">
+                          <td className="py-2.5 px-3 font-bold text-[#182542] dark:text-white">
+                            <div className="flex items-center gap-2">
+                              <StockLogo ticker={p.ticker} name={p.name} size="xs" />
+                              <div>
+                                <div className="flex items-center gap-1.5">
+                                  <span>{p.ticker}</span>
+                                  {p.ticker === ticker && (
+                                    <span className="text-[9px] bg-indigo-100 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-300 px-1.5 py-0.2 rounded font-sans">Mevcut</span>
+                                  )}
+                                </div>
+                                <div className="text-[10px] font-sans text-slate-500 dark:text-slate-400 font-normal truncate max-w-[130px]">{p.name}</div>
+                              </div>
                             </div>
-                            <div className="text-[10px] font-sans text-slate-500 font-normal truncate max-w-[130px]">{p.name}</div>
                           </td>
                           <td className="py-2.5 px-3">
                             <span className="font-bold text-slate-800 block">{p.priceTRY}</span>

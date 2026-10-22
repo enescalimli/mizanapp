@@ -17,12 +17,14 @@ import {
   LayoutGrid,
   List,
   Plus,
-  Send,
   Building2,
+  ShieldCheck,
+  TrendingUp,
 } from "lucide-react";
 import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { CompanySummary } from "@/types/katilim";
 import { PaynoShell } from "@/components/PaynoShell";
+import { StockLogo } from "@/components/StockLogo";
 
 type SortField =
   | "ticker"
@@ -46,24 +48,13 @@ export default function TarayiciPage() {
   } = useLiveMarketData(30000);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT" | "KATILIM100">("ALL");
+  const [activeTab, setActiveTab] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT" | "FAV">("ALL");
+  const [sectorFilter, setSectorFilter] = useState("TÜMÜ");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [visibleLimit, setVisibleLimit] = useState(60);
   const [sortField, setSortField] = useState<SortField>("ticker");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-  const [favorites, setFavorites] = useState<string[]>(["BIMAS", "THYAO", "ASELS", "TUPRS"]);
-
-  // Quick transfer / simulation box state (From Frame 03)
-  const [selectedQuickStock, setSelectedQuickStock] = useState<string>("BIMAS");
-  const [quickAmount, setQuickAmount] = useState<string>("100");
-
-  const quickFavoritesList = [
-    { ticker: "BIMAS", name: "BİM Mağazalar", initials: "AK", color: "bg-[#FF5B26]" },
-    { ticker: "THYAO", name: "Türk Hava Yolları", initials: "RA", color: "bg-[#2563EB]" },
-    { ticker: "ASELS", name: "Aselsan", initials: "PS", color: "bg-[#7C3AED]" },
-    { ticker: "FROTO", name: "Ford Otomotiv", initials: "TH", color: "bg-[#D97706]" },
-    { ticker: "TUPRS", name: "Tüpraş", initials: "GL", color: "bg-[#059669]" },
-  ];
+  const [favorites, setFavorites] = useState<string[]>(["BIMAS", "THYAO", "ASELS", "TUPRS", "FROTO"]);
 
   const toggleFavorite = (ticker: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -71,6 +62,15 @@ export default function TarayiciPage() {
       prev.includes(ticker) ? prev.filter((t) => t !== ticker) : [...prev, ticker]
     );
   };
+
+  // Unique sector list
+  const sectorList = useMemo(() => {
+    const set = new Set<string>();
+    companies.forEach((c) => {
+      if (c.sector) set.add(c.sector);
+    });
+    return ["TÜMÜ", ...Array.from(set).sort()];
+  }, [companies]);
 
   // Filtering
   const filteredCompanies = useMemo(() => {
@@ -90,12 +90,16 @@ export default function TarayiciPage() {
       list = list.filter((c) => c.bistStatus === "COMPLIANT");
     } else if (activeTab === "NON_COMPLIANT") {
       list = list.filter((c) => c.bistStatus === "NON_COMPLIANT");
-    } else if (activeTab === "KATILIM100") {
-      list = list.filter((c) => c.bistStatus === "COMPLIANT").slice(0, 100);
+    } else if (activeTab === "FAV") {
+      list = list.filter((c) => favorites.includes(c.ticker));
+    }
+
+    if (sectorFilter !== "TÜMÜ") {
+      list = list.filter((c) => c.sector === sectorFilter);
     }
 
     return list;
-  }, [companies, searchQuery, activeTab]);
+  }, [companies, searchQuery, activeTab, sectorFilter, favorites]);
 
   // Sorting
   const sortedCompanies = useMemo(() => {
@@ -146,9 +150,9 @@ export default function TarayiciPage() {
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) return <ArrowUpDown size={12} className="text-[#8C9BB0]" />;
     return sortDirection === "asc" ? (
-      <ChevronUp size={14} className="text-[#14151A]" />
+      <ChevronUp size={14} className="text-[#182542] dark:text-white" />
     ) : (
-      <ChevronDown size={14} className="text-[#14151A]" />
+      <ChevronDown size={14} className="text-[#182542] dark:text-white" />
     );
   };
 
@@ -163,52 +167,35 @@ export default function TarayiciPage() {
     };
   }, [companies]);
 
-  // Color generator for stock cards
-  const getStockAvatarColor = (ticker: string) => {
-    const colors = [
-      "from-[#FF5B26] to-[#FF8C66]",
-      "from-[#2563EB] to-[#60A5FA]",
-      "from-[#7C3AED] to-[#A78BFA]",
-      "from-[#E11D48] to-[#FB7185]",
-      "from-[#059669] to-[#34D399]",
-      "from-[#D97706] to-[#FBBF24]",
-    ];
-    let hash = 0;
-    for (let i = 0; i < ticker.length; i++) {
-      hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return colors[Math.abs(hash) % colors.length];
-  };
-
   return (
     <PaynoShell badge="tarayıcı">
-      <div className="space-y-6">
+      <div className="space-y-5 sm:space-y-6">
         
         {/* ================================================================= */}
-        {/* HEADER (Replicating Frame 03: Contacts / Tarayıcı Header)         */}
+        {/* BAŞLIK VE GÖRÜNÜM KONTROLLERİ                                     */}
         {/* ================================================================= */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#14151A]">
-              Contacts &amp; Hisseler
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
+              Borsa İstanbul Katılım Hisseleri (626)
             </h1>
-            <p className="text-xs sm:text-sm text-[#8C93A3]">
-              The companies and assets in Borsa İstanbul, one tap away. (626 BIST Katılım)
+            <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
+              Diyanet İşleri Başkanlığı ve TKBB standartlarına göre 626 hissenin anlık uygunluk denetimi.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* View Mode Toggle: Grid vs Table */}
-            <div className="bg-white rounded-full p-1 border border-slate-200/60 shadow-xs flex items-center gap-1">
+            {/* Görünüm Seçici: Kart Izgarası vs Tablo */}
+            <div className="bg-white dark:bg-[#161F32] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
                 className={`p-1.5 rounded-full transition ${
                   viewMode === "grid"
-                    ? "bg-[#15161A] text-white"
-                    : "text-[#8C93A3] hover:text-[#14151A]"
+                    ? "bg-[#182542] dark:bg-[#273869] text-white"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
                 }`}
-                title="Kart Izgarası"
+                title="Kart Izgarası Görünümü"
               >
                 <LayoutGrid size={15} />
               </button>
@@ -217,165 +204,56 @@ export default function TarayiciPage() {
                 onClick={() => setViewMode("table")}
                 className={`p-1.5 rounded-full transition ${
                   viewMode === "table"
-                    ? "bg-[#15161A] text-white"
-                    : "text-[#8C93A3] hover:text-[#14151A]"
+                    ? "bg-[#182542] dark:bg-[#273869] text-white"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
                 }`}
-                title="Detaylı Tablo"
+                title="Detaylı Tablo Görünümü"
               >
                 <List size={15} />
               </button>
             </div>
 
-            {/* Refresh Live Data */}
+            {/* Yenileme Butonu */}
             <button
               type="button"
               onClick={() => refreshNow()}
               disabled={isRefreshing}
-              className="w-8 h-8 rounded-full bg-white border border-slate-200/60 shadow-xs text-[#8C93A3] hover:text-[#14151A] flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
               title="KAP Bilanço Verilerini Yenile"
             >
-              <RefreshCw size={14} className={isRefreshing ? "animate-spin text-[#FF5B26]" : ""} />
+              <RefreshCw size={14} className={isRefreshing ? "animate-spin text-[#0D8B52]" : ""} />
             </button>
 
-            {/* Add Contact / Portföye Ekle Pill Button */}
+            {/* Portföye Git */}
             <Link
-              href="/portfolio"
-              className="rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white px-4 sm:px-5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
+              href="/portfolio#yeni-pozisyon"
+              className="rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white px-4 sm:px-5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
             >
               <Plus size={14} />
-              <span>Add contact</span>
+              <span>Portföye Ekle</span>
             </Link>
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* QUICK TRANSFER / SIMULATION PANEL (From Frame 03)                 */}
+        {/* FİLTRE KAPSÜLLERİ, SEKTÖR VE ARAMA ÇUBUĞU                         */}
         {/* ================================================================= */}
-        <div className="bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           
-          {/* Sol Kolon: Quick Transfer Avatars (lg:col-span-7) */}
-          <div className="lg:col-span-7 space-y-3">
-            <div>
-              <h3 className="text-sm font-bold text-[#14151A]">
-                Quick transfer
-              </h3>
-              <p className="text-[11px] text-[#8C93A3]">
-                Pick a favourite, choose an amount, done.
-              </p>
-            </div>
-
-            {/* Horizontal avatar list with New button */}
-            <div className="flex items-center gap-4 overflow-x-auto py-2 scrollbar-none">
-              {quickFavoritesList.map((item) => (
-                <button
-                  key={item.ticker}
-                  type="button"
-                  onClick={() => setSelectedQuickStock(item.ticker)}
-                  className="flex flex-col items-center gap-1.5 group shrink-0"
-                >
-                  <div className={`w-12 h-12 rounded-full ${item.color} text-white flex items-center justify-center font-bold text-xs font-mono shadow-xs transition group-hover:scale-105 ${
-                    selectedQuickStock === item.ticker ? "ring-2 ring-offset-2 ring-[#15161A]" : ""
-                  }`}>
-                    {item.initials}
-                  </div>
-                  <span className="text-[11px] font-semibold text-[#14151A] truncate max-w-[64px]">
-                    {item.ticker}
-                  </span>
-                </button>
-              ))}
-
-              {/* + New Button (From Frame 03) */}
-              <button
-                type="button"
-                onClick={() => setViewMode("table")}
-                className="flex flex-col items-center gap-1.5 group shrink-0"
-              >
-                <div className="w-12 h-12 rounded-full border-2 border-dashed border-slate-200 hover:border-slate-400 text-[#8C93A3] flex items-center justify-center text-lg font-light transition">
-                  +
-                </div>
-                <span className="text-[11px] font-semibold text-[#8C93A3]">
-                  New
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* Sağ Kolon: Quick Amount Box (lg:col-span-5) */}
-          <div className="lg:col-span-5 bg-[#F8F9FA] rounded-2xl p-4 border border-slate-100 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-[#FF5B26] text-white flex items-center justify-center font-bold text-[10px] font-mono">
-                {selectedQuickStock.slice(0, 2)}
-              </div>
-              <div className="text-xs">
-                <span className="text-[#8C93A3] text-[10px] block">Sending to</span>
-                <span className="font-bold text-[#14151A]">{selectedQuickStock} Katılım İncelemesi</span>
-              </div>
-            </div>
-
-            {/* Input field */}
-            <div className="bg-white rounded-xl p-2.5 border border-slate-200 flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <span className="text-lg font-black text-[#14151A] font-mono">₺</span>
-                <input
-                  type="text"
-                  value={quickAmount}
-                  onChange={(e) => setQuickAmount(e.target.value.replace(/[^0-9]/g, ""))}
-                  className="text-lg font-black text-[#14151A] font-mono bg-transparent outline-none w-24"
-                />
-              </div>
-              <span className="text-xs font-bold text-[#8C93A3]">USD / TRY</span>
-            </div>
-
-            {/* Chips */}
-            <div className="flex items-center gap-2">
-              {["50", "100", "250", "500"].map((amt) => (
-                <button
-                  key={amt}
-                  type="button"
-                  onClick={() => setQuickAmount(amt)}
-                  className={`flex-1 py-1 rounded-full text-xs font-semibold transition ${
-                    quickAmount === amt
-                      ? "bg-[#15161A] text-white shadow-xs"
-                      : "bg-white text-[#14151A] border border-slate-200/80 hover:bg-slate-50"
-                  }`}
-                >
-                  ${amt}
-                </button>
-              ))}
-            </div>
-
-            {/* Send Button */}
-            <button
-              type="button"
-              onClick={() => router.push(`/companies/${selectedQuickStock}`)}
-              className="w-full py-2.5 rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-xs transition"
-            >
-              <Send size={12} />
-              <span>Send ${quickAmount}.00</span>
-            </button>
-          </div>
-
-        </div>
-
-        {/* ================================================================= */}
-        {/* FILTER CATEGORY PILLS & SEARCH (From Frame 03)                    */}
-        {/* ================================================================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          
-          {/* Category Filter Pills (All 10, Favourites 4, Businesses 4) */}
+          {/* Kategori Filtre Kapsülleri */}
           <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-none">
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "ALL"
-                  ? "bg-[#15161A] text-white shadow-xs"
-                  : "bg-white text-[#646A78] hover:text-[#15161A] border border-slate-200/60"
+                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                  : "bg-white dark:bg-[#161F32] text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-slate-200/60 dark:border-white/10"
               }`}
             >
-              <span>All</span>
+              <span>Tüm Hisseler</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === "ALL" ? "bg-white/20 text-white" : "bg-slate-100 text-[#8C93A3]"
+                activeTab === "ALL" ? "bg-white/20 text-white" : "bg-slate-100 dark:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
               }`}>
                 {stats.total}
               </span>
@@ -384,15 +262,15 @@ export default function TarayiciPage() {
             <button
               type="button"
               onClick={() => setActiveTab("COMPLIANT")}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "COMPLIANT"
-                  ? "bg-[#15161A] text-white shadow-xs"
-                  : "bg-white text-[#646A78] hover:text-[#15161A] border border-slate-200/60"
+                  ? "bg-[#0D8B52] text-white shadow-xs"
+                  : "bg-white dark:bg-[#161F32] text-[#646A78] dark:text-[#94A3B8] hover:text-[#0D8B52] border border-slate-200/60 dark:border-white/10"
               }`}
             >
-              <span>Katılıma Uygun</span>
+              <span>✓ Katılıma Uygun</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === "COMPLIANT" ? "bg-white/20 text-white" : "bg-emerald-50 text-[#10B981]"
+                activeTab === "COMPLIANT" ? "bg-white/20 text-white" : "bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400"
               }`}>
                 {stats.compliant}
               </span>
@@ -401,15 +279,15 @@ export default function TarayiciPage() {
             <button
               type="button"
               onClick={() => setActiveTab("NON_COMPLIANT")}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "NON_COMPLIANT"
-                  ? "bg-[#15161A] text-white shadow-xs"
-                  : "bg-white text-[#646A78] hover:text-[#15161A] border border-slate-200/60"
+                  ? "bg-[#C62E26] text-white shadow-xs"
+                  : "bg-white dark:bg-[#161F32] text-[#646A78] dark:text-[#94A3B8] hover:text-[#C62E26] border border-slate-200/60 dark:border-white/10"
               }`}
             >
-              <span>Katılım Dışı</span>
+              <span>✕ Katılım Dışı</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === "NON_COMPLIANT" ? "bg-white/20 text-white" : "bg-rose-50 text-[#E03131]"
+                activeTab === "NON_COMPLIANT" ? "bg-white/20 text-white" : "bg-rose-50 dark:bg-rose-950/40 text-[#C62E26] dark:text-rose-400"
               }`}>
                 {stats.nonCompliant}
               </span>
@@ -417,36 +295,55 @@ export default function TarayiciPage() {
 
             <button
               type="button"
-              onClick={() => setActiveTab("KATILIM100")}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap ${
-                activeTab === "KATILIM100"
-                  ? "bg-[#15161A] text-white shadow-xs"
-                  : "bg-white text-[#646A78] hover:text-[#15161A] border border-slate-200/60"
+              onClick={() => setActiveTab("FAV")}
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+                activeTab === "FAV"
+                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                  : "bg-white dark:bg-[#161F32] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
               }`}
             >
-              <span>Katılım 100</span>
+              <span>Favorilerim</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                activeTab === "FAV" ? "bg-white/20 text-white" : "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
+              }`}>
+                {favorites.length}
+              </span>
             </button>
           </div>
 
-          {/* Search Box (Search contacts) */}
-          <div className="relative w-full sm:w-64">
-            <Search size={14} className="absolute left-3.5 top-3 text-[#8C93A3]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search contacts..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white border border-slate-200/60 text-xs text-[#14151A] placeholder-[#8C93A3] focus:outline-none focus:border-[#15161A] shadow-xs"
-            />
+          {/* Sektör Seçici & Arama Kutusu */}
+          <div className="flex items-center gap-2">
+            <select
+              value={sectorFilter}
+              onChange={(e) => setSectorFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none shadow-xs max-w-[150px] truncate"
+            >
+              {sectorList.map((sec) => (
+                <option key={sec} value={sec}>
+                  {sec === "TÜMÜ" ? "Tüm Sektörler" : sec}
+                </option>
+              ))}
+            </select>
+
+            <div className="relative w-full sm:w-64">
+              <Search size={14} className="absolute left-3.5 top-2.5 text-[#6E81A0] dark:text-[#94A3B8]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="626 Hisse Ara (örn: BIMAS, THYAO)..."
+                className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 text-xs text-[#182542] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 shadow-xs"
+              />
+            </div>
           </div>
 
         </div>
 
         {/* ================================================================= */}
-        {/* VIEW 1: CONTACT CARDS GRID (Exact match to Frame 03!)             */}
+        {/* GÖRÜNÜM 1: BENTO KART IZGARASI (Gerçek Logolarla!)                */}
         {/* ================================================================= */}
         {viewMode === "grid" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {displayedCompanies.map((comp) => {
               const isFav = favorites.includes(comp.ticker);
               const isCompliant = comp.bistStatus === "COMPLIANT";
@@ -455,14 +352,14 @@ export default function TarayiciPage() {
                 <div
                   key={comp.ticker}
                   onClick={() => router.push(`/companies/${comp.ticker}`)}
-                  className="bg-white rounded-[24px] p-5 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-300 transition-all flex flex-col justify-between space-y-4 group cursor-pointer relative"
+                  className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between space-y-3.5 group cursor-pointer relative"
                 >
-                  {/* Top: Star Favorite Icon */}
+                  {/* Üst: Favori Yıldızı */}
                   <div className="flex justify-end">
                     <button
                       type="button"
                       onClick={(e) => toggleFavorite(comp.ticker, e)}
-                      className="text-slate-300 hover:text-amber-400 transition"
+                      className="text-slate-300 dark:text-slate-600 hover:text-amber-400 transition"
                       title={isFav ? "Favorilerden Kaldır" : "Favorilere Ekle"}
                     >
                       <Star
@@ -472,51 +369,54 @@ export default function TarayiciPage() {
                     </button>
                   </div>
 
-                  {/* Center: Large Avatar Circle + Name + Handle */}
+                  {/* Merkez: Gerçek Şirket Logosu + Kod + Şirket Adı */}
                   <div className="flex flex-col items-center text-center space-y-2">
-                    <div className={`w-14 h-14 rounded-full bg-gradient-to-tr ${getStockAvatarColor(comp.ticker)} text-white flex items-center justify-center text-sm font-bold font-mono shadow-sm group-hover:scale-105 transition`}>
-                      {comp.ticker.slice(0, 2)}
-                    </div>
+                    <StockLogo
+                      ticker={comp.ticker}
+                      name={comp.name}
+                      size="xl"
+                      className="group-hover:scale-105 transition"
+                    />
 
                     <div className="space-y-0.5">
-                      <h4 className="text-xs font-bold text-[#14151A] group-hover:text-[#FF5B26] transition truncate max-w-[150px]">
+                      <span className="font-mono font-black text-sm text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400 transition block">
+                        {comp.ticker}
+                      </span>
+                      <h4 className="text-[11px] font-semibold text-[#6E81A0] dark:text-[#94A3B8] truncate max-w-[150px]">
                         {comp.name}
                       </h4>
-                      <p className="text-[11px] font-mono text-[#8C93A3]">
-                        @{comp.ticker.toLowerCase()}
-                      </p>
                     </div>
 
-                    {/* Sector / Type Pill */}
-                    <span className="text-[10px] font-semibold text-[#8C93A3] bg-[#F8F9FA] px-2.5 py-0.5 rounded-full border border-slate-100 truncate max-w-[140px]">
+                    {/* Sektör Rozeti */}
+                    <span className="text-[10px] font-medium text-[#6E81A0] dark:text-[#94A3B8] bg-[#F8F9FA] dark:bg-white/5 px-2.5 py-0.5 rounded-full border border-slate-100 dark:border-white/5 truncate max-w-[140px]">
                       {comp.sector || "BIST Katılım"}
                     </span>
                   </div>
 
-                  {/* Bottom: Ratios & Price Details */}
-                  <div className="pt-3 border-t border-slate-100 text-center space-y-1">
-                    <div className="flex items-center justify-between text-[11px] font-mono">
-                      <span className="text-[#8C93A3]">Fiyat:</span>
-                      <span className="font-bold text-[#14151A]">{comp.priceTRY}</span>
+                  {/* Alt: Fiyat & Fıkhi Borç Rasyoları */}
+                  <div className="pt-2.5 border-t border-slate-100 dark:border-white/10 text-center space-y-1">
+                    <div className="flex items-center justify-between text-xs font-mono">
+                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Fiyat:</span>
+                      <span className="font-bold text-[#182542] dark:text-white">{comp.priceTRY}</span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[10px]">
-                      <span className="text-[#8C93A3]">Faizli Borç:</span>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Faizli Borç:</span>
                       <span className={`font-mono font-bold ${
-                        comp.debtRatioPercent > 33 ? "text-[#E03131]" : "text-[#10B981]"
+                        comp.debtRatioPercent > 33 ? "text-[#C62E26] dark:text-rose-400" : "text-[#0D8B52] dark:text-emerald-400"
                       }`}>
                         %{comp.debtRatioPercent.toFixed(1)}
                       </span>
                     </div>
 
-                    {/* Compliance Pill */}
+                    {/* Fıkhi Uygunluk Rozeti */}
                     <div className="pt-1.5 flex justify-center">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                         isCompliant
-                          ? "bg-[#EBF9F1] text-[#10B981]"
-                          : "bg-[#FFF0F0] text-[#E03131]"
+                          ? "bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400"
+                          : "bg-rose-50 dark:bg-rose-950/40 text-[#C62E26] dark:text-rose-400"
                       }`}>
-                        {isCompliant ? "✓ Katılıma Uygun" : "✕ Kapsam Dışı"}
+                        {isCompliant ? "✓ Katılıma Uygun" : "✕ Katılım Dışı"}
                       </span>
                     </div>
                   </div>
@@ -527,40 +427,40 @@ export default function TarayiciPage() {
         )}
 
         {/* ================================================================= */}
-        {/* VIEW 2: DETAILED TABLE VIEW                                       */}
+        {/* GÖRÜNÜM 2: DETAYLI TABLO GÖRÜNÜMÜ                                 */}
         {/* ================================================================= */}
         {viewMode === "table" && (
-          <div className="bg-white rounded-[24px] border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden">
+          <div className="bg-white dark:bg-[#161F32] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-[#F8F9FA] text-[#8C93A3] font-semibold text-[11px]">
-                    <th onClick={() => handleSort("ticker")} className="py-3 px-4 cursor-pointer hover:text-[#14151A]">
+                  <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[#6E81A0] dark:text-[#94A3B8] font-bold text-[11px]">
+                    <th onClick={() => handleSort("ticker")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white">
                       <div className="flex items-center gap-1">
                         <span>Hisse Kodu &amp; Şirket</span>
                         {getSortIcon("ticker")}
                       </div>
                     </th>
-                    <th onClick={() => handleSort("priceTRY")} className="py-3 px-4 cursor-pointer hover:text-[#14151A] text-right">
+                    <th onClick={() => handleSort("priceTRY")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Fiyat</span>
                         {getSortIcon("priceTRY")}
                       </div>
                     </th>
-                    <th onClick={() => handleSort("change24h")} className="py-3 px-4 cursor-pointer hover:text-[#14151A] text-right">
+                    <th onClick={() => handleSort("change24h")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Değişim</span>
                         {getSortIcon("change24h")}
                       </div>
                     </th>
                     <th className="py-3 px-4">Fıkhi Durum</th>
-                    <th onClick={() => handleSort("debtRatioPercent")} className="py-3 px-4 cursor-pointer hover:text-[#14151A] text-right">
+                    <th onClick={() => handleSort("debtRatioPercent")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Borç Oranı (&lt;%33)</span>
                         {getSortIcon("debtRatioPercent")}
                       </div>
                     </th>
-                    <th onClick={() => handleSort("impureIncomePercent")} className="py-3 px-4 cursor-pointer hover:text-[#14151A] text-right">
+                    <th onClick={() => handleSort("impureIncomePercent")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Arındırma (&lt;%5)</span>
                         {getSortIcon("impureIncomePercent")}
@@ -569,53 +469,53 @@ export default function TarayiciPage() {
                     <th className="py-3 px-4 text-center">İncele</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                   {displayedCompanies.map((comp) => {
                     const isCompliant = comp.bistStatus === "COMPLIANT";
                     return (
                       <tr
                         key={comp.ticker}
                         onClick={() => router.push(`/companies/${comp.ticker}`)}
-                        className="hover:bg-slate-50/70 transition cursor-pointer group"
+                        className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition cursor-pointer group"
                       >
                         <td className="py-3 px-4">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-7 h-7 rounded-full bg-[#15161A] text-white flex items-center justify-center font-mono font-bold text-xs">
-                              {comp.ticker.slice(0, 2)}
-                            </div>
+                          <div className="flex items-center gap-3">
+                            <StockLogo ticker={comp.ticker} name={comp.name} size="sm" />
                             <div>
-                              <span className="font-bold text-xs text-[#14151A] block">{comp.ticker}</span>
-                              <span className="text-[10px] text-[#8C93A3] block truncate max-w-[180px]">{comp.name}</span>
+                              <span className="font-bold text-xs text-[#182542] dark:text-white block">{comp.ticker}</span>
+                              <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[180px]">{comp.name}</span>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-right font-mono font-bold text-[#14151A]">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
                           {comp.priceTRY}
                         </td>
                         <td className={`py-3 px-4 text-right font-mono font-bold ${
-                          String(comp.change24h).startsWith("+") ? "text-[#10B981]" : "text-[#E03131]"
+                          String(comp.change24h).startsWith("+") ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
                         }`}>
                           {comp.change24h}
                         </td>
                         <td className="py-3 px-4">
                           <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            isCompliant ? "bg-[#EBF9F1] text-[#10B981]" : "bg-[#FFF0F0] text-[#E03131]"
+                            isCompliant
+                              ? "bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400"
+                              : "bg-rose-50 dark:bg-rose-950/40 text-[#C62E26] dark:text-rose-400"
                           }`}>
-                            {isCompliant ? "✓ Katılıma Uygun" : "✕ Kapsam Dışı"}
+                            {isCompliant ? "✓ Katılıma Uygun" : "✕ Katılım Dışı"}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right font-mono">
-                          <span className={comp.debtRatioPercent > 33 ? "text-[#E03131] font-bold" : "text-[#14151A]"}>
+                          <span className={comp.debtRatioPercent > 33 ? "text-[#C62E26] dark:text-rose-400 font-bold" : "text-[#182542] dark:text-white font-bold"}>
                             %{comp.debtRatioPercent.toFixed(1)}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right font-mono">
-                          <span className={comp.impureIncomePercent > 5 ? "text-[#E03131] font-bold" : "text-[#14151A]"}>
+                          <span className={comp.impureIncomePercent > 5 ? "text-[#C62E26] dark:text-rose-400 font-bold" : "text-[#182542] dark:text-white font-bold"}>
                             %{comp.impureIncomePercent.toFixed(1)}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
-                          <div className="w-6 h-6 rounded-full bg-slate-100 hover:bg-[#15161A] hover:text-white inline-flex items-center justify-center transition">
+                          <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-[#182542] dark:hover:bg-[#273869] hover:text-white inline-flex items-center justify-center transition">
                             <ArrowUpRight size={12} />
                           </div>
                         </td>
@@ -628,13 +528,13 @@ export default function TarayiciPage() {
           </div>
         )}
 
-        {/* Load More Button */}
+        {/* Daha Fazla Göster Butonu */}
         {visibleLimit < sortedCompanies.length && (
           <div className="text-center pt-2">
             <button
               type="button"
               onClick={() => setVisibleLimit((v) => v + 60)}
-              className="px-6 py-2 rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white text-xs font-semibold shadow-xs transition"
+              className="px-6 py-2 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold shadow-xs transition"
             >
               Daha Fazla Göster (+60 / Toplam: {sortedCompanies.length})
             </button>

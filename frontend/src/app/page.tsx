@@ -13,20 +13,18 @@ import {
   ShieldCheck,
   ChevronDown,
   Info,
-  CreditCard,
-  TrendingUp,
-  Wallet,
-  PiggyBank,
   Scale,
   Sparkles,
-  ArrowRightLeft,
   Plus,
-  Sliders,
-  Building2,
-  DollarSign,
+  BarChart3,
+  Search,
+  Wallet,
+  TrendingUp,
+  PieChart,
 } from "lucide-react";
 import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { PaynoShell } from "@/components/PaynoShell";
+import { StockLogo } from "@/components/StockLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 export default function HomePage() {
@@ -39,218 +37,236 @@ export default function HomePage() {
   const [monthlyLimit, setMonthlyLimit] = useState<number>(5500);
   const [limitUsed, setLimitUsed] = useState<number>(1400);
 
-  // Quick Transfer / Screener Modal state
-  const [isTransferModalOpen, setIsTransferModalOpen] = useState<boolean>(false);
-  const [transferAmount, setTransferAmount] = useState<string>("100");
-  const [selectedContact, setSelectedContact] = useState<{ name: string; tag: string; ticker?: string }>({
-    name: "BİM Birleşik Mağazalar",
-    tag: "BIMAS",
-    ticker: "BIMAS",
-  });
+  // Quick stock screener inline state
+  const [quickSearch, setQuickSearch] = useState<string>("");
 
   const userDisplayName = useMemo(() => {
-    return profile?.full_name || (user?.user_metadata?.full_name as string) || "Code XR";
+    return profile?.full_name || (user?.user_metadata?.full_name as string) || "Mustafa Çalımlı";
   }, [profile?.full_name, user?.user_metadata?.full_name]);
 
-  // Balance calculation according to currency
+  // Greeting according to local hour
+  const greetingText = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "Hayırlı Sabahlar";
+    if (hour >= 12 && hour < 18) return "Hayırlı Günler";
+    return "Hayırlı Akşamlar";
+  }, []);
+
+  // Formatted balance
   const formattedBalance = useMemo(() => {
-    if (!balanceVisible) return "••••••••";
-    if (currency === "USD") return "$102,419.86";
+    if (!balanceVisible) return "•••••••• ₺";
+    if (currency === "USD") return "$26,480.00";
     return "₺842.500,00";
   }, [balanceVisible, currency]);
 
-  // Monthly income chart data
+  // Monthly income chart data (Aylık Kâr Payı & Temettü)
   const chartData = [
-    { month: "Oca", profit: 65, loss: 12, label: "₺6.500" },
-    { month: "Şub", profit: 45, loss: 8, label: "₺4.500" },
-    { month: "Mar", profit: 80, loss: 15, label: "₺8.000" },
-    { month: "Nis", profit: 95, loss: 18, label: "₺9.500", active: true },
-    { month: "May", profit: 70, loss: 10, label: "₺7.000" },
-    { month: "Haz", profit: 85, loss: 14, label: "₺8.500" },
+    { month: "Oca", profit: 65, label: "₺6.500" },
+    { month: "Şub", profit: 45, label: "₺4.500" },
+    { month: "Mar", profit: 80, label: "₺8.000" },
+    { month: "Nis", profit: 95, label: "₺9.500", active: true },
+    { month: "May", profit: 70, label: "₺7.000" },
+    { month: "Haz", profit: 85, label: "₺8.500" },
   ];
 
-  // Recent activities list
+  // Son Katılım İşlemleri ve KAP Bildirimleri (Gerçek BIST hisseleri ve logoları)
   const recentActivities = [
     {
       ticker: "BIMAS",
-      name: "BİM Birleşik Mağazalar",
+      name: "BİM Birleşik Mağazalar A.Ş.",
       type: "Temettü Tahakkuku",
       amount: "+₺4.850,00",
       date: "Bugün, 14:32",
-      status: "Uygun (DİB)",
+      status: "DİB Uyumlu",
       compliant: true,
-      color: "from-orange-500 to-amber-500",
     },
     {
       ticker: "THYAO",
-      name: "Türk Hava Yolları",
-      type: "Fıkhi İnceleme & Tarama",
+      name: "Türk Hava Yolları A.O.",
+      type: "KAP Fıkhi Denetim Raporu",
       amount: "İcazetli",
       date: "Dün, 16:45",
       status: "Borç %18.2",
       compliant: true,
-      color: "from-blue-600 to-indigo-600",
     },
     {
       ticker: "ASELS",
-      name: "Aselsan Elektronik",
-      type: "Fıkhi Arındırma Kesintisi",
-      amount: "-₺142,50",
+      name: "Aselsan Elektronik Sanayi",
+      type: "Arındırma Oranı Güncellemesi",
+      amount: "-%0.85",
       date: "20 Nis",
-      status: "%0.85 Arındırma",
+      status: "DİB Uyumlu",
       compliant: true,
-      color: "from-purple-600 to-indigo-700",
     },
     {
       ticker: "KCHOL",
-      name: "Koç Holding",
+      name: "Koç Holding A.Ş.",
       type: "Katılım Dışı Uyarısı",
       amount: "Uygunsuz",
       date: "19 Nis",
-      status: "Finans/Faiz > %5",
+      status: "Finans/Faiz Geliri > %5",
       compliant: false,
-      color: "from-rose-500 to-red-600",
     },
     {
       ticker: "TUPRS",
-      name: "Tüpraş Petrol Rafinerileri",
-      type: "KAP Bilanço Güncellemesi",
-      amount: "+%1.4 Kâr Payı",
+      name: "Türkiye Petrol Rafinerileri",
+      type: "KAP Bilanço Uygunluk Onayı",
+      amount: "Onaylandı",
       date: "18 Nis",
-      status: "Uygun (DİB)",
+      status: "DİB Uyumlu",
       compliant: true,
-      color: "from-emerald-500 to-teal-600",
+    },
+    {
+      ticker: "FROTO",
+      name: "Ford Otomotiv Sanayi A.Ş.",
+      type: "Temettü & Kâr Payı Dağıtımı",
+      amount: "+₺3.200,00",
+      date: "17 Nis",
+      status: "DİB Uyumlu",
+      compliant: true,
     },
   ];
 
-  const quickContacts = [
-    { name: "BİM Mağazalar", tag: "BIMAS", ticker: "BIMAS", bg: "bg-orange-500" },
-    { name: "THY Havacılık", tag: "THYAO", ticker: "THYAO", bg: "bg-blue-600" },
-    { name: "Aselsan Savunma", tag: "ASELS", ticker: "ASELS", bg: "bg-purple-600" },
-    { name: "Ford Otomotiv", tag: "FROTO", ticker: "FROTO", bg: "bg-amber-500" },
-    { name: "Tüpraş Rafineri", tag: "TUPRS", ticker: "TUPRS", bg: "bg-emerald-600" },
-  ];
+  // Quick filtered stocks for fast search
+  const quickFilteredStocks = useMemo(() => {
+    if (!quickSearch.trim()) return companies.slice(0, 5);
+    const q = quickSearch.toUpperCase().trim();
+    return companies.filter(
+      (c) => c.ticker.includes(q) || c.name.toUpperCase().includes(q)
+    ).slice(0, 5);
+  }, [companies, quickSearch]);
 
   return (
-    <PaynoShell badge="Dashboard V14">
-      <div className="space-y-6">
+    <PaynoShell badge="katılım">
+      <div className="space-y-5 sm:space-y-6">
         
         {/* ================================================================= */}
-        {/* HERO GREETING BANNER (V14 Style)                                  */}
+        {/* KARŞILAMA VE PORTFÖY BAŞLIĞI (Türkçe, Kurumsal & Mobil Uyumlu)     */}
         {/* ================================================================= */}
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#14151A]">
-            Good morning, {userDisplayName}
-          </h1>
-          <p className="text-xs sm:text-sm text-[#8C93A3]">
-            Stay on top of your halal portfolio, monitor compliance, and track purification.
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
+              {greetingText}, {userDisplayName}
+            </h1>
+            <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
+              BIST Katılım portföyünüzün DİB fıkhi uyumunu, arındırma oranlarını ve kâr paylarını canlı takip edin.
+            </p>
+          </div>
+
+          {/* Hızlı Eylem Butonu (Mobilde de tam genişlik) */}
+          <div className="flex items-center gap-2">
+            <Link
+              href="/tarayici"
+              className="w-full sm:w-auto px-4 py-2 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs active:scale-95"
+            >
+              <Search size={14} />
+              <span>626 BIST Hisse Tara</span>
+            </Link>
+          </div>
         </div>
 
         {/* ================================================================= */}
-        {/* ROW 1: 3 BENTO COLUMNS (V14 Overview)                             */}
-        {/* 1. Total Balance | 2. 2x2 Bento Metrics | 3. Total Income Chart   */}
+        {/* 1. SATIR: 3 BENTO KOLONU (Lacivert/Zümrüt Paleti)                 */}
+        {/* 1. Toplam Varlık | 2. 2x2 Bento Metrik | 3. Temettü & Kâr Grafiği */}
         {/* ================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* =============================================================== */}
-          {/* COLUMN 1: TOTAL BALANCE CARD (lg:col-span-4)                     */}
+          {/* KOLON 1: TOPLAM PORTFÖY BAKİYESİ (lg:col-span-4)                 */}
           {/* =============================================================== */}
-          <div className="lg:col-span-4 bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-6">
+          <div className="lg:col-span-4 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-5 transition-colors">
             
-            {/* Top Row: Title + Currency Selector Pill */}
+            {/* Üst Satır: Başlık + Para Birimi Değiştirici */}
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#8C93A3]">
-                  Total Balance
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
+                  Toplam Portföy Değeri
                 </span>
                 
-                {/* Currency Switcher Pill */}
+                {/* Döviz Kapsülü */}
                 <button
                   type="button"
                   onClick={() => setCurrency((c) => (c === "TRY" ? "USD" : "TRY"))}
-                  className="bg-[#F4F5F7] hover:bg-[#E9EBEF] text-[#14151A] px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition"
+                  className="bg-[#F4F5F7] dark:bg-white/10 hover:bg-[#E9EBEF] dark:hover:bg-white/15 text-[#182542] dark:text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition"
                 >
-                  <span>{currency === "USD" ? "🇺🇸 USD" : "🇹🇷 TRY"}</span>
-                  <ChevronDown size={12} className="text-[#8C93A3]" />
+                  <span>{currency === "USD" ? "🇺🇸 USD" : "🇹🇷 TRY ₺"}</span>
+                  <ChevronDown size={12} className="text-[#6E81A0] dark:text-[#94A3B8]" />
                 </button>
               </div>
 
-              {/* Amount + Visibility Toggle */}
+              {/* Tutar & Gizleme Butonu */}
               <div className="mt-3 flex items-baseline gap-3">
-                <span className="text-3xl sm:text-4xl font-extrabold text-[#14151A] font-mono tracking-tight">
+                <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
                   {formattedBalance}
                 </span>
                 <button
                   type="button"
                   onClick={() => setBalanceVisible(!balanceVisible)}
-                  className="text-[#8C93A3] hover:text-[#14151A] transition"
+                  className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white transition"
                   title="Bakiyeyi Gizle / Göster"
                 >
                   {balanceVisible ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
 
-              {/* Subtitle Trend Badge */}
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EBF9F1] text-[#10B981] text-[11px] font-semibold">
-                <span>▲ +5% than last month</span>
+              {/* Trend Rozeti (Zümrüt Yeşili) */}
+              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[11px] font-bold">
+                <span>▲ Geçen aya göre +%5,2</span>
               </div>
             </div>
 
-            {/* Action Buttons: ⇄ Transfer & + Request (V14 Pill Buttons) */}
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <button
-                type="button"
-                onClick={() => setIsTransferModalOpen(true)}
-                className="rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white py-2.5 px-4 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition"
-              >
-                <ArrowRightLeft size={13} />
-                <span>Transfer</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => router.push("/purification")}
-                className="rounded-full bg-[#F4F5F7] hover:bg-[#EAECEF] text-[#14151A] py-2.5 px-4 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
+            {/* Anlamlı Katılım Eylemleri: Hisse Ekle / Arındır */}
+            <div className="grid grid-cols-2 gap-2.5 pt-1">
+              <Link
+                href="/portfolio#yeni-pozisyon"
+                className="rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white py-2.5 px-3 text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition text-center"
               >
                 <Plus size={14} />
-                <span>Request</span>
-              </button>
+                <span>Hisse Ekle</span>
+              </Link>
+
+              <Link
+                href="/purification"
+                className="rounded-full bg-[#F4F5F7] dark:bg-white/10 hover:bg-[#EAECEF] dark:hover:bg-white/15 text-[#182542] dark:text-white py-2.5 px-3 text-xs font-bold flex items-center justify-center gap-1.5 transition text-center"
+              >
+                <Scale size={14} />
+                <span>Arındır</span>
+              </Link>
             </div>
 
-            {/* Wallets Section (V14 Wallets sub-cards) */}
-            <div className="pt-3 border-t border-slate-100 space-y-2.5">
-              <div className="flex items-center justify-between text-xs text-[#8C93A3]">
-                <span className="font-semibold">Wallets</span>
-                <span className="text-[11px]">Total 2 wallets</span>
+            {/* Varlık Dağılımı Cüzdanları */}
+            <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-2">
+              <div className="flex items-center justify-between text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                <span className="font-bold">Varlık Dağılımı</span>
+                <span className="text-[11px]">2 Varlık Grubu</span>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
-                {/* Wallet 1 */}
-                <div className="bg-[#F8F9FA] rounded-2xl p-3 border border-slate-100 flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#15161A] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                {/* 1. Cüzdan: BIST Hisseleri */}
+                <div className="bg-[#F8F9FA] dark:bg-white/5 rounded-2xl p-2.5 border border-slate-100 dark:border-white/5 flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center text-xs font-bold shrink-0">
                     ₺
                   </div>
                   <div className="min-w-0">
-                    <div className="text-xs font-bold text-[#14151A] truncate">
-                      Katılım Portföy
+                    <div className="text-xs font-bold text-[#182542] dark:text-white truncate">
+                      Katılım Hisseleri
                     </div>
-                    <div className="text-[10px] text-[#8C93A3] font-mono">
+                    <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
                       ₺710.000
                     </div>
                   </div>
                 </div>
 
-                {/* Wallet 2 */}
-                <div className="bg-[#F8F9FA] rounded-2xl p-3 border border-slate-100 flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+                {/* 2. Cüzdan: Sukuk & Fon */}
+                <div className="bg-[#F8F9FA] dark:bg-white/5 rounded-2xl p-2.5 border border-slate-100 dark:border-white/5 flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-[#0D8B52] dark:bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
                     S
                   </div>
                   <div className="min-w-0">
-                    <div className="text-xs font-bold text-[#14151A] truncate">
+                    <div className="text-xs font-bold text-[#182542] dark:text-white truncate">
                       Sukuk &amp; Fon
                     </div>
-                    <div className="text-[10px] text-[#8C93A3] font-mono">
+                    <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
                       ₺132.500
                     </div>
                   </div>
@@ -261,96 +277,94 @@ export default function HomePage() {
           </div>
 
           {/* =============================================================== */}
-          {/* COLUMN 2: 2x2 BENTO METRIC CARDS (lg:col-span-4)                 */}
+          {/* KOLON 2: 2x2 BENTO METRİK KARTLARI (Lacivert İmzalı)            */}
           {/* =============================================================== */}
-          <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+          <div className="lg:col-span-4 grid grid-cols-2 gap-3 sm:gap-4">
             
-            {/* CARD 1: TOTAL EARNINGS (With iconic V14 top-left corner fill) */}
-            <div className="relative overflow-hidden bg-white rounded-[24px] p-5 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[160px] group hover:border-slate-300 transition">
-              {/* V14 Iconic Quarter-Circle Top-Left Accent Fill */}
-              <div className="absolute -top-1 -left-1 w-24 h-24 rounded-br-[42px] bg-[#FF5B26] p-3 text-white flex flex-col justify-start pointer-events-none shadow-sm">
+            {/* KART 1: PORTFÖY GETİRİSİ (Lacivert Çeyrek Daire Köşe Dolgusu) */}
+            <div className="relative overflow-hidden bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
+              {/* Orijinal Lacivert İmza Köşe Vurgusu */}
+              <div className="absolute -top-1 -left-1 w-24 h-24 rounded-br-[42px] bg-gradient-to-br from-[#182542] via-[#24375d] to-[#273869] p-3 text-white flex flex-col justify-start pointer-events-none shadow-xs">
                 <span className="text-[11px] font-bold leading-tight">
-                  Total<br />Earnings
+                  Portföy<br />Getirisi
                 </span>
               </div>
 
-              {/* Empty placeholder to push content down */}
-              <div className="h-10" />
+              <div className="h-9" />
 
-              {/* Amount and Subtitle */}
               <div className="space-y-1">
-                <div className="text-2xl font-black text-[#14151A] font-mono tracking-tight">
+                <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
                   ₺118.420
                 </div>
-                <div className="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5">
-                  <span>▲ +18.4%</span>
-                  <span className="text-[#8C93A3] font-normal ml-1">total profit</span>
+                <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
+                  <span>▲ +%18,4</span>
+                  <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">net getiri</span>
                 </div>
               </div>
             </div>
 
-            {/* CARD 2: TOTAL SPENDING / ARINDIRMA YÜKÜ */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[160px] group hover:border-slate-300 transition">
+            {/* KART 2: ARINDIRMA YÜKÜ (Terazi) */}
+            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#8C93A3]">
-                  Total Spending
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
+                  Arındırma Yükü
                 </span>
-                <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[#8C93A3]">
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
                   <Scale size={12} />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="text-2xl font-black text-[#14151A] font-mono tracking-tight">
-                  ₺1.240
+                <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
+                  ₺1.240,50
                 </div>
-                <div className="text-[11px] font-semibold text-[#FF5B26] flex items-center gap-0.5">
-                  <span>▲ +5%</span>
-                  <span className="text-[#8C93A3] font-normal ml-1">This month</span>
+                <div className="text-[11px] font-bold text-[#273869] dark:text-blue-400 flex items-center gap-0.5">
+                  <span>%0,14</span>
+                  <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">pro-rata pay</span>
                 </div>
               </div>
             </div>
 
-            {/* CARD 3: TOTAL INCOME / TEMETTÜ */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[160px] group hover:border-slate-300 transition">
+            {/* KART 3: YILLIK TEMETTÜ GELİRİ */}
+            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#8C93A3]">
-                  Total Income
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
+                  Temettü Geliri
                 </span>
-                <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[#8C93A3]">
-                  <PiggyBank size={12} />
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
+                  <TrendingUp size={12} />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="text-2xl font-black text-[#14151A] font-mono tracking-tight">
+                <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
                   ₺34.680
                 </div>
-                <div className="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5">
-                  <span>▲ +8%</span>
-                  <span className="text-[#8C93A3] font-normal ml-1">This month</span>
+                <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
+                  <span>▲ +%8</span>
+                  <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">yıllık kâr</span>
                 </div>
               </div>
             </div>
 
-            {/* CARD 4: TOTAL REVENUE / KATILIM ENDEKSİ UYUMU */}
-            <div className="bg-white rounded-[24px] p-5 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[160px] group hover:border-slate-300 transition">
+            {/* KART 4: KATILIM ENDEKSİ SKORU */}
+            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#8C93A3]">
-                  Total Revenue
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
+                  Katılım Uyumu
                 </span>
-                <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[#8C93A3]">
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                   <ShieldCheck size={12} />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="text-2xl font-black text-[#14151A] font-mono tracking-tight">
+                <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
                   %100 Helal
                 </div>
-                <div className="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5">
-                  <span>▲ 24/24 Kriter</span>
-                  <span className="text-[#8C93A3] font-normal ml-1">DİB Onay</span>
+                <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
+                  <span>24/24 Kriter</span>
+                  <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">DİB Onay</span>
                 </div>
               </div>
             </div>
@@ -358,64 +372,53 @@ export default function HomePage() {
           </div>
 
           {/* =============================================================== */}
-          {/* COLUMN 3: TOTAL INCOME CHART CARD (lg:col-span-4)                */}
+          {/* KOLON 3: TEMETTÜ & GELİR SEYRİ GRAFİĞİ (lg:col-span-4)           */}
           {/* =============================================================== */}
-          <div className="lg:col-span-4 bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-4 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
-            {/* Header + Subtitle + Legend */}
             <div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[#14151A]">
-                    Total Income
+                  <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                    Aylık Kâr Payı &amp; Temettü Seyri
                   </h3>
-                  <p className="text-[11px] text-[#8C93A3]">
-                    View your income in a certain period of time
+                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                    Son 6 aylık kâr payı ve getiri dağılımı
                   </p>
                 </div>
 
-                {/* Legend Chips */}
-                <div className="flex items-center gap-3 text-[10px] font-semibold text-[#8C93A3]">
-                  <div className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-[#15161A]" />
-                    <span>Profit</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-slate-200" />
-                    <span>Loss</span>
-                  </div>
+                <div className="flex items-center gap-2 text-[10px] font-bold text-[#6E81A0] dark:text-[#94A3B8]">
+                  <span className="w-2 h-2 rounded-full bg-[#182542] dark:bg-blue-400" />
+                  <span>Kâr Payı</span>
                 </div>
               </div>
             </div>
 
-            {/* Vertical Bar Chart Graphic */}
-            <div className="pt-4 pb-2">
-              <div className="flex items-end justify-between h-36 gap-2 sm:gap-3 px-2">
+            {/* Dikey Bar Grafiği */}
+            <div className="pt-3 pb-1">
+              <div className="flex items-end justify-between h-32 sm:h-36 gap-2 sm:gap-3 px-1">
                 {chartData.map((item, idx) => (
-                  <div key={idx} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group cursor-pointer">
+                  <div key={idx} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end group cursor-pointer">
                     
-                    {/* Tooltip on active */}
                     {item.active && (
-                      <span className="text-[10px] font-bold font-mono bg-[#15161A] text-white px-1.5 py-0.5 rounded-md shadow-xs animate-pulse">
+                      <span className="text-[10px] font-bold font-mono bg-[#182542] dark:bg-[#273869] text-white px-1.5 py-0.5 rounded-md shadow-xs animate-pulse">
                         {item.label}
                       </span>
                     )}
 
-                    {/* Bar Pill Container */}
-                    <div className="w-full max-w-[28px] h-full flex flex-col justify-end items-center">
+                    <div className="w-full max-w-[24px] sm:max-w-[28px] h-full flex flex-col justify-end items-center">
                       <div
                         className={`w-full rounded-full transition-all duration-300 ${
                           item.active
-                            ? "bg-[#15161A] shadow-xs"
-                            : "bg-[#EAECEF] group-hover:bg-slate-300"
+                            ? "bg-[#182542] dark:bg-[#273869] shadow-xs"
+                            : "bg-[#EAECEF] dark:bg-white/10 group-hover:bg-slate-300 dark:group-hover:bg-white/20"
                         }`}
                         style={{ height: `${item.profit}%` }}
                       />
                     </div>
 
-                    {/* Month Label */}
                     <span className={`text-[11px] font-semibold ${
-                      item.active ? "text-[#14151A] font-bold" : "text-[#8C93A3]"
+                      item.active ? "text-[#182542] dark:text-white font-bold" : "text-[#6E81A0] dark:text-[#94A3B8]"
                     }`}>
                       {item.month}
                     </span>
@@ -424,12 +427,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Bottom Insight Pill */}
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-              <span className="text-[#8C93A3] text-[11px]">Nisan kâr payı zirve yaptı</span>
+            <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs">
+              <span className="text-[#6E81A0] dark:text-[#94A3B8] text-[11px]">Nisan temettü dönemi</span>
               <Link
                 href="/portfolio"
-                className="font-bold text-[#14151A] hover:text-[#FF5B26] transition flex items-center gap-1 text-[11px]"
+                className="font-bold text-[#182542] dark:text-blue-400 hover:text-blue-600 transition flex items-center gap-1 text-[11px]"
               >
                 <span>Detaylı Rapor</span>
                 <ChevronRight size={12} />
@@ -441,41 +443,40 @@ export default function HomePage() {
         </div>
 
         {/* ================================================================= */}
-        {/* ROW 2: BOTTOM BENTO (Monthly Spending Limit & Recent Activities)  */}
+        {/* 2. SATIR: ARINDIRMA LİMİTİ & SON KATILIM İŞLEMLERİ                */}
         {/* ================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* =============================================================== */}
-          {/* BOTTOM LEFT: MONTHLY SPENDING LIMIT CARD (lg:col-span-5)         */}
+          {/* SOL: AYLIK ARINDIRMA LİMİTİ (lg:col-span-5)                      */}
           {/* =============================================================== */}
-          <div className="lg:col-span-5 bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-5">
+          <div className="lg:col-span-5 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-[#14151A]">
-                  Monthly Spending Limit
+                <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                  Aylık Arındırma &amp; Risk Limiti
                 </h3>
-                <p className="text-[11px] text-[#8C93A3]">
-                  Aylık fıkhi arındırma &amp; risk limit takibi
+                <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                  Fıkhi arındırma bütçesi ve şüpheli gelir tavanı
                 </p>
               </div>
 
-              <div className="px-2.5 py-1 rounded-full bg-[#EBF9F1] text-[#10B981] text-[10px] font-bold">
-                Active Limit
+              <div className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[10px] font-bold">
+                Aktif Limit
               </div>
             </div>
 
-            {/* Amount display */}
             <div className="flex items-baseline justify-between">
-              <span className="text-xs font-semibold text-[#8C93A3]">
+              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                 Tanımlı Tavan Limit
               </span>
-              <span className="text-2xl sm:text-3xl font-extrabold text-[#14151A] font-mono">
-                ${monthlyLimit.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              <span className="text-2xl sm:text-3xl font-black text-[#182542] dark:text-white font-mono">
+                ₺{monthlyLimit.toLocaleString("tr-TR")},00
               </span>
             </div>
 
-            {/* V14 Signature Orange Slider Bar with Circle Thumb */}
+            {/* Slider (Lacivert / Zümrüt Vurgulu) */}
             <div className="space-y-2">
               <div className="relative flex items-center">
                 <input
@@ -485,40 +486,38 @@ export default function HomePage() {
                   step={500}
                   value={monthlyLimit}
                   onChange={(e) => setMonthlyLimit(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-[#FF5B26]"
+                  className="w-full h-2 bg-slate-100 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#182542] dark:accent-[#273869]"
                 />
               </div>
 
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#8C93A3]">
-                <span>$1,000</span>
-                <span>$20,000</span>
+              <div className="flex items-center justify-between text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8]">
+                <span>₺1.000</span>
+                <span>₺20.000</span>
               </div>
             </div>
 
-            {/* Spending progress bar */}
-            <div className="p-3.5 rounded-2xl bg-[#F8F9FA] border border-slate-100 space-y-2">
+            {/* İlerleme Çubuğu */}
+            <div className="p-3.5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 space-y-2">
               <div className="flex items-center justify-between text-xs font-semibold">
-                <span className="text-[#FF5B26] font-mono font-bold">
-                  ${limitUsed.toLocaleString("en-US", { minimumFractionDigits: 2 })} used
+                <span className="text-[#182542] dark:text-white font-mono font-bold">
+                  ₺{limitUsed.toLocaleString("tr-TR")} kullanıldı
                 </span>
-                <span className="text-[#8C93A3] text-[11px]">
-                  {Math.round((limitUsed / monthlyLimit) * 100)}%
+                <span className="text-[#6E81A0] dark:text-[#94A3B8] text-[11px]">
+                  %{Math.round((limitUsed / monthlyLimit) * 100)}
                 </span>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#FF5B26] to-amber-500 transition-all duration-300"
+                  className="h-full rounded-full bg-gradient-to-r from-[#182542] to-[#273869] dark:from-[#273869] dark:to-blue-500 transition-all duration-300"
                   style={{ width: `${Math.min(100, (limitUsed / monthlyLimit) * 100)}%` }}
                 />
               </div>
             </div>
 
-            {/* Controls Toggle */}
             <div className="flex items-center justify-between text-xs pt-1">
-              <span className="text-[#8C93A3] text-[11px]">Otomatik arındırma limiti kilidi</span>
-              <div className="w-10 h-6 bg-[#FF5B26] rounded-full p-1 cursor-pointer flex items-center justify-end shadow-xs">
+              <span className="text-[#6E81A0] dark:text-[#94A3B8] text-[11px]">Otomatik arındırma güvenliği</span>
+              <div className="w-10 h-6 bg-[#182542] dark:bg-[#273869] rounded-full p-1 cursor-pointer flex items-center justify-end shadow-xs">
                 <div className="w-4 h-4 rounded-full bg-white shadow-xs" />
               </div>
             </div>
@@ -526,55 +525,57 @@ export default function HomePage() {
           </div>
 
           {/* =============================================================== */}
-          {/* BOTTOM RIGHT: RECENT ACTIVITIES CARD (lg:col-span-7)             */}
+          {/* SAĞ: SON KATILIM İŞLEMLERİ (GERÇEK BİST HİSSE LOGOLARI İLE)       */}
           {/* =============================================================== */}
-          <div className="lg:col-span-7 bg-white rounded-[24px] p-5 sm:p-6 border border-slate-200/60 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-7 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
-            {/* Header + View All */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-[#14151A]">
-                  Recent Activities
+                <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                  Son Katılım İşlemleri &amp; KAP Bildirimleri
                 </h3>
-                <p className="text-[11px] text-[#8C93A3]">
-                  Son BIST katılım işlemleri, arındırma ve KAP bildirimleri
+                <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                  BIST hisselerinin çeyreklik arındırma ve icazet takibi
                 </p>
               </div>
 
               <Link
                 href="/tarayici"
-                className="text-xs font-semibold text-[#8C93A3] hover:text-[#14151A] transition flex items-center gap-1"
+                className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white transition flex items-center gap-1"
               >
-                <span>See all</span>
+                <span>Tümünü Gör (626)</span>
                 <ChevronRight size={13} />
               </Link>
             </div>
 
-            {/* Activities Rows */}
-            <div className="space-y-2.5 divide-y divide-slate-100">
-              {recentActivities.map((act, idx) => (
+            {/* Gerçek Logolu Hisse Listesi */}
+            <div className="space-y-2.5 divide-y divide-slate-100 dark:divide-white/5">
+              {recentActivities.map((act) => (
                 <div
-                  key={idx}
+                  key={act.ticker}
                   className="pt-2.5 first:pt-0 flex items-center justify-between gap-3 group"
                 >
-                  {/* Left: Avatar + Details */}
+                  {/* Sol: Gerçek Hisse Logosu + Detaylar */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-9 h-9 rounded-full bg-gradient-to-tr ${act.color} text-white flex items-center justify-center text-xs font-bold font-mono shrink-0 shadow-xs group-hover:scale-105 transition`}>
-                      {act.ticker.slice(0, 2)}
-                    </div>
+                    <StockLogo
+                      ticker={act.ticker}
+                      name={act.name}
+                      size="sm"
+                      className="group-hover:scale-105 transition"
+                    />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/companies/${act.ticker}`}
-                          className="text-xs font-bold text-[#14151A] hover:text-[#FF5B26] transition truncate"
+                          className="text-xs font-extrabold text-[#182542] dark:text-white hover:text-blue-600 transition truncate"
                         >
                           {act.ticker}
                         </Link>
-                        <span className="text-[10px] text-[#8C93A3] truncate hidden sm:inline">
+                        <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] truncate hidden sm:inline">
                           &bull; {act.name}
                         </span>
                       </div>
-                      <div className="text-[11px] text-[#8C93A3] flex items-center gap-1.5">
+                      <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] flex items-center gap-1.5">
                         <span>{act.type}</span>
                         <span>&bull;</span>
                         <span className="text-[10px]">{act.date}</span>
@@ -582,13 +583,13 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* Right: Amount + Status Pill */}
+                  {/* Sağ: Tutar + Uygunluk Rozeti */}
                   <div className="text-right shrink-0">
-                    <div className="text-xs font-mono font-bold text-[#14151A]">
+                    <div className="text-xs font-mono font-bold text-[#182542] dark:text-white">
                       {act.amount}
                     </div>
-                    <div className={`text-[10px] font-semibold mt-0.5 ${
-                      act.compliant ? "text-[#10B981]" : "text-[#E03131]"
+                    <div className={`text-[10px] font-bold mt-0.5 ${
+                      act.compliant ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#E03131] dark:text-rose-400"
                     }`}>
                       {act.status}
                     </div>
@@ -597,17 +598,17 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Bottom Fast Action */}
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-[11px] text-[#8C93A3]">
+            {/* Alt Canlı Piyasa Çubuğu */}
+            <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between">
+              <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                 Canlı BIST Verisi: {updatedAt ? new Date(updatedAt).toLocaleTimeString("tr-TR") : "Güncel"}
               </span>
 
               <Link
                 href="/tarayici"
-                className="px-4 py-1.5 rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white text-xs font-semibold shadow-xs transition"
+                className="px-4 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold shadow-xs transition"
               >
-                626 Hisse Tara &rarr;
+                Hisse Taramaya Git &rarr;
               </Link>
             </div>
 
@@ -616,134 +617,6 @@ export default function HomePage() {
         </div>
 
       </div>
-
-      {/* =================================================================== */}
-      {/* QUICK TRANSFER / TRANSACTIONS MODAL (Replicating Frame 03)         */}
-      {/* =================================================================== */}
-      {isTransferModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[28px] max-w-lg w-full p-6 shadow-2xl border border-slate-200/80 space-y-5 animate-in zoom-in-95 duration-200">
-            
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-[#14151A]">
-                  Quick Transfer &amp; Screen
-                </h3>
-                <p className="text-xs text-[#8C93A3]">
-                  Pick a favourite, choose an amount, done.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsTransferModalOpen(false)}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-[#14151A] flex items-center justify-center font-bold text-xs"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Quick Contacts Avatar Row (From Frame 03) */}
-            <div className="space-y-2">
-              <span className="text-xs font-semibold text-[#8C93A3]">
-                Hızlı Katılım Şirketleri
-              </span>
-              <div className="flex items-center gap-3 overflow-x-auto py-2 scrollbar-none">
-                {quickContacts.map((contact) => (
-                  <button
-                    key={contact.tag}
-                    type="button"
-                    onClick={() => setSelectedContact(contact)}
-                    className="flex flex-col items-center gap-1.5 shrink-0 group"
-                  >
-                    <div className={`w-12 h-12 rounded-full ${contact.bg} text-white flex items-center justify-center text-xs font-bold font-mono shadow-xs group-hover:scale-105 transition ring-offset-2 ${
-                      selectedContact.tag === contact.tag ? "ring-2 ring-[#15161A]" : ""
-                    }`}>
-                      {contact.tag.slice(0, 2)}
-                    </div>
-                    <span className="text-[11px] font-semibold text-[#14151A] truncate max-w-[60px]">
-                      {contact.tag}
-                    </span>
-                  </button>
-                ))}
-
-                {/* + New Button */}
-                <button
-                  type="button"
-                  onClick={() => router.push("/tarayici")}
-                  className="flex flex-col items-center gap-1.5 shrink-0 group"
-                >
-                  <div className="w-12 h-12 rounded-full border-2 border-dashed border-slate-300 hover:border-slate-500 text-slate-400 flex items-center justify-center text-lg font-light transition">
-                    +
-                  </div>
-                  <span className="text-[11px] font-semibold text-[#8C93A3]">
-                    New
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            {/* Transaction Box (From Frame 03) */}
-            <div className="p-4 rounded-2xl bg-[#F8F9FA] border border-slate-100 space-y-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold font-mono">
-                  {selectedContact.tag.slice(0, 2)}
-                </div>
-                <div>
-                  <div className="text-[10px] text-[#8C93A3]">Sending to / İnceleme</div>
-                  <div className="text-xs font-bold text-[#14151A]">{selectedContact.name} ({selectedContact.tag})</div>
-                </div>
-              </div>
-
-              {/* Amount Input */}
-              <div className="bg-white rounded-xl p-3 border border-slate-200 flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                  <span className="text-xl font-black text-[#14151A] font-mono">₺</span>
-                  <input
-                    type="text"
-                    value={transferAmount}
-                    onChange={(e) => setTransferAmount(e.target.value.replace(/[^0-9]/g, ""))}
-                    className="text-xl font-black text-[#14151A] font-mono bg-transparent outline-none w-32"
-                  />
-                </div>
-                <span className="text-xs font-bold text-[#8C93A3]">TRY</span>
-              </div>
-
-              {/* Amount Chips */}
-              <div className="flex items-center gap-2">
-                {["50", "100", "250", "500", "1000"].map((chip) => (
-                  <button
-                    key={chip}
-                    type="button"
-                    onClick={() => setTransferAmount(chip)}
-                    className={`flex-1 py-1.5 rounded-full text-xs font-semibold transition ${
-                      transferAmount === chip
-                        ? "bg-[#15161A] text-white"
-                        : "bg-white text-[#14151A] border border-slate-200 hover:bg-slate-50"
-                    }`}
-                  >
-                    ₺{chip}
-                  </button>
-                ))}
-              </div>
-
-              {/* Send Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  setIsTransferModalOpen(false);
-                  router.push(`/companies/${selectedContact.ticker}`);
-                }}
-                className="w-full py-3 rounded-full bg-[#15161A] hover:bg-[#2A2B33] text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition"
-              >
-                <span>Fıkhi Raporu Aç (₺{transferAmount})</span>
-                <ArrowUpRight size={14} />
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
     </PaynoShell>
   );
 }

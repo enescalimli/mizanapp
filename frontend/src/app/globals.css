@@ -30,12 +30,22 @@
     scroll-behavior: smooth;
   }
 
+  html.dark {
+    background-color: #0B0F17;
+    color: #F1F3F7;
+  }
+
   body {
     /* Vertix Dashboard V14 Soft Neutral Gray Matte Canvas */
     background-color: #EEF0F4;
     color: #14151A;
     min-height: 100vh;
     overflow-x: hidden;
+  }
+
+  html.dark body {
+    background-color: #0B0F17;
+    color: #F1F3F7;
   }
 }
 
