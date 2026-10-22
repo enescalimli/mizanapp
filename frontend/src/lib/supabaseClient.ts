@@ -33,6 +33,8 @@ export interface Profile {
   purification_ceiling_rounding: boolean;
   zakat_calculation_preference: "AUTO" | "TRADING_ONLY" | "DIVIDEND_ONLY";
   alert_notifications_enabled: boolean;
+  is_pro?: boolean;
+  subscription_tier?: "FREE" | "STARTER" | "PRO";
   created_at: string;
   updated_at: string;
 }

@@ -72,6 +72,58 @@ export interface FootnoteVerification {
   debtBreakdown: DebtFootnoteDetail;
 }
 
+export interface CompanyFinancialsSummary {
+  revenueTRY: string;
+  grossProfitTRY: string;
+  ebitdaTRY: string;
+  netIncomeTRY: string;
+  currentAssetsTRY: string;
+  nonCurrentAssetsTRY: string;
+  totalAssetsTRY: string;
+  financialDebtTRY: string;
+  netDebtTRY: string;
+  equityTRY: string;
+  revenueGrowthYoY: string;
+  netIncomeGrowthYoY: string;
+  grossMargin: string;
+  ebitdaMargin: string;
+  netMargin: string;
+  peRatio: string;
+  pbRatio: string;
+  evEbitda: string;
+  netDebtToEbitda: string;
+  roePercent: string;
+  roaPercent: string;
+}
+
+export interface PeriodicReturns {
+  daily: string;
+  weekly: string;
+  monthly: string;
+  sixMonths: string;
+  ytd2026: string;
+  oneYear: string;
+  fiveYears: string;
+}
+
+export interface AiAnalysisReport {
+  score: number;
+  verdict: string;
+  shariahRiskSummary: string;
+  financialHealthSummary: string;
+  purificationZakatNote: string;
+  pros: string[];
+  cons: string[];
+}
+
+export interface DetailedBreachDiagnostic {
+  category: "SECTOR_ACTIVITY" | "SUBSIDIARY" | "GOVERNANCE_KAFIF" | "DEBT_RATIO" | "CASH_RATIO" | "INCOME_RATIO" | "COMPLIANT";
+  categoryLabel: string;
+  primaryReason: string;
+  regulatoryStandard: string;
+  detailExplanation: string;
+}
+
 export interface CompanyDetailScreening {
   ticker: string;
   companyName: string;
@@ -83,6 +135,10 @@ export interface CompanyDetailScreening {
   overallStatus: ComplianceStatus;
   isSectorCompliant: boolean;
   prohibitedActivitiesFound: string[];
+  detailedBreach?: DetailedBreachDiagnostic;
+  financials?: CompanyFinancialsSummary;
+  periodicReturns?: PeriodicReturns;
+  aiAnalysis?: AiAnalysisReport;
   gracePeriodInfo: {
     isInGracePeriod: boolean;
     consecutiveBreachQuarters: number;
