@@ -21,6 +21,7 @@ import {
   Sparkles,
   PlusCircle,
   CheckCircle2,
+  XCircle,
   TrendingUp,
   TrendingDown,
   BarChart3,
@@ -34,9 +35,14 @@ import {
   FileSpreadsheet,
   Coins,
   Cpu,
+  Award,
+  Zap,
+  Split,
+  Users2,
+  PieChart,
 } from "lucide-react";
 
-type CompanyDetailTab = "FIKIH" | "FINANSALLAR" | "CARPANLAR" | "AI_ANALIZ";
+type CompanyDetailTab = "FIKIH" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ";
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -50,10 +56,10 @@ export default function CompanyDetailPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [addedToPortfolio, setAddedToPortfolio] = useState(false);
+  const [isProUser, setIsProUser] = useState(false);
 
   // Check if user is PRO or if this is the sample free stock (BIMAS)
   const isSampleFreeStock = ticker === "BIMAS";
-  const [isProUser, setIsProUser] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -176,6 +182,11 @@ export default function CompanyDetailPage() {
   const fin = data.financials;
   const ai = data.aiAnalysis;
   const breach = data.detailedBreach;
+  const scorecard = data.scorecard;
+  const dRatios = data.detailedRatios;
+  const dupont = data.dupont;
+  const divHist = data.dividendHistory;
+  const peers = data.peers;
 
   return (
     <PaynoShell badge={ticker}>
@@ -345,14 +356,16 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* INTERACTIVE NAVIGATION TABS: Fıkıh, Finansallar, Çarpanlar, AI      */}
+        {/* 6 INTERACTIVE NAVIGATION TABS                                       */}
         {/* =================================================================== */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           {[
-            { id: "FIKIH", label: "Fıkhi Katılım Analizi", icon: Scale },
-            { id: "FINANSALLAR", label: "Özet Finansallar (Fintables)", icon: FileSpreadsheet },
-            { id: "CARPANLAR", label: "Piyasa Çarpanları & Rasyolar", icon: BarChart3 },
-            { id: "AI_ANALIZ", label: "Mizan AI Fıkhi Raporu", icon: Sparkles, badge: isSampleFreeStock ? "Açık Demo" : "PRO" },
+            { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
+            { id: "KARNE", label: "Şirket Karnesi (24 Puan)", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
+            { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
+            { id: "FINANSALLAR", label: "Finansallar & DuPont", icon: FileSpreadsheet },
+            { id: "TEMETTU_RAKIP", label: "Temettü & Rakipler", icon: Users2 },
+            { id: "AI_ANALIZ", label: "Mizan AI Raporu", icon: Sparkles, badge: isSampleFreeStock ? "Açık Demo" : "PRO" },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -478,29 +491,349 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 2: ÖZET FİNANSALLAR (Fintables Inspired Grid)                   */}
+        {/* TAB 2: ŞİRKET KARNESİ (Fintables 18 Kriter + Mizan 6 Fıkhi Kriter)  */}
         {/* =================================================================== */}
-        {activeTab === "FINANSALLAR" && fin && (
-          <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
-            <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-4">
-              <div>
-                <h3 className="text-base font-bold text-[#182542]">Özet Finansal Tablolar</h3>
-                <p className="text-xs text-[#6E81A0]">Son açıklanan çeyreklik KAP mali tablolarına göre hesaplanmıştır.</p>
-              </div>
-              <span className="text-xs font-mono font-bold text-[#182542] bg-slate-100 px-3 py-1 rounded-xl">
-                Birim: TRY (₺)
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Gelir Tablosu Kalemleri */}
-              <div className="p-5 rounded-2xl bg-white border border-[#EDF1F7] space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <span className="text-xs font-extrabold uppercase text-[#182542]">Gelir Tablosu Kalemleri</span>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
-                    Yıllık Değişim
+        {activeTab === "KARNE" && scorecard && (
+          <div className="space-y-6">
+            {/* Header Score Banner */}
+            <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#6E81A0]">
+                    Fintables &amp; Mizan Entegre Sağlık Karnesi
                   </span>
                 </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542]">
+                  {ticker} Şirket Yatırım &amp; Fıkıh Karnesi
+                </h3>
+                <p className="text-xs text-[#6E81A0]">
+                  Kârlılık, Büyüme, Borçluluk ve Fıkhi Uyum olmak üzere toplam 24 objektif kriterin denetimidir.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="text-right">
+                  <div className="text-2xl font-mono font-extrabold text-[#182542]">
+                    {scorecard.totalScore} <span className="text-sm text-[#6E81A0]">/ 24</span>
+                  </div>
+                  <div className="text-[10px] text-[#6E81A0] font-bold">Toplam Karne Puanı</div>
+                </div>
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm ${
+                  scorecard.ratingLetter === "A+" || scorecard.ratingLetter === "A"
+                    ? "bg-emerald-600 text-white"
+                    : scorecard.ratingLetter.startsWith("B")
+                    ? "bg-blue-600 text-white"
+                    : "bg-rose-600 text-white"
+                }`}>
+                  {scorecard.ratingLetter}
+                </div>
+              </div>
+            </div>
+
+            {/* 4 Scorecard Pillars Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Pillar 1: Kârlılık */}
+              <div className="p-5 rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/90 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-xs font-extrabold uppercase text-[#182542] flex items-center gap-1.5">
+                    <Activity size={14} className="text-blue-600" />
+                    <span>1. Kârlılık Karnesi</span>
+                  </span>
+                  <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg">
+                    {scorecard.profitabilityScore} / 6
+                  </span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  {scorecard.profitabilityItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-none">
+                      <div className="flex items-center gap-2">
+                        {item.passed ? (
+                          <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                        ) : (
+                          <XCircle size={15} className="text-rose-500 shrink-0" />
+                        )}
+                        <span className="text-slate-700">{item.label}</span>
+                      </div>
+                      <span className="font-mono font-bold text-[#182542] text-[11px] shrink-0 ml-2">
+                        {item.value || "-"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pillar 2: Büyüme */}
+              <div className="p-5 rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/90 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-xs font-extrabold uppercase text-[#182542] flex items-center gap-1.5">
+                    <TrendingUp size={14} className="text-emerald-600" />
+                    <span>2. Büyüme Karnesi</span>
+                  </span>
+                  <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg">
+                    {scorecard.growthScore} / 6
+                  </span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  {scorecard.growthItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-none">
+                      <div className="flex items-center gap-2">
+                        {item.passed ? (
+                          <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                        ) : (
+                          <XCircle size={15} className="text-rose-500 shrink-0" />
+                        )}
+                        <span className="text-slate-700">{item.label}</span>
+                      </div>
+                      <span className="font-mono font-bold text-[#182542] text-[11px] shrink-0 ml-2">
+                        {item.value || "-"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pillar 3: Borçluluk */}
+              <div className="p-5 rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/90 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-xs font-extrabold uppercase text-[#182542] flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-indigo-600" />
+                    <span>3. Borçluluk &amp; Kaldıraç Karnesi</span>
+                  </span>
+                  <span className="font-mono text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-lg">
+                    {scorecard.debtScore} / 6
+                  </span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  {scorecard.debtItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-none">
+                      <div className="flex items-center gap-2">
+                        {item.passed ? (
+                          <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                        ) : (
+                          <XCircle size={15} className="text-rose-500 shrink-0" />
+                        )}
+                        <span className="text-slate-700">{item.label}</span>
+                      </div>
+                      <span className="font-mono font-bold text-[#182542] text-[11px] shrink-0 ml-2">
+                        {item.value || "-"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pillar 4: Fıkhi Katılım */}
+              <div className="p-5 rounded-[28px] bg-white/85 backdrop-blur-xl border border-white/90 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-xs font-extrabold uppercase text-[#182542] flex items-center gap-1.5">
+                    <Scale size={14} className="text-emerald-600" />
+                    <span>4. Mizan Fıkhi Katılım Karnesi</span>
+                  </span>
+                  <span className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg">
+                    {scorecard.shariahScore} / 6
+                  </span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  {scorecard.shariahItems.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 last:border-none">
+                      <div className="flex items-center gap-2">
+                        {item.passed ? (
+                          <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
+                        ) : (
+                          <XCircle size={15} className="text-rose-500 shrink-0" />
+                        )}
+                        <span className="text-slate-700">{item.label}</span>
+                      </div>
+                      <span className="font-mono font-bold text-[#182542] text-[11px] shrink-0 ml-2">
+                        {item.value || "-"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =================================================================== */}
+        {/* TAB 3: DETAYLI RASYOLAR (4 Kategori: Değerleme, Kârlılık, Likidite) */}
+        {/* =================================================================== */}
+        {activeTab === "RASYOLAR" && dRatios && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Category 1: Değerleme Çarpanları */}
+              <div className="p-5 rounded-[28px] bg-white/80 backdrop-blur-2xl border border-white/85 shadow-2xs space-y-3">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] border-b border-slate-100 pb-2">
+                  1. Değerleme Çarpanları
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">F/K (Fiyat/Kazanç)</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.valuation.pe}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">PD / DD (Defter Değeri)</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.valuation.pb}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">FD / FAVÖK</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.valuation.evEbitda}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Fiyat / Serbest Nakit</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.valuation.priceToFcf}x</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Hisse Başına Kâr (EPS)</span>
+                    <span className="text-base font-mono font-extrabold text-emerald-700">{dRatios.valuation.epsTRY}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Temettü Verimi</span>
+                    <span className="text-base font-mono font-extrabold text-emerald-700">{dRatios.valuation.dividendYield}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category 2: Kârlılık Oranları */}
+              <div className="p-5 rounded-[28px] bg-white/80 backdrop-blur-2xl border border-white/85 shadow-2xs space-y-3">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] border-b border-slate-100 pb-2">
+                  2. Kârlılık Marjları
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Brüt Kâr Marjı</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.profitability.grossMargin}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">FAVÖK Marjı</span>
+                    <span className="text-base font-mono font-extrabold text-emerald-700">{dRatios.profitability.ebitdaMargin}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Net Kâr Marjı</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.profitability.netMargin}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Özkaynak Kârlılığı (ROE)</span>
+                    <span className="text-base font-mono font-extrabold text-indigo-700">{dRatios.profitability.roe}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Varlık Kârlılığı (ROA)</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.profitability.roa}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Yatırılan Sermaye (ROIC)</span>
+                    <span className="text-base font-mono font-extrabold text-purple-700">{dRatios.profitability.roic}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category 3: Likidite & Çalışma Sermayesi */}
+              <div className="p-5 rounded-[28px] bg-white/80 backdrop-blur-2xl border border-white/85 shadow-2xs space-y-3">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] border-b border-slate-100 pb-2">
+                  3. Likidite ve Çalışma Sermayesi
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Cari Oran (Current Ratio)</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.liquidity.currentRatio}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Likit Oran (Asit-Test)</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.liquidity.quickRatio}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Nakit Oranı</span>
+                    <span className="text-base font-mono font-extrabold text-emerald-700">{dRatios.liquidity.cashRatio}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Net Çalışma Sermayesi</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.liquidity.workingCapitalTRY}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category 4: Borçluluk & Finansal Yapı */}
+              <div className="p-5 rounded-[28px] bg-white/80 backdrop-blur-2xl border border-white/85 shadow-2xs space-y-3">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] border-b border-slate-100 pb-2">
+                  4. Borçluluk ve Kaldıraç
+                </h4>
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Finansal Borç / Özkaynak</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.debt.debtToEquity}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Net Borç / FAVÖK</span>
+                    <span className="text-base font-mono font-extrabold text-indigo-700">{dRatios.debt.netDebtToEbitda}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Kaldıraç (Borç / Aktif)</span>
+                    <span className="text-base font-mono font-extrabold text-[#182542]">{dRatios.debt.debtToAssets}</span>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200/60">
+                    <span className="text-[10px] text-[#6E81A0] font-semibold block">Toplam Finansal Borç</span>
+                    <span className="text-base font-mono font-extrabold text-rose-700">{dRatios.debt.financialDebtTRY}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* =================================================================== */}
+        {/* TAB 4: FINANSALLAR & DUPONT ANALİZİ                                 */}
+        {/* =================================================================== */}
+        {activeTab === "FINANSALLAR" && fin && dupont && (
+          <div className="space-y-6">
+            {/* DuPont Analizi Kartı */}
+            <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+              <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-3">
+                <div className="space-y-0.5">
+                  <h3 className="text-base font-bold text-[#182542] flex items-center gap-2">
+                    <Split size={16} className="text-indigo-600" />
+                    <span>DuPont Analizi (Özkaynak Kârlılığının Anatomisi)</span>
+                  </h3>
+                  <p className="text-xs text-[#6E81A0]">ROE = Net Kâr Marjı &times; Aktif Devir Hızı &times; Finansal Kaldıraç</p>
+                </div>
+                <span className="text-xs font-mono font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-xl">
+                  ROE: %{dupont.calculatedRoePercent}
+                </span>
+              </div>
+
+              {/* DuPont Flow Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center text-xs">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-[#6E81A0] block">1. Net Kâr Marjı</span>
+                  <div className="text-lg font-mono font-extrabold text-[#182542]">%{dupont.netMarginPercent.toFixed(1)}</div>
+                  <span className="text-[10px] text-slate-500">Satış Kârlılığı</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-[#6E81A0] block">2. Aktif Devir Hızı</span>
+                  <div className="text-lg font-mono font-extrabold text-[#182542]">{dupont.assetTurnover}x</div>
+                  <span className="text-[10px] text-slate-500">Varlık Verimliliği</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-[#6E81A0] block">3. Finansal Kaldıraç</span>
+                  <div className="text-lg font-mono font-extrabold text-[#182542]">{dupont.leverageMultiplier}x</div>
+                  <span className="text-[10px] text-slate-500">Aktif / Özkaynak</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/80 space-y-1">
+                  <span className="text-[10px] uppercase font-bold text-indigo-900 block">Hesaplanan ROE</span>
+                  <div className="text-lg font-mono font-extrabold text-indigo-700">%{dupont.calculatedRoePercent}</div>
+                  <span className="text-[10px] text-indigo-800 font-semibold">Özkaynak Getirisi</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Bilanço ve Gelir Tabloları */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="p-5 rounded-[28px] bg-white/80 backdrop-blur-2xl border border-white/85 shadow-2xs space-y-3">
+                <span className="text-xs font-extrabold uppercase text-[#182542] block border-b border-slate-100 pb-2">
+                  Gelir Tablosu Kalemleri
+                </span>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between py-1 border-b border-slate-50">
                     <span className="text-slate-600">Satış Gelirleri (Hasılat)</span>
@@ -521,14 +854,10 @@ export default function CompanyDetailPage() {
                 </div>
               </div>
 
-              {/* Bilanço Kalemleri */}
-              <div className="p-5 rounded-2xl bg-white border border-[#EDF1F7] space-y-3">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                  <span className="text-xs font-extrabold uppercase text-[#182542]">Bilanço Kalemleri</span>
-                  <span className="text-[10px] font-bold text-[#182542] bg-slate-100 px-2 py-0.5 rounded-md">
-                    Konsolide
-                  </span>
-                </div>
+              <div className="p-5 rounded-[28px] bg-white/80 backdrop-blur-2xl border border-white/85 shadow-2xs space-y-3">
+                <span className="text-xs font-extrabold uppercase text-[#182542] block border-b border-slate-100 pb-2">
+                  Bilanço Kalemleri
+                </span>
                 <div className="space-y-2 text-xs">
                   <div className="flex items-center justify-between py-1 border-b border-slate-50">
                     <span className="text-slate-600">Dönen Varlıklar</span>
@@ -553,69 +882,121 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 3: PİYASA ÇARPANLARI & RASYOLAR (Fintables Multipliers)         */}
+        {/* TAB 5: TEMETTÜ & RAKİP KIYASLAMA TABLOSU                             */}
         {/* =================================================================== */}
-        {activeTab === "CARPANLAR" && fin && (
-          <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
-            <div>
-              <h3 className="text-base font-bold text-[#182542]">Finansal Rasyolar ve Değerleme Çarpanları</h3>
-              <p className="text-xs text-[#6E81A0]">Fiyat/Kazanç, Defter Değeri ve Kârlılık Marjları analizi.</p>
+        {activeTab === "TEMETTU_RAKIP" && (
+          <div className="space-y-6">
+            {/* Temettü Geçmişi & Fıkhi Arındırma Tablosu */}
+            <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+              <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-3">
+                <div className="space-y-0.5">
+                  <h3 className="text-base font-bold text-[#182542] flex items-center gap-2">
+                    <Coins size={16} className="text-emerald-600" />
+                    <span>Temettü Geçmişi ve Temettü Başına Fıkhi Arındırma</span>
+                  </h3>
+                  <p className="text-xs text-[#6E81A0]">
+                    Dağıtılan brüt temettüler ve içerisindeki fıkhi faiz arındırma payı.
+                  </p>
+                </div>
+              </div>
+
+              {divHist && divHist.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-200 text-[#6E81A0] text-[10px] uppercase font-bold tracking-wider">
+                        <th className="py-2.5 px-3">Yıl</th>
+                        <th className="py-2.5 px-3">Hisse Başı Brüt</th>
+                        <th className="py-2.5 px-3">Temettü Verimi</th>
+                        <th className="py-2.5 px-3 text-amber-700">Fıkhi Arındırma Payı</th>
+                        <th className="py-2.5 px-3 text-right">Ödeme Tarihi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-mono">
+                      {divHist.map((d) => (
+                        <tr key={d.year} className="hover:bg-slate-50/50 transition">
+                          <td className="py-2.5 px-3 font-bold text-[#182542]">{d.year}</td>
+                          <td className="py-2.5 px-3 font-bold text-slate-800">{d.grossPerShareTRY}</td>
+                          <td className="py-2.5 px-3 text-emerald-700 font-bold">{d.dividendYieldPercent}</td>
+                          <td className="py-2.5 px-3 font-bold text-amber-700">{d.purificationPerShareTRY}</td>
+                          <td className="py-2.5 px-3 text-right text-slate-500 font-sans text-[11px]">{d.paymentDate}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-xs text-[#6E81A0]">Kayıtlı temettü geçmişi bulunamadı.</p>
+              )}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">F/K (Fiyat / Kazanç)</span>
-                <span className="text-lg font-mono font-extrabold text-[#182542]">{fin.peRatio}</span>
-                <span className="text-[10px] text-slate-500 block">Sektör Ort: 8.4</span>
+            {/* Sektörel Rakip Kıyaslama Tablosu */}
+            <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+              <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-3">
+                <div className="space-y-0.5">
+                  <h3 className="text-base font-bold text-[#182542] flex items-center gap-2">
+                    <Users2 size={16} className="text-indigo-600" />
+                    <span>Sektörel Rakip Kıyaslaması ({data.sector})</span>
+                  </h3>
+                  <p className="text-xs text-[#6E81A0]">Aynı sektörde işlem gören diğer hisselerle çarpan ve katılım kıyası.</p>
+                </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">PD/DD (Defter Değeri)</span>
-                <span className="text-lg font-mono font-extrabold text-[#182542]">{fin.pbRatio}</span>
-                <span className="text-[10px] text-slate-500 block">Özkaynak Çarpanı</span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">FD / FAVÖK</span>
-                <span className="text-lg font-mono font-extrabold text-[#182542]">{fin.evEbitda}</span>
-                <span className="text-[10px] text-slate-500 block">Operasyonel Çarpan</span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">Net Borç / FAVÖK</span>
-                <span className="text-lg font-mono font-extrabold text-emerald-700">{fin.netDebtToEbitda}</span>
-                <span className="text-[10px] text-emerald-800 block">Güvenli Kaldıraç</span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">Brüt Kâr Marjı</span>
-                <span className="text-lg font-mono font-extrabold text-[#182542]">{fin.grossMargin}</span>
-                <span className="text-[10px] text-slate-500 block">Satış Kârlılığı</span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">FAVÖK Marjı</span>
-                <span className="text-lg font-mono font-extrabold text-emerald-700">{fin.ebitdaMargin}</span>
-                <span className="text-[10px] text-slate-500 block">Esas Faaliyet Marjı</span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">Özsermaye Kârlılığı (ROE)</span>
-                <span className="text-lg font-mono font-extrabold text-[#182542]">{fin.roePercent}</span>
-                <span className="text-[10px] text-slate-500 block">Yıllıklandırılmış</span>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] space-y-1">
-                <span className="text-[10px] font-bold text-[#6E81A0] uppercase block">Aktif Kârlılığı (ROA)</span>
-                <span className="text-lg font-mono font-extrabold text-[#182542]">{fin.roaPercent}</span>
-                <span className="text-[10px] text-slate-500 block">Varlık Verimliliği</span>
-              </div>
+              {peers && peers.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-200 text-[#6E81A0] text-[10px] uppercase font-bold tracking-wider">
+                        <th className="py-2.5 px-3">Hisse</th>
+                        <th className="py-2.5 px-3">Fiyat</th>
+                        <th className="py-2.5 px-3">Katılım Durumu</th>
+                        <th className="py-2.5 px-3">F/K</th>
+                        <th className="py-2.5 px-3">PD/DD</th>
+                        <th className="py-2.5 px-3">Faizli Borç</th>
+                        <th className="py-2.5 px-3 text-right">İşlem</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-mono">
+                      {peers.map((p) => (
+                        <tr key={p.ticker} className="hover:bg-slate-50/50 transition">
+                          <td className="py-2.5 px-3 font-bold text-[#182542]">
+                            <div>{p.ticker}</div>
+                            <div className="text-[10px] font-sans text-slate-500 font-normal truncate max-w-[120px]">{p.name}</div>
+                          </td>
+                          <td className="py-2.5 px-3 font-bold text-slate-800">{p.priceTRY}</td>
+                          <td className="py-2.5 px-3">
+                            <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                              p.isCompliant ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
+                            }`}>
+                              {p.isCompliant ? "Katılım Uyumlu" : "Katılım Dışı"}
+                            </span>
+                          </td>
+                          <td className="py-2.5 px-3">{p.peRatio}</td>
+                          <td className="py-2.5 px-3">{p.pbRatio}</td>
+                          <td className="py-2.5 px-3">%{p.debtRatioPercent.toFixed(1)}</td>
+                          <td className="py-2.5 px-3 text-right">
+                            <Link
+                              href={`/companies/${p.ticker}`}
+                              className="px-2.5 py-1 rounded-lg bg-[#182542] hover:bg-[#273869] text-white text-[10px] font-bold font-sans transition inline-flex items-center gap-1"
+                            >
+                              <span>İncele</span>
+                              <ArrowRight size={10} />
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p className="text-xs text-[#6E81A0]">Bu sektörde kayıtlı rakip şirket bulunamadı.</p>
+              )}
             </div>
           </div>
         )}
 
         {/* =================================================================== */}
-        {/* TAB 4: MİZAN AI ANALİZ MODÜLÜ (Freemium & PRO Paywall)              */}
+        {/* TAB 6: MİZAN AI ANALİZ MODÜLÜ (Freemium & PRO Paywall)              */}
         {/* =================================================================== */}
         {activeTab === "AI_ANALIZ" && ai && (
           <div className="space-y-6">

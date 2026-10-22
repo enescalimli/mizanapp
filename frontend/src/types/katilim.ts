@@ -124,6 +124,86 @@ export interface DetailedBreachDiagnostic {
   detailExplanation: string;
 }
 
+export interface ScorecardCriterion {
+  label: string;
+  passed: boolean;
+  value?: string;
+  threshold?: string;
+}
+
+export interface CompanyScorecard {
+  profitabilityScore: number; // out of 6
+  profitabilityItems: ScorecardCriterion[];
+  growthScore: number; // out of 6
+  growthItems: ScorecardCriterion[];
+  debtScore: number; // out of 6
+  debtItems: ScorecardCriterion[];
+  shariahScore: number; // out of 6
+  shariahItems: ScorecardCriterion[];
+  totalScore: number; // out of 24
+  ratingLetter: "A+" | "A" | "B+" | "B" | "C" | "D" | "F";
+}
+
+export interface DetailedRatiosGroup {
+  valuation: {
+    pe: string;
+    pb: string;
+    evEbitda: string;
+    priceToFcf: string;
+    epsTRY: string;
+    dividendYield: string;
+  };
+  profitability: {
+    grossMargin: string;
+    operatingMargin: string;
+    ebitdaMargin: string;
+    netMargin: string;
+    roe: string;
+    roa: string;
+    roic: string;
+  };
+  liquidity: {
+    currentRatio: string;
+    quickRatio: string;
+    cashRatio: string;
+    workingCapitalTRY: string;
+  };
+  debt: {
+    debtToEquity: string;
+    netDebtToEbitda: string;
+    debtToAssets: string;
+    financialDebtTRY: string;
+    netDebtTRY: string;
+  };
+}
+
+export interface DupontAnalysis {
+  netMarginPercent: number;
+  assetTurnover: number;
+  leverageMultiplier: number;
+  calculatedRoePercent: number;
+}
+
+export interface HistoricalDividendItem {
+  year: number;
+  grossPerShareTRY: string;
+  dividendYieldPercent: string;
+  purificationPerShareTRY: string;
+  paymentDate: string;
+}
+
+export interface PeerComparisonItem {
+  ticker: string;
+  name: string;
+  priceTRY: string;
+  change24h: string;
+  isCompliant: boolean;
+  peRatio: string;
+  pbRatio: string;
+  evEbitda: string;
+  debtRatioPercent: number;
+}
+
 export interface CompanyDetailScreening {
   ticker: string;
   companyName: string;
@@ -138,6 +218,11 @@ export interface CompanyDetailScreening {
   detailedBreach?: DetailedBreachDiagnostic;
   financials?: CompanyFinancialsSummary;
   periodicReturns?: PeriodicReturns;
+  scorecard?: CompanyScorecard;
+  detailedRatios?: DetailedRatiosGroup;
+  dupont?: DupontAnalysis;
+  dividendHistory?: HistoricalDividendItem[];
+  peers?: PeerComparisonItem[];
   aiAnalysis?: AiAnalysisReport;
   gracePeriodInfo: {
     isInGracePeriod: boolean;
