@@ -138,7 +138,7 @@ export const ZakatTrackerModule: React.FC<ZakatTrackerModuleProps> = ({
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 text-emerald-700 text-[10px] font-bold uppercase tracking-wider">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
-            <span>AAOIFI &amp; DİB Uyumlu Hisse Zekatı Motoru</span>
+            <span>DİB &amp; TKBB Uyumlu Hisse Zekatı Motoru</span>
           </div>
           <h3 className="text-xl font-bold text-slate-900 tracking-tight">
             Zekat Takip ve Hesaplama Modülü ({breakdown.ratePercentText})

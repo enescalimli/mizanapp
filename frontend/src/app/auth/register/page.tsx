@@ -4,7 +4,7 @@ import { AuthForm } from "@/components/auth/AuthForm";
 
 export const metadata: Metadata = {
   title: "Hesap Aç | MizanApp.tr - Katılım Finansmanı",
-  description: "MizanApp hesabı açarak BIST Katılım ve AAOIFI standartlarında hisse ve portföy takibine başlayın.",
+  description: "MizanApp hesabı açarak DİB ve BIST Katılım standartlarında hisse ve portföy takibine başlayın.",
 };
 
 export default function RegisterPage() {

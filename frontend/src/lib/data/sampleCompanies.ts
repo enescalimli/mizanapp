@@ -72,7 +72,7 @@ export const SAMPLE_COMPANIES_SUMMARY: CompanySummary[] = [
     change24h: "+0.85%",
     purificationPerShareTRY: "0.6210",
     zatableNetAssetsPerShareTRY: "18.6000",
-    breachReasonSummary: "AAOIFI %30.00 borç eşiğinde %30.85 ile 1/2 çeyrek hoşgörü (Grace Period) bandında.",
+    breachReasonSummary: "BIST Katılım %33.00 yasal tavanı altında güvenli bölgede izlenmektedir.",
     previousQuarterStatus: "COMPLIANT",
   },
   {
@@ -355,7 +355,7 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
       maxAllowedQuarters: 2,
       notes: summary.breachReasonSummary
         ? [summary.breachReasonSummary]
-        : ["Tüm finansal ve faaliyet kriterleri BIST Katılım ve AAOIFI standartlarına uygundur."],
+        : ["Tüm finansal ve faaliyet kriterleri BIST Katılım ve DİB standartlarına uygundur."],
     },
     ratios: {
       denominatorRuleUsed: "MAX_OF_MCAP_OR_ASSETS",
@@ -545,7 +545,7 @@ export const DETAILED_COMPANIES_DATABASE: Record<string, CompanyDetailScreening>
       maxAllowedQuarters: 2,
       notes: [
         "BIST Katılım standardında borç oranı %30.85 ile %33 limitinin altındadır.",
-        "AAOIFI standardında ise %30.00 eşiğini aştığı için 1. çeyrek hoşgörü süresi (Grace Period) kapsamındadır.",
+        "DİB ve TKBB kriterlerine tam uyumludur.",
       ],
     },
     ratios: {
@@ -849,9 +849,8 @@ export function evaluateCompanyStatusForStandard(
   status: ComplianceStatus;
   breachedMetrics: BreachedMetricItem[];
 } {
-  const status =
-    standard === "BIST_KATILIM_DIB" ? summary.bistStatus : summary.aaoifiStatus;
-  const maxDebtCashThreshold = standard === "BIST_KATILIM_DIB" ? 33.0 : 30.0;
+  const status = summary.bistStatus;
+  const maxDebtCashThreshold = 33.0;
   const maxIncomeThreshold = 5.0;
 
   const breachedMetrics: BreachedMetricItem[] = [];
@@ -924,8 +923,7 @@ export function getSmartAlternativesForTicker(
 
   // Same sector compliant companies first
   const sameSectorCompliant = deduplicatedUniverse.filter((c) => {
-    const status =
-      standard === "BIST_KATILIM_DIB" ? c.bistStatus : c.aaoifiStatus;
+    const status = c.bistStatus;
     return (
       c.ticker !== target.ticker &&
       c.sector === target.sector &&
@@ -940,8 +938,7 @@ export function getSmartAlternativesForTicker(
 
   // If fewer than 2 in same sector, supplement with top industrial/tech compliant leaders
   const fallbackCompliant = deduplicatedUniverse.filter((c) => {
-    const status =
-      standard === "BIST_KATILIM_DIB" ? c.bistStatus : c.aaoifiStatus;
+    const status = c.bistStatus;
     return (
       c.ticker !== target.ticker &&
       c.sector !== target.sector &&

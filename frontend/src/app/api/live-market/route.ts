@@ -33,7 +33,7 @@ const DEFAULT_KAP_DISCLOSURES: KAPDisclosureDTO[] = [
     title: "Katılım Finans İlkeleri Bilgi Formu (KAFİF)",
     category: "KATILIM_INFO_FORM",
     summary:
-      "Faizli borç rasyosu %1.32, uygunsuz gelir oranı %0.23 olarak gerçekleşmiştir. BIST Katılım (XKTUM) ve AAOIFI tam uygundur.",
+      "Faizli borç rasyosu %1.32, uygunsuz gelir oranı %0.23 olarak gerçekleşmiştir. BIST Katılım (XKTUM) tam uygundur.",
     publishedAt: "16:45",
     triggersRescreening: true,
     kapUrl: "https://www.kap.org.tr/tr/arama?keyword=BIMAS",

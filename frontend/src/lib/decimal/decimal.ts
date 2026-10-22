@@ -92,7 +92,7 @@ export function calculateDaysHeld(
     const diffMs = vDate.getTime() - pDate.getTime();
     const diffDays = Math.max(Math.floor(diffMs / (1000 * 60 * 60 * 24)), 1);
 
-    // Quarter is normalized to 90 days pro-rata as per TKBB & AAOIFI rules
+    // Quarter is normalized to 90 days pro-rata as per TKBB rules
     const daysInQuarter = Math.min(diffDays, 90);
 
     const formatted = new Intl.DateTimeFormat("tr-TR", {
@@ -307,9 +307,8 @@ export function assessStockKatilimRisk(
   summary: CompanySummary,
   standard: ScreeningStandardCode = "BIST_KATILIM_DIB"
 ): KatilimRiskAssessment {
-  const debtThreshold = standard === "BIST_KATILIM_DIB" ? 33.0 : 30.0;
-  const status =
-    standard === "BIST_KATILIM_DIB" ? summary.bistStatus : summary.aaoifiStatus;
+  const debtThreshold = 33.0;
+  const status = summary.bistStatus;
 
   const debtMargin = debtThreshold - summary.debtRatioPercent;
   const isBreached = status === "NON_COMPLIANT";

@@ -51,7 +51,6 @@ export default function TarayiciPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT">("ALL");
   const [sectorFilter, setSectorFilter] = useState("TÜMÜ");
-  const [standard, setStandard] = useState<"BIST" | "AAOIFI">("BIST");
   const [visibleLimit, setVisibleLimit] = useState(80);
   const [sortField, setSortField] = useState<SortField>("ticker");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
@@ -89,13 +88,9 @@ export default function TarayiciPage() {
     }
 
     if (statusFilter === "COMPLIANT") {
-      list = list.filter((c) =>
-        standard === "BIST" ? c.bistStatus === "COMPLIANT" : c.aaoifiStatus === "COMPLIANT"
-      );
+      list = list.filter((c) => c.bistStatus === "COMPLIANT");
     } else if (statusFilter === "NON_COMPLIANT") {
-      list = list.filter((c) =>
-        standard === "BIST" ? c.bistStatus === "NON_COMPLIANT" : c.aaoifiStatus === "NON_COMPLIANT"
-      );
+      list = list.filter((c) => c.bistStatus === "NON_COMPLIANT");
     }
 
     if (sectorFilter !== "TÜMÜ") {
@@ -103,7 +98,7 @@ export default function TarayiciPage() {
     }
 
     return list;
-  }, [companies, searchQuery, statusFilter, sectorFilter, standard]);
+  }, [companies, searchQuery, statusFilter, sectorFilter]);
 
   // Sorting
   const sortedCompanies = useMemo(() => {
@@ -113,8 +108,8 @@ export default function TarayiciPage() {
       let valB: any = "";
 
       if (sortField === "status") {
-        valA = standard === "BIST" ? a.bistStatus : a.aaoifiStatus;
-        valB = standard === "BIST" ? b.bistStatus : b.aaoifiStatus;
+        valA = a.bistStatus;
+        valB = b.bistStatus;
       } else if (sortField === "priceTRY") {
         valA = parseFloat(String(a.priceTRY).replace(/[^0-9.-]+/g, "")) || 0;
         valB = parseFloat(String(b.priceTRY).replace(/[^0-9.-]+/g, "")) || 0;
@@ -135,7 +130,7 @@ export default function TarayiciPage() {
       return sortDirection === "asc" ? valA - valB : valB - valA;
     });
     return list;
-  }, [filteredCompanies, sortField, sortDirection, standard]);
+  }, [filteredCompanies, sortField, sortDirection]);
 
   const displayedCompanies = useMemo(
     () => sortedCompanies.slice(0, visibleLimit),
@@ -162,9 +157,7 @@ export default function TarayiciPage() {
 
   const stats = useMemo(() => {
     const total = companies.length;
-    const compliant = companies.filter((c) =>
-      standard === "BIST" ? c.bistStatus === "COMPLIANT" : c.aaoifiStatus === "COMPLIANT"
-    ).length;
+    const compliant = companies.filter((c) => c.bistStatus === "COMPLIANT").length;
     const nonCompliant = total - compliant;
     return {
       total,
@@ -172,10 +165,10 @@ export default function TarayiciPage() {
       nonCompliant,
       ratio: total > 0 ? ((compliant / total) * 100).toFixed(1) : "0",
     };
-  }, [companies, standard]);
+  }, [companies]);
 
   const getComplianceReason = (comp: CompanySummary) => {
-    const isComp = standard === "BIST" ? comp.bistStatus === "COMPLIANT" : comp.aaoifiStatus === "COMPLIANT";
+    const isComp = comp.bistStatus === "COMPLIANT";
     if (isComp) {
       return "BIST Katılım Kriterlerine Uygundur (Finansal rasyolar eşik altındadır).";
     }
@@ -274,30 +267,10 @@ export default function TarayiciPage() {
               </p>
             </div>
 
-            {/* Fıkhi Standart Switcher */}
-            <div className="inline-flex p-1 rounded-2xl bg-[#EDF1F7] border border-white shrink-0 self-start md:self-auto">
-              <button
-                type="button"
-                onClick={() => setStandard("BIST")}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition ${
-                  standard === "BIST"
-                    ? "bg-[#182542] text-white shadow-xs"
-                    : "text-[#6E81A0] hover:text-[#182542]"
-                }`}
-              >
-                BIST Katılım (Max %33)
-              </button>
-              <button
-                type="button"
-                onClick={() => setStandard("AAOIFI")}
-                className={`px-3.5 py-1.5 text-xs font-bold rounded-xl transition ${
-                  standard === "AAOIFI"
-                    ? "bg-[#182542] text-white shadow-xs"
-                    : "text-[#6E81A0] hover:text-[#182542]"
-                }`}
-              >
-                AAOIFI No:21 (Max %30)
-              </button>
+            {/* Resmi Fıkhi Standart Rozeti */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs shrink-0 self-start md:self-auto text-xs font-bold text-[#182542]">
+              <Scale size={13} className="text-emerald-600" />
+              <span>DİB &amp; BIST Katılım Standartları (&lt;%33)</span>
             </div>
           </div>
 
@@ -448,8 +421,7 @@ export default function TarayiciPage() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {displayedCompanies.map((comp) => {
-                  const isCompliant =
-                    standard === "BIST" ? comp.bistStatus === "COMPLIANT" : comp.aaoifiStatus === "COMPLIANT";
+                  const isCompliant = comp.bistStatus === "COMPLIANT";
                   const isPositiveChange = String(comp.change24h).startsWith("+");
 
                   return (
@@ -516,7 +488,7 @@ export default function TarayiciPage() {
                       <td className="py-3.5 px-4 text-right font-mono">
                         <span
                           className={`font-bold ${
-                            comp.debtRatioPercent > (standard === "BIST" ? 33.0 : 30.0)
+                            comp.debtRatioPercent > 33.0
                               ? "text-rose-600"
                               : "text-[#182542]"
                           }`}
@@ -529,7 +501,7 @@ export default function TarayiciPage() {
                       <td className="py-3.5 px-4 text-right font-mono">
                         <span
                           className={`font-bold ${
-                            comp.cashRatioPercent > (standard === "BIST" ? 33.0 : 30.0)
+                            comp.cashRatioPercent > 33.0
                               ? "text-rose-600"
                               : "text-[#182542]"
                           }`}

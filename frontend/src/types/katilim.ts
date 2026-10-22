@@ -4,7 +4,7 @@ export type ComplianceStatus =
   | "NON_COMPLIANT"
   | "INSUFFICIENT_DATA";
 
-export type ScreeningStandardCode = "BIST_KATILIM_DIB" | "AAOIFI_STD_21";
+export type ScreeningStandardCode = "BIST_KATILIM_DIB";
 
 export type ZakatIntentionType = "TRADING_SHORT_TERM" | "LONG_TERM_DIVIDEND";
 
@@ -18,7 +18,7 @@ export interface CompanySummary {
   sector: string;
   subSector?: string;
   bistStatus: ComplianceStatus;
-  aaoifiStatus: ComplianceStatus;
+  aaoifiStatus?: ComplianceStatus;
   debtRatioPercent: number;
   cashRatioPercent: number;
   impureIncomePercent: number;

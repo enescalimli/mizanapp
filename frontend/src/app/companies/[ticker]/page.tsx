@@ -260,30 +260,10 @@ export default function CompanyDetailPage() {
               </div>
             </div>
 
-            {/* Standard Switcher (BIST Katılım DİB vs AAOIFI) */}
-            <div className="flex items-center bg-[#EBEEF2]/90 p-1 rounded-2xl border border-white/80 shadow-2xs shrink-0 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setStandard("BIST_KATILIM_DIB")}
-                className={`px-3 py-1.5 rounded-xl transition ${
-                  isBist
-                    ? "bg-white text-[#182542] shadow-xs"
-                    : "text-[#6E81A0] hover:text-[#182542]"
-                }`}
-              >
-                DİB / BIST Katılım (&lt;%33)
-              </button>
-              <button
-                type="button"
-                onClick={() => setStandard("AAOIFI_STD_21")}
-                className={`px-3 py-1.5 rounded-xl transition ${
-                  !isBist
-                    ? "bg-white text-[#182542] shadow-xs"
-                    : "text-[#6E81A0] hover:text-[#182542]"
-                }`}
-              >
-                AAOIFI No.21 (&lt;%30)
-              </button>
+            {/* Resmi Fıkhi Standart Rozeti */}
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[#EBEEF2]/90 border border-white/80 shadow-2xs shrink-0 text-xs font-bold text-[#182542]">
+              <Scale size={13} className="text-emerald-600" />
+              <span>DİB &amp; BIST Katılım Standartları (&lt;%33)</span>
             </div>
           </div>
 

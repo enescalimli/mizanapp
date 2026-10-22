@@ -123,7 +123,7 @@ export const FloatingBottomBar: React.FC = () => {
                       Hisse Uygunluk Sorgula
                     </div>
                     <div className="text-[11px] text-[#6E81A0]">
-                      626 BIST hissesi için DİB/TKBB &amp; AAOIFI rasyoları
+                      626 BIST hissesi için DİB &amp; TKBB rasyoları
                     </div>
                   </div>
                 </div>

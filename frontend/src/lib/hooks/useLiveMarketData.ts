@@ -23,7 +23,7 @@ const INITIAL_KAP_FEED: KAPDisclosureDTO[] = [
     title: "Katılım Finans İlkeleri Bilgi Formu (KAFİF)",
     category: "KATILIM_INFO_FORM",
     summary:
-      "Faizli borç rasyosu %1.32, uygunsuz gelir oranı %0.23 olarak gerçekleşmiştir. BIST Katılım ve AAOIFI tam uygundur.",
+      "Faizli borç rasyosu %1.32, uygunsuz gelir oranı %0.23 olarak gerçekleşmiştir. BIST Katılım tam uygundur.",
     publishedAt: "16:45",
     triggersRescreening: true,
     kapUrl: "https://www.kap.org.tr",
@@ -71,7 +71,7 @@ const INITIAL_KAP_FEED: KAPDisclosureDTO[] = [
     title: "Konsolide Finansal Rapor & Uçak Kiralama Yükümlülükleri",
     category: "FINANCIAL_REPORT",
     summary:
-      "Filo genişlemesi finansal kiralama borçları nedeniyle borç rasyosu %30.85 olarak izlenmektedir (BIST Katılım uygun, AAOIFI hoşgörü bandında).",
+      "Filo genişlemesi finansal kiralama borçları nedeniyle borç rasyosu %30.85 olarak izlenmektedir (BIST Katılım %33 tavanı altında).",
     publishedAt: "09:50",
     triggersRescreening: true,
     kapUrl: "https://www.kap.org.tr",

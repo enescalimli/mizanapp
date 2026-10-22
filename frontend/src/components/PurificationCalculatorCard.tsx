@@ -413,7 +413,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
                 Niyet 2: Uzun Vadeli Temettü Yatırımı
               </span>
               <span className="text-[11px] text-slate-500 block mb-2 font-normal">
-                Net Dönen Varlıklar üzerinden %2.5 (AAOIFI No. 35)
+                Net Dönen Varlıklar üzerinden %2.5 (İslam Fıkıh Akademisi)
               </span>
               <div className="flex items-baseline justify-between text-xs">
                 <span className="text-slate-500">Zekata Tabi Matrah:</span>

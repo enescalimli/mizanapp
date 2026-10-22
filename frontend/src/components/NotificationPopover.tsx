@@ -54,7 +54,7 @@ const INITIAL_NOTIFICATIONS: MizanNotification[] = [
     ticker: "BIMAS",
     title: "Katılım Bilgi Formu (KAFİF) Onaylandı",
     summary:
-      "2026 konsolide finansal tablolar uyarınca faizli borç oranı %14,80 olup BIST Katılım ve AAOIFI kriterlerini eksiksiz karşılamaktadır.",
+      "2026 konsolide finansal tablolar uyarınca faizli borç oranı %14,80 olup BIST Katılım ve DİB kriterlerini eksiksiz karşılamaktadır.",
     time: "1 saat önce",
     isUnread: true,
     linkHref: "/companies/BIMAS",

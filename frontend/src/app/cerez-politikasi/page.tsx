@@ -133,7 +133,7 @@ export default function CookiePolicyPage() {
                   </span>
                 </div>
                 <p className="text-[11px] text-[#6E81A0] leading-relaxed">
-                  Seçtiğiniz fıkhi standart (DİB / AAOIFI), portföy gizleme durumu ve arındırma hesaplama tercihlerinizi bir sonraki ziyaretinizde anımsamak için kullanılır.
+                  Seçtiğiniz fıkhi tercihler (DİB / BIST Katılım), portföy gizleme durumu ve arındırma hesaplama tercihlerinizi bir sonraki ziyaretinizde anımsamak için kullanılır.
                 </p>
               </div>
               <input

@@ -388,25 +388,10 @@ export default function PortfolioManagementPage() {
               <span className="text-xs font-medium text-[#6E81A0]">
                 Denetim Standardı:
               </span>
-              <div className="apple-segmented-group shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setStandard("BIST_KATILIM_DIB")}
-                  className={`apple-segmented-item ${
-                    standard === "BIST_KATILIM_DIB" ? "active" : ""
-                  }`}
-                >
-                  BIST Katılım (&lt;%33)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStandard("AAOIFI_STD_21")}
-                  className={`apple-segmented-item ${
-                    standard === "AAOIFI_STD_21" ? "active" : ""
-                  }`}
-                >
-                  AAOIFI No.21 (&lt;%30)
-                </button>
+              <div className="shrink-0">
+                <span className="px-3.5 py-1.5 rounded-xl bg-[#182542] text-white text-xs font-bold shadow-xs">
+                  DİB &amp; BIST Katılım Standartları (&lt;%33)
+                </span>
               </div>
             </div>
           </div>

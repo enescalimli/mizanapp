@@ -88,7 +88,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc pl-5 space-y-1 text-slate-600">
               <li><strong>Kimlik ve İletişim Bilgileri:</strong> Ad, soyad, e-posta adresi (üyelik ve OTP doğrulama için).</li>
               <li><strong>İşlem Güvenliği ve Teknik Veriler:</strong> IP adresi, erişim logları, tarayıcı türü, oturum çerezleri.</li>
-              <li><strong>Kullanıcı Tercihleri:</strong> Seçilen fıkhi standart (DİB / AAOIFI), arındırma yöntemi (temettü/hisse oranı), bildirim tercihleri.</li>
+              <li><strong>Kullanıcı Tercihleri:</strong> Seçilen fıkhi tercihler (DİB / BIST Katılım), arındırma yöntemi (temettü/hisse oranı), bildirim tercihleri.</li>
               <li><strong>Ödeme Bilgileri:</strong> Kart numaralarınız Mizan sunucularında asla saklanmaz. Ödemeler PCI-DSS Seviye 1 sertifikalı lisanslı sağlayıcılar (Stripe/iyzico) üzerinden tokenize edilerek işlenir.</li>
             </ul>
           </section>

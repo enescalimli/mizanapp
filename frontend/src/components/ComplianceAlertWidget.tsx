@@ -44,7 +44,7 @@ export const ComplianceAlertWidget: React.FC<ComplianceAlertWidgetProps> = ({
   const standardLabel =
     standard === "BIST_KATILIM_DIB"
       ? "BIST Katılım (DİB/TKBB <%33 Borç/Nakit, <%5 Gelir)"
-      : "AAOIFI Std No. 21 (<%30 Borç/Nakit, <%5 Gelir)";
+      : "DİB & BIST Katılım (<%33 Borç/Nakit, <%5 Gelir)";
 
   // All compliant state
   if (alerts.length === 0) {

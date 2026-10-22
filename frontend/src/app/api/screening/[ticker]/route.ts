@@ -137,30 +137,16 @@ export async function GET(
     ? mcapDec.div(priceDec).round()
     : new Decimal(500_000_000);
 
-  const isBist = standard === "BIST_KATILIM_DIB";
-  const debtLimit = isBist ? 33.0 : 30.0;
-  const cashLimit = isBist ? 33.0 : 30.0;
-  const toleranceLimit = isBist ? 34.65 : 31.5;
+  const debtLimit = 33.0;
+  const cashLimit = 33.0;
+  const toleranceLimit = 34.65;
 
   const isDebtOk = univ.debtRatioPercent <= debtLimit;
   const isCashOk = univ.cashRatioPercent <= cashLimit;
   const isIncomeOk = univ.impureIncomePercent <= 5.0;
 
-  // Determine overall status based on standard
+  // Determine overall status based on DİB / BIST Katılım
   let overallStatus = univ.bistStatus;
-  if (!isBist) {
-    if (
-      univ.bistStatus === "COMPLIANT" &&
-      univ.debtRatioPercent > 30.0 &&
-      univ.debtRatioPercent <= 31.5
-    ) {
-      overallStatus = "GRACE_PERIOD_TOLERANCE";
-    } else if (univ.debtRatioPercent > 31.5 || univ.bistStatus === "NON_COMPLIANT") {
-      overallStatus = "NON_COMPLIANT";
-    } else {
-      overallStatus = "COMPLIANT";
-    }
-  }
 
   // =========================================================================
   // 1. DİNAMİK VE DOĞRU KATILIM DIŞI TEŞHİS MOTORU (Root-Cause Engine)
@@ -783,7 +769,7 @@ export async function GET(
   if (overallStatus === "COMPLIANT") {
     shariahActionPlan = `1. Hisse BIST Katılım (XKTUM) resmi endeks bileşenidir; alım-satımında fıkhi engel bulunmamaktadır.\n2. Temettü ödemesi alındığında veya yıl sonunda brüt temettü/kâr payının %${univ.impureIncomePercent.toFixed(2)}'si faiz arındırması olarak hak sahipliği iddia edilmeksizin hayır kurumlarına aktarılmalıdır.\n3. Güvenlik tamponu (%${shariahSafetyBuffer}) geniş olduğu için bir sonraki çeyrekte endeksten düşme endişesi taşımadan orta-uzun vadeli pozisyon korunabilir.`;
   } else {
-    shariahActionPlan = `1. DİB Din İşleri Yüksek Kurulu ve AAOIFI standartları gereği bu hisseye yeni yatırım yapılması caiz görülmemektedir.\n2. Portföyünde hisse bulunan katılım yatırımcılarının ana sermayelerini koruyarak uygun bir piyasa koşulunda pozisyondan çıkış yapmaları tavsiye edilir.\n3. Katılım dışı hissede kalınan sürede elde edilen faizli gelir ve haksız kazanç payları arındırma amacıyla elden çıkarılmalıdır.`;
+    shariahActionPlan = `1. DİB Din İşleri Yüksek Kurulu ve BIST Katılım standartları gereği bu hisseye yeni yatırım yapılması caiz görülmemektedir.\n2. Portföyünde hisse bulunan katılım yatırımcılarının ana sermayelerini koruyarak uygun bir piyasa koşulunda pozisyondan çıkış yapmaları tavsiye edilir.\n3. Katılım dışı hissede kalınan sürede elde edilen faizli gelir ve haksız kazanç payları arındırma amacıyla elden çıkarılmalıdır.`;
   }
 
   const pros = overallStatus === "COMPLIANT"
@@ -882,7 +868,7 @@ export async function GET(
       notes:
         overallStatus === "GRACE_PERIOD_TOLERANCE"
           ? [
-              "BIST Katılım (XKTUM) %33 eşiği altında olup AAOIFI %30 sınırında hoşgörü bandında izlenmektedir.",
+              "BIST Katılım (XKTUM) %33 yasal tavanı sınırında hoşgörü bandında izlenmektedir.",
             ]
           : [],
     },

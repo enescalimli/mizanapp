@@ -37,7 +37,7 @@ interface UserSettingsState {
   phone: string;
   investorLevel: "BASLANGIC" | "ORTA" | "ILERI";
   // Fıkıh
-  standard: "BIST" | "AAOIFI" | "DJIM";
+  standard: "BIST" | "TKBB";
   useCeilingRounding: boolean;
   purificationMethod: "PRO_RATA" | "DIVIDEND";
   zakatStrategy: "LONG_TERM_DIVIDEND" | "SHORT_TERM_TRADING";
@@ -425,28 +425,21 @@ export default function SettingsPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 {
                   id: "BIST",
-                  title: "BIST Katılım Kriteri",
-                  subtitle: "Diyanet & TKBB Danışma Kurulu",
-                  desc: "Borç < %33, Nakit < %33, Uygunsuz Gelir < %5. Türkiye borsası için resmi standarttır.",
-                  badge: "Tavsiye Edilen",
+                  title: "DİB & BIST Katılım Kriteri",
+                  subtitle: "Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu",
+                  desc: "Faizli Borç < %33, Faizli Nakit < %33, Uygunsuz Gelir < %5. Borsa İstanbul resmi helal tarama standardıdır.",
+                  badge: "Resmi Standart",
                 },
                 {
-                  id: "AAOIFI",
-                  title: "AAOIFI No. 21",
-                  subtitle: "Uluslararası Şer'i Kurul",
-                  desc: "Borç < %30, Faizli Varlık < %30, Uygunsuz Gelir < %5. Küresel fonlarda yaygındır.",
-                  badge: "Küresel İslami Finans",
-                },
-                {
-                  id: "DJIM",
-                  title: "DJIM Islamic Market",
-                  subtitle: "Dow Jones Metodolojisi",
-                  desc: "Piyasa değeri ağırlıklı 24 aylık ortalama faizli borç eşiği (%33).",
-                  badge: "Endeks Ağırlıklı",
+                  id: "TKBB",
+                  title: "TKBB Merkezi Danışma Kurulu",
+                  subtitle: "Türkiye Katılım Bankaları Birliği",
+                  desc: "KAP Katılım Finansı İlkeleri Bilgi Formu (KAFİF) ve 3 altın rasyo denetim metodolojisi.",
+                  badge: "KAP Uyumlu",
                 },
               ].map((std) => (
                 <div

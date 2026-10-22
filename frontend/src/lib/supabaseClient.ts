@@ -29,7 +29,7 @@ export interface Profile {
   full_name: string | null;
   avatar_url: string | null;
   phone_number: string | null;
-  preferred_standard: "BIST_KATILIM_DIB" | "AAOIFI_STD_21";
+  preferred_standard: "BIST_KATILIM_DIB";
   purification_ceiling_rounding: boolean;
   zakat_calculation_preference: "AUTO" | "TRADING_ONLY" | "DIVIDEND_ONLY";
   alert_notifications_enabled: boolean;

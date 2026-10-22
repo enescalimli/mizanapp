@@ -740,7 +740,7 @@ export default function HomePage() {
                 {/* Middle */}
                 <div className="relative z-10 py-1 space-y-1">
                   <div className="text-xs font-extrabold text-white tracking-tight">
-                    BIST Katılım (XKTUM) &amp; AAOIFI No: 21
+                    BIST Katılım (XKTUM) &amp; DİB Standartları
                   </div>
                   <div className="text-[10px] text-white/75 leading-relaxed">
                     Faizli Borç Oranı: <strong className="text-emerald-300">&lt; %33</strong> &bull; Uygunsuz Gelir: <strong className="text-emerald-300">&lt; %5</strong>

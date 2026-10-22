@@ -248,7 +248,7 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
 
         {/* Drawer Footer */}
         <div className="p-4 border-t border-slate-100 bg-slate-50 text-xs text-center text-slate-500 font-mono">
-          TKBB &amp; AAOIFI No. 21 Otomatik Bilanço Takip Sistemi
+          TKBB &amp; DİB Otomatik Bilanço Takip Sistemi
         </div>
       </div>
     </div>

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     template: "%s | Mizan Katılım Finans",
   },
   description:
-    "BIST Katılım (DİB/TKBB) ve AAOIFI standartlarında 626 hisse uygunluk tarama, çeyreklik KAP bilanço dipnot analizi, kuruşu kuruşuna arındırma ve hisse zekâtı SaaS platformu.",
+    "BIST Katılım (DİB/TKBB) standartlarında 626 hisse uygunluk tarama, çeyreklik KAP bilanço dipnot analizi, kuruşu kuruşuna arındırma ve hisse zekâtı SaaS platformu.",
   keywords: [
     "bist katılım",
     "helal hisse",

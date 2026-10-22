@@ -313,7 +313,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
           <p className="text-xs text-[#6E81A0] mt-1.5 font-normal">
             {mode === "login"
               ? "Katılım portföyünüze ve kuruşu kuruşuna arındırma verilerinize erişin."
-              : "BIST Katılım ve AAOIFI standartlarında şer'i portföy takibine hemen başlayın."}
+              : "DİB ve BIST Katılım standartlarında şer'i portföy takibine hemen başlayın."}
           </p>
         </div>
 
