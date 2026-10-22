@@ -25,9 +25,9 @@ export const LeftDockSidebar: React.FC = () => {
   const navItems = [
     {
       label: "Genel Bakış",
-      href: "/",
+      href: "/dashboard",
       icon: LayoutGrid,
-      isActive: pathname === "/",
+      isActive: pathname === "/dashboard" || pathname === "/",
     },
     {
       label: "Halka Arz Takvimi",

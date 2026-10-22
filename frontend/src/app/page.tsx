@@ -32,11 +32,9 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import { StockLogo } from "@/components/StockLogo";
-import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 
 export default function LandingPage() {
   const { isDark, toggleTheme } = useTheme();
-  const { companies } = useLiveMarketData(60000);
 
   // Active interactive showcase tab
   const [activeFeatureTab, setActiveFeatureTab] = useState<

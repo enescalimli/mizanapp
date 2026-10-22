@@ -27,9 +27,6 @@ export const FloatingBottomBar: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
   const [quickActionOpen, setQuickActionOpen] = useState(false);
 
-  // Landing sayfasında (pazarlama karşılama sayfasında) mobil barı gizle
-  if (pathname === "/") return null;
-
   // Close modal on escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,6 +44,10 @@ export const FloatingBottomBar: React.FC = () => {
       document.body.style.overflow = "";
     }
   }, [quickActionOpen]);
+
+  // Landing sayfasında (pazarlama karşılama sayfasında) mobil barı gizle
+  // TÜM React Hook'ları çağrıldıktan SONRA koşullu çıkış yapılır (Rules of Hooks kuralı)
+  if (pathname === "/") return null;
 
   const navItems = [
     {
