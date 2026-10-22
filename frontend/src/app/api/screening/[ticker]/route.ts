@@ -19,17 +19,18 @@ export const dynamic = "force-dynamic";
 
 /**
  * 7/24 Borsa İstanbul Resmi Finansal Veri ve Çarpan Çekicisi (TradingView BIST Scanner)
+ * Birden fazla hisseyi (Hisse + Sektörel Rakipler) tek bir ağ çağrısında çeker.
  */
-async function fetchLiveTradingViewStockFundamentals(ticker: string) {
+async function fetchLiveTradingViewStockFundamentals(tickers: string[]) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000);
+    const timeout = setTimeout(() => controller.abort(), 5000);
 
     const res = await fetch("https://scanner.tradingview.com/turkey/scan", {
       method: "POST",
       headers: { "Content-Type": "application/json", "User-Agent": "Mozilla/5.0" },
       body: JSON.stringify({
-        filter: [{ left: "name", operation: "equal", right: ticker }],
+        filter: [{ left: "name", operation: "in_range", right: tickers }],
         symbols: { query: { types: [] }, tickers: [] },
         columns: [
           "name",
@@ -73,11 +74,17 @@ async function fetchLiveTradingViewStockFundamentals(ticker: string) {
       cache: "no-store",
     });
     clearTimeout(timeout);
-    if (!res.ok) return null;
+    if (!res.ok) return new Map<string, any[]>();
     const json = await res.json();
-    return json.data?.[0]?.d || null;
+    const map = new Map<string, any[]>();
+    for (const item of json.data || []) {
+      if (item?.d?.[0]) {
+        map.set(String(item.d[0]).toUpperCase(), item.d);
+      }
+    }
+    return map;
   } catch {
-    return null;
+    return new Map<string, any[]>();
   }
 }
 
@@ -92,10 +99,7 @@ export async function GET(
     (searchParams.get("standard") as ScreeningStandardCode) ||
     "BIST_KATILIM_DIB";
 
-  const [{ companies }, tvData] = await Promise.all([
-    fetchLiveBistUniverse24x7(),
-    fetchLiveTradingViewStockFundamentals(upperTicker),
-  ]);
+  const { companies } = await fetchLiveBistUniverse24x7();
 
   const univ =
     companies.find((c) => c.ticker === upperTicker) ||
@@ -107,6 +111,20 @@ export async function GET(
       { status: 404 }
     );
   }
+
+  // 1. Sektörel Rakip Adayları
+  const peerCandidates = companies
+    .filter(
+      (c) =>
+        c.ticker !== upperTicker &&
+        (c.sector === univ.sector || (univ.subSector && c.subSector === univ.subSector))
+    )
+    .slice(0, 5);
+
+  // 2. Ana Hisse + Rakipler için BIST Scanner'dan Canlı Veri Çekimi
+  const tickersToScan = [upperTicker, ...peerCandidates.map((p) => p.ticker)];
+  const tvMap = await fetchLiveTradingViewStockFundamentals(tickersToScan);
+  const tvData = tvMap.get(upperTicker) || null;
 
   const liveClose = tvData?.[2] != null ? Number(tvData[2]) : Number(univ.priceTRY || "50.00");
   const liveChange = tvData?.[3] != null ? Number(tvData[3]) : Number(univ.change24h.replace("%", "").replace("+", "") || "0");
@@ -504,79 +522,334 @@ export async function GET(
   ];
 
   // =========================================================================
-  // 8. SEKTOREL RAKİP KIYASLAMA TABLOSU (Peer Group Benchmark)
+  // 8. SEKTOREL RAKİP KIYASLAMA TABLOSU (Canlı BIST Scanner Rasyoları ile)
   // =========================================================================
-  const peerCandidates = companies
-    .filter((c) => c.ticker !== upperTicker && (c.sector === univ.sector || c.subSector === univ.subSector))
-    .slice(0, 4);
-
   const peers: PeerComparisonItem[] = peerCandidates.map((p) => {
     const isPCompliant = p.bistStatus === "COMPLIANT";
-    const pPe = isPCompliant ? "9.4" : "5.8";
-    const pPb = isPCompliant ? "2.10" : "1.45";
-    const pEvEbitda = isPCompliant ? "7.8" : "6.2";
+    const pTv = tvMap.get(p.ticker.toUpperCase());
+
+    // Canlı Fiyat & Değişim
+    const pClose = pTv?.[2] != null ? `₺${Number(pTv[2]).toFixed(2)}` : `₺${p.priceTRY}`;
+    const pChange = pTv?.[3] != null ? `${Number(pTv[3]) >= 0 ? "+" : ""}${Number(pTv[3]).toFixed(2)}%` : p.change24h;
+
+    // Canlı F/K
+    let pPe = "-";
+    if (pTv?.[10] != null) {
+      const peNum = Number(pTv[10]);
+      pPe = peNum > 0 ? peNum.toFixed(1) : "A/D";
+    }
+
+    // Canlı PD/DD
+    const pPb = pTv?.[11] != null ? Number(pTv[11]).toFixed(2) : "-";
+
+    // Canlı FD/FAVÖK
+    const pEv = pTv?.[12] != null ? Number(pTv[12]).toFixed(1) : "-";
+
+    // Canlı ROE (Özkaynak Kârlılığı)
+    const pRoe = pTv?.[14] != null ? `${Number(pTv[14]) >= 0 ? "%" : "-%"}${Math.abs(Number(pTv[14])).toFixed(1)}` : "-";
+
+    // Canlı Net Borç / FAVÖK
+    const pNetDebtEbitda = pTv?.[13] != null ? Number(pTv[13]).toFixed(2) : "-";
+
     return {
       ticker: p.ticker,
       name: p.name,
-      priceTRY: `₺${p.priceTRY}`,
-      change24h: p.change24h,
+      priceTRY: pClose,
+      change24h: pChange,
       isCompliant: isPCompliant,
       peRatio: pPe,
       pbRatio: pPb,
-      evEbitda: pEvEbitda,
+      evEbitda: pEv,
       debtRatioPercent: p.debtRatioPercent,
+      roePercent: pRoe,
+      netDebtToEbitda: pNetDebtEbitda,
     };
   });
 
   // =========================================================================
-  // 9. MİZAN AI ANALİZ MODÜLÜ (Gerçek Finansallarla Dinamik Üretim)
+  // 9. GELİŞMİŞ MİZAN AI ANALİZ MOTORU (Fıkhi, Finansal & Sektörel Sentez)
   // =========================================================================
-  let aiScore = 8.5;
-  let aiVerdict = "Güçlü Bilanço & Güvenli Katılım";
-  let shariahRisk = `Şirketin faizli borç oranı (%${univ.debtRatioPercent.toFixed(1)}) ve nakit oranı (%${univ.cashRatioPercent.toFixed(1)}) DİB/TKBB eşiklerinin güvenli tarafındadır. Katılım endeksi dışına düşme riski düşüktür.`;
-  
+  const shariahSafetyBuffer = Number((debtLimit - univ.debtRatioPercent).toFixed(1));
+  let nextQuarterRiskLevel: "DÜŞÜK" | "ORTA" | "YÜKSEK" = "DÜŞÜK";
+  let nextQuarterRiskOutlook = "";
+
+  if (overallStatus === "COMPLIANT") {
+    if (shariahSafetyBuffer >= 12) {
+      nextQuarterRiskLevel = "DÜŞÜK";
+      nextQuarterRiskOutlook = `Şirketin faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) yasal %${debtLimit} tavanından %${shariahSafetyBuffer} oranında güvenli mesafededir. Mevcut nakit ve borçlanma politikası sürdüğü müddetçe gelecek çeyreklerde Katılım Endeksi dışına çıkma riski çok düşüktür.`;
+    } else if (shariahSafetyBuffer >= 4) {
+      nextQuarterRiskLevel = "ORTA";
+      nextQuarterRiskOutlook = `Şirketin faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) yasal %${debtLimit} tavanına makul bir mesafededir (%${shariahSafetyBuffer} güvenlik marjı). Yeni banka kredisi kullanımları veya piyasa değeri düşüşleri durumunda eşik aşımı riski çeyreklik bazda yakından izlenmelidir.`;
+    } else {
+      nextQuarterRiskLevel = "YÜKSEK";
+      nextQuarterRiskOutlook = `Şirketin faizli borç oranı (%${univ.debtRatioPercent.toFixed(1)}) %${debtLimit} tavanına çok yakındır (yalnızca %${shariahSafetyBuffer} tampon). Olası finansal dalgalanmalarda endeksten geçici ihraç riski mevcuttur.`;
+    }
+  } else {
+    nextQuarterRiskLevel = "YÜKSEK";
+    nextQuarterRiskOutlook = `Şirket halihazırda ${detailedBreach.primaryReason} gerekçesiyle katılım kriterlerini karşılamamaktadır. Portföylere dahil edilmesi caiz değildir.`;
+  }
+
+  // 1. Fıkhi Güvenlik Skoru
+  let shariahScoreVal = 2.0;
+  let shariahStatus: "EXCELLENT" | "GOOD" | "MODERATE" | "WEAK" | "CRITICAL" = "CRITICAL";
+  let shariahDesc = "";
+
+  if (overallStatus === "COMPLIANT") {
+    if (shariahSafetyBuffer >= 12) {
+      shariahScoreVal = 9.8;
+      shariahStatus = "EXCELLENT";
+      shariahDesc = `Faizli borç (%${univ.debtRatioPercent.toFixed(1)}) ve nakit (%${univ.cashRatioPercent.toFixed(1)}) oranları DİB/TKBB tavanının çok altındadır. Güvenlik marjı (%${shariahSafetyBuffer}) mükemmel seviyededir.`;
+    } else if (shariahSafetyBuffer >= 5) {
+      shariahScoreVal = 8.2;
+      shariahStatus = "GOOD";
+      shariahDesc = `Faizli borç oranı kabul edilebilir sınırlar içinde olup %${shariahSafetyBuffer} tampon barındırmaktadır. Fıkhi uygunluk güvence altındadır.`;
+    } else {
+      shariahScoreVal = 6.4;
+      shariahStatus = "MODERATE";
+      shariahDesc = `Faizli borç oranı yasal tavan sınırına yakındır. Katılım endeksi devamlılığı hassas izleme gerektirir.`;
+    }
+  } else {
+    shariahScoreVal = isBankOrFinance || isAlcoholOrTobacco ? 1.5 : 3.5;
+    shariahStatus = "CRITICAL";
+    shariahDesc = `DİB Din İşleri Yüksek Kurulu standartları ihlal edilmektedir: ${detailedBreach.primaryReason}.`;
+  }
+
+  // 2. Finansal Dayanıklılık & Borçluluk Skoru
+  let finScoreVal = 7.5;
+  let finStatus: "EXCELLENT" | "GOOD" | "MODERATE" | "WEAK" | "CRITICAL" = "GOOD";
+  let finDesc = "";
+
+  if (realNetIncome > 0) {
+    if ((rawNetDebtEbitda == null || rawNetDebtEbitda < 1.5) && (rawCr == null || rawCr >= 1.2)) {
+      finScoreVal = 9.0;
+      finStatus = "EXCELLENT";
+      finDesc = `Net Borç/FAVÖK (${netDebtEbitdaFormatted}) ve Cari Oran (${crVal}) mükemmel likiditeye ve düşük borç yüküne işaret etmektedir.`;
+    } else if (rawNetDebtEbitda == null || rawNetDebtEbitda < 3.0) {
+      finScoreVal = 7.8;
+      finStatus = "GOOD";
+      finDesc = `Yönetilebilir borçluluk ve dengeli işletme sermayesi. Operasyonel kâr borç servis yükünü karşılayacak güçtedir.`;
+    } else {
+      finScoreVal = 5.6;
+      finStatus = "MODERATE";
+      finDesc = `Yüksek finansal borç yükü (Net Borç/FAVÖK: ${netDebtEbitdaFormatted}). Finansman giderlerinin kârlılık üzerindeki baskısı takip edilmelidir.`;
+    }
+  } else {
+    finScoreVal = 4.2;
+    finStatus = "WEAK";
+    finDesc = `Son 12 ayda açıklanan net zarar (${Math.abs(realNetIncome).toLocaleString("tr-TR")} ₺) işletme sermayesi üzerinde baskı oluşturmaktadır.`;
+  }
+
+  // 3. Kârlılık & Büyüme Kalitesi Skoru
+  let profScoreVal = 7.0;
+  let profStatus: "EXCELLENT" | "GOOD" | "MODERATE" | "WEAK" | "CRITICAL" = "GOOD";
+  let profDesc = "";
+
+  if (dupont.calculatedRoePercent >= 20) {
+    profScoreVal = 9.2;
+    profStatus = "EXCELLENT";
+    profDesc = `Yıllık %${dupont.calculatedRoePercent} özkaynak kârlılığı ile sektörünün en verimli sermaye getirisi üreten şirketlerindendir.`;
+  } else if (dupont.calculatedRoePercent >= 10) {
+    profScoreVal = 7.9;
+    profStatus = "GOOD";
+    profDesc = `Pozitif kâr marjları ve %${dupont.calculatedRoePercent} özkaynak getirisi operasyonel sürdürülebilirliği desteklemektedir.`;
+  } else if (dupont.calculatedRoePercent > 0) {
+    profScoreVal = 6.2;
+    profStatus = "MODERATE";
+    profDesc = `Özkaynak kârlılığı (%${dupont.calculatedRoePercent}) piyasa faiz / enflasyon ortamına kıyasla sınırlı kalmaktadır.`;
+  } else {
+    profScoreVal = 3.6;
+    profStatus = "WEAK";
+    profDesc = `Negatif net kâr marjı sermaye kârlılığını eritmektedir. Operasyonel marjlarda toparlanma beklenmelidir.`;
+  }
+
+  // 4. Değerleme & Çarpan Cazibesi Skoru
+  let valScoreVal = 7.0;
+  let valStatus: "EXCELLENT" | "GOOD" | "MODERATE" | "WEAK" | "CRITICAL" = "GOOD";
+  let valDesc = "";
+
+  const peerPeList = peers
+    .map((p) => parseFloat(p.peRatio))
+    .filter((v) => !isNaN(v) && v > 0);
+  const avgPeerPe = peerPeList.length
+    ? Number((peerPeList.reduce((a, b) => a + b, 0) / peerPeList.length).toFixed(1))
+    : null;
+
+  if (rawPe && rawPe > 0) {
+    if (avgPeerPe && rawPe < avgPeerPe * 0.85) {
+      valScoreVal = 8.8;
+      valStatus = "EXCELLENT";
+      valDesc = `Hisse F/K çarpanı (${rawPe.toFixed(1)}x), sektör rakipleri ortalamasına (${avgPeerPe}x) kıyasla cazip bir iskonto sunmaktadır.`;
+    } else if (avgPeerPe && rawPe > avgPeerPe * 1.25) {
+      valScoreVal = 6.2;
+      valStatus = "MODERATE";
+      valDesc = `Hisse ${rawPe.toFixed(1)}x F/K ile sektör ortalamasına (${avgPeerPe}x) göre primli fiyatlanmaktadır.`;
+    } else {
+      valScoreVal = 7.5;
+      valStatus = "GOOD";
+      valDesc = `Hisse ${rawPe.toFixed(1)}x F/K ve ${pbFormatted} PD/DD çarpanı ile sektör dengesine uygun fiyatlanmaktadır.`;
+    }
+  } else {
+    valScoreVal = 4.8;
+    valStatus = "MODERATE";
+    valDesc = `Net zarar nedeniyle F/K hesaplanamamaktadır (A/D). Şirket ${pbFormatted} PD/DD ve ${evEbitdaFormatted} FD/FAVÖK üzerinden takip edilmelidir.`;
+  }
+
+  // Toplam Ağırlıklı Mizan AI Skoru (10 Üzerinden)
+  const overallAiScore = Number(
+    (
+      shariahScoreVal * 0.35 +
+      finScoreVal * 0.25 +
+      profScoreVal * 0.25 +
+      valScoreVal * 0.15
+    ).toFixed(1)
+  );
+
+  // Genel Hüküm (Verdict)
+  let aiVerdict = "Dengeli Katılım Hissesi";
+  if (overallStatus !== "COMPLIANT") {
+    aiVerdict = isBankOrFinance || isAlcoholOrTobacco
+      ? "Sektörel Faaliyet Engeli (Yatırıma Kesinlikle Uygun Değil)"
+      : "Finansal Rasyo Aşımı Nedeniyle Katılım Dışı";
+  } else {
+    if (overallAiScore >= 8.5) {
+      aiVerdict = "Yüksek Fıkhi Güvenlik & Güçlü Operasyonel Bilanço";
+    } else if (overallAiScore >= 7.0) {
+      aiVerdict = "İstikrarlı Katılım Hissesi & Yönetilebilir Risk";
+    } else {
+      aiVerdict = "Takip Gerektiren Katılım Hissesi (Zarar/Borç Baskısı)";
+    }
+  }
+
+  // Finansal Büyüme & Kârlılık Özeti
   let financialHealth = "";
   if (realNetIncome < 0) {
     financialHealth = `Şirket son 12 aylık dönemde ${Math.abs(realNetIncome).toLocaleString("tr-TR")} ₺ net zarar açıklamıştır. Özkaynak kârlılığı (${roeFormatted}) ve net marjı (${netMarginFormatted}) negatiftir. Ancak hasılat büyüklüğü (${formatMcapShort(realRevenue)}) operasyonel tabanın korunduğunu göstermektedir.`;
-    aiScore = Math.max(5.5, aiScore - 2.5);
-    aiVerdict = "Net Zarar Açıklayan Katılım Hissesi";
   } else {
     financialHealth = `Şirketin yıllıklandırılmış hasılatı ${formatMcapShort(realRevenue)}, net kârı ise ${formatMcapShort(realNetIncome)} seviyesindedir. F/K çarpanı (${peFormatted}) ve FAVÖK marjı (${ebitdaMarginFormatted}) ile sektöründe güçlü operasyonel kârlılık üretmektedir. Net Borç/FAVÖK çarpanı (${netDebtEbitdaFormatted}) borç yükünün yönetilebilir olduğunu göstermektedir.`;
   }
 
+  // Temettü & Arındırma Notu
   let purificationNote = `Hisse başına çeyreklik tahmini arındırma tutarı ₺${univ.purificationPerShareTRY} seviyesindedir. Dağıtılacak temettülerde fıkhi arındırma payı ortalama %${univ.impureIncomePercent.toFixed(2)} olarak hesaplanmaktadır.`;
 
   if (overallStatus !== "COMPLIANT") {
-    aiScore = isBankOrFinance || isAlcoholOrTobacco ? 2.1 : 4.5;
-    aiVerdict = isSectorCompliant ? "Rasyo Aşımı Nedeniyle Katılım Dışı" : "Sektörel Faaliyet Engeli (Yatırıma Uygun Değil)";
-    shariahRisk = `Şirket, ${detailedBreach.primaryReason} gerekçesiyle DİB Din İşleri Yüksek Kurulu ve BIST Katılım Endeksi kriterlerini ihlal etmektedir.`;
     financialHealth = `Finansal bilanço büyüklüğü (${formatMcapShort(realTotalAssets)}) yüksek olsa da katılım portföyleri açısından meşru yatırım evreninde bulunmamaktadır.`;
     purificationNote = `Hisse katılım dışı olduğu için elde edilecek sermaye kazancı ve temettünün arındırma yöntemiyle caiz kılınması mümkün değildir (Ana sermayenin çekilmesi tavsiye edilir).`;
   }
 
+  // DuPont AI Sentezi
+  let dupontAiSynthesis = "";
+  if (dupont.calculatedRoePercent > 18) {
+    dupontAiSynthesis = `Şirket yıllıklandırılmış %${dupont.calculatedRoePercent} ile sektör ortalamasının üzerinde güçlü bir özkaynak kârlılığı (ROE) üretmektedir. DuPont ayrıştırmasına göre kârlılığın ana kaynağı ${
+      dupont.assetTurnover >= 1.5
+        ? `yüksek aktif devir hızı (${dupont.assetTurnover}x) ve perakende/operasyonel sürüm gücüdür`
+        : `yüksek net kâr marjı (%${dupont.netMarginPercent.toFixed(1)}) ve güçlü fiyatlama hakimiyetidir`
+    }. Finansal kaldıraç çarpanı (${dupont.leverageMultiplier}x) dengeli seyretmektedir.`;
+  } else if (dupont.calculatedRoePercent > 0) {
+    dupontAiSynthesis = `Şirket %${dupont.calculatedRoePercent} seviyesinde makul bir özkaynak kârlılığına sahiptir. DuPont modeli, kârlılığın %${dupont.netMarginPercent.toFixed(1)} net marj ve ${dupont.leverageMultiplier}x kaldıraç dengesiyle sağlandığını göstermektedir.`;
+  } else {
+    dupontAiSynthesis = `Şirketin hesaplanan özkaynak kârlılığı negatif seviyededir (%${dupont.calculatedRoePercent}). DuPont kırılımında net kâr marjının negatif bölgeye düşmesi sermaye kârlılığını eritmektedir; operasyonel marjlarda toparlanma izlenmelidir.`;
+  }
+
+  // Değerleme ve Çarpan İncelemesi
+  let valuationInsight = "";
+  if (rawPe && rawPe > 0) {
+    if (avgPeerPe && rawPe < avgPeerPe * 0.85) {
+      valuationInsight = `Hissenin F/K çarpanı (${rawPe.toFixed(1)}x), sektör rakipleri ortalamasına (${avgPeerPe}x) kıyasla %${Math.round((1 - rawPe / avgPeerPe) * 100)} iskontolu işlem görmektedir. PD/DD çarpanı (${pbFormatted}) ile birlikte değerlendirildiğinde cazip bir değerleme potansiyeli sunmaktadır.`;
+    } else if (avgPeerPe && rawPe > avgPeerPe * 1.25) {
+      valuationInsight = `Hisse F/K çarpanı (${rawPe.toFixed(1)}x), sektör ortalamasının (${avgPeerPe}x) yaklaşık %${Math.round((rawPe / avgPeerPe - 1) * 100)} üzerinde primli fiyatlanmaktadır. Bu prim, şirketin pazar liderliği, yüksek özkaynak kârlılığı (%${roeFormatted}) veya büyüme beklentileriyle desteklenmektedir.`;
+    } else {
+      valuationInsight = `Hisse ${rawPe.toFixed(1)}x F/K çarpanı ile sektör medyanı ${avgPeerPe ? `(${avgPeerPe}x)` : ""} ile uyumlu, dengeli bir değerleme bandında işlem görmektedir.`;
+    }
+  } else {
+    valuationInsight = `Şirket son mali dönemde net zarar açıkladığı için F/K çarpanı anlamsız/değersizdir (A/D). Şirket ${pbFormatted} PD/DD ve ${evEbitdaFormatted} FD/FAVÖK çarpanı üzerinden takip edilmelidir.`;
+  }
+
+  // Hedef Yatırımcı Profili
+  let targetInvestorProfile = "";
+  if (overallStatus === "COMPLIANT") {
+    if (rawDivYield && rawDivYield >= 3.0) {
+      targetInvestorProfile = "Düzenli temettü nakit akışı ve düşük bilanço volatilitesi arayan muhafazakar katılım yatırımcıları ve uzun vadeli birikim portföyleri için ideal profil.";
+    } else if (perf1Y && perf1Y > 50) {
+      targetInvestorProfile = "Yüksek büyüme ivmesi, pazar payı genişlemesi ve orta-uzun vadeli sermaye kazancı hedefleyen büyüme odaklı katılım yatırımcıları.";
+    } else {
+      targetInvestorProfile = "BIST Katılım endeksi kriterlerini eksiksiz karşılayan, dengeli risk-getiri profiline sahip ana omurga helal hisse portföyleri.";
+    }
+  } else {
+    targetInvestorProfile = "Katılım hassasiyeti ve helal kazanç önceliği olan yatırımcılar için kesinlikle uygun değildir. Şirket katılım dışı evrende yer almaktadır.";
+  }
+
+  // Fıkhi Aksiyon Rehberi
+  let shariahActionPlan = "";
+  if (overallStatus === "COMPLIANT") {
+    shariahActionPlan = `1. Hisse BIST Katılım (XKTUM) resmi endeks bileşenidir; alım-satımında fıkhi engel bulunmamaktadır.\n2. Temettü ödemesi alındığında veya yıl sonunda brüt temettü/kâr payının %${univ.impureIncomePercent.toFixed(2)}'si faiz arındırması olarak hak sahipliği iddia edilmeksizin hayır kurumlarına aktarılmalıdır.\n3. Güvenlik tamponu (%${shariahSafetyBuffer}) geniş olduğu için bir sonraki çeyrekte endeksten düşme endişesi taşımadan orta-uzun vadeli pozisyon korunabilir.`;
+  } else {
+    shariahActionPlan = `1. DİB Din İşleri Yüksek Kurulu ve AAOIFI standartları gereği bu hisseye yeni yatırım yapılması caiz görülmemektedir.\n2. Portföyünde hisse bulunan katılım yatırımcılarının ana sermayelerini koruyarak uygun bir piyasa koşulunda pozisyondan çıkış yapmaları tavsiye edilir.\n3. Katılım dışı hissede kalınan sürede elde edilen faizli gelir ve haksız kazanç payları arındırma amacıyla elden çıkarılmalıdır.`;
+  }
+
+  const pros = overallStatus === "COMPLIANT"
+    ? [
+        "BIST Katılım (XKTUM) resmi endeks bileşenidir.",
+        `Faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) %33 yasal tavanının altındadır (Güvenlik marjı: %${shariahSafetyBuffer}).`,
+        realNetIncome > 0 ? `Yıllıklandırılmış net kârı ${formatMcapShort(realNetIncome)} olup kârlılık üretmektedir.` : "Güçlü hasılat tabanı ve derin piyasa işlem hacmi.",
+        perf1Y && perf1Y > 0 ? `Son 1 yılda yatırımcısına %${perf1Y.toFixed(1)} getiri sağlamıştır.` : "Dengeli piyasa çarpanları.",
+      ]
+    : [
+        `Yüksek likidite ve derin işlem hacmi (Piyasa Değeri: ${formatMcapShort(mcapNum)}).`,
+        realRevenue > 0 ? `Yıllıklandırılmış hasılat büyüklüğü: ${formatMcapShort(realRevenue)}.` : "Geniş operasyonel varlık tabanı.",
+      ];
+
+  const cons = overallStatus === "COMPLIANT"
+    ? [
+        realNetIncome < 0 ? "Son mali dönemde net kâr yerine zarar açıklamıştır." : `Faizli gelir oranı %${univ.impureIncomePercent.toFixed(1)} seviyesinde olup temettüde arındırma gerektirir.`,
+        shariahSafetyBuffer < 8 ? `Güvenlik marjı (%${shariahSafetyBuffer}) sınırlıdır; borçlanma artışları takip edilmelidir.` : `Piyasa dalgalanmalarına ve sektör konjonktürüne duyarlı fiyatlama.`,
+      ]
+    : [
+        detailedBreach.primaryReason,
+        "Katılım fonları ve bireysel helal portföyler tarafından alınamaz.",
+        "Temettü ve sermaye kazançları arındırma yöntemiyle caiz kılınamaz.",
+      ];
+
   const aiAnalysis: AiAnalysisReport = {
-    score: aiScore,
+    score: overallAiScore,
     verdict: aiVerdict,
-    shariahRiskSummary: shariahRisk,
+    shariahRiskSummary: nextQuarterRiskOutlook,
     financialHealthSummary: financialHealth,
     purificationZakatNote: purificationNote,
-    pros: overallStatus === "COMPLIANT"
-      ? [
-          "BIST Katılım (XKTUM) resmi endeks bileşenidir.",
-          `Faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) %33 yasal tavanının altındadır.`,
-          perf1Y && perf1Y > 0 ? `Son 1 yılda yatırımcısına %${perf1Y.toFixed(1)} getiri sağlamıştır.` : "Güçlü likidite ve derin işlem hacmi.",
-        ]
-      : [
-          `Yüksek likidite ve derin işlem hacmi (Piyasa Değeri: ${formatMcapShort(mcapNum)}).`,
-        ],
-    cons: overallStatus === "COMPLIANT"
-      ? [
-          realNetIncome < 0 ? "Son mali dönemde net kâr yerine zarar açıklamıştır." : `Faizli gelir oranı %${univ.impureIncomePercent.toFixed(1)} seviyesinde olup temettüde arındırma gerektirir.`,
-        ]
-      : [
-          detailedBreach.primaryReason,
-          "Katılım fonları ve bireysel helal portföyler tarafından alınamaz.",
-        ],
+    pros,
+    cons,
+    scoresBreakdown: {
+      shariahSafety: {
+        name: "Fıkhi Güvenlik & Endeks Tamponu",
+        score: shariahScoreVal,
+        status: shariahStatus,
+        description: shariahDesc,
+      },
+      financialResilience: {
+        name: "Finansal Dayanıklılık & Borçluluk",
+        score: finScoreVal,
+        status: finStatus,
+        description: finDesc,
+      },
+      profitabilityGrowth: {
+        name: "Kârlılık & Büyüme Kalitesi",
+        score: profScoreVal,
+        status: profStatus,
+        description: profDesc,
+      },
+      valuationAttractiveness: {
+        name: "Değerleme & Çarpan Cazibesi",
+        score: valScoreVal,
+        status: valStatus,
+        description: valDesc,
+      },
+    },
+    shariahSafetyBufferPercent: shariahSafetyBuffer,
+    nextQuarterRiskLevel,
+    nextQuarterRiskOutlook,
+    valuationInsight,
+    dupontAiSynthesis,
+    targetInvestorProfile,
+    shariahActionPlan,
   };
 
   const company: CompanyDetailScreening = {

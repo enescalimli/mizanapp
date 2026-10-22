@@ -106,6 +106,13 @@ export interface PeriodicReturns {
   fiveYears: string;
 }
 
+export interface AiComponentScore {
+  name: string;
+  score: number;
+  status: "EXCELLENT" | "GOOD" | "MODERATE" | "WEAK" | "CRITICAL";
+  description: string;
+}
+
 export interface AiAnalysisReport {
   score: number;
   verdict: string;
@@ -114,6 +121,19 @@ export interface AiAnalysisReport {
   purificationZakatNote: string;
   pros: string[];
   cons: string[];
+  scoresBreakdown?: {
+    shariahSafety: AiComponentScore;
+    financialResilience: AiComponentScore;
+    profitabilityGrowth: AiComponentScore;
+    valuationAttractiveness: AiComponentScore;
+  };
+  shariahSafetyBufferPercent?: number;
+  nextQuarterRiskLevel?: "DÜŞÜK" | "ORTA" | "YÜKSEK";
+  nextQuarterRiskOutlook?: string;
+  valuationInsight?: string;
+  dupontAiSynthesis?: string;
+  targetInvestorProfile?: string;
+  shariahActionPlan?: string;
 }
 
 export interface DetailedBreachDiagnostic {
@@ -202,6 +222,8 @@ export interface PeerComparisonItem {
   pbRatio: string;
   evEbitda: string;
   debtRatioPercent: number;
+  roePercent?: string;
+  netDebtToEbitda?: string;
 }
 
 export interface CompanyDetailScreening {

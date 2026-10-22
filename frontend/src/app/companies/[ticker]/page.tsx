@@ -40,6 +40,8 @@ import {
   Split,
   Users2,
   PieChart,
+  Target,
+  Compass,
 } from "lucide-react";
 
 type CompanyDetailTab = "FIKIH" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ";
@@ -948,10 +950,12 @@ export default function CompanyDetailPage() {
                     <thead>
                       <tr className="border-b border-slate-200 text-[#6E81A0] text-[10px] uppercase font-bold tracking-wider">
                         <th className="py-2.5 px-3">Hisse</th>
-                        <th className="py-2.5 px-3">Fiyat</th>
-                        <th className="py-2.5 px-3">Katılım Durumu</th>
+                        <th className="py-2.5 px-3">Fiyat &amp; Değişim</th>
+                        <th className="py-2.5 px-3">Katılım</th>
                         <th className="py-2.5 px-3">F/K</th>
                         <th className="py-2.5 px-3">PD/DD</th>
+                        <th className="py-2.5 px-3">FD/FAVÖK</th>
+                        <th className="py-2.5 px-3">ROE</th>
                         <th className="py-2.5 px-3">Faizli Borç</th>
                         <th className="py-2.5 px-3 text-right">İşlem</th>
                       </tr>
@@ -960,19 +964,31 @@ export default function CompanyDetailPage() {
                       {peers.map((p) => (
                         <tr key={p.ticker} className="hover:bg-slate-50/50 transition">
                           <td className="py-2.5 px-3 font-bold text-[#182542]">
-                            <div>{p.ticker}</div>
-                            <div className="text-[10px] font-sans text-slate-500 font-normal truncate max-w-[120px]">{p.name}</div>
+                            <div className="flex items-center gap-1.5">
+                              <span>{p.ticker}</span>
+                              {p.ticker === ticker && (
+                                <span className="text-[9px] bg-indigo-100 text-indigo-800 px-1.5 py-0.2 rounded font-sans">Mevcut</span>
+                              )}
+                            </div>
+                            <div className="text-[10px] font-sans text-slate-500 font-normal truncate max-w-[130px]">{p.name}</div>
                           </td>
-                          <td className="py-2.5 px-3 font-bold text-slate-800">{p.priceTRY}</td>
+                          <td className="py-2.5 px-3">
+                            <span className="font-bold text-slate-800 block">{p.priceTRY}</span>
+                            <span className={`text-[10px] font-semibold ${p.change24h.startsWith("-") ? "text-rose-600" : "text-emerald-600"}`}>
+                              {p.change24h}
+                            </span>
+                          </td>
                           <td className="py-2.5 px-3">
                             <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
                               p.isCompliant ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"
                             }`}>
-                              {p.isCompliant ? "Katılım Uyumlu" : "Katılım Dışı"}
+                              {p.isCompliant ? "Uyumlu" : "Dışı"}
                             </span>
                           </td>
-                          <td className="py-2.5 px-3">{p.peRatio}</td>
+                          <td className="py-2.5 px-3 font-bold text-slate-700">{p.peRatio}</td>
                           <td className="py-2.5 px-3">{p.pbRatio}</td>
+                          <td className="py-2.5 px-3">{p.evEbitda}</td>
+                          <td className="py-2.5 px-3 text-indigo-700 font-semibold">{p.roePercent || "-"}</td>
                           <td className="py-2.5 px-3">%{p.debtRatioPercent.toFixed(1)}</td>
                           <td className="py-2.5 px-3 text-right">
                             <Link
@@ -996,28 +1012,28 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 6: MİZAN AI ANALİZ MODÜLÜ (Freemium & PRO Paywall)              */}
+        {/* TAB 6: GELİŞMİŞ MİZAN AI ANALİZ MODÜLÜ (Freemium & PRO Paywall)      */}
         {/* =================================================================== */}
         {activeTab === "AI_ANALIZ" && ai && (
           <div className="space-y-6">
             
             {/* AI Header Card */}
-            <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-xs">
-                    <Sparkles size={20} />
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-[#182542] text-white flex items-center justify-center shadow-xs">
+                    <Sparkles size={22} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-bold text-[#182542]">Mizan AI &bull; Fıkhi ve Finansal Sağlık Raporu</h3>
+                      <h3 className="text-base font-extrabold text-[#182542]">Mizan AI &bull; Fıkhi ve Finansal Sağlık Sentezi</h3>
                       {isSampleFreeStock && (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                           Örnek Ücretsiz Rapor (BIMAS)
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-[#6E81A0]">KAP bilanço dipnotları ve DİB/TKBB standartları algoritmik yapay zeka sentezi.</p>
+                    <p className="text-xs text-[#6E81A0]">KAP bilanço dipnotları, DİB/TKBB standartları ve piyasa çarpanlarının algoritmik yapay zekâ sentezi.</p>
                   </div>
                 </div>
 
@@ -1029,74 +1045,246 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Verdict Summary Callout */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-[#182542] leading-relaxed">
-                {ai.verdict} &bull; {ai.shariahRiskSummary}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-semibold text-[#182542] leading-relaxed flex items-start gap-2.5">
+                <Compass size={16} className="text-indigo-600 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-extrabold text-[#182542]">{ai.verdict}: </span>
+                  <span className="text-slate-700 font-normal">{ai.shariahRiskSummary}</span>
+                </div>
               </div>
+
+              {/* 4-Pill Component Scores Bar */}
+              {ai.scoresBreakdown && (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-1 text-xs">
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 space-y-1">
+                    <span className="text-[10px] font-bold text-[#6E81A0] block uppercase tracking-wider">
+                      1. Fıkhi Güvenlik
+                    </span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-mono font-extrabold text-base text-emerald-700">
+                        {ai.scoresBreakdown.shariahSafety.score} <span className="text-xs font-normal text-slate-400">/ 10</span>
+                      </span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-800">
+                        {ai.scoresBreakdown.shariahSafety.status}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-tight">
+                      {ai.scoresBreakdown.shariahSafety.description}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 space-y-1">
+                    <span className="text-[10px] font-bold text-[#6E81A0] block uppercase tracking-wider">
+                      2. Finansal Dayanıklılık
+                    </span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-mono font-extrabold text-base text-indigo-700">
+                        {ai.scoresBreakdown.financialResilience.score} <span className="text-xs font-normal text-slate-400">/ 10</span>
+                      </span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-800">
+                        {ai.scoresBreakdown.financialResilience.status}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-tight">
+                      {ai.scoresBreakdown.financialResilience.description}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 space-y-1">
+                    <span className="text-[10px] font-bold text-[#6E81A0] block uppercase tracking-wider">
+                      3. Kârlılık &amp; Büyüme
+                    </span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-mono font-extrabold text-base text-purple-700">
+                        {ai.scoresBreakdown.profitabilityGrowth.score} <span className="text-xs font-normal text-slate-400">/ 10</span>
+                      </span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-50 text-purple-800">
+                        {ai.scoresBreakdown.profitabilityGrowth.status}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-tight">
+                      {ai.scoresBreakdown.profitabilityGrowth.description}
+                    </p>
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-white/70 border border-slate-200/70 space-y-1">
+                    <span className="text-[10px] font-bold text-[#6E81A0] block uppercase tracking-wider">
+                      4. Değerleme Cazibesi
+                    </span>
+                    <div className="flex items-baseline justify-between">
+                      <span className="font-mono font-extrabold text-base text-amber-700">
+                        {ai.scoresBreakdown.valuationAttractiveness.score} <span className="text-xs font-normal text-slate-400">/ 10</span>
+                      </span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-50 text-amber-800">
+                        {ai.scoresBreakdown.valuationAttractiveness.status}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-tight">
+                      {ai.scoresBreakdown.valuationAttractiveness.description}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Endekste Kalma Güvenlik Tamponu Banner */}
+              {ai.shariahSafetyBufferPercent != null && (
+                <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] uppercase font-bold text-emerald-900 flex items-center gap-1.5">
+                      <ShieldCheck size={14} className="text-emerald-700" />
+                      <span>Katılım Endeksi Güvenlik Tamponu: %{ai.shariahSafetyBufferPercent}</span>
+                    </span>
+                    <p className="text-emerald-950 font-normal leading-relaxed text-[11px]">
+                      {ai.nextQuarterRiskOutlook}
+                    </p>
+                  </div>
+                  <div className="shrink-0">
+                    <span className={`px-3 py-1 rounded-xl font-bold font-mono text-xs ${
+                      ai.nextQuarterRiskLevel === "DÜŞÜK"
+                        ? "bg-emerald-600 text-white"
+                        : ai.nextQuarterRiskLevel === "ORTA"
+                        ? "bg-amber-500 text-white"
+                        : "bg-rose-600 text-white"
+                    }`}>
+                      Gelecek Çeyrek Riski: {ai.nextQuarterRiskLevel}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* UNLOCKED FULL CONTENT (BIMAS or PRO user) */}
             {isUserPro ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Section 1: Financial Health */}
-                <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
-                    <Activity size={14} className="text-indigo-600" />
-                    <span>Finansal Büyüme &amp; Kârlılık Röntgeni</span>
-                  </h4>
-                  <p className="text-xs text-slate-700 leading-relaxed font-normal">
-                    {ai.financialHealthSummary}
-                  </p>
+              <div className="space-y-6">
+                
+                {/* 6 In-Depth Analysis Bento Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Section 1: Financial Health */}
+                  <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
+                      <Activity size={14} className="text-indigo-600" />
+                      <span>1. Finansal Büyüme &amp; Kârlılık Röntgeni</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-normal">
+                      {ai.financialHealthSummary}
+                    </p>
+                  </div>
+
+                  {/* Section 2: Purification Note */}
+                  <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
+                      <Coins size={14} className="text-emerald-600" />
+                      <span>2. Fıkhi Arındırma &amp; Temettü Yükü</span>
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed font-normal">
+                      {ai.purificationZakatNote}
+                    </p>
+                  </div>
+
+                  {/* Section 3: DuPont & ROE Quality */}
+                  {ai.dupontAiSynthesis && (
+                    <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
+                        <Split size={14} className="text-purple-600" />
+                        <span>3. DuPont Model &amp; ROE Kalitesi Sentezi</span>
+                      </h4>
+                      <p className="text-xs text-slate-700 leading-relaxed font-normal">
+                        {ai.dupontAiSynthesis}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Section 4: Valuation & Peer Benchmarking */}
+                  {ai.valuationInsight && (
+                    <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
+                        <BarChart3 size={14} className="text-amber-600" />
+                        <span>4. Sektörel Değerleme &amp; Çarpan Kıyaslaması</span>
+                      </h4>
+                      <p className="text-xs text-slate-700 leading-relaxed font-normal">
+                        {ai.valuationInsight}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Section 5: Target Investor Profile */}
+                  {ai.targetInvestorProfile && (
+                    <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
+                        <Target size={14} className="text-rose-600" />
+                        <span>5. Hedef Yatırımcı Profili &amp; Uygunluk</span>
+                      </h4>
+                      <p className="text-xs text-slate-700 leading-relaxed font-normal">
+                        {ai.targetInvestorProfile}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Section 6: Action Plan */}
+                  {ai.shariahActionPlan && (
+                    <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
+                        <Scale size={14} className="text-emerald-600" />
+                        <span>6. Mizan Fıkhi Aksiyon Rehberi</span>
+                      </h4>
+                      <div className="space-y-1.5 text-xs text-slate-700 leading-relaxed font-normal">
+                        {ai.shariahActionPlan.split("\n").map((step, idx) => (
+                          <p key={idx} className="flex items-start gap-1.5">
+                            <span className="font-bold text-[#182542] shrink-0">&bull;</span>
+                            <span>{step.replace(/^[0-9]+\.\s*/, "")}</span>
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Section 2: Purification Note */}
-                <div className="p-6 rounded-[28px] bg-white/80 backdrop-blur-xl border border-white/85 shadow-2xs space-y-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] flex items-center gap-2">
-                    <Coins size={14} className="text-emerald-600" />
-                    <span>Fıkhi Arındırma &amp; Temettü Yükü</span>
-                  </h4>
-                  <p className="text-xs text-slate-700 leading-relaxed font-normal">
-                    {ai.purificationZakatNote}
-                  </p>
+                {/* Pros & Cons Bento */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Section: Pros */}
+                  <div className="p-6 rounded-[28px] bg-emerald-50/60 border border-emerald-200/80 space-y-2">
+                    <h4 className="text-xs font-bold text-emerald-900 flex items-center gap-2">
+                      <CheckCircle2 size={15} className="text-emerald-600" />
+                      <span>Öne Çıkan Güçlü Yönler</span>
+                    </h4>
+                    <ul className="space-y-1.5 text-xs text-emerald-950 font-medium pl-4 list-disc">
+                      {ai.pros.map((p, i) => (
+                        <li key={i}>{p}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Section: Cons */}
+                  <div className="p-6 rounded-[28px] bg-amber-50/60 border border-amber-200/80 space-y-2">
+                    <h4 className="text-xs font-bold text-amber-900 flex items-center gap-2">
+                      <AlertTriangle size={15} className="text-amber-600" />
+                      <span>Takip Edilmesi Gereken Riskler</span>
+                    </h4>
+                    <ul className="space-y-1.5 text-xs text-amber-950 font-medium pl-4 list-disc">
+                      {ai.cons.map((c, i) => (
+                        <li key={i}>{c}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                {/* Section 3: Pros */}
-                <div className="p-6 rounded-[28px] bg-emerald-50/60 border border-emerald-200/80 space-y-2">
-                  <h4 className="text-xs font-bold text-emerald-900 flex items-center gap-2">
-                    <CheckCircle2 size={15} className="text-emerald-600" />
-                    <span>Öne Çıkan Güçlü Yönler</span>
-                  </h4>
-                  <ul className="space-y-1.5 text-xs text-emerald-950 font-medium pl-4 list-disc">
-                    {ai.pros.map((p, i) => (
-                      <li key={i}>{p}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Section 4: Cons */}
-                <div className="p-6 rounded-[28px] bg-amber-50/60 border border-amber-200/80 space-y-2">
-                  <h4 className="text-xs font-bold text-amber-900 flex items-center gap-2">
-                    <AlertTriangle size={15} className="text-amber-600" />
-                    <span>Takip Edilmesi Gereken Riskler</span>
-                  </h4>
-                  <ul className="space-y-1.5 text-xs text-amber-950 font-medium pl-4 list-disc">
-                    {ai.cons.map((c, i) => (
-                      <li key={i}>{c}</li>
-                    ))}
-                  </ul>
-                </div>
               </div>
             ) : (
               /* LOCKED PAYWALL FOR OTHER STOCKS WHEN ON FREE TIER */
               <div className="relative rounded-[28px] overflow-hidden border border-white/90 shadow-lg">
                 {/* Blurred Background Preview */}
                 <div className="p-8 space-y-4 filter blur-xs select-none pointer-events-none opacity-40 bg-white">
-                  <h4 className="text-sm font-bold">Finansal Büyüme &amp; Kârlılık Röntgeni</h4>
+                  <h4 className="text-sm font-bold">1. Finansal Büyüme &amp; Kârlılık Röntgeni</h4>
                   <p className="text-xs leading-relaxed">
                     Şirketin 2026 yılı 3. çeyrek finansal tablolarında esas faaliyet kârlılığı güçlü bir ivme sergilemiş olup, faizli borç rasyolarındaki hareketlilik izlenmektedir...
                   </p>
-                  <h4 className="text-sm font-bold">Fıkhi Arındırma &amp; Temettü Yükü</h4>
+                  <h4 className="text-sm font-bold">2. Fıkhi Arındırma &amp; Temettü Yükü</h4>
                   <p className="text-xs leading-relaxed">
                     Dağıtılacak kâr payında arındırılması gereken faiz geliri payı ve hisse başı zekât tutarları...
+                  </p>
+                  <h4 className="text-sm font-bold">3. DuPont Model &amp; ROE Kalitesi</h4>
+                  <p className="text-xs leading-relaxed">
+                    Özkaynak kârlılığının aktif devir hızı ve net kâr marjı çarpanları analizi...
                   </p>
                 </div>
 
