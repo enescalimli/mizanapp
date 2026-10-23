@@ -31,18 +31,30 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || DEFAULT_GEMINI_KEY;
 // Fıkhi Doktrin ve Kurumsal Sistem Talimatı
 const MIZAN_SYSTEM_PROMPT = `
 Sen Mizan Katılım Finans Sistemi'nin resmi yapay zekâ fıkhi ve finansal asistanısın (Mizan AI).
-Model altyapın: Google Gemini 3.8 Flash.
+Model altyapın: Google Gemini Flash.
 Temel görevin: Borsa İstanbul (BIST) hisselerini, Diyanet İşleri Başkanlığı (DİB) Din İşleri Yüksek Kurulu 2021/11 Sayılı Mütalaası ve Türkiye Katılım Bankaları Birliği (TKBB) Katılım Standart 1 (Pay Senetleri Alım-Satımı) ilkelerine göre analiz etmek; yatırımcıların fıkhi arındırma (infak), hisse zekâtı ve helal sektörel ikame sorularını kuruş hassasiyetinde yanıtlamaktır.
 
-TEMEL FIKHİ KURALLAR:
-1. FAİZLİ BORÇ EŞİĞİ: Şirketin faizli borçlarının toplam piyasa değerine (veya toplam varlıklarına) oranı azami %33 olmalıdır. %33'ü aşan şirketler (Örn: THYAO %44.2) Katılım Endeksi dışıdır ve hisselerini almak caiz görülmez.
-2. FAİZ GETİREN MEVDUAT EŞİĞİ: Faizli mevduat ve menkul kıymetlerin piyasa değerine oranı azami %30 olmalıdır.
-3. ŞÜPHELİ / HARAM GELİR EŞİĞİ: Şirketin gayrimeşru faaliyetlerden elde ettiği hasılat azami %5 olmalıdır.
-4. FAALİYET YASAĞI: Faizli bankacılık, konvansiyonel sigorta, alkollü içki, domuz mamulleri, kumar ve şans oyunları üreten/ticaretini yapan şirketler doğrudan katılım dışıdır.
-5. ARINDIRMA (İPFAK): Hissenin temettü veya sermaye kazancına karışan düşük oranlı (azami %5) şüpheli gelir, hissenin portföyde tutulduğu gün sayısına göre pro-rata (365 gün esasıyla) hesaplanarak sevap beklemeksizin kamu yararına veya ihtiyaç sahiplerine infak edilmelidir.
-6. HİSSE ZEKÂTI (DİB USULÜ): Temettü ve uzun vadeli ortaklık amaçlı hisselerde Duran Varlıklar (fabrika, arsa, makineler) zekâttan muaftır; yalnızca net Dönen Varlıklar üzerinden %2,5 (1/40) zekât tahakkuk ettirilir. Kısa vadeli al-sat hisseleri ise ticaret malı sayıldığından piyasa değeri üzerinden %2,5 zekâta tabidir.
-7. SPK YASAL UYARISI: Asla spekülatif hisse alım-satım tavsiyesi (YTD) verme. Her zaman fıkhi standartlar, bilanço rasyoları ve katılım endeksi kuralları çerçevesinde bilgilendir.
+ÖNEMLİ CEVAP VE FORMAT KURALLARI:
+1. YALNIZCA SORULAN KONUYA ODAKLAN: Kullanıcının açıkça sormadığı hiçbir hisse veya şirketi durduk yere cevaba ekleme. Eğer kullanıcı genel bir fıkhi soru soruyorsa (örn: "Halka arz helal mi?", "Borsada hisse almak caiz mi?", "Zekât nasıl hesaplanır?"), yalnızca o sorunun fıkhi cevabını ver; asla durduk yere THYAO veya başka şirket analizlerine girme!
+2. TEMİZ VE AKICI YAZIM: Cevaplarında temiz, estetik ve akıcı bir Türkçe kullan. Asla gereksiz veya bozuk markdown sembolleri (ardışık hashler, garip yıldız kümeleri) yığma. Başlıkları ve listeleri sade tut.
+3. FAİZLİ BORÇ EŞİĞİ: Şirketin faizli borçlarının toplam piyasa değerine oranı azami %33 olmalıdır. %33'ü aşan şirketler (Örn: THYAO %44.2) Katılım Endeksi dışıdır ve hisselerini almak caiz görülmez.
+4. FAİZ GETİREN MEVDUAT EŞİĞİ: Faizli mevduat ve menkul kıymetlerin piyasa değerine oranı azami %30 olmalıdır.
+5. ŞÜPHELİ / HARAM GELİR EŞİĞİ: Şirketin gayrimeşru faaliyetlerden elde ettiği hasılat azami %5 olmalıdır.
+6. FAALİYET YASAĞI: Faizli bankacılık, konvansiyonel sigorta, alkollü içki, domuz mamulleri, kumar ve şans oyunları üreten/ticaretini yapan şirketler doğrudan katılım dışıdır.
+7. ARINDIRMA (İPFAK): Hissenin hasılatına karışan düşük oranlı (azami %5) şüpheli gelir, pro-rata (365 gün esasıyla) hesaplanarak sevap beklemeksizin kamu yararına veya ihtiyaç sahiplerine infak edilmelidir.
+8. HİSSE ZEKÂTI (DİB USULÜ): Temettü amaçlı hisselerde Duran Varlıklar (fabrika, arsa, makineler) zekâttan muaftır; yalnızca net Dönen Varlıklar üzerinden %2,5 (1/40) zekât tahakkuk ettirilir.
+9. SPK YASAL UYARISI: Asla spekülatif hisse alım-satım tavsiyesi (YTD) verme. Fıkhi standartlar çerçevesinde bilgilendir.
 `;
+
+// Türkçe kelimelerle çakışan veya yanlış pozitif üreten 2-4 harfli borsa kodları
+const COLLIDING_WORDS = new Set([
+  "AL", "CAN", "DUR", "GEN", "INFO", "KART", "SAN", "TAT", "TEK", "YAT",
+  "SU", "FON", "TUR", "PAR", "BAG", "SUR", "TAB", "BAY", "GEL", "GIT",
+  "YOK", "VAR", "HER", "BIR", "SON", "KAP", "PAY", "BOR", "NET", "KOT",
+  "FAIZ", "CAIZ", "DIN", "HAK", "ORAN", "TL", "USD", "EUR", "TRY", "BIST",
+  "BORSA", "HELAL", "HARAM", "HISSE", "ORTAK", "KREDI", "KREDİ", "MUDAR",
+  "ILK", "İLK", "AY", "GUN", "GÜN", "VE", "ILE", "İLE", "BU", "ŞU", "O"
+]);
 
 interface ChatRequestMessage {
   role: "user" | "assistant" | "system";
@@ -74,21 +86,33 @@ export async function POST(req: NextRequest) {
     // 0. Akıllı Context Window Pruning & Ticker Hafızası (65K TPM Güvenliği)
     const pruningResult = pruneConversationHistory(messages, 500);
 
-    // 1. Ticker Tespiti (Kullanıcı mesajından, sayfa bağlamından veya geçmişten)
+    // 1. Ticker Tespiti (Yalnızca kullanıcı açıkça bir hisse sorduysa)
     let detectedTicker: string | null = context?.currentTicker?.toUpperCase() || null;
     
-    // Mesaj içindeki 626 BIST hissesi sembollerini ara
+    // Mesaj içindeki BIST hisse sembollerini ara (Çakışan Türkçe kelimeleri eleyerek)
     const allTickers = BIST_COMPREHENSIVE_UNIVERSE.map((c) => c.ticker);
     for (const t of allTickers) {
-      const regex = new RegExp(`\\b${t}\\b`, "i");
-      if (regex.test(lastUserMessage)) {
-        detectedTicker = t;
-        break;
+      if (COLLIDING_WORDS.has(t)) {
+        // Eğer kod Türkçe bir kelimeyle çakışıyorsa (örn: CAN, AL, DUR, GEN, TAT, TEK, SU)
+        // Sadece mesajda BÜYÜK HARFLE ve "hisse/şirket" kelimeleriyle birlikte geçtiyse kabul et:
+        const strictRegex = new RegExp(`\\b${t}\\b`);
+        const hasStockKeyword = /\b(hisse|şirket|senet|pay|endeks|rasyo|caiz|fiyat)\b/i.test(lastUserMessage);
+        if (strictRegex.test(lastUserMessage) && hasStockKeyword) {
+          detectedTicker = t;
+          break;
+        }
+      } else {
+        const regex = new RegExp(`\\b${t}\\b`, "i");
+        if (regex.test(lastUserMessage)) {
+          detectedTicker = t;
+          break;
+        }
       }
     }
 
-    // Kullanıcı mesajında açıkça hisse belirtilmediyse geçmiş bağlamdan devral
-    if (!detectedTicker && pruningResult.retainedTicker) {
+    // Kullanıcı mesajında hisse yoksa; SADECE mesaj bariz bir takip sorusuysa (örn: "bunun borcu ne?", "yerine ne alabilirim?") hafızadan devral
+    const isExplicitFollowUp = /\b(bunun|bu hisse|şirketin|yerine|muadil|alternatif|borcu|arındırması|zekâtı)\b/i.test(lastUserMessage);
+    if (!detectedTicker && isExplicitFollowUp && pruningResult.retainedTicker) {
       detectedTicker = pruningResult.retainedTicker;
     }
 

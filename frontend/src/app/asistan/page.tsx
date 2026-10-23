@@ -6,30 +6,19 @@ import { useSearchParams } from "next/navigation";
 import {
   Sparkles,
   Send,
-  RefreshCw,
   Trash2,
-  Printer,
-  ArrowRight,
-  ShieldCheck,
-  AlertTriangle,
-  Scale,
-  Coins,
-  FileText,
-  Info,
-  CheckCircle2,
-  ExternalLink,
-  BookOpen,
-  ArrowLeftRight,
-  Plus,
   Mic,
   MicOff,
   Volume2,
   VolumeX,
+  ArrowRight,
+  ShieldCheck,
+  ArrowLeftRight,
 } from "lucide-react";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
-import { useAuth } from "@/lib/auth/AuthContext";
 import { useVoiceChat } from "@/lib/hooks/useVoiceChat";
+import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 interface ChatMessage {
   id: string;
@@ -48,37 +37,31 @@ interface ChatMessage {
   timestamp: string;
 }
 
-const STARTER_TOPICS = [
-  {
-    title: "THYAO Neden Katılım Dışı?",
-    desc: "Faizli kredi borç oranı (%44,2) ve yasal %33 tavanı aşım analizi",
-    prompt: "THYAO neden katılım dışı kaldı, faizli borç oranı kaç çıktı?",
-  },
-  {
-    title: "Portföyümün Zekâtını Hesapla",
-    desc: "DİB fetvasına göre arsa ve fabrikayı düşerek net dönen varlık matrahı",
-    prompt: "DİB fetvasına göre temettü hisselerimde zekât nasıl hesaplanır?",
-  },
-  {
-    title: "KCHOL Yerine Katılım Holdingi",
-    desc: "TKFEN, SISE ve BERA gibi katılım onaylı sektörel muadiller",
-    prompt: "KCHOL yerine katılım uyumlu hangi holding hissesini alabilirim?",
-  },
-  {
-    title: "BIMAS Çeyreklik Arındırma İnfakı",
-    desc: "Kuruş hassasiyetli 365 gün pro-rata infak borcu hesabı",
-    prompt: "BIMAS hissesi için bu çeyrek ne kadar arındırma infakı ödemeliyim?",
-  },
+const STARTER_PROMPTS = [
+  "THYAO neden katılım endeksi dışı kaldı?",
+  "BIMAS için bu çeyrek arındırma infakı ne kadar?",
+  "Halka arz tavan serisi bozulunca satmak helal mi?",
+  "Hisse zekâtında fabrika ve duran varlıklar düşülür mü?",
 ];
 
 function AsistanContent() {
   const searchParams = useSearchParams();
   const initialPrompt = searchParams.get("q");
-  const { user } = useAuth();
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: "asistan-welcome",
+      role: "assistant",
+      content:
+        "Selamün aleyküm! Ben **Mizan AI**.\n\nDiyanet İşleri Başkanlığı (DİB 2021/11 Kararı) ve TKBB Katılım Standart 1 metodolojisine göre hisselerin fıkhi uygunluğunu, faizli borç eşiklerini, arındırma infakını ve hisse zekâtını analiz edebilirim.\n\nBana Borsa İstanbul'daki herhangi bir hisseyi veya aklınıza takılan fıkhi bir konuyu sorabilirsiniz.",
+      suggestedQuestions: STARTER_PROMPTS,
+      timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
+    },
+  ]);
 
   // Sesli Sohbet (Speech-to-Text & Text-to-Speech)
   const {
@@ -95,22 +78,6 @@ function AsistanContent() {
       setInput(transcript);
     },
   });
-
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "asistan-welcome",
-      role: "assistant",
-      content:
-        "Selamün aleyküm! Ben **Mizan AI Fıkhi & Finansal Çalışma Masası**.\n\nAltyapımda **Google Gemini 3.8 Flash** ve Borsa İstanbul'un 626 hissesini tarayan deterministik fıkhi hesaplama motorlarımız çalışmaktadır.\n\nDiyanet İşleri Başkanlığı (DİB 2021/11 Kararı) ve TKBB Katılım Standart 1 metodolojisine göre hisselerin helallik durumunu, borç rasyolarını, arındırma (infak) tutarlarını ve zekât yükümlülüklerini kuruş hassasiyetinde öğrenebilirsiniz.",
-      suggestedQuestions: [
-        "THYAO neden katılım dışı kaldı?",
-        "BIMAS için arındırma infakı ne kadar?",
-        "KCHOL yerine hangi katılım holdingini alabilirim?",
-        "Halka arz tavan serisi bozulunca satmak helal mi?",
-      ],
-      timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
-    },
-  ]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -192,6 +159,7 @@ function AsistanContent() {
           id: `welcome-${Date.now()}`,
           role: "assistant",
           content: "Sohbet temizlendi. Yeni bir hisse veya fıkhi konu sorabilirsiniz.",
+          suggestedQuestions: STARTER_PROMPTS,
           timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
         },
       ]);
@@ -200,27 +168,25 @@ function AsistanContent() {
 
   return (
     <PaynoShell badge="asistan">
-      <div className="space-y-6">
+      <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-125px)]">
         
         {/* ================================================================= */}
-        {/* ÜST BAŞLIK VE MODEL ROZETİ                                        */}
+        {/* SADE & ŞIK ÜST BAŞLIK BAR                                         */}
         {/* ================================================================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/60 dark:border-white/10 pb-4">
+        <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-200/60 dark:border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#0D8B52] dark:from-[#273869] dark:to-[#0D8B52] text-white flex items-center justify-center shadow-md">
-              <Sparkles size={22} className="text-emerald-300" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#0D8B52] dark:from-[#273869] dark:to-[#0D8B52] text-white flex items-center justify-center shadow-md">
+              <Sparkles size={20} className="text-emerald-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#182542] dark:text-white">
-                  Mizan AI Fıkhi &amp; Finansal Asistan
+                <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#182542] dark:text-white">
+                  Mizan AI Asistan
                 </h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-500/20">
-                  Google Gemini 3.8 Flash
-                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
-              <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                DİB Din İşleri Yüksek Kurulu 2021/11 Kararı &amp; TKBB Katılım Standart 1 Rehberliğinde BIST Analizi
+              <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                DİB &amp; TKBB Standartlarında BIST Fıkhi Analiz
               </p>
             </div>
           </div>
@@ -228,420 +194,282 @@ function AsistanContent() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => window.print()}
-              className="px-3.5 py-2 rounded-full bg-white dark:bg-[#161F32] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white shadow-xs transition flex items-center gap-1.5"
-              title="Sohbeti Yazdır veya PDF Kaydet"
-            >
-              <Printer size={14} className="text-emerald-600" />
-              <span>Yazdır (PDF)</span>
-            </button>
-
-            <button
-              type="button"
               onClick={handleClear}
-              className="px-3 py-2 rounded-full bg-white dark:bg-[#161F32] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:text-rose-600 shadow-xs transition flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#161F32] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:text-rose-600 shadow-xs transition flex items-center gap-1.5"
               title="Sohbeti Temizle"
             >
-              <Trash2 size={14} />
-              <span>Temizle</span>
+              <Trash2 size={13} />
+              <span>Sıfırla</span>
             </button>
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* 3 SÜTUNLU BENTO ÇALIŞMA MASASI DÜZENİ                             */}
+        {/* ODAKLANMIŞ CHATBOT MESAJ AKIŞI                                    */}
         {/* ================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          
-          {/* SOL SÜTUN (3 Kolon): Hızlı Fıkhi Konular & Şablonlar */}
-          <div className="lg:col-span-3 space-y-4">
-            
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-xs space-y-3">
-              <h3 className="text-xs font-black tracking-wider text-[#182542] dark:text-white uppercase flex items-center gap-1.5">
-                <BookOpen size={14} className="text-[#0D8B52]" />
-                <span>Hazır Fıkhi Sorgular</span>
-              </h3>
-              <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                En sık karşılaşılan fıkhi ikilemleri tek tıkla analiz edin:
-              </p>
+        <div className="flex-1 overflow-y-auto px-1 sm:px-4 py-4 space-y-4 scrollbar-thin">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex flex-col ${
+                msg.role === "user" ? "items-end" : "items-start"
+              }`}
+            >
+              <div
+                className={`max-w-[92%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 space-y-3 ${
+                  msg.role === "user"
+                    ? "bg-[#182542] text-white rounded-br-xs shadow-xs"
+                    : "bg-white dark:bg-[#161F32] text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/70 dark:border-white/10 shadow-sm"
+                }`}
+              >
+                {/* Mesaj Metni: Zengin Markdown Ayrıştırıcı (Raw markdown sembolleri yok) */}
+                {msg.role === "assistant" ? (
+                  <MarkdownRenderer content={msg.content} />
+                ) : (
+                  <div className="leading-relaxed whitespace-pre-wrap text-sm">
+                    {msg.content}
+                  </div>
+                )}
 
-              <div className="space-y-2 pt-1">
-                {STARTER_TOPICS.map((topic, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => handleSend(topic.prompt)}
-                    className="w-full text-left p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 border border-slate-200/60 dark:border-white/10 hover:border-emerald-300 transition group space-y-1"
-                  >
-                    <span className="font-bold text-xs text-[#182542] dark:text-white group-hover:text-[#0D8B52] block">
-                      {topic.title}
-                    </span>
-                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block leading-tight">
-                      {topic.desc}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
+                {/* GENERATIVE UI 1: Hisse Durum Özeti Kartı (Yalnızca hisse sorulduysa) */}
+                {msg.stockData && (
+                  <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#111726] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <StockLogo ticker={msg.stockData.ticker} name={msg.stockData.name} size="md" />
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-sm text-[#182542] dark:text-white">
+                              {msg.stockData.ticker}
+                            </span>
+                            <span className="text-xs text-slate-500 font-mono">
+                              {msg.stockData.priceTRY}
+                            </span>
+                          </div>
+                          <span className="text-xs text-slate-500 block truncate max-w-[200px]">
+                            {msg.stockData.name} • {msg.stockData.sector}
+                          </span>
+                        </div>
+                      </div>
 
-            {/* DİB & TKBB Kurumsal Güvence Kartı */}
-            <div className="bg-gradient-to-br from-emerald-500/10 to-transparent dark:from-emerald-950/20 rounded-[24px] p-4 border border-emerald-500/20 text-xs space-y-2">
-              <div className="flex items-center gap-2 text-[#0D8B52] dark:text-emerald-400 font-bold">
-                <ShieldCheck size={16} />
-                <span>DİB &amp; TKBB Metodolojisi</span>
-              </div>
-              <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
-                Mizan AI, Din İşleri Yüksek Kurulu&apos;nun 2021/11 Sayılı Mütalaası doğrultusunda faizli borç (%33), faizli mevduat (%30) ve gayrimeşru hasılat (%5) tavanlarını anlık kontrol eder.
-              </p>
-            </div>
-
-          </div>
-
-          {/* ORTA SÜTUN (6 Kolon): Canlı Sohbet Akışı & Generative UI */}
-          <div className="lg:col-span-6 bg-white dark:bg-[#161F32] rounded-[28px] border border-slate-200/60 dark:border-white/10 shadow-sm flex flex-col h-[750px] overflow-hidden">
-            
-            {/* Mesaj Alanı */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 scrollbar-thin text-xs">
-              {messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${
-                    msg.role === "user" ? "items-end" : "items-start"
-                  }`}
-                >
-                  <div
-                    className={`max-w-[92%] rounded-2xl p-4 sm:p-5 space-y-3 ${
-                      msg.role === "user"
-                        ? "bg-[#182542] text-white rounded-br-xs shadow-xs"
-                        : "bg-[#F8F9FA] dark:bg-white/5 text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/60 dark:border-white/10 shadow-xs"
-                    }`}
-                  >
-                    {/* Mesaj Metni */}
-                    <div className="leading-relaxed whitespace-pre-wrap text-xs sm:text-[13px] prose dark:prose-invert max-w-none">
-                      {msg.content}
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold ${
+                          msg.stockData.isCompliant
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400"
+                            : "bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-400"
+                        }`}
+                      >
+                        {msg.stockData.isCompliant ? "✓ Katılım Endeksine Uygun" : "✕ Katılım Dışıdır"}
+                      </span>
                     </div>
 
-                    {/* GENERATIVE UI: Hisse Durum Kartı */}
-                    {msg.stockData && (
-                      <div className="mt-3 p-4 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <StockLogo ticker={msg.stockData.ticker} name={msg.stockData.name} size="md" />
+                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 text-center text-xs">
+                      <div>
+                        <span className="text-[10px] text-slate-500 block">Faizli Borç Oranı</span>
+                        <strong className={msg.stockData.isCompliant ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600"}>
+                          {msg.stockData.debtRatio}
+                        </strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-500 block">Nakit/Mevduat</span>
+                        <strong className="text-slate-700 dark:text-slate-300">{msg.stockData.cashRatio}</strong>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-500 block">Şüpheli Hasılat</span>
+                        <strong className="text-slate-700 dark:text-slate-300">{msg.stockData.impureIncomeRatio}</strong>
+                      </div>
+                    </div>
+
+                    <Link
+                      href={`/companies/${msg.stockData.ticker}`}
+                      className="w-full py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-center text-xs font-bold block transition"
+                    >
+                      24 Kriterli Şirket Karnesi 2.0 Detayını Aç &rarr;
+                    </Link>
+                  </div>
+                )}
+
+                {/* GENERATIVE UI 2: Sektörel Muadiller Kartı */}
+                {msg.compliantAlternatives && msg.compliantAlternatives.length > 0 && (
+                  <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/20 space-y-3">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#0D8B52] dark:text-emerald-400">
+                      <ArrowLeftRight size={14} />
+                      <span>Katılım Uyumlu Sektörel İkame Tavsiyeleri:</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {msg.compliantAlternatives.map((alt: any) => (
+                        <div
+                          key={alt.ticker}
+                          className="p-2.5 rounded-xl bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 flex items-center justify-between shadow-xs"
+                        >
+                          <div className="flex items-center gap-2">
+                            <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
                             <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-extrabold text-sm text-[#182542] dark:text-white">
-                                  {msg.stockData.ticker}
-                                </span>
-                                <span className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                                  {msg.stockData.name}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-slate-500 block">
-                                Sektör: {msg.stockData.sector} • Fiyat: {msg.stockData.priceTRY}
+                              <strong className="text-xs text-[#182542] dark:text-white block">{alt.ticker}</strong>
+                              <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] truncate block max-w-[110px]">
+                                {alt.name}
                               </span>
                             </div>
                           </div>
-
-                          <span
-                            className={`px-3 py-1 rounded-full text-xs font-bold ${
-                              msg.stockData.isCompliant
-                                ? "bg-emerald-50 dark:bg-emerald-950/60 text-[#0D8B52] dark:text-emerald-400"
-                                : "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400"
-                            }`}
-                          >
-                            {msg.stockData.isCompliant ? "✓ Katılım Uyumlu" : "✕ Kapsam Dışı"}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 text-center text-xs">
-                          <div>
-                            <span className="text-[10px] text-slate-500 block">Faizli Borç Oranı</span>
-                            <strong className={msg.stockData.isCompliant ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600"}>
-                              {msg.stockData.debtRatio}
-                            </strong>
-                          </div>
-                          <div>
-                            <span className="text-[10px] text-slate-500 block">Nakit/Mevduat</span>
-                            <strong className="text-slate-700 dark:text-slate-300">{msg.stockData.cashRatio}</strong>
-                          </div>
-                          <div>
-                            <span className="text-[10px] text-slate-500 block">Şüpheli Hasılat</span>
-                            <strong className="text-slate-700 dark:text-slate-300">{msg.stockData.impureIncomeRatio}</strong>
-                          </div>
-                        </div>
-
-                        <Link
-                          href={`/companies/${msg.stockData.ticker}`}
-                          className="w-full py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-center text-xs font-bold block transition"
-                        >
-                          24 Kriterli Şirket Karnesi 2.0 Sayfasına Git &rarr;
-                        </Link>
-                      </div>
-                    )}
-
-                    {/* GENERATIVE UI: Sektörel Muadiller Kartı */}
-                    {msg.compliantAlternatives && msg.compliantAlternatives.length > 0 && (
-                      <div className="mt-3 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/20 space-y-3">
-                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#0D8B52] dark:text-emerald-400">
-                          <ArrowLeftRight size={14} />
-                          <span>Katılım Uyumlu Sektörel İkame Tavsiyeleri:</span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {msg.compliantAlternatives.map((alt: any) => (
-                            <div
-                              key={alt.ticker}
-                              className="p-3 rounded-xl bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 flex items-center justify-between shadow-xs"
+                          <div className="text-right">
+                            <span className="text-[10px] text-[#0D8B52] font-bold block">
+                              Borç: {alt.debtRatio || "%14.2"}
+                            </span>
+                            <Link
+                              href={`/companies/${alt.ticker}`}
+                              className="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline"
                             >
-                              <div className="flex items-center gap-2">
-                                <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
-                                <div>
-                                  <strong className="text-xs text-[#182542] dark:text-white block">{alt.ticker}</strong>
-                                  <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] truncate block max-w-[110px]">
-                                    {alt.name}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <span className="text-[10px] text-[#0D8B52] font-bold block">
-                                  Borç: {alt.debtRatio || "%14.2"}
-                                </span>
-                                <Link
-                                  href={`/companies/${alt.ticker}`}
-                                  className="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline"
-                                >
-                                  İncele &rarr;
-                                </Link>
-                              </div>
-                            </div>
-                          ))}
+                              İncele &rarr;
+                            </Link>
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between w-full max-w-[92%] text-[10px] text-slate-400 mt-1 px-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />
-                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
-                        </span>
-                      ) : msg.role === "assistant" && msg.modelUsed ? (
-                        <span className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
-                          <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
-                        </span>
-                      ) : null}
-
-                      {/* Token Pruning Güvenlik Rozeti */}
-                      {msg.tokenMetrics && msg.tokenMetrics.prunedMessages > 0 && (
-                        <span
-                          className="px-2 py-0.5 rounded text-[9px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                          title={`${msg.tokenMetrics.prunedMessages} eski mesaj budandı (~${msg.tokenMetrics.historyTokens} token)`}
-                        >
-                          🛡️ Pruned ({msg.tokenMetrics.historyTokens}t)
-                        </span>
-                      )}
-
-                      {/* Sesli Yanıt Dinleme (TTS) */}
-                      {msg.role === "assistant" && (
-                        <button
-                          type="button"
-                          onClick={() => speak(msg.content, msg.id)}
-                          className={`p-1 px-2 rounded-md transition flex items-center gap-1 ${
-                            isSpeaking && activeSpeakingId === msg.id
-                              ? "bg-emerald-500 text-white animate-pulse"
-                              : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400"
-                          }`}
-                          title={isSpeaking && activeSpeakingId === msg.id ? "Sesi Durdur" : "Sesli Yanıt Dinle (TTS)"}
-                        >
-                          {isSpeaking && activeSpeakingId === msg.id ? (
-                            <>
-                              <VolumeX size={13} />
-                              <span className="text-[9px] font-bold">Durdur</span>
-                            </>
-                          ) : (
-                            <>
-                              <Volume2 size={13} />
-                              <span className="text-[9px]">Sesli Dinle</span>
-                            </>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                    <span>{msg.timestamp}</span>
-                  </div>
-
-                  {/* Devam Sorusu Önerileri */}
-                  {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2.5 max-w-[92%]">
-                      {msg.suggestedQuestions.map((q, idx) => (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => handleSend(q)}
-                          className="px-3 py-1.5 rounded-full bg-white dark:bg-[#111726] hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-200 transition text-left shadow-xs"
-                        >
-                          {q} &rarr;
-                        </button>
                       ))}
                     </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Mesaj Alt Çubuğu (Model Durumu, Pruning, Sesli Dinle, Saat) */}
+              <div className="flex items-center justify-between w-full max-w-[92%] sm:max-w-[85%] text-[10px] text-slate-400 mt-1 px-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                      <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
+                    </span>
+                  ) : msg.role === "assistant" && msg.modelUsed ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+                      <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
+                    </span>
+                  ) : null}
+
+                  {/* Token Pruning Güvenlik Rozeti */}
+                  {msg.tokenMetrics && msg.tokenMetrics.prunedMessages > 0 && (
+                    <span
+                      className="px-1.5 py-0.5 rounded text-[8px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                      title={`${msg.tokenMetrics.prunedMessages} eski mesaj budandı (~${msg.tokenMetrics.historyTokens} token)`}
+                    >
+                      🛡️ Pruned ({msg.tokenMetrics.historyTokens}t)
+                    </span>
+                  )}
+
+                  {/* Sesli Yanıt Dinleme (TTS) */}
+                  {msg.role === "assistant" && (
+                    <button
+                      type="button"
+                      onClick={() => speak(msg.content, msg.id)}
+                      className={`p-1 px-2 rounded-md transition flex items-center gap-1 ${
+                        isSpeaking && activeSpeakingId === msg.id
+                          ? "bg-emerald-500 text-white animate-pulse"
+                          : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400"
+                      }`}
+                      title={isSpeaking && activeSpeakingId === msg.id ? "Sesi Durdur" : "Sesli Yanıt Dinle (TTS)"}
+                    >
+                      {isSpeaking && activeSpeakingId === msg.id ? (
+                        <>
+                          <VolumeX size={12} />
+                          <span className="text-[9px] font-bold">Durdur</span>
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 size={12} />
+                          <span className="text-[9px]">Sesli Dinle</span>
+                        </>
+                      )}
+                    </button>
                   )}
                 </div>
-              ))}
+                <span>{msg.timestamp}</span>
+              </div>
 
-              {loading && (
-                <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-100 dark:bg-white/10 max-w-[70%]">
-                  <div className="w-5 h-5 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs text-slate-700 dark:text-slate-200 font-medium animate-pulse">
-                    Google Gemini 3.8 Flash fıkhi ve finansal verileri analiz ediyor...
-                  </span>
+              {/* Devam Sorusu Önerileri */}
+              {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-2 max-w-[92%] sm:max-w-[85%]">
+                  {msg.suggestedQuestions.map((q, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSend(q)}
+                      className="px-3 py-1 rounded-full bg-white dark:bg-[#161F32] hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-200 transition text-left shadow-2xs"
+                    >
+                      {q} &rarr;
+                    </button>
+                  ))}
                 </div>
               )}
-
-              {isListening && (
-                <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs animate-pulse">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping inline-block" />
-                  <span className="font-semibold">Mikrofon Aktif: Konuşmanızı dinliyorum...</span>
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
             </div>
+          ))}
 
-            {/* Mesaj Yazma Alanı */}
-            <div className="p-4 bg-[#F8F9FA] dark:bg-white/5 border-t border-slate-200/80 dark:border-white/10 shrink-0 space-y-2">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleSend();
-                }}
-                className="flex items-center gap-2 bg-white dark:bg-[#111726] border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#0D8B52] shadow-xs transition-colors"
-              >
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={isListening ? "Dinleniyor..." : "Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?, BIMAS arındırma borcum ne kadar?)..."}
-                  disabled={loading}
-                  className="w-full bg-transparent text-xs sm:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
-                />
-
-                {/* Mikrofon ile Sesli Soru Düğmesi */}
-                {hasSpeechSupport && (
-                  <button
-                    type="button"
-                    onClick={isListening ? stopListening : startListening}
-                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition ${
-                      isListening
-                        ? "bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/40"
-                        : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-                    }`}
-                    title={isListening ? "Dinlemeyi Durdur" : "Sesle Sor (Mikrofon)"}
-                  >
-                    {isListening ? <MicOff size={16} /> : <Mic size={16} />}
-                  </button>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={!input.trim() || loading}
-                  className="w-9 h-9 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-300 dark:disabled:bg-white/10 text-white flex items-center justify-center shrink-0 shadow-xs transition"
-                >
-                  <Send size={15} />
-                </button>
-              </form>
-
-              <div className="flex items-center justify-between text-[10px] text-[#6E81A0] dark:text-[#94A3B8] px-1">
-                <span>DİB 2021/11 &amp; TKBB Standart 1 Esaslıdır</span>
-                <span className="font-semibold">SPK Uyarısı: Yatırım Tavsiyesi Değildir (YTD)</span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* SAĞ SÜTUN (3 Kolon): Fıkhi Eşikler & Hızlı Hisseler */}
-          <div className="lg:col-span-3 space-y-4">
-            
-            {/* Fıkhi Eşikler Panosu */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-xs space-y-3">
-              <h3 className="text-xs font-black tracking-wider text-[#182542] dark:text-white uppercase flex items-center gap-1.5">
-                <Scale size={14} className="text-blue-600" />
-                <span>DİB / TKBB Eşik Sınırları</span>
-              </h3>
-
-              <div className="space-y-2 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
-                  <div>
-                    <strong className="block text-[#182542] dark:text-white">Faizli Kredi Borcu</strong>
-                    <span className="text-[10px] text-slate-500">Piyasa değerine oranı</span>
-                  </div>
-                  <span className="font-mono font-black text-rose-600 text-xs bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded-md">
-                    Azami %33
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
-                  <div>
-                    <strong className="block text-[#182542] dark:text-white">Faizli Mevduat</strong>
-                    <span className="text-[10px] text-slate-500">Nakit &amp; bono varlığı</span>
-                  </div>
-                  <span className="font-mono font-black text-amber-600 text-xs bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md">
-                    Azami %30
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
-                  <div>
-                    <strong className="block text-[#182542] dark:text-white">Şüpheli Hasılat</strong>
-                    <span className="text-[10px] text-slate-500">Gayrimeşru gelir payı</span>
-                  </div>
-                  <span className="font-mono font-black text-emerald-600 text-xs bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-md">
-                    Azami %5
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Hızlı Ticker Hapları */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-xs space-y-3">
-              <h3 className="text-xs font-black tracking-wider text-[#182542] dark:text-white uppercase">
-                Gözde Hisseleri Sor
-              </h3>
-              <div className="flex flex-wrap gap-1.5">
-                {["BIMAS", "THYAO", "ASELS", "FROTO", "KCHOL", "TUPRS", "EREGL", "PGSUS", "TABGD"].map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => handleSend(`${t} caiz mi, güncel borç oranı kaç?`)}
-                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/10 hover:bg-[#182542] hover:text-white text-xs font-bold text-[#182542] dark:text-white transition font-mono"
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Portföy Entegrasyon Çağrısı */}
-            <div className="p-4 rounded-[24px] bg-[#182542] text-white space-y-2">
-              <span className="text-xs font-bold text-emerald-300 block">
-                Portföyünüzü Fıkhen Arındırın
+          {loading && (
+            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 max-w-[70%] shadow-xs">
+              <div className="w-4 h-4 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs text-slate-600 dark:text-slate-300 font-medium animate-pulse">
+                Mizan AI fıkhi ve finansal verileri analiz ediyor...
               </span>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                Portföy sayfanızdaki hisselerin kuruş hassasiyetinde arındırma ve zekât belgelerini PDF olarak yazdırabilirsiniz.
-              </p>
-              <Link
-                href="/portfolio"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 pt-1"
-              >
-                <span>Portföy Yönetimine Git</span>
-                <ArrowRight size={13} />
-              </Link>
             </div>
+          )}
 
+          {isListening && (
+            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs animate-pulse">
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping inline-block" />
+              <span className="font-semibold">Mikrofon Aktif: Konuşmanızı dinliyorum...</span>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* ================================================================= */}
+        {/* TEMİZ VE KULLANIMI KOLAY MESAJ GİRİŞ ALANI                        */}
+        {/* ================================================================= */}
+        <div className="pt-2 pb-1 shrink-0 space-y-2">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+            className="flex items-center gap-2 bg-white dark:bg-[#161F32] border border-slate-200/90 dark:border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#0D8B52] shadow-sm transition-all"
+          >
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={isListening ? "Dinleniyor..." : "Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?, BIMAS arındırması ne kadar?)..."}
+              disabled={loading}
+              className="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
+            />
+
+            {/* Mikrofon ile Sesli Soru Düğmesi */}
+            {hasSpeechSupport && (
+              <button
+                type="button"
+                onClick={isListening ? stopListening : startListening}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition ${
+                  isListening
+                    ? "bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/40"
+                    : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20"
+                }`}
+                title={isListening ? "Dinlemeyi Durdur" : "Sesle Sor (Mikrofon)"}
+              >
+                {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+              </button>
+            )}
+
+            <button
+              type="submit"
+              disabled={!input.trim() || loading}
+              className="w-9 h-9 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-200 dark:disabled:bg-white/10 disabled:text-slate-400 text-white flex items-center justify-center shrink-0 shadow-xs transition"
+            >
+              <Send size={15} />
+            </button>
+          </form>
+
+          <div className="flex items-center justify-between text-[10px] text-slate-400 px-2">
+            <span>DİB 2021/11 &amp; TKBB Standart 1 Esaslıdır</span>
+            <span>SPK Uyarısı: Yatırım Tavsiyesi Değildir (YTD)</span>
           </div>
-
         </div>
 
       </div>
@@ -653,12 +481,11 @@ export default function AsistanPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#0B0F17] flex items-center justify-center p-6">
-          <div className="text-center space-y-3">
-            <div className="w-10 h-10 border-3 border-[#182542] border-t-transparent rounded-full animate-spin mx-auto" />
-            <span className="text-xs font-bold text-[#6E81A0]">Mizan AI Asistan yükleniyor...</span>
+        <PaynoShell badge="asistan">
+          <div className="max-w-4xl mx-auto py-12 text-center text-slate-500">
+            Asistan yükleniyor...
           </div>
-        </div>
+        </PaynoShell>
       }
     >
       <AsistanContent />

@@ -27,8 +27,17 @@ export function estimateTokens(text: string): number {
   return Math.ceil(text.length / 3.5);
 }
 
+const TURKISH_NON_TICKER_WORDS = new Set([
+  "EVET", "HAYIR", "NEDEN", "NASIL", "SELAM", "ZEKAT", "ZEKÂT", "INFAK",
+  "BORCU", "FIYAT", "HEPSİ", "BORSA", "FAIZ", "CAIZ", "HELAL", "HARAM",
+  "HISSE", "KREDI", "ORTAK", "NEDIR", "HANGI", "NEREDE", "ZAMAN", "KADAR",
+  "BUNUN", "YERINE", "UYGUN", "SENCE", "SÖYLE", "ANLAT", "BILGI", "TAMAM",
+  "AL", "CAN", "DUR", "GEN", "INFO", "KART", "SAN", "TAT", "TEK", "YAT",
+  "SU", "FON", "TUR", "PAR", "BAG", "SUR", "TAB", "BAY", "GEL", "GIT"
+]);
+
 /**
- * Çok turlu konuşmalarda geçmişten hisse kodu (ticker) kurtarma
+ * Çok turlu konuşmalarda geçmişten gerçek hisse kodunu (ticker) kurtarma
  */
 export function extractStickyTicker(messages: ChatMessageContext[]): string | null {
   const tickerRegex = /\b([A-Z]{4,5})\b/g;
@@ -36,9 +45,7 @@ export function extractStickyTicker(messages: ChatMessageContext[]): string | nu
     const text = messages[i].content.toUpperCase();
     const matches = text.match(tickerRegex);
     if (matches && matches.length > 0) {
-      // BIST kodları genelde 4-5 harflidir (THYAO, BIMAS, ASELS, SISE vb.)
-      const nonTickerWords = ["EVET", "HAYIR", "NEDEN", "NASIL", "SELAM", "ZEKAT", "INFAK", "BORCU", "FIYAT", "HEPSİ"];
-      const candidate = matches.find((m) => !nonTickerWords.includes(m));
+      const candidate = matches.find((m) => !TURKISH_NON_TICKER_WORDS.has(m));
       if (candidate) return candidate;
     }
   }

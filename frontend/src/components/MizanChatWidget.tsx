@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { StockLogo } from "./StockLogo";
 import { useVoiceChat } from "@/lib/hooks/useVoiceChat";
+import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessage {
   id: string;
@@ -274,10 +275,14 @@ export const MizanChatWidget: React.FC = () => {
                       : "bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/60 dark:border-white/10 shadow-xs"
                   }`}
                 >
-                  {/* Mesaj Metni */}
-                  <div className="leading-relaxed whitespace-pre-wrap prose-xs">
-                    {msg.content}
-                  </div>
+                  {/* Mesaj Metni - Zengin & Temiz Markdown Çıktısı */}
+                  {msg.role === "assistant" ? (
+                    <MarkdownRenderer content={msg.content} />
+                  ) : (
+                    <div className="leading-relaxed whitespace-pre-wrap">
+                      {msg.content}
+                    </div>
+                  )}
 
                   {/* GENERATIVE UI 1: Hisse Durum Özeti Kartı */}
                   {msg.stockData && (
