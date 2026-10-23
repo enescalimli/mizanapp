@@ -469,6 +469,15 @@ export async function GET(
       regulatoryStandard: "TKBB İştirak ve Grup Şirketleri Uygunluk Esasları",
       detailExplanation: "Ana holding faaliyeti meşru sektörleri kapsasa dahi, konsolide aktif büyüklüğünün ve net kârının önemli bir kısmı faizli banka iştirakinden kaynaklandığı için katılım dışıdır.",
     };
+  } else if (upperTicker === "THYAO") {
+    isSectorCompliant = false;
+    detailedBreach = {
+      category: "SECTOR_ACTIVITY",
+      categoryLabel: "Uygunsuz Faaliyet & Borç Aşımı",
+      primaryReason: "Uçak içi alkollü içecek servisi/satışı ve faizli finansal borç yükü (%38.74) sebebiyle BIST Katılım dışıdır.",
+      regulatoryStandard: "BIST Katılım Endeksi Temel Esasları & TKBB Danışma Kurulu",
+      detailExplanation: "Şirketin uçuşlarında alkol servisi bulunması ve filo finansmanındaki faizli borçların piyasa değerine oranının %33 eşiğini aşması nedeniyle Borsa İstanbul Katılım Endeksi (XKTUM) kapsamı dışındadır.",
+    };
   } else if (univ.debtRatioPercent > debtLimit) {
     const diff = (univ.debtRatioPercent - debtLimit).toFixed(1);
     detailedBreach = {

@@ -49,7 +49,7 @@ export default function LandingPage() {
   const ribbonStocks = useMemo(() => {
     const list = [
       { ticker: "BIMAS", name: "BİM Birleşik Mağazalar", price: "540.00", change: "+2.40%", isOk: true, ratio: "%1.32 Borç" },
-      { ticker: "THYAO", name: "Türk Hava Yolları", price: "324.50", change: "+1.15%", isOk: true, ratio: "%18.2 Borç" },
+      { ticker: "THYAO", name: "Türk Hava Yolları", price: "259.00", change: "-2.26%", isOk: false, ratio: "Katılım Dışı" },
       { ticker: "ASELS", name: "Aselsan Elektronik", price: "64.20", change: "+0.85%", isOk: true, ratio: "%8.45 Borç" },
       { ticker: "AAGYO", name: "Ağaoğlu Avrasya GYO", price: "7.41", change: "-0.40%", isOk: false, ratio: "Gelir %29.28" },
       { ticker: "TUPRS", name: "Tüpraş Rafinerileri", price: "172.80", change: "+3.10%", isOk: true, ratio: "%4.10 Borç" },
@@ -647,7 +647,7 @@ export default function LandingPage() {
               <div className="space-y-2 text-xs font-medium">
                 {[
                   { ticker: "BIMAS", sector: "Perakende", pe: "14.2", pb: "3.10", evEbitda: "6.8", status: "COMPLIANT", score: "22/24" },
-                  { ticker: "THYAO", sector: "Ulaştırma", pe: "5.4", pb: "0.85", evEbitda: "4.2", status: "COMPLIANT", score: "21/24" },
+                  { ticker: "THYAO", sector: "Ulaştırma", pe: "5.4", pb: "0.85", evEbitda: "4.2", status: "NON_COMPLIANT", score: "12/24" },
                   { ticker: "AAGYO", sector: "GYO", pe: "A/D", pb: "0.31", evEbitda: "A/D", status: "NON_COMPLIANT", score: "14/24" },
                   { ticker: "BETAE", sector: "Elektrik", pe: "25.6", pb: "3.24", evEbitda: "19.9", status: "COMPLIANT", score: "19/24" },
                 ].map((row) => (
