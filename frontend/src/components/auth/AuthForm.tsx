@@ -152,24 +152,78 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
     }
   };
 
-  const handleGoogleSignInClick = () => {
-    setErrorMessage(null);
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  // Helper to ensure Google GIS client is loaded
+  const loadGoogleScript = (): Promise<boolean> => {
+    if (typeof window === "undefined") return Promise.resolve(false);
+    if ((window as any).google?.accounts?.oauth2) return Promise.resolve(true);
 
-    // Gerçek Google OAuth Client ID mevcutsa ve Google SDK yüklüyse resmi Google popup'ını tetikle
-    if (clientId && typeof window !== "undefined" && (window as any).google?.accounts?.oauth2) {
-      try {
+    return new Promise((resolve) => {
+      const existing = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (existing) {
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          if ((window as any).google?.accounts?.oauth2) {
+            clearInterval(interval);
+            resolve(true);
+          } else if (attempts > 30) {
+            clearInterval(interval);
+            resolve(false);
+          }
+        }, 100);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          if ((window as any).google?.accounts?.oauth2) {
+            clearInterval(interval);
+            resolve(true);
+          } else if (attempts > 20) {
+            clearInterval(interval);
+            resolve(false);
+          }
+        }, 100);
+      };
+      script.onerror = () => resolve(false);
+      document.head.appendChild(script);
+    });
+  };
+
+  const handleGoogleSignInClick = async () => {
+    setErrorMessage(null);
+    const clientId =
+      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ||
+      "934615365685-jvjo2h1o7k4k9b28945fnmc6he10ibij.apps.googleusercontent.com";
+
+    setIsLoading(true);
+
+    try {
+      const isGsiReady = await loadGoogleScript();
+
+      // Gerçek Google OAuth Client ID mevcutsa ve Google SDK yüklüyse resmi Google popup'ını tetikle
+      if (clientId && isGsiReady && (window as any).google?.accounts?.oauth2) {
         const tokenClient = (window as any).google.accounts.oauth2.initTokenClient({
           client_id: clientId,
           scope: "email profile openid",
           prompt: "select_account",
           callback: async (tokenResponse: any) => {
             if (tokenResponse?.error) {
-              setErrorMessage("Google ile oturum açma iptal edildi.");
+              setIsLoading(false);
+              if (tokenResponse.error === "popup_closed_by_user" || tokenResponse.error === "access_denied") {
+                setErrorMessage("Google ile oturum açma penceresi kapatıldı.");
+              } else {
+                setErrorMessage(`Google oturum açma hatası: ${tokenResponse.error}`);
+              }
               return;
             }
             if (tokenResponse?.access_token) {
-              setIsLoading(true);
               try {
                 const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
                   headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
@@ -177,25 +231,30 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 const googleUser = await userInfoRes.json();
                 if (googleUser?.email) {
                   loginWithDetails(googleUser.email, googleUser.name || googleUser.email.split("@")[0]);
-                  setSuccessMessage(`${googleUser.name || googleUser.email} olarak Google ile giriş yapıldı!`);
-                  setTimeout(() => router.push("/dashboard"), 600);
+                  setSuccessMessage(`${googleUser.name || googleUser.email} olarak Google ile başarıyla giriş yapıldı!`);
+                  setTimeout(() => router.push("/dashboard"), 500);
+                  return;
                 }
-              } catch {
-                setErrorMessage("Google kullanıcı bilgileri alınamadı.");
+              } catch (userInfoErr) {
+                console.error("Google kullanıcı bilgileri alınamadı:", userInfoErr);
+                setErrorMessage("Google kullanıcı profili doğrulanamadı.");
               } finally {
                 setIsLoading(false);
               }
             }
           },
         });
+
         tokenClient.requestAccessToken({ prompt: "select_account" });
+        setIsLoading(false);
         return;
-      } catch (err) {
-        console.warn("Google SDK init hatası, görsel hesap seçiciye geçiliyor:", err);
       }
+    } catch (err) {
+      console.warn("Google SDK init hatası, görsel hesap seçiciye geçiliyor:", err);
     }
 
-    // Google Client ID yapılandırılana kadar görseldeki resmi Google penceresini aç
+    setIsLoading(false);
+    // Yalnızca Google SDK yüklenemezse veya engellenirse görsel hesap seçiciyi aç
     handleOpenGoogleModal();
   };
 
