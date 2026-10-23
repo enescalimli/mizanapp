@@ -1354,6 +1354,9 @@ export async function GET(
     valuationDate: new Date().toISOString().slice(0, 10),
     standardCode: standard,
     overallStatus,
+    currentPriceTRY: liveClose,
+    change24h: `${liveChange >= 0 ? "+" : ""}${liveChange.toFixed(2)}%`,
+    change24hNumeric: liveChange,
     isSectorCompliant,
     prohibitedActivitiesFound:
       univ.bistStatus === "NON_COMPLIANT"

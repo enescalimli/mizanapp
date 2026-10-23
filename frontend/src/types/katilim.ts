@@ -235,6 +235,9 @@ export interface CompanyDetailScreening {
   valuationDate: string;
   standardCode: ScreeningStandardCode;
   overallStatus: ComplianceStatus;
+  currentPriceTRY?: number;
+  change24h?: string;
+  change24hNumeric?: number;
   isSectorCompliant: boolean;
   prohibitedActivitiesFound: string[];
   detailedBreach?: DetailedBreachDiagnostic;

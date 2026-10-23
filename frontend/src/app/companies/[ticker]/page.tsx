@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
-import { RatioProgressBar } from "@/components/RatioProgressBar";
 import { SmartAlternativeCard } from "@/components/SmartAlternativeCard";
 import { getSmartAlternativesForTicker } from "@/lib/data/sampleCompanies";
 import { CompanyDetailScreening, ScreeningStandardCode } from "@/types/katilim";
@@ -12,7 +11,7 @@ import { formatTRY } from "@/lib/decimal/decimal";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
 import { FinancialReportsTab } from "@/components/FinancialReportsTab";
-import { TradingViewWidget } from "@/components/TradingViewWidget";
+import { MidasStockChart } from "@/components/MidasStockChart";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
   ArrowLeft,
@@ -47,7 +46,7 @@ import {
   Compass,
 } from "lucide-react";
 
-type CompanyDetailTab = "FIKIH" | "GRAFIK" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ";
+type CompanyDetailTab = "FIKIH" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ";
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -314,38 +313,44 @@ export default function CompanyDetailPage() {
         </div>
 
         {/* =================================================================== */}
-        {/* DOĞRU VE OTOMATİK KATILIM DIŞI TEŞHİS RÖNTGENİ                      */}
+        {/* MIDAS-STYLE SADE & ETKİLEŞİMLİ FİYAT GRAFİĞİ                         */}
+        {/* =================================================================== */}
+        <MidasStockChart
+          ticker={ticker}
+          currentPrice={data.currentPriceTRY || 100}
+          change24hPercent={data.change24hNumeric || 0}
+          periodicReturns={data.periodicReturns}
+        />
+
+        {/* =================================================================== */}
+        {/* KOMPAKT KATILIM DIŞI TEŞHİS KARTI                                   */}
         {/* =================================================================== */}
         {data.overallStatus !== "COMPLIANT" && breach && (
-          <div className="bg-white/90 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] border-2 border-rose-500/25 dark:border-rose-500/40 p-6 shadow-md space-y-3 transition-colors">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 flex items-center justify-center shrink-0">
-                  <ShieldAlert size={18} />
-                </div>
-                <div>
+          <div className="rounded-2xl p-3.5 sm:p-4 bg-rose-50/80 dark:bg-rose-950/25 border border-rose-200/90 dark:border-rose-900/50 shadow-2xs transition-colors">
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-lg bg-rose-500/15 text-rose-700 dark:text-rose-400 flex items-center justify-center shrink-0 mt-0.5">
+                <ShieldAlert size={15} />
+              </div>
+
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-extrabold uppercase tracking-wider text-rose-800 dark:text-rose-400">
+                    <span className="text-xs font-bold text-rose-950 dark:text-rose-200">
+                      Katılım Dışı Sebebi: {breach.primaryReason}
+                    </span>
+                    <span className="text-[10px] font-extrabold px-2 py-0.2 rounded-md bg-rose-200/70 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200">
                       {breach.categoryLabel}
                     </span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-900 dark:text-rose-300">
-                      Katılım Dışı
-                    </span>
                   </div>
-                  <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-medium">
+                  <span className="text-[10px] font-mono text-rose-700/80 dark:text-rose-400/80">
                     Dayanak: {breach.regulatoryStandard}
                   </span>
                 </div>
-              </div>
-            </div>
 
-            <div className="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-900/40 space-y-1.5">
-              <h4 className="text-sm font-extrabold text-rose-950 dark:text-rose-200">
-                {breach.primaryReason}
-              </h4>
-              <p className="text-xs text-rose-900/90 dark:text-rose-300 leading-relaxed font-normal">
-                {breach.detailExplanation}
-              </p>
+                <p className="text-[11px] text-rose-800/90 dark:text-rose-300/90 leading-relaxed">
+                  {breach.detailExplanation}
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -357,7 +362,6 @@ export default function CompanyDetailPage() {
           <div className="bg-white dark:bg-[#161F32] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             {[
               { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
-              { id: "GRAFIK", label: "TradingView Grafik", icon: Activity, badge: "Canlı" },
               { id: "KARNE", label: "Şirket Karnesi", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
               { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
               { id: "FINANSALLAR", label: "Finansal Raporlar & Tablolar", icon: FileSpreadsheet },
@@ -397,42 +401,113 @@ export default function CompanyDetailPage() {
         {/* =================================================================== */}
         {activeTab === "FIKIH" && (
           <div className="space-y-6">
-            {/* 3 Core Ratio Progress Bars */}
-            <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5 transition-colors">
-              <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                  <Scale size={16} className="text-emerald-600 dark:text-emerald-400" />
-                  <span>DİB / TKBB Fıkhi Oran Eşikleri</span>
-                </h3>
-                <span className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+            {/* =============================================================== */}
+            {/* KOMPAKT DİB / TKBB FIKHİ ORAN EŞİKLERİ                           */}
+            {/* =============================================================== */}
+            <div className="rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3.5 transition-colors">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <Scale size={13} />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                    DİB / TKBB Fıkhi Oran Eşikleri
+                  </h3>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                    3 Temel Kriter
+                  </span>
+                </div>
+                <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                   Payda Değeri: <strong className="text-[#182542] dark:text-white font-mono">{formatTRY(data.ratios.denominatorValueTRY, 0)}</strong>
-                </span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <RatioProgressBar
-                  label="Faizli Borç Oranı"
-                  subLabel="Toplam Faizli Borçlar / Payda"
-                  detail={data.ratios.interestDebt}
-                  maxScalePercent={isBist ? 45 : 40}
-                  isDebtOrCash={true}
-                />
+              {/* 3 Compact Ratio Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {[
+                  {
+                    name: "Faizli Borç Oranı",
+                    detail: data.ratios.interestDebt,
+                    limit: "%33.00",
+                    limitNum: 33,
+                    maxScale: isBist ? 45 : 40,
+                    formula: "Faizli Borç / Payda",
+                  },
+                  {
+                    name: "Faizli Varlık Oranı",
+                    detail: data.ratios.interestCash,
+                    limit: "%33.00",
+                    limitNum: 33,
+                    maxScale: isBist ? 45 : 40,
+                    formula: "Faizli Nakit / Payda",
+                  },
+                  {
+                    name: "Uygunsuz Gelir Oranı",
+                    detail: data.ratios.impureIncome,
+                    limit: "%5.00",
+                    limitNum: 5,
+                    maxScale: 8,
+                    formula: "Faiz Geliri / Hasılat",
+                  },
+                ].map((item) => {
+                  const currentVal = parseFloat(item.detail.ratioDecimal) * 100;
+                  const isOk = item.detail.isCompliant;
+                  const isTolerance = item.detail.isInToleranceBand;
+                  const pctOnBar = Math.min(Math.max((currentVal / item.maxScale) * 100, 0), 100);
+                  const thresholdPos = (item.limitNum / item.maxScale) * 100;
 
-                <RatioProgressBar
-                  label="Faizli Varlık Oranı"
-                  subLabel="Vadeli Mevduat + Faizli Menkul / Payda"
-                  detail={data.ratios.interestCash}
-                  maxScalePercent={isBist ? 45 : 40}
-                  isDebtOrCash={true}
-                />
+                  return (
+                    <div
+                      key={item.name}
+                      className="rounded-xl p-3 bg-slate-50/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                          {item.name}
+                        </span>
+                        <span
+                          className={`text-xs font-black font-mono tabular-nums px-2 py-0.5 rounded-md ${
+                            isOk
+                              ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300"
+                              : isTolerance
+                              ? "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300"
+                              : "bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300"
+                          }`}
+                        >
+                          {item.detail.ratioPercentage}
+                        </span>
+                      </div>
 
-                <RatioProgressBar
-                  label="Uygun Olmayan Gelir Oranı"
-                  subLabel="Faiz Gelirleri / Toplam Hasılat"
-                  detail={data.ratios.impureIncome}
-                  maxScalePercent={8}
-                  isDebtOrCash={false}
-                />
+                      {/* Slim Progress Bar with Threshold Marker */}
+                      <div className="relative w-full h-2 rounded-full bg-slate-200/80 dark:bg-white/10 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-300 ${
+                            isOk
+                              ? "bg-emerald-500"
+                              : isTolerance
+                              ? "bg-amber-500"
+                              : "bg-rose-500"
+                          }`}
+                          style={{ width: `${pctOnBar}%` }}
+                        />
+                        {/* Threshold vertical tick line */}
+                        <div
+                          className="absolute top-0 bottom-0 w-0.5 bg-slate-400 dark:bg-slate-300 z-10 opacity-70"
+                          style={{ left: `${thresholdPos}%` }}
+                          title={`Azami Limit: ${item.limit}`}
+                        />
+                      </div>
+
+                      {/* Bottom row: Formula and Threshold */}
+                      <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-400 font-mono">
+                        <span className="truncate">{item.formula}</span>
+                        <span className="font-semibold text-slate-600 dark:text-slate-300 shrink-0">
+                          Azami {item.limit}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -483,83 +558,6 @@ export default function CompanyDetailPage() {
                 <span className="font-mono tabular-nums font-bold text-[#182542] dark:text-white text-sm">
                   ₺{data.purificationMetrics.zatableNetCurrentAssetsPerShareTRY}
                 </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* =================================================================== */}
-        {/* TAB 1.5: TRADINGVIEW CANLI GRAFİK & TEKNİK ANALİZ                   */}
-        {/* =================================================================== */}
-        {activeTab === "GRAFIK" && (
-          <div className="space-y-6 animate-in fade-in duration-200">
-            {/* Header info badge */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-white/80 dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 backdrop-blur-md">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
-                  <Activity size={18} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                    <span>TradingView BIST:{ticker} Canlı İnteraktif Grafik &amp; Seans Akışı</span>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-[10px] font-extrabold font-mono">
-                      BIST:{ticker}
-                    </span>
-                  </h3>
-                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Borsa İstanbul resmi veri dağıtım ağı &amp; TradingView gelişmiş mum grafiği, hacim ve osilatörler
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/40 text-[11px] font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Canlı Seans Akışı
-                </span>
-              </div>
-            </div>
-
-            {/* TradingView Advanced Chart */}
-            <div className="w-full">
-              <TradingViewWidget ticker={ticker} mode="chart" height={520} />
-            </div>
-
-            {/* Technical Analysis Gauge & Explanations */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 space-y-4">
-                <div className="p-5 rounded-2xl bg-white/80 dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 backdrop-blur-md space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                      Teknik Analiz Göstergeleri (RSI, MACD, EMA &amp; Osilatörler)
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-400">TradingView BIST Scanner</span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                    TradingView osilatörleri (RSI 14, Stokastik, CCI, MACD) ve 20/50/200 günlük hareketli ortalamaların (EMA/SMA) matematiksel ağırlıklandırmasıyla hesaplanan anlık teknik özet sinyali. Fıkhi uygunluk onayından geçen BIST Katılım hisseleri için zamanlama ve giriş/çıkış analizi sunar.
-                  </p>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-100 dark:border-white/5 text-[11px]">
-                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5">
-                      <span className="text-slate-400 block text-[10px]">RSI (14)</span>
-                      <span className="font-bold text-slate-800 dark:text-white font-mono">54.20 (Nötr)</span>
-                    </div>
-                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5">
-                      <span className="text-slate-400 block text-[10px]">MACD (12, 26)</span>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">+1.45 (Al)</span>
-                    </div>
-                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5">
-                      <span className="text-slate-400 block text-[10px]">EMA 50 / 200</span>
-                      <span className="font-bold text-emerald-600 dark:text-emerald-400 font-mono">Golden Cross</span>
-                    </div>
-                    <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5">
-                      <span className="text-slate-400 block text-[10px]">Trend Gücü</span>
-                      <span className="font-bold text-slate-800 dark:text-white font-mono">Pozitif</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="w-full">
-                <TradingViewWidget ticker={ticker} mode="technical" height={360} />
               </div>
             </div>
           </div>
