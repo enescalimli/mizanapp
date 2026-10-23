@@ -2,7 +2,6 @@
 
 import React, { useState, useMemo, useRef, useCallback } from "react";
 import { TrendingUp, TrendingDown, Clock } from "lucide-react";
-import { formatTRY } from "@/lib/decimal/decimal";
 
 export type ChartTimeframe = "1G" | "1H" | "1A" | "3A" | "1Y" | "5Y";
 
@@ -60,16 +59,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
   const points = useMemo<PricePoint[]>(() => {
     const returnPct = returnsMap[timeframe] || 0;
     const startPrice = currentPrice / (1 + returnPct / 100);
-
-    const countMap: Record<ChartTimeframe, number> = {
-      "1G": 40,
-      "1H": 35,
-      "1A": 45,
-      "3A": 50,
-      "1Y": 52,
-      "5Y": 60,
-    };
-    const count = countMap[timeframe];
+    const totalDelta = currentPrice - startPrice;
     const generated: PricePoint[] = [];
 
     // Deterministic pseudo-random seed based on ticker + timeframe
@@ -80,41 +70,228 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       return x - Math.floor(x);
     };
 
-    for (let i = 0; i < count; i++) {
-      const progress = i / (count - 1); // 0 to 1
-      // Base trend
-      const trendPrice = startPrice + (currentPrice - startPrice) * progress;
-      // Natural fluctuation
-      const noise = (pseudoRandom(i) - 0.48) * (currentPrice * 0.015);
-      let p = trendPrice + noise;
-      if (i === count - 1) p = currentPrice;
-      if (i === 0) p = startPrice;
+    if (timeframe === "1G") {
+      // 1 GÜN: Borsa İstanbul seans saatleri 10:00 - 18:00 arası tam 15 dakikalık aralıklarla 33 nokta
+      const isFloorTaban = returnPct <= -8.0; // Taban hisse (örn: -%9.90)
+      const isCeilTavan = returnPct >= 8.0;   // Tavan hisse (örn: +%9.90)
 
-      let timeLabel = "";
-      if (timeframe === "1G") {
-        const hour = 10 + Math.floor(progress * 8);
-        const minute = Math.floor((progress * 8 * 60) % 60);
-        timeLabel = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-      } else if (timeframe === "1H") {
-        const days = ["Pzt", "Sal", "Çar", "Per", "Cum"];
-        timeLabel = days[Math.min(Math.floor(progress * 5), 4)];
-      } else if (timeframe === "1A" || timeframe === "3A") {
-        const day = 1 + Math.floor(progress * 28);
-        timeLabel = `${day} Gün önce`;
+      if (isFloorTaban) {
+        // TABAN: Sabah açılışta hızla tabana oturur (10:00 - 10:45) ve günün geri kalanında tabanda (düz çizgi) kilit kalır
+        for (let i = 0; i <= 32; i++) {
+          const totalMins = i * 15;
+          const hour = 10 + Math.floor(totalMins / 60);
+          const minute = totalMins % 60;
+          const timeLabel = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
+          let p: number;
+          if (i === 0) {
+            p = startPrice;
+          } else if (i === 1) {
+            // 10:15
+            p = startPrice + totalDelta * 0.60;
+          } else if (i === 2) {
+            // 10:30
+            p = startPrice + totalDelta * 0.88;
+          } else if (i === 3) {
+            // 10:45
+            p = startPrice + totalDelta * 0.98;
+          } else {
+            // 11:00 - 18:00: Taban Kilit (tamamen yatay taban seviyesi)
+            p = currentPrice;
+          }
+          generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+        }
+      } else if (isCeilTavan) {
+        // TAVAN: Sabah açılışta hızla tavana tırmanır (10:00 - 10:45) ve günün geri kalanında tavanda kilit kalır
+        for (let i = 0; i <= 32; i++) {
+          const totalMins = i * 15;
+          const hour = 10 + Math.floor(totalMins / 60);
+          const minute = totalMins % 60;
+          const timeLabel = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
+          let p: number;
+          if (i === 0) {
+            p = startPrice;
+          } else if (i === 1) {
+            // 10:15
+            p = startPrice + totalDelta * 0.60;
+          } else if (i === 2) {
+            // 10:30
+            p = startPrice + totalDelta * 0.88;
+          } else if (i === 3) {
+            // 10:45
+            p = startPrice + totalDelta * 0.98;
+          } else {
+            // 11:00 - 18:00: Tavan Kilit
+            p = currentPrice;
+          }
+          generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+        }
+      } else if (returnPct <= -3.5) {
+        // Belirgin düşüş: Sabah satışı, öğle tepkisi, öğleden sonra kapanış satışı
+        for (let i = 0; i <= 32; i++) {
+          const totalMins = i * 15;
+          const hour = 10 + Math.floor(totalMins / 60);
+          const minute = totalMins % 60;
+          const timeLabel = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
+          const t = i / 32;
+          let p: number;
+          if (t <= 0.35) {
+            const dropProgress = t / 0.35;
+            p = startPrice + totalDelta * 0.82 * Math.sin((dropProgress * Math.PI) / 2);
+          } else if (t <= 0.60) {
+            const bounceProgress = (t - 0.35) / 0.25;
+            p = startPrice + totalDelta * 0.82 - totalDelta * 0.12 * Math.sin(bounceProgress * Math.PI);
+          } else {
+            const closeProgress = (t - 0.60) / 0.40;
+            p = startPrice + totalDelta * 0.82 + (totalDelta * 0.18) * closeProgress;
+          }
+
+          const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.003);
+          if (i === 0) p = startPrice;
+          else if (i === 32) p = currentPrice;
+          else p += noise;
+
+          generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+        }
+      } else if (returnPct >= 3.5) {
+        // Belirgin yükseliş: Sabah rallisi, öğlen kâr satışı dinlenmesi, öğleden sonra kapanış ivmesi
+        for (let i = 0; i <= 32; i++) {
+          const totalMins = i * 15;
+          const hour = 10 + Math.floor(totalMins / 60);
+          const minute = totalMins % 60;
+          const timeLabel = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+
+          const t = i / 32;
+          let p: number;
+          if (t <= 0.35) {
+            const rallyProgress = t / 0.35;
+            p = startPrice + totalDelta * 0.80 * Math.sin((rallyProgress * Math.PI) / 2);
+          } else if (t <= 0.60) {
+            const pullProgress = (t - 0.35) / 0.25;
+            p = startPrice + totalDelta * 0.80 - totalDelta * 0.10 * Math.sin(pullProgress * Math.PI);
+          } else {
+            const closeProgress = (t - 0.60) / 0.40;
+            p = startPrice + totalDelta * 0.80 + (totalDelta * 0.20) * closeProgress;
+          }
+
+          const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.003);
+          if (i === 0) p = startPrice;
+          else if (i === 32) p = currentPrice;
+          else p += noise;
+
+          generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+        }
       } else {
-        timeLabel = `${(1 - progress).toFixed(1)} yıl önce`;
-      }
+        // Normal seans dalgalanması: 15 dakikalık aralıklarla dengeli seans eğrisi
+        for (let i = 0; i <= 32; i++) {
+          const totalMins = i * 15;
+          const hour = 10 + Math.floor(totalMins / 60);
+          const minute = totalMins % 60;
+          const timeLabel = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
 
-      generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+          const t = i / 32;
+          const wave = Math.sin(t * Math.PI * 2) * (currentPrice * 0.006);
+          const trend = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+          let p = trend + wave;
+
+          if (i === 0) p = startPrice;
+          if (i === 32) p = currentPrice;
+
+          generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+        }
+      }
+    } else if (timeframe === "1H") {
+      // 1 HAFTA: 5 işlem günü (Pazartesi - Cuma) için günde 4 seans noktası (10:00, 12:30, 15:00, 18:00) = 20 nokta
+      const days = ["Pzt", "Sal", "Çar", "Per", "Cum"];
+      const times = ["10:00", "12:30", "15:00", "18:00"];
+      const count = 20;
+      for (let i = 0; i < count; i++) {
+        const dayIdx = Math.min(Math.floor(i / 4), 4);
+        const timeIdx = i % 4;
+        const timeLabel = `${days[dayIdx]} ${times[timeIdx]}`;
+        const t = i / (count - 1);
+        const trend = startPrice + totalDelta * t;
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.012);
+        let p = trend + noise;
+        if (i === 0) p = startPrice;
+        if (i === count - 1) p = currentPrice;
+        generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+      }
+    } else if (timeframe === "1A") {
+      // 1 AY: 22 işlem günü
+      const count = 22;
+      const now = new Date();
+      for (let i = 0; i < count; i++) {
+        const daysAgo = Math.round((1 - i / (count - 1)) * 30);
+        const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const timeLabel = `${d.getDate()} ${d.toLocaleDateString("tr-TR", { month: "short" })}`;
+        const t = i / (count - 1);
+        const trend = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.018);
+        let p = trend + noise;
+        if (i === 0) p = startPrice;
+        if (i === count - 1) p = currentPrice;
+        generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+      }
+    } else if (timeframe === "3A") {
+      // 3 AY: 30 nokta
+      const count = 30;
+      const now = new Date();
+      for (let i = 0; i < count; i++) {
+        const daysAgo = Math.round((1 - i / (count - 1)) * 90);
+        const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const timeLabel = `${d.getDate()} ${d.toLocaleDateString("tr-TR", { month: "short" })}`;
+        const t = i / (count - 1);
+        const trend = startPrice + totalDelta * t;
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.025);
+        let p = trend + noise;
+        if (i === 0) p = startPrice;
+        if (i === count - 1) p = currentPrice;
+        generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+      }
+    } else if (timeframe === "1Y") {
+      // 1 YIL: 36 nokta
+      const count = 36;
+      const now = new Date();
+      for (let i = 0; i < count; i++) {
+        const daysAgo = Math.round((1 - i / (count - 1)) * 365);
+        const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const timeLabel = `${d.toLocaleDateString("tr-TR", { month: "short" })} ${d.getFullYear()}`;
+        const t = i / (count - 1);
+        const trend = startPrice + totalDelta * t;
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.035);
+        let p = trend + noise;
+        if (i === 0) p = startPrice;
+        if (i === count - 1) p = currentPrice;
+        generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+      }
+    } else {
+      // 5 YIL: 40 nokta
+      const count = 40;
+      const now = new Date();
+      for (let i = 0; i < count; i++) {
+        const daysAgo = Math.round((1 - i / (count - 1)) * 365 * 5);
+        const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const timeLabel = `${d.toLocaleDateString("tr-TR", { month: "short" })} ${d.getFullYear()}`;
+        const t = i / (count - 1);
+        const trend = startPrice + totalDelta * t;
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.05);
+        let p = trend + noise;
+        if (i === 0) p = startPrice;
+        if (i === count - 1) p = currentPrice;
+        generated.push({ timeLabel, price: Number(p.toFixed(2)) });
+      }
     }
 
     return generated;
   }, [ticker, currentPrice, timeframe, returnsMap]);
 
   // Compute SVG coordinates
-  const { pathD, areaD, minPrice, maxPrice, isPositive, currentReturnPercent } = useMemo(() => {
+  const { pathD, areaD, minPrice, maxPrice, isPositive } = useMemo(() => {
     if (!points.length) {
-      return { pathD: "", areaD: "", minPrice: 0, maxPrice: 0, isPositive: true, currentReturnPercent: 0 };
+      return { pathD: "", areaD: "", minPrice: 0, maxPrice: 0, isPositive: true };
     }
 
     const prices = points.map((p) => p.price);
@@ -143,12 +320,16 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       const p2 = coords[i + 1];
       const p3 = coords[i + 2] || p2;
 
-      const cp1x = p1.x + (p2.x - p0.x) / 6;
-      const cp1y = p1.y + (p2.y - p0.y) / 6;
-      const cp2x = p2.x - (p3.x - p1.x) / 6;
-      const cp2y = p2.y - (p3.y - p1.y) / 6;
-
-      d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+      // If prices are identical (e.g. taban/tavan flat line), draw straight line to avoid overshoot
+      if (p1.y === p2.y) {
+        d += ` L ${p2.x} ${p2.y}`;
+      } else {
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+        d += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+      }
     }
 
     const area = `${d} L ${width} ${height} L 0 ${height} Z`;
@@ -163,7 +344,6 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       minPrice: min,
       maxPrice: max,
       isPositive: pos,
-      currentReturnPercent: retPct,
     };
   }, [points]);
 
@@ -204,8 +384,8 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
           <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <span>BIST:{ticker} Canlı Fiyat</span>
             {hoveredPoint && (
-              <span className="text-[10px] text-slate-500 font-mono flex items-center gap-1 bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded-full">
-                <Clock size={10} />
+              <span className="text-[10px] text-slate-600 dark:text-slate-300 font-mono font-bold flex items-center gap-1 bg-slate-100 dark:bg-white/10 px-2.5 py-0.5 rounded-full border border-slate-200/60 dark:border-white/10">
+                <Clock size={10} className="text-slate-400" />
                 {hoveredPoint.timeLabel}
               </span>
             )}
@@ -257,6 +437,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       <div
         ref={containerRef}
         onPointerMove={handlePointerMove}
+        onPointerDown={handlePointerMove}
         onPointerLeave={handlePointerLeave}
         className="relative w-full h-[180px] sm:h-[210px] cursor-crosshair select-none touch-none"
       >
@@ -348,7 +529,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
         </div>
 
         <div className="text-[11px] font-mono text-slate-400 dark:text-slate-500 hidden sm:block">
-          Borsa İstanbul Veri Akışı
+          Borsa İstanbul 15 Dk Seans Akışı
         </div>
       </div>
 
