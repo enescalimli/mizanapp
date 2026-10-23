@@ -17,8 +17,35 @@ import {
   X,
   KeyRound,
   RotateCcw,
+  UserPlus,
+  ChevronRight,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext";
+
+interface GoogleAccountOption {
+  id: string;
+  name: string;
+  email: string;
+  avatarText: string;
+  avatarBg: string;
+}
+
+const DEFAULT_GOOGLE_ACCOUNTS: GoogleAccountOption[] = [
+  {
+    id: "acc-1",
+    name: "Mustafa Enes Çalımlı",
+    email: "mustafaenescalimli@gmail.com",
+    avatarText: "M",
+    avatarBg: "bg-blue-600",
+  },
+  {
+    id: "acc-2",
+    name: "Katılım Yatırımcısı",
+    email: "yatirimci@mizanapp.tr",
+    avatarText: "K",
+    avatarBg: "bg-emerald-600",
+  },
+];
 
 interface AuthFormProps {
   initialMode?: "login" | "register";
@@ -41,9 +68,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Google Modal States
+  // Google Modal States (Authentic Account Chooser)
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
+  const [googleCustomMode, setGoogleCustomMode] = useState(false);
   const [customGoogleEmail, setCustomGoogleEmail] = useState("");
+  const [customGoogleName, setCustomGoogleName] = useState("");
+  const [googleSigningInAccount, setGoogleSigningInAccount] = useState<string | null>(null);
 
   // OTP Verification States
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
@@ -124,21 +154,44 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
   const handleOpenGoogleModal = () => {
     setErrorMessage(null);
-    setCustomGoogleEmail(email.endsWith("@gmail.com") ? email : "");
+    setGoogleCustomMode(false);
+    setCustomGoogleEmail("");
+    setCustomGoogleName("");
+    setGoogleSigningInAccount(null);
     setIsGoogleModalOpen(true);
   };
 
-  const handleGoogleEmailSubmit = (e: React.FormEvent) => {
+  const handleSelectGoogleAccount = (acc: GoogleAccountOption) => {
+    setGoogleSigningInAccount(acc.id);
+    setTimeout(() => {
+      loginWithDetails(acc.email, acc.name);
+      setIsGoogleModalOpen(false);
+      setGoogleSigningInAccount(null);
+      setSuccessMessage(`${acc.name} (${acc.email}) olarak Google ile giriş yapıldı!`);
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
+    }, 450);
+  };
+
+  const handleCustomGoogleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!customGoogleEmail.includes("@")) {
       setErrorMessage("Lütfen geçerli bir Google / Gmail e-posta adresi giriniz.");
       return;
     }
-    setIsGoogleModalOpen(false);
-    initiateOtpVerification(
-      customGoogleEmail.trim().toLowerCase(),
-      customGoogleEmail.split("@")[0]
-    );
+    const cleanEmail = customGoogleEmail.trim().toLowerCase();
+    const cleanName = customGoogleName.trim() || cleanEmail.split("@")[0];
+    setGoogleSigningInAccount("custom");
+    setTimeout(() => {
+      loginWithDetails(cleanEmail, cleanName);
+      setIsGoogleModalOpen(false);
+      setGoogleSigningInAccount(null);
+      setSuccessMessage(`${cleanName} olarak Google ile giriş yapıldı!`);
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
+    }, 450);
   };
 
   // OTP Digit Change Handler
@@ -575,10 +628,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       </div>
 
       {/* ===================================================================== */}
-      {/* 1. GOOGLE OAUTH EMAIL MODAL                                           */}
+      {/* 1. GOOGLE AUTHENTIC ACCOUNT CHOOSER (BİR HESAP SEÇİN)                  */}
       {/* ===================================================================== */}
       {isGoogleModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="relative w-full max-w-sm bg-white dark:bg-[#161F32] rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200 dark:border-white/10 space-y-5 animate-in zoom-in-95 duration-150">
             
             {/* Modal Close Button */}
@@ -590,8 +643,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               <X size={18} />
             </button>
 
-            {/* Google Logo Header */}
-            <div className="text-center space-y-2">
+            {/* Google Logo & Title */}
+            <div className="text-center space-y-1.5">
               <svg className="w-8 h-8 mx-auto" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -611,49 +664,143 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 />
               </svg>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                Google ile Devam Et
+                Google ile oturum açın
               </h3>
-              <p className="text-xs text-slate-500 dark:text-[#94A3B8] leading-relaxed">
-                Mizan Katılım hesabınıza güvenli erişim için Google / Gmail e-posta adresinizi giriniz:
+              <p className="text-xs text-slate-500 dark:text-[#94A3B8]">
+                {googleCustomMode
+                  ? "Farklı bir Google hesabı giriniz"
+                  : "mizanapp.tr uygulamasına devam etmek için bir hesap seçin"}
               </p>
             </div>
 
-            <form onSubmit={handleGoogleEmailSubmit} className="space-y-4 pt-1">
-              <div>
-                <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1.5">
-                  Google / Gmail E-Posta Adresi
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                    <Mail size={15} />
+            {/* ACCOUNT PICKER LIST */}
+            {!googleCustomMode ? (
+              <div className="space-y-2 pt-1">
+                <div className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider px-1">
+                  Kayıtlı Google Hesapları
+                </div>
+
+                {DEFAULT_GOOGLE_ACCOUNTS.map((acc) => {
+                  const isSigningInThis = googleSigningInAccount === acc.id;
+                  return (
+                    <button
+                      key={acc.id}
+                      type="button"
+                      disabled={googleSigningInAccount !== null}
+                      onClick={() => handleSelectGoogleAccount(acc)}
+                      className="w-full p-3 rounded-2xl border border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/25 hover:bg-slate-50 dark:hover:bg-white/5 flex items-center justify-between gap-3 text-left transition group active:scale-[0.99] disabled:opacity-60"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className={`w-9 h-9 rounded-full ${acc.avatarBg} text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-xs`}
+                        >
+                          {acc.avatarText}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                            {acc.name}
+                          </div>
+                          <div className="text-[11px] text-slate-500 dark:text-[#94A3B8] font-mono truncate">
+                            {acc.email}
+                          </div>
+                        </div>
+                      </div>
+
+                      {isSigningInThis ? (
+                        <RefreshCw size={15} className="animate-spin text-blue-600 shrink-0" />
+                      ) : (
+                        <ChevronRight
+                          size={15}
+                          className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition shrink-0"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+
+                {/* Başka Bir Hesap Kullan Seçeneği */}
+                <button
+                  type="button"
+                  disabled={googleSigningInAccount !== null}
+                  onClick={() => setGoogleCustomMode(true)}
+                  className="w-full p-3 rounded-2xl border border-dashed border-slate-300 dark:border-white/15 hover:border-solid hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 flex items-center gap-3 text-left transition group active:scale-[0.99]"
+                >
+                  <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0">
+                    <UserPlus size={16} />
                   </div>
-                  <input
-                    type="email"
-                    required
-                    value={customGoogleEmail}
-                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                    placeholder="adiniz@gmail.com"
-                    autoFocus
-                    className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:bg-white dark:focus:bg-white/10 focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition"
-                  />
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                      Başka bir hesap kullan
+                    </div>
+                    <div className="text-[10px] text-slate-400">
+                      Farklı bir Gmail ile oturum açın
+                    </div>
+                  </div>
+                </button>
+
+                <div className="pt-2 text-center text-[10px] text-slate-400 dark:text-slate-500 leading-relaxed border-t border-slate-100 dark:border-white/10">
+                  Devam ederek mizanapp.tr ile adınızı, e-posta adresinizi ve profil bilgilerinizi paylaşmayı onaylarsınız.
                 </div>
               </div>
+            ) : (
+              /* CUSTOM GOOGLE ACCOUNT FORM */
+              <form onSubmit={handleCustomGoogleSubmit} className="space-y-3.5 pt-1">
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1">
+                    Ad Soyad (Opsiyonel)
+                  </label>
+                  <input
+                    type="text"
+                    value={customGoogleName}
+                    onChange={(e) => setCustomGoogleName(e.target.value)}
+                    placeholder="Örn: Mustafa Çalımlı"
+                    className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs focus:bg-white dark:focus:bg-white/10 focus:outline-none focus:border-blue-500 transition"
+                  />
+                </div>
 
-              <button
-                type="submit"
-                disabled={isLoading || !customGoogleEmail.includes("@")}
-                className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
-              >
-                {isLoading ? (
-                  <RefreshCw size={14} className="animate-spin" />
-                ) : (
-                  <>
-                    <span>Onay Kodu Gönder</span>
-                    <ArrowRight size={14} />
-                  </>
-                )}
-              </button>
-            </form>
+                <div>
+                  <label className="text-[10px] uppercase font-semibold text-slate-500 dark:text-[#94A3B8] tracking-wider block mb-1">
+                    Google / Gmail E-Posta Adresi
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                      <Mail size={15} />
+                    </div>
+                    <input
+                      type="email"
+                      required
+                      value={customGoogleEmail}
+                      onChange={(e) => setCustomGoogleEmail(e.target.value)}
+                      placeholder="adiniz@gmail.com"
+                      autoFocus
+                      className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:bg-white dark:focus:bg-white/10 focus:outline-none focus:border-blue-500 transition"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setGoogleCustomMode(false)}
+                    className="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-white/5 transition"
+                  >
+                    Geri
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={googleSigningInAccount !== null || !customGoogleEmail.includes("@")}
+                    className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-blue-600/20"
+                  >
+                    {googleSigningInAccount ? (
+                      <RefreshCw size={14} className="animate-spin" />
+                    ) : (
+                      <span>Oturum Aç</span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+
           </div>
         </div>
       )}
