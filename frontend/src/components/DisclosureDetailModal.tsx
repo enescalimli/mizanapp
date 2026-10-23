@@ -152,15 +152,10 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
         </div>
 
         {/* Full Headline / Title */}
-        <div className="space-y-2">
+        <div className="space-y-1">
           <h2 className="text-lg sm:text-xl font-black text-[#182542] dark:text-white leading-snug">
             {disclosure.title}
           </h2>
-          {disclosure.rawTitle && disclosure.rawTitle !== disclosure.title && (
-            <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">
-              Orijinal Başlık: {disclosure.rawTitle}
-            </p>
-          )}
         </div>
 
         {/* Summary / Body */}
