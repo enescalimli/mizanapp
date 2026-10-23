@@ -411,11 +411,17 @@ export async function GET(
 
   const isGyo = upperTicker.endsWith("GYO") || univ.sector.includes("GYO") || univ.sector.includes("Gayrimenkul");
 
-  const isBankOrFinance = !isGyo && (
+  const isBank = [
+    "GARAN", "AKBNK", "ISCTR", "ISBTR", "ISATR", "ISKUR", "YKBNK", "HALKB", "VAKBN", "ALBRK", "QNBTR", "KLNMA", "TSKB", "ICBCT"
+  ].includes(upperTicker) || univ.sector === "Bankacılık";
+
+  const isFinancialIntermediation = !isGyo && !isBank && (
     [
-      "GARAN", "AKBNK", "ISCTR", "YKBNK", "HALKB", "VAKBN", "ALBRK", "QNBFK", "VAKFN", "ISFIN", "GARFA", "SEKFK"
-    ].includes(upperTicker) || univ.sector.includes("Bankacılık") || univ.sector.includes("Finans")
+      "QNBFK", "VAKFN", "ISFIN", "GARFA", "SEKFK", "LIDFA", "CRDFA", "ULUFA", "DSTKF", "KTLEV"
+    ].includes(upperTicker) || univ.sector === "Finansal Hizmetler & Aracı Kurumlar"
   );
+
+  const isBankOrFinance = isBank || isFinancialIntermediation;
 
   const isInsurance = [
     "TURSG", "AGESA", "ANSGR", "AKGRT", "ANHYT", "RAYSG"
@@ -432,7 +438,7 @@ export async function GET(
       regulatoryStandard: "DİB Din İşleri Yüksek Kurulu & TKBB Danışma Kurulu Standartları",
       detailExplanation: `Şirketin faizli borç oranı (%${univ.debtRatioPercent.toFixed(1)}), faiz getiren nakit oranı (%${univ.cashRatioPercent.toFixed(1)}) ve uygunsuz gelir oranı (%${univ.impureIncomePercent.toFixed(1)}) azami yasal sınırların altındadır.`,
     };
-  } else if (isBankOrFinance) {
+  } else if (isBank) {
     isSectorCompliant = false;
     detailedBreach = {
       category: "SECTOR_ACTIVITY",
@@ -440,6 +446,15 @@ export async function GET(
       primaryReason: "Konvansiyonel faizli bankacılık ve mevduat/kredi operasyonları yürütmektedir.",
       regulatoryStandard: "DİB Din İşleri Yüksek Kurulu Kriteri Madde 1.1",
       detailExplanation: "Şirketin ana gelir kaynağı faiz ile para ticareti, mevduat toplama ve faizli borçlandırma işlemlerine dayandığı için doğrudan katılım finans kapsamı dışındadır.",
+    };
+  } else if (isFinancialIntermediation) {
+    isSectorCompliant = false;
+    detailedBreach = {
+      category: "SECTOR_ACTIVITY",
+      categoryLabel: "Faizli Finansal Aracılık İhlali",
+      primaryReason: "Konvansiyonel faizli faktoring, finansal kiralama (leasing) veya borçlandırma operasyonları yürütmektedir.",
+      regulatoryStandard: "TKBB Danışma Kurulu Finansal Hizmetler İlke Kararları",
+      detailExplanation: "Faiz bazlı alacak finansmanı ve faizli fonlama mekanizmaları nedeniyle doğrudan katılım finans kapsamı dışındadır.",
     };
   } else if (isInsurance) {
     isSectorCompliant = false;
@@ -577,7 +592,12 @@ export async function GET(
     debtRatio = parseFloat(detailedRecord.ratios.interestDebt.ratioPercentage.replace("%", "")) || univ.debtRatioPercent;
     debtNumTRY = Number(detailedRecord.footnoteVerification?.debtBreakdown?.conventionalBankLoansTRY) || (denomTRY * (debtRatio / 100));
   } else {
-    const isRetailOrLogistics = ["Retail Trade", "Transportation", "Consumer Non-Durables"].includes(univ.sector) || univ.subSector?.includes("Retail") || univ.subSector?.includes("Market");
+    const isRetailOrLogistics =
+      ["Perakende & Tüketim Malları", "Ulaştırma & Havacılık", "Gıda, İçecek & Tarım", "Retail Trade", "Transportation", "Consumer Non-Durables"].includes(univ.sector) ||
+      univ.subSector?.includes("Retail") ||
+      univ.subSector?.includes("Market") ||
+      univ.subSector?.includes("Perakende") ||
+      univ.subSector?.includes("Taşımacılık");
     // Perakende ve lojistikte TFRS 16 mağaza kiraları faizli banka kredisi değildir
     debtNumTRY = isRetailOrLogistics ? Math.max(0, realTotalDebt * 0.15) : realTotalDebt;
     debtRatio = Number(((debtNumTRY / denomTRY) * 100).toFixed(2));

@@ -261,7 +261,13 @@ export default function CompanyDetailPage() {
                 <div className="flex flex-wrap items-center gap-2 text-xs text-[#6E81A0] dark:text-[#94A3B8] font-medium">
                   <span className="flex items-center gap-1">
                     <Building2 size={12} className="text-[#182542] dark:text-white" />
-                    {data.sector} &bull; {data.subSector}
+                    <span>{data.sector}</span>
+                    {data.subSector && data.subSector !== data.sector && (
+                      <>
+                        <span>&bull;</span>
+                        <span>{data.subSector}</span>
+                      </>
+                    )}
                   </span>
                   <span>&bull;</span>
                   <span className="flex items-center gap-1 font-mono">

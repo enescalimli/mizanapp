@@ -316,11 +316,11 @@ export default function TarayiciPage() {
             <select
               value={sectorFilter}
               onChange={(e) => setSectorFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none shadow-xs max-w-[150px] truncate"
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none shadow-xs max-w-[160px] sm:max-w-[220px] truncate cursor-pointer"
             >
               {sectorList.map((sec) => (
                 <option key={sec} value={sec}>
-                  {sec === "TÜMÜ" ? "Tüm Sektörler" : sec}
+                  {sec === "TÜMÜ" ? "Tüm Sektörler (626)" : sec}
                 </option>
               ))}
             </select>
