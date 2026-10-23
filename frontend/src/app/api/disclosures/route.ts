@@ -18,12 +18,11 @@ for (const c of BIST_COMPREHENSIVE_UNIVERSE) {
 
 function cleanHtml(raw: string): string {
   if (!raw) return "";
-  return raw
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, "&")
+  const decoded = raw
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
     .replace(/&#39;/g, "'")
     .replace(/&nbsp;/g, " ")
     .replace(/&#199;/g, "Ç")
@@ -37,7 +36,10 @@ function cleanHtml(raw: string): string {
     .replace(/&#350;/g, "Ş")
     .replace(/&#351;/g, "ş")
     .replace(/&#286;/g, "Ğ")
-    .replace(/&#287;/g, "ğ")
+    .replace(/&#287;/g, "ğ");
+
+  return decoded
+    .replace(/<[^>]+>/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
