@@ -17,8 +17,13 @@ import {
   Bot,
   User,
   ChevronDown,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import { StockLogo } from "./StockLogo";
+import { useVoiceChat } from "@/lib/hooks/useVoiceChat";
 
 interface ChatMessage {
   id: string;
@@ -30,6 +35,10 @@ interface ChatMessage {
   zakatCalculation?: any;
   suggestedQuestions?: string[];
   modelUsed?: string;
+  tokenMetrics?: {
+    historyTokens: number;
+    prunedMessages: number;
+  };
   timestamp: string;
 }
 
@@ -39,6 +48,22 @@ export const MizanChatWidget: React.FC = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Sesli Sohbet (Speech-to-Text & Text-to-Speech)
+  const {
+    isListening,
+    startListening,
+    stopListening,
+    isSpeaking,
+    activeSpeakingId,
+    speak,
+    stopSpeaking,
+    hasSpeechSupport,
+  } = useVoiceChat({
+    onTranscript: (transcript) => {
+      setInput(transcript);
+    },
+  });
 
   // Sayfa bağlamından hisse kodu tespiti (Örn: /companies/THYAO -> THYAO)
   const currentTicker = React.useMemo(() => {
@@ -119,6 +144,7 @@ export const MizanChatWidget: React.FC = () => {
         zakatCalculation: data.zakatCalculation,
         suggestedQuestions: data.suggestedQuestions,
         modelUsed: data.modelUsed,
+        tokenMetrics: data.tokenMetrics,
         timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
       };
 
@@ -355,19 +381,51 @@ export const MizanChatWidget: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between w-full max-w-[88%] text-[9px] text-slate-400 mt-1 px-1">
-                  <span className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
-                      <>
+                      <span className="flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
                         <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
-                      </>
+                      </span>
                     ) : msg.role === "assistant" && msg.modelUsed ? (
-                      <>
+                      <span className="flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
                         <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
-                      </>
+                      </span>
                     ) : null}
-                  </span>
+
+                    {msg.tokenMetrics && msg.tokenMetrics.prunedMessages > 0 && (
+                      <span
+                        className="px-1.5 py-0.2 rounded text-[8px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                        title={`${msg.tokenMetrics.prunedMessages} eski mesaj budandı (~${msg.tokenMetrics.historyTokens} token)`}
+                      >
+                        🛡️ Pruned ({msg.tokenMetrics.historyTokens}t)
+                      </span>
+                    )}
+
+                    {/* Sesli Yanıt Dinleme (TTS) */}
+                    {msg.role === "assistant" && (
+                      <button
+                        type="button"
+                        onClick={() => speak(msg.content, msg.id)}
+                        className={`p-1 rounded transition flex items-center gap-0.5 ${
+                          isSpeaking && activeSpeakingId === msg.id
+                            ? "bg-emerald-500 text-white animate-pulse"
+                            : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400"
+                        }`}
+                        title={isSpeaking && activeSpeakingId === msg.id ? "Sesi Durdur" : "Sesli Yanıt Dinle (TTS)"}
+                      >
+                        {isSpeaking && activeSpeakingId === msg.id ? (
+                          <>
+                            <VolumeX size={11} />
+                            <span className="text-[8px] font-bold">Durdur</span>
+                          </>
+                        ) : (
+                          <Volume2 size={11} />
+                        )}
+                      </button>
+                    )}
+                  </div>
                   <span>{msg.timestamp}</span>
                 </div>
 
@@ -398,6 +456,13 @@ export const MizanChatWidget: React.FC = () => {
               </div>
             )}
 
+            {isListening && (
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-[11px] animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block" />
+                <span>Mikrofon aktif: Konuşmanızı dinliyorum...</span>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
@@ -414,10 +479,27 @@ export const MizanChatWidget: React.FC = () => {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?)..."
+                placeholder={isListening ? "Dinleniyor..." : "Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?)..."}
                 disabled={loading}
                 className="w-full bg-transparent text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
               />
+
+              {/* Mikrofon ile Sesli Soru Düğmesi */}
+              {hasSpeechSupport && (
+                <button
+                  type="button"
+                  onClick={isListening ? stopListening : startListening}
+                  className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition ${
+                    isListening
+                      ? "bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/40"
+                      : "bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
+                  }`}
+                  title={isListening ? "Dinlemeyi Durdur" : "Sesle Sor (Mikrofon)"}
+                >
+                  {isListening ? <MicOff size={13} /> : <Mic size={13} />}
+                </button>
+              )}
+
               <button
                 type="submit"
                 disabled={!input.trim() || loading}

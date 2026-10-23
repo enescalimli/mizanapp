@@ -18,6 +18,7 @@ import {
   SECTOR_COMPLIANT_ALTERNATIVES,
   getCompliantAlternativesForTicker,
 } from "@/lib/data/compliantAlternatives";
+import { pruneConversationHistory } from "@/lib/ai/contextPruner";
 
 // Google Gemini Flash API Ayarları (Ortam değişkeni veya güvenli kodlanmış yedek anahtar)
 const DEFAULT_GEMINI_KEY = Buffer.from(
@@ -70,7 +71,10 @@ export async function POST(req: NextRequest) {
     const lastUserMessage = messages[messages.length - 1]?.content || "";
     const lowerText = lastUserMessage.toLowerCase();
 
-    // 1. Ticker Tespiti (Kullanıcı mesajından veya sayfa bağlamından)
+    // 0. Akıllı Context Window Pruning & Ticker Hafızası (65K TPM Güvenliği)
+    const pruningResult = pruneConversationHistory(messages, 500);
+
+    // 1. Ticker Tespiti (Kullanıcı mesajından, sayfa bağlamından veya geçmişten)
     let detectedTicker: string | null = context?.currentTicker?.toUpperCase() || null;
     
     // Mesaj içindeki 626 BIST hissesi sembollerini ara
@@ -81,6 +85,11 @@ export async function POST(req: NextRequest) {
         detectedTicker = t;
         break;
       }
+    }
+
+    // Kullanıcı mesajında açıkça hisse belirtilmediyse geçmiş bağlamdan devral
+    if (!detectedTicker && pruningResult.retainedTicker) {
+      detectedTicker = pruningResult.retainedTicker;
     }
 
     // 2. Ticker İle İlgili Deterministik Fıkhi ve Finansal Veri Çekimi
@@ -194,17 +203,9 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
 `;
     }
 
-    // Önceki konuşma geçmişini bağlama ekle (Çok turlu konuşma hafızası)
-    const recentHistory = messages
-      .slice(-5, -1)
-      .map(
-        (m) =>
-          `${m.role === "user" ? "KULLANICI" : "ASİSTAN"}: ${m.content.slice(0, 300)}`
-      )
-      .join("\n\n");
-
-    const historySection = recentHistory
-      ? `\n[ÖNCEKİ SOHBET GEÇMİŞİ]:\n${recentHistory}\n`
+    // Context Window Pruning ile optimize edilmiş geçmiş hafızası
+    const historySection = pruningResult.prunedHistoryText
+      ? `\n[ÖNCEKİ DİYALOG HAFIZA BAĞLAMI]:\n${pruningResult.prunedHistoryText}\n`
       : "";
 
     // 4. Gemini Flash Canlı API Çağrısı (Model Kademeli Çağrı)
@@ -360,6 +361,10 @@ Detaylı analiz için hisse kodu belirtebilirsiniz (Örn: *“THYAO neden katıl
       purificationCalculation,
       zakatCalculation,
       suggestedQuestions,
+      tokenMetrics: {
+        historyTokens: pruningResult.approximateTokens,
+        prunedMessages: pruningResult.prunedCount,
+      },
     });
   } catch (error) {
     console.error("Chat API error:", error);
