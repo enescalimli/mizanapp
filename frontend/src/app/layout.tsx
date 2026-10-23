@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { FloatingBottomBar } from "@/components/FloatingBottomBar";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
@@ -74,6 +75,7 @@ export default function RootLayout({
   return (
     <html lang="tr" suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-[#EEF0F4] dark:bg-[#0B0F17] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200">
+        <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
         <ThemeProvider>
           <AuthProvider>
             {children}
