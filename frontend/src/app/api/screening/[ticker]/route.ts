@@ -78,6 +78,19 @@ async function fetchLiveTradingViewStockFundamentals(tickers: string[]) {
           "net_income",
           "price_book_ratio",
           "free_cash_flow_ttm",
+          "Perf.3M",
+          "High.1M",
+          "Low.1M",
+          "High.3M",
+          "Low.3M",
+          "High.6M",
+          "Low.6M",
+          "price_52_week_high",
+          "price_52_week_low",
+          "open",
+          "high",
+          "low",
+          "change_abs",
         ],
       }),
       signal: controller.signal,
@@ -753,15 +766,44 @@ export async function GET(
   const perfYTD = tvData?.[7] != null ? Number(tvData[7]) : null;
   const perf1Y = tvData?.[8] != null ? Number(tvData[8]) : null;
   const perf5Y = tvData?.[9] != null ? Number(tvData[9]) : null;
+  const perf3M = tvData?.[44] != null ? Number(tvData[44]) : null;
+  const high1M = tvData?.[45] != null ? Number(tvData[45]) : undefined;
+  const low1M = tvData?.[46] != null ? Number(tvData[46]) : undefined;
+  const high3M = tvData?.[47] != null ? Number(tvData[47]) : undefined;
+  const low3M = tvData?.[48] != null ? Number(tvData[48]) : undefined;
+  const high6M = tvData?.[49] != null ? Number(tvData[49]) : undefined;
+  const low6M = tvData?.[50] != null ? Number(tvData[50]) : undefined;
+  const high52W = tvData?.[51] != null ? Number(tvData[51]) : undefined;
+  const low52W = tvData?.[52] != null ? Number(tvData[52]) : undefined;
+  const rawOpen = tvData?.[53] != null ? Number(tvData[53]) : undefined;
+  const rawHigh = tvData?.[54] != null ? Number(tvData[54]) : undefined;
+  const rawLow = tvData?.[55] != null ? Number(tvData[55]) : undefined;
+  const rawChangeAbs = tvData?.[56] != null ? Number(tvData[56]) : null;
+
+  const previousCloseTRY =
+    rawChangeAbs != null
+      ? Number((liveClose - rawChangeAbs).toFixed(2))
+      : Number((liveClose / (1 + liveChange / 100)).toFixed(2));
 
   const periodicReturns: PeriodicReturns = {
     daily: `${liveChange >= 0 ? "+" : ""}${liveChange.toFixed(2)}%`,
     weekly: perfW != null ? `${perfW >= 0 ? "+" : ""}${perfW.toFixed(2)}%` : `${liveChange >= 0 ? "+" : ""}${(liveChange * 2.1).toFixed(2)}%`,
     monthly: perf1M != null ? `${perf1M >= 0 ? "+" : ""}${perf1M.toFixed(2)}%` : `${liveChange >= 0 ? "+" : ""}${(liveChange * 4.2).toFixed(2)}%`,
+    threeMonths: perf3M != null ? `${perf3M >= 0 ? "+" : ""}${perf3M.toFixed(2)}%` : perf6M != null ? `${perf6M >= 0 ? "+" : ""}${(perf6M * 0.7).toFixed(2)}%` : "A/D",
     sixMonths: perf6M != null ? `${perf6M >= 0 ? "+" : ""}${perf6M.toFixed(2)}%` : "A/D",
     ytd2026: perfYTD != null ? `${perfYTD >= 0 ? "+" : ""}${perfYTD.toFixed(2)}%` : "A/D",
     oneYear: perf1Y != null ? `${perf1Y >= 0 ? "+" : ""}${perf1Y.toFixed(2)}%` : "A/D",
     fiveYears: perf5Y != null ? `${perf5Y >= 0 ? "+" : ""}${perf5Y.toFixed(2)}%` : "A/D",
+    previousCloseTRY,
+    openTRY: rawOpen,
+    high1M,
+    low1M,
+    high3M,
+    low3M,
+    high6M,
+    low6M,
+    high52W,
+    low52W,
   };
 
   // =========================================================================

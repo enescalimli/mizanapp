@@ -281,11 +281,12 @@ export default function CompanyDetailPage() {
 
           {/* FINTABLES-STYLE RETURN RIBBON (Çoklu Periyot Getiri Barı) */}
           {ret && (
-            <div className="pt-3 border-t border-[#EDF1F7] dark:border-white/10 grid grid-cols-4 sm:grid-cols-7 gap-2 text-center text-xs">
+            <div className="pt-3 border-t border-[#EDF1F7] dark:border-white/10 grid grid-cols-4 sm:grid-cols-8 gap-2 text-center text-xs">
               {[
                 { label: "Günlük", val: ret.daily },
                 { label: "1 Hafta", val: ret.weekly },
                 { label: "1 Ay", val: ret.monthly },
+                { label: "3 Ay", val: ret.threeMonths || "A/D" },
                 { label: "6 Ay", val: ret.sixMonths },
                 { label: "2026 (YTD)", val: ret.ytd2026 },
                 { label: "1 Yıl", val: ret.oneYear },

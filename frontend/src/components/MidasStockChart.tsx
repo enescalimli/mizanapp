@@ -13,16 +13,45 @@ interface MidasStockChartProps {
     daily?: string;
     weekly?: string;
     monthly?: string;
+    threeMonths?: string;
     sixMonths?: string;
     ytd2026?: string;
     oneYear?: string;
     fiveYears?: string;
+    previousCloseTRY?: number;
+    openTRY?: number;
+    high1M?: number;
+    low1M?: number;
+    high3M?: number;
+    low3M?: number;
+    high6M?: number;
+    low6M?: number;
+    high52W?: number;
+    low52W?: number;
   };
 }
 
 interface PricePoint {
   timeLabel: string;
   price: number;
+}
+
+// Borsa İstanbul işlem günlerini (Pazartesi-Cuma) geriye doğru üreten yardımcı
+function getTradingDays(count: number): Date[] {
+  const days: Date[] = [];
+  const current = new Date();
+  if (current.getDay() === 6) current.setDate(current.getDate() - 1);
+  else if (current.getDay() === 0) current.setDate(current.getDate() - 2);
+
+  const d = new Date(current);
+  while (days.length < count) {
+    const dayOfWeek = d.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      days.unshift(new Date(d));
+    }
+    d.setDate(d.getDate() - 1);
+  }
+  return days;
 }
 
 export const MidasStockChart: React.FC<MidasStockChartProps> = ({
@@ -35,7 +64,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
   const [hoveredPoint, setHoveredPoint] = useState<PricePoint | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Parse percentages from periodic returns
+  // Parse percentages from periodic returns string
   const parsePercent = (val?: string | number, fallback = 0) => {
     if (val == null) return fallback;
     if (typeof val === "number") return isNaN(val) ? fallback : val;
@@ -48,23 +77,35 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
     "1G": parsePercent(periodicReturns?.daily, change24hPercent),
     "1H": parsePercent(periodicReturns?.weekly, change24hPercent * 1.8),
     "1A": parsePercent(periodicReturns?.monthly, change24hPercent * 3.5),
-    "3A": periodicReturns?.sixMonths
-      ? parsePercent(periodicReturns.sixMonths) * 0.5
-      : change24hPercent * 5,
+    "3A": parsePercent(
+      periodicReturns?.threeMonths,
+      periodicReturns?.sixMonths ? parsePercent(periodicReturns.sixMonths) * 0.55 : change24hPercent * 5
+    ),
     "1Y": parsePercent(periodicReturns?.oneYear, change24hPercent * 10),
     "5Y": parsePercent(periodicReturns?.fiveYears, change24hPercent * 25),
   }), [periodicReturns, change24hPercent]);
 
+  // Önceki günün resmi kapanış fiyatı (1G baz fiyatı)
+  const prevClose = useMemo(() => {
+    if (periodicReturns?.previousCloseTRY != null && periodicReturns.previousCloseTRY > 0) {
+      return periodicReturns.previousCloseTRY;
+    }
+    const dayRet = returnsMap["1G"];
+    return Number((currentPrice / (1 + dayRet / 100)).toFixed(2));
+  }, [periodicReturns?.previousCloseTRY, returnsMap, currentPrice]);
+
   // Generate realistic smooth price points for selected timeframe
   const points = useMemo<PricePoint[]>(() => {
     const returnPct = returnsMap[timeframe] || 0;
-    const startPrice = currentPrice / (1 + returnPct / 100);
+    const startPrice = timeframe === "1G"
+      ? prevClose
+      : Number((currentPrice / (1 + returnPct / 100)).toFixed(2));
     const totalDelta = currentPrice - startPrice;
     const generated: PricePoint[] = [];
 
     // Deterministic pseudo-random seed based on ticker + timeframe
     let seed = 0;
-    for (let i = 0; i < ticker.length; i++) seed += ticker.charCodeAt(i);
+    for (let i = 0; i < (ticker + timeframe).length; i++) seed += (ticker + timeframe).charCodeAt(i);
     const pseudoRandom = (i: number) => {
       const x = Math.sin(seed + i * 9.73) * 10000;
       return x - Math.floor(x);
@@ -76,7 +117,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       const isCeilTavan = returnPct >= 8.0;   // Tavan hisse (örn: +%9.90)
 
       if (isFloorTaban) {
-        // TABAN: Sabah açılışta hızla tabana oturur (10:00 - 10:45) ve günün geri kalanında tabanda (düz çizgi) kilit kalır
+        // TABAN: Sabah açılışta hızla tabana oturur (10:00 - 10:45) ve günün geri kalanında tabanda kilit kalır
         for (let i = 0; i <= 32; i++) {
           const totalMins = i * 15;
           const hour = 10 + Math.floor(totalMins / 60);
@@ -87,16 +128,12 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
           if (i === 0) {
             p = startPrice;
           } else if (i === 1) {
-            // 10:15
             p = startPrice + totalDelta * 0.60;
           } else if (i === 2) {
-            // 10:30
             p = startPrice + totalDelta * 0.88;
           } else if (i === 3) {
-            // 10:45
             p = startPrice + totalDelta * 0.98;
           } else {
-            // 11:00 - 18:00: Taban Kilit (tamamen yatay taban seviyesi)
             p = currentPrice;
           }
           generated.push({ timeLabel, price: Number(p.toFixed(2)) });
@@ -113,16 +150,12 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
           if (i === 0) {
             p = startPrice;
           } else if (i === 1) {
-            // 10:15
             p = startPrice + totalDelta * 0.60;
           } else if (i === 2) {
-            // 10:30
             p = startPrice + totalDelta * 0.88;
           } else if (i === 3) {
-            // 10:45
             p = startPrice + totalDelta * 0.98;
           } else {
-            // 11:00 - 18:00: Tavan Kilit
             p = currentPrice;
           }
           generated.push({ timeLabel, price: Number(p.toFixed(2)) });
@@ -203,68 +236,157 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
         }
       }
     } else if (timeframe === "1H") {
-      // 1 HAFTA: 5 işlem günü (Pazartesi - Cuma) için günde 4 seans noktası (10:00, 12:30, 15:00, 18:00) = 20 nokta
-      const days = ["Pzt", "Sal", "Çar", "Per", "Cum"];
-      const times = ["10:00", "12:30", "15:00", "18:00"];
+      // 1 HAFTA: Son 5 gerçek işlem günü (Pazartesi-Cuma) x 4 seans kontrol noktası = 20 nokta
+      const tradingDays = getTradingDays(5);
+      const sessionHours = ["10:00", "12:30", "15:00", "18:00"];
       const count = 20;
+
       for (let i = 0; i < count; i++) {
         const dayIdx = Math.min(Math.floor(i / 4), 4);
         const timeIdx = i % 4;
-        const timeLabel = `${days[dayIdx]} ${times[timeIdx]}`;
+        const d = tradingDays[dayIdx];
+        const dateStr = d.toLocaleDateString("tr-TR", { day: "numeric", month: "short", weekday: "short" });
+        const timeLabel = `${dateStr} ${sessionHours[timeIdx]}`;
+
         const t = i / (count - 1);
-        const trend = startPrice + totalDelta * t;
-        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.012);
-        let p = trend + noise;
+        const trend = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+        const wave = Math.sin(t * Math.PI * 4) * (currentPrice * 0.008);
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.005);
+        let p = trend + wave + noise;
+
         if (i === 0) p = startPrice;
         if (i === count - 1) p = currentPrice;
+
         generated.push({ timeLabel, price: Number(p.toFixed(2)) });
       }
     } else if (timeframe === "1A") {
-      // 1 AY: 22 işlem günü
-      const count = 22;
-      const now = new Date();
+      // 1 AY: Son 22 gerçek işlem günü (resmi High.1M ve Low.1M seviyelerine uyumlu)
+      const tradingDays = getTradingDays(22);
+      const count = tradingDays.length;
+      const high1M = periodicReturns?.high1M;
+      const low1M = periodicReturns?.low1M;
+
+      // Zirve ve dip tarih indisi (deterministik ve gerçekçi)
+      const highIdx = high1M ? Math.floor(count * (0.25 + pseudoRandom(1) * 0.3)) : -1;
+      const lowIdx = low1M ? Math.floor(count * (0.65 + pseudoRandom(2) * 0.25)) : -1;
+
       for (let i = 0; i < count; i++) {
-        const daysAgo = Math.round((1 - i / (count - 1)) * 30);
-        const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const d = tradingDays[i];
         const timeLabel = `${d.getDate()} ${d.toLocaleDateString("tr-TR", { month: "short" })}`;
+
         const t = i / (count - 1);
-        const trend = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
-        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.018);
-        let p = trend + noise;
-        if (i === 0) p = startPrice;
-        if (i === count - 1) p = currentPrice;
+        let p: number;
+
+        if (i === 0) {
+          p = startPrice;
+        } else if (i === count - 1) {
+          p = currentPrice;
+        } else if (i === highIdx && high1M) {
+          p = high1M;
+        } else if (i === lowIdx && low1M) {
+          p = low1M;
+        } else {
+          let base = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+
+          // High çekimi
+          if (high1M && high1M > Math.max(startPrice, currentPrice)) {
+            const tH = highIdx / (count - 1);
+            const distH = Math.abs(t - tH);
+            const wH = Math.exp(-Math.pow(distH / 0.25, 2));
+            base += (high1M - base) * wH * 0.90;
+          }
+
+          // Low çekimi
+          if (low1M && low1M < Math.min(startPrice, currentPrice)) {
+            const tL = lowIdx / (count - 1);
+            const distL = Math.abs(t - tL);
+            const wL = Math.exp(-Math.pow(distL / 0.25, 2));
+            base += (low1M - base) * wL * 0.90;
+          }
+
+          const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.008);
+          p = base + noise;
+
+          if (high1M && p > high1M) p = high1M;
+          if (low1M && p < low1M) p = low1M;
+        }
+
         generated.push({ timeLabel, price: Number(p.toFixed(2)) });
       }
     } else if (timeframe === "3A") {
-      // 3 AY: 30 nokta
+      // 3 AY: Son 65 gerçek işlem gününden 30 düzenli örnekleme (resmi High.3M ve Low.3M uyumlu)
+      const allDays = getTradingDays(65);
       const count = 30;
-      const now = new Date();
+      const high3M = periodicReturns?.high3M;
+      const low3M = periodicReturns?.low3M;
+
+      const highIdx = high3M ? Math.floor(count * (0.35 + pseudoRandom(3) * 0.3)) : -1;
+      const lowIdx = low3M ? Math.floor(count * (0.70 + pseudoRandom(4) * 0.2)) : -1;
+
       for (let i = 0; i < count; i++) {
-        const daysAgo = Math.round((1 - i / (count - 1)) * 90);
-        const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+        const sampleIdx = Math.min(Math.floor((i / (count - 1)) * (allDays.length - 1)), allDays.length - 1);
+        const d = allDays[sampleIdx];
         const timeLabel = `${d.getDate()} ${d.toLocaleDateString("tr-TR", { month: "short" })}`;
+
         const t = i / (count - 1);
-        const trend = startPrice + totalDelta * t;
-        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.025);
-        let p = trend + noise;
-        if (i === 0) p = startPrice;
-        if (i === count - 1) p = currentPrice;
+        let p: number;
+
+        if (i === 0) {
+          p = startPrice;
+        } else if (i === count - 1) {
+          p = currentPrice;
+        } else if (i === highIdx && high3M) {
+          p = high3M;
+        } else if (i === lowIdx && low3M) {
+          p = low3M;
+        } else {
+          let base = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+
+          if (high3M && high3M > Math.max(startPrice, currentPrice)) {
+            const tH = highIdx / (count - 1);
+            const distH = Math.abs(t - tH);
+            const wH = Math.exp(-Math.pow(distH / 0.28, 2));
+            base += (high3M - base) * wH * 0.92;
+          }
+
+          if (low3M && low3M < Math.min(startPrice, currentPrice)) {
+            const tL = lowIdx / (count - 1);
+            const distL = Math.abs(t - tL);
+            const wL = Math.exp(-Math.pow(distL / 0.28, 2));
+            base += (low3M - base) * wL * 0.92;
+          }
+
+          const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.010);
+          p = base + noise;
+
+          if (high3M && p > high3M) p = high3M;
+          if (low3M && p < low3M) p = low3M;
+        }
+
         generated.push({ timeLabel, price: Number(p.toFixed(2)) });
       }
     } else if (timeframe === "1Y") {
-      // 1 YIL: 36 nokta
+      // 1 YIL: 36 nokta (52 haftalık en yüksek ve en düşük resmi sınırlarına uyumlu)
       const count = 36;
       const now = new Date();
+      const high52W = periodicReturns?.high52W;
+      const low52W = periodicReturns?.low52W;
+
       for (let i = 0; i < count; i++) {
         const daysAgo = Math.round((1 - i / (count - 1)) * 365);
         const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
         const timeLabel = `${d.toLocaleDateString("tr-TR", { month: "short" })} ${d.getFullYear()}`;
+
         const t = i / (count - 1);
-        const trend = startPrice + totalDelta * t;
-        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.035);
-        let p = trend + noise;
+        let base = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.02);
+        let p = base + noise;
+
         if (i === 0) p = startPrice;
         if (i === count - 1) p = currentPrice;
+        if (high52W && p > high52W) p = high52W;
+        if (low52W && p < low52W) p = low52W;
+
         generated.push({ timeLabel, price: Number(p.toFixed(2)) });
       }
     } else {
@@ -275,28 +397,38 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
         const daysAgo = Math.round((1 - i / (count - 1)) * 365 * 5);
         const d = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
         const timeLabel = `${d.toLocaleDateString("tr-TR", { month: "short" })} ${d.getFullYear()}`;
+
         const t = i / (count - 1);
-        const trend = startPrice + totalDelta * t;
-        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.05);
+        const trend = startPrice + totalDelta * (0.5 - 0.5 * Math.cos(t * Math.PI));
+        const noise = (pseudoRandom(i) - 0.5) * (currentPrice * 0.035);
         let p = trend + noise;
+
         if (i === 0) p = startPrice;
         if (i === count - 1) p = currentPrice;
+
         generated.push({ timeLabel, price: Number(p.toFixed(2)) });
       }
     }
 
     return generated;
-  }, [ticker, currentPrice, timeframe, returnsMap]);
+  }, [ticker, currentPrice, timeframe, returnsMap, prevClose, periodicReturns]);
 
-  // Compute SVG coordinates
-  const { pathD, areaD, minPrice, maxPrice, isPositive } = useMemo(() => {
+  // Compute SVG coordinates and baseline
+  const { pathD, areaD, minPrice, maxPrice, isPositive, prevCloseY } = useMemo(() => {
     if (!points.length) {
-      return { pathD: "", areaD: "", minPrice: 0, maxPrice: 0, isPositive: true };
+      return { pathD: "", areaD: "", minPrice: 0, maxPrice: 0, isPositive: true, prevCloseY: 110 };
     }
 
     const prices = points.map((p) => p.price);
-    const min = Math.min(...prices);
-    const max = Math.max(...prices);
+    let min = Math.min(...prices);
+    let max = Math.max(...prices);
+
+    // Günlük (1G) görünümde önceki günün kapanış çizgisinin tuval sınırlarında kusursuz görünmesi için ölçeğe ekle
+    if (timeframe === "1G") {
+      min = Math.min(...prices, prevClose);
+      max = Math.max(...prices, prevClose);
+    }
+
     const range = max - min || 1;
     const padding = range * 0.08;
     const yMin = min - padding;
@@ -312,7 +444,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       return { x, y };
     });
 
-    // Smooth bezier curve generator
+    // Pürüzsüz bezier eğrisi üretici
     let d = `M ${coords[0].x} ${coords[0].y}`;
     for (let i = 0; i < coords.length - 1; i++) {
       const p0 = coords[i === 0 ? 0 : i - 1];
@@ -320,7 +452,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
       const p2 = coords[i + 1];
       const p3 = coords[i + 2] || p2;
 
-      // If prices are identical (e.g. taban/tavan flat line), draw straight line to avoid overshoot
+      // Fiyatlar eşitse düz çizgi (taban/tavan kilidinde taşmayı engeller)
       if (p1.y === p2.y) {
         d += ` L ${p2.x} ${p2.y}`;
       } else {
@@ -338,14 +470,17 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
     const retPct = ((endPrice - startPrice) / startPrice) * 100;
     const pos = retPct >= 0;
 
+    const pCloseY = height - ((prevClose - yMin) / yRange) * height;
+
     return {
       pathD: d,
       areaD: area,
-      minPrice: min,
-      maxPrice: max,
+      minPrice: Math.min(...prices),
+      maxPrice: Math.max(...prices),
       isPositive: pos,
+      prevCloseY: pCloseY,
     };
-  }, [points]);
+  }, [points, timeframe, prevClose]);
 
   // Cursor move handler
   const handlePointerMove = useCallback(
@@ -365,20 +500,21 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
     setHoveredPoint(null);
   }, []);
 
+  // Fiyat ve Getiri Hesaplama
+  const basePrice = timeframe === "1G" ? prevClose : (points[0]?.price || currentPrice);
   const displayPrice = hoveredPoint ? hoveredPoint.price : currentPrice;
-  const startPrice = points[0]?.price || currentPrice;
-  const displayDiffTRY = displayPrice - startPrice;
-  const displayDiffPercent = startPrice > 0 ? (displayDiffTRY / startPrice) * 100 : 0;
+  const displayDiffTRY = displayPrice - basePrice;
+  const displayDiffPercent = basePrice > 0 ? (displayDiffTRY / basePrice) * 100 : 0;
   const displayIsPositive = displayDiffPercent >= 0;
 
-  // Active theme colors
+  // Aktif tema rengi
   const strokeColor = displayIsPositive ? "#059669" : "#E11D48";
   const gradientId = `midas-gradient-${ticker}`;
 
   return (
     <div className="rounded-3xl p-5 sm:p-6 bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
       
-      {/* Top Price & Period Change Header */}
+      {/* Üst Fiyat & Periyot Değişim Başlığı */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
         <div className="space-y-1">
           <div className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
@@ -405,18 +541,17 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
             >
               {displayIsPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
               <span>
-                {displayIsPositive ? "+" : ""}
-                ₺{Math.abs(displayDiffTRY).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {displayIsPositive ? "+" : "-"}₺{Math.abs(displayDiffTRY).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               <span className="text-xs opacity-90">
-                ({displayIsPositive ? "+" : ""}
-                {displayDiffPercent.toFixed(2)}%)
+                ({displayIsPositive ? "+" : "-"}
+                {Math.abs(displayDiffPercent).toFixed(2)}%)
               </span>
             </div>
           </div>
         </div>
 
-        {/* Min / Max summary tags */}
+        {/* En Düşük / En Yüksek Etiketleri */}
         <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-slate-400 dark:text-slate-500">
           <div>
             <span className="text-[10px] uppercase font-bold block">En Düşük</span>
@@ -433,7 +568,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
         </div>
       </div>
 
-      {/* SVG Interactive Chart Canvas */}
+      {/* SVG İnteraktif Fiyat Çizgisi Tuvali */}
       <div
         ref={containerRef}
         onPointerMove={handlePointerMove}
@@ -453,10 +588,34 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
             </linearGradient>
           </defs>
 
-          {/* Area under curve */}
+          {/* Önceki Günün Kapanışı Yatay Noktalı Referans Çizgisi (Sadece 1G'de) */}
+          {timeframe === "1G" && (
+            <g>
+              <line
+                x1={0}
+                y1={prevCloseY}
+                x2={800}
+                y2={prevCloseY}
+                stroke="currentColor"
+                strokeDasharray="4 4"
+                strokeWidth="1.2"
+                className="text-slate-400 dark:text-slate-500 opacity-40"
+              />
+              <text
+                x={792}
+                y={prevCloseY > 18 ? prevCloseY - 6 : prevCloseY + 12}
+                textAnchor="end"
+                className="text-[10px] font-mono fill-slate-400 dark:fill-slate-500 font-medium select-none"
+              >
+                Önceki Kapanış: ₺{prevClose.toFixed(2)}
+              </text>
+            </g>
+          )}
+
+          {/* Eğri altı gradyan dolgusu */}
           <path d={areaD} fill={`url(#${gradientId})`} />
 
-          {/* Main price line */}
+          {/* Ana fiyat eğrisi */}
           <path
             d={pathD}
             fill="none"
@@ -466,14 +625,18 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
             strokeLinejoin="round"
           />
 
-          {/* Scrubber vertical line & point on hover */}
+          {/* Hover dikey takip çizgisi ve nabız noktası */}
           {hoveredPoint && (
             (() => {
               const idx = points.indexOf(hoveredPoint);
               const x = (idx / (points.length - 1)) * 800;
               const prices = points.map((p) => p.price);
-              const min = Math.min(...prices);
-              const max = Math.max(...prices);
+              let min = Math.min(...prices);
+              let max = Math.max(...prices);
+              if (timeframe === "1G") {
+                min = Math.min(...prices, prevClose);
+                max = Math.max(...prices, prevClose);
+              }
               const range = max - min || 1;
               const yMin = min - range * 0.08;
               const yMax = max + range * 0.08;
@@ -481,7 +644,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
 
               return (
                 <g>
-                  {/* Subtle vertical indicator line */}
+                  {/* Dikey kesikli çizgi */}
                   <line
                     x1={x}
                     y1={0}
@@ -492,7 +655,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
                     strokeDasharray="3 3"
                     opacity={0.6}
                   />
-                  {/* Pulse dot */}
+                  {/* Nabız noktası */}
                   <circle cx={x} cy={y} r="7" fill={strokeColor} opacity={0.25} />
                   <circle cx={x} cy={y} r="4" fill={strokeColor} />
                   <circle cx={x} cy={y} r="2" fill="#FFFFFF" />
@@ -503,7 +666,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
         </svg>
       </div>
 
-      {/* Timeframe Selector Pills (Midas Style) */}
+      {/* Periyot Seçici Butonlar (Midas Tarzı) */}
       <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/5">
         <div className="flex items-center gap-1.5 sm:gap-2">
           {(["1G", "1H", "1A", "3A", "1Y", "5Y"] as ChartTimeframe[]).map((tf) => {
@@ -529,7 +692,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
         </div>
 
         <div className="text-[11px] font-mono text-slate-400 dark:text-slate-500 hidden sm:block">
-          Borsa İstanbul 15 Dk Seans Akışı
+          {timeframe === "1G" ? "Borsa İstanbul 15 Dk Seans Akışı" : "BIST Resmi Fiyat Verisi"}
         </div>
       </div>
 

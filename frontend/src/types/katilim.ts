@@ -100,10 +100,21 @@ export interface PeriodicReturns {
   daily: string;
   weekly: string;
   monthly: string;
+  threeMonths?: string;
   sixMonths: string;
   ytd2026: string;
   oneYear: string;
   fiveYears: string;
+  previousCloseTRY?: number;
+  openTRY?: number;
+  high1M?: number;
+  low1M?: number;
+  high3M?: number;
+  low3M?: number;
+  high6M?: number;
+  low6M?: number;
+  high52W?: number;
+  low52W?: number;
 }
 
 export interface AiComponentScore {
