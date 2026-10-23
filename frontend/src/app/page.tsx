@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import { StockLogo } from "@/components/StockLogo";
+import { InstitutionalLogosSection } from "@/components/landing/InstitutionalLogosSection";
 
 export default function LandingPage() {
   const { isDark, toggleTheme } = useTheme();
@@ -836,6 +837,11 @@ export default function LandingPage() {
 
         </div>
       </section>
+
+      {/* =================================================================== */}
+      {/* 8.5 OFFICIAL DATA & STANDARDS INTEGRATIONS (BIST, KAP, TKBB, TV)   */}
+      {/* =================================================================== */}
+      <InstitutionalLogosSection />
 
       {/* =================================================================== */}
       {/* 9. COMPREHENSIVE MIDAS-STYLE FOOTER                                 */}

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   User,
   ShieldCheck,
@@ -78,7 +79,15 @@ const DEFAULT_SETTINGS: UserSettingsState = {
 };
 
 export default function SettingsPage() {
-  const { user, profile } = useAuth();
+  const router = useRouter();
+  const { user, profile, loading, isDemoUser } = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user && !isDemoUser) {
+      router.replace("/auth/login");
+    }
+  }, [loading, user, isDemoUser, router]);
+
   const [activeTab, setActiveTab] = useState<SettingsTab>("PROFIL");
   const [settings, setSettings] = useState<UserSettingsState>(DEFAULT_SETTINGS);
   const [isSavedToast, setIsSavedToast] = useState(false);

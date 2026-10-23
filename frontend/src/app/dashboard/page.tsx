@@ -29,11 +29,18 @@ import { useAuth } from "@/lib/auth/AuthContext";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile, loading, isDemoUser } = useAuth();
   const { companies, updatedAt } = useLiveMarketData(45000);
 
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
   const [currency, setCurrency] = useState<"TRY" | "USD">("TRY");
+
+  // Auth gate: Giriş yapmamış kullanıcıyı anında /auth/login'e yönlendir
+  React.useEffect(() => {
+    if (!loading && !user && !isDemoUser) {
+      router.replace("/auth/login");
+    }
+  }, [loading, user, isDemoUser, router]);
 
   // Quick stock screener inline state
   const [quickSearch, setQuickSearch] = useState<string>("");

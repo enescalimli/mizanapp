@@ -20,11 +20,13 @@ import {
   Moon,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 export const FloatingBottomBar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { isDark, toggleTheme } = useTheme();
+  const { user, isDemoUser, loading } = useAuth();
   const [quickActionOpen, setQuickActionOpen] = useState(false);
 
   // Close modal on escape
@@ -45,9 +47,32 @@ export const FloatingBottomBar: React.FC = () => {
     }
   }, [quickActionOpen]);
 
-  // Landing sayfasında (pazarlama karşılama sayfasında) mobil barı gizle
-  // TÜM React Hook'ları çağrıldıktan SONRA koşullu çıkış yapılır (Rules of Hooks kuralı)
-  if (pathname === "/") return null;
+  // Mobil barın gizleneceği sayfalar:
+  // 1. Ana Landing Sayfası
+  // 2. Giriş, Kayıt, Çıkış gibi tüm Yetkilendirme (/auth/*) sayfaları
+  // 3. Yasal / Sözleşme sayfaları
+  // 4. Kullanıcı oturum açmamışsa (misafir modunda) uygulama alt barı kesinlikle gösterilmez
+  const isExcludedPath =
+    pathname === "/" ||
+    pathname.startsWith("/auth") ||
+    pathname.startsWith("/gizlilik") ||
+    pathname.startsWith("/kullanim") ||
+    pathname.startsWith("/cerez") ||
+    pathname.startsWith("/mesafeli") ||
+    pathname.startsWith("/iade");
+
+  // React Hook kuralları gereği tüm hook'lar çalıştırıldıktan sonra koşullu render çıkışı yapılır
+  if (isExcludedPath) return null;
+  if (!loading && !user && !isDemoUser) return null;
+
+  const handleProtectedAction = (href: string) => {
+    setQuickActionOpen(false);
+    if (!user && !isDemoUser) {
+      router.push("/auth/login");
+      return;
+    }
+    router.push(href);
+  };
 
   const navItems = [
     {
@@ -116,10 +141,7 @@ export const FloatingBottomBar: React.FC = () => {
             <div className="grid grid-cols-1 gap-2.5">
               <button
                 type="button"
-                onClick={() => {
-                  setQuickActionOpen(false);
-                  router.push("/#screener-table");
-                }}
+                onClick={() => handleProtectedAction("/tarayici")}
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-[#F0F4FA] border border-[#E2E8F0] transition group text-left"
               >
                 <div className="flex items-center gap-3">
@@ -140,10 +162,7 @@ export const FloatingBottomBar: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  setQuickActionOpen(false);
-                  router.push("/ipo");
-                }}
+                onClick={() => handleProtectedAction("/ipo")}
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
@@ -164,10 +183,7 @@ export const FloatingBottomBar: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  setQuickActionOpen(false);
-                  router.push("/portfolio?tab=arindirma");
-                }}
+                onClick={() => handleProtectedAction("/portfolio?tab=arindirma")}
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
@@ -188,10 +204,7 @@ export const FloatingBottomBar: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  setQuickActionOpen(false);
-                  router.push("/portfolio");
-                }}
+                onClick={() => handleProtectedAction("/portfolio")}
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
@@ -212,10 +225,7 @@ export const FloatingBottomBar: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  setQuickActionOpen(false);
-                  router.push("/rehber");
-                }}
+                onClick={() => handleProtectedAction("/rehber")}
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">

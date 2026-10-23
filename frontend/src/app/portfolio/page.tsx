@@ -39,6 +39,7 @@ import {
 import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
+import { useAuth } from "@/lib/auth/AuthContext";
 import {
   Decimal,
   formatTRY,
@@ -51,6 +52,14 @@ import {
 function PortfolioManagementContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, loading, isDemoUser } = useAuth();
+
+  // Yetkisiz kullanıcıyı giriş sayfasına yönlendir
+  useEffect(() => {
+    if (!loading && !user && !isDemoUser) {
+      router.replace("/auth/login");
+    }
+  }, [loading, user, isDemoUser, router]);
 
   // Aktif Ana Sekme: Pozisyonlar, Fıkhi Arındırma, Hisse Zekâtı
   const initialTab = searchParams.get("tab");
