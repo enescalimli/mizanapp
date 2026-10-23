@@ -11,7 +11,6 @@ import {
   Mail,
   FileText,
   PieChart,
-  Scale,
   Settings,
   HelpCircle,
   LogOut,
@@ -69,12 +68,6 @@ export const LeftDockSidebar: React.FC = () => {
       href: "/portfolio",
       icon: PieChart,
       isActive: pathname.startsWith("/portfolio"),
-    },
-    {
-      label: "Halka Arz Takvimi",
-      href: "/ipo",
-      icon: Scale,
-      isActive: pathname.startsWith("/ipo"),
     },
     {
       label: "Ayarlar & Tercihler",

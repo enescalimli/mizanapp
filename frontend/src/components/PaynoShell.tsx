@@ -50,19 +50,6 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
     }
   };
 
-  const navItems = [
-    { label: "Genel Bakış", href: "/dashboard" },
-    { label: "Tarayıcı (626)", href: "/tarayici" },
-    { label: "Portföy & Arındırma", href: "/portfolio" },
-    { label: "Halka Arz", href: "/ipo" },
-    { label: "Fıkhi Rehber", href: "/rehber" },
-  ];
-
-  const isNavActive = (href: string) => {
-    if (href === "/dashboard") return pathname === "/dashboard" || pathname === "/";
-    return pathname.startsWith(href);
-  };
-
   return (
     <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#0B0F17] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative antialiased py-2.5 sm:py-6 px-2 sm:px-4 lg:px-6 transition-colors duration-200">
       {/* Fixed Left Vertical Dock (Desktop only) */}
@@ -72,9 +59,9 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
       <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-[#F7F8FA] dark:bg-[#111726] rounded-[24px] sm:rounded-[36px] border border-white/90 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] p-3.5 sm:p-6 lg:p-7 space-y-5 sm:space-y-6 transition-colors duration-200">
         
         {/* ================================================================= */}
-        {/* TOP HEADER BAR (Logo + Segmented Pill Nav + Actions)              */}
+        {/* TOP UTILITY BAR (Logo + Search/Actions/Profile)                    */}
         {/* ================================================================= */}
-        <header className="flex items-center justify-between gap-2.5 sm:gap-4 flex-wrap">
+        <header className="flex items-center justify-between gap-3 sm:gap-4">
           
           {/* Sol Logo & Marka Adı (Proje dosyasındaki lacivert squircle logo) */}
           <Link href="/dashboard" className="inline-flex items-center gap-2.5 group shrink-0">
@@ -98,30 +85,8 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             </div>
           </Link>
 
-          {/* Orta Kapsül Navigasyon (Türkçe Kapsül Menü) */}
-          <nav className="order-3 lg:order-2 w-full lg:w-auto flex items-center justify-start sm:justify-center overflow-x-auto py-1 scrollbar-none">
-            <div className="bg-white dark:bg-[#161F32] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.03)] flex items-center gap-0.5 sm:gap-1 shrink-0">
-              {navItems.map((item) => {
-                const active = isNavActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`rounded-full px-3 sm:px-4 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
-                      active
-                        ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                        : "text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-white/5"
-                    }`}
-                  >
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </nav>
-
           {/* Sağ Eylem İkonları ve Kullanıcı Profili */}
-          <div className="order-2 lg:order-3 flex items-center gap-2 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             
             {/* Arama Butonu */}
             <button
