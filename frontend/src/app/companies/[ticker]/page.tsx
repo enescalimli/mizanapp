@@ -571,7 +571,7 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 2: ŞİRKET KARNESİ (Fintables 18 Kriter + Mizan 6 Fıkhi Kriter)  */}
+        {/* TAB 2: ŞİRKET KARNESİ 2.0 (Fintables 18 Kriter + Mizan 6 Fıkhi Kriter) */}
         {/* =================================================================== */}
         {activeTab === "KARNE" && scorecard && (
           <div className="space-y-6">
@@ -580,35 +580,86 @@ export default function CompanyDetailPage() {
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8]">
-                    Fintables &amp; Mizan Entegre Sağlık Karnesi
+                    Fintables &amp; Mizan Entegre Sağlık Karnesi 2.0
+                  </span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300">
+                    24 Kriterli Bilanço &amp; Fıkıh Denetimi
                   </span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
                   {ticker} Şirket Yatırım &amp; Fıkıh Karnesi
                 </h3>
                 <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                  Kârlılık, Büyüme, Borçluluk ve Fıkhi Uyum olmak üzere toplam 24 objektif kriterin denetimidir.
+                  Kârlılık, Büyüme, Borçluluk ve Fıkhi Uyum olmak üzere 4 temel sütunda toplam 24 objektif kriterin denetimidir.
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-4 shrink-0">
                 <div className="text-right">
-                  <div className="text-2xl font-mono font-extrabold text-[#182542]">
+                  <div className="text-2xl font-mono font-extrabold text-[#182542] dark:text-white">
                     {scorecard.totalScore} <span className="text-sm text-[#6E81A0]">/ 24</span>
                   </div>
-                  <div className="text-[10px] text-[#6E81A0] font-bold">Toplam Karne Puanı</div>
+                  <div className="text-[10px] text-[#6E81A0] font-bold flex items-center justify-end gap-1.5 mt-0.5">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{scorecard.passedCount ?? scorecard.totalScore} Başarılı</span>
+                    <span>&bull;</span>
+                    <span className="text-rose-500 font-extrabold">{scorecard.failedCount ?? (24 - scorecard.totalScore)} Takip</span>
+                  </div>
                 </div>
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-sm ${
                   scorecard.ratingLetter === "A+" || scorecard.ratingLetter === "A"
                     ? "bg-emerald-600 text-white"
                     : scorecard.ratingLetter.startsWith("B")
                     ? "bg-blue-600 text-white"
+                    : scorecard.ratingLetter === "C"
+                    ? "bg-amber-500 text-white"
                     : "bg-rose-600 text-white"
                 }`}>
                   {scorecard.ratingLetter}
                 </div>
               </div>
             </div>
+
+            {/* 4 Category Summaries Bar */}
+            {scorecard.categorySummaries && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">1. Kârlılık</span>
+                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.profitabilityScore}/6</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
+                    {scorecard.categorySummaries.profitability}
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">2. Büyüme</span>
+                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.growthScore}/6</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
+                    {scorecard.categorySummaries.growth}
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">3. Borçluluk</span>
+                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.debtScore}/6</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
+                    {scorecard.categorySummaries.debt}
+                  </p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">4. Fıkhi Uyum</span>
+                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.shariahScore}/6</span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
+                    {scorecard.categorySummaries.shariah}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* 4 Scorecard Pillars Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -623,20 +674,34 @@ export default function CompanyDetailPage() {
                     {scorecard.profitabilityScore} / 6
                   </span>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2.5 text-xs">
                   {scorecard.profitabilityItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5 last:border-none">
-                      <div className="flex items-center gap-2">
-                        {item.passed ? (
-                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        ) : (
-                          <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
-                        )}
-                        <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
+                    <div key={idx} className="py-1.5 border-b border-slate-50 dark:border-white/5 last:border-none space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {item.passed ? (
+                            <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          ) : (
+                            <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
+                          )}
+                          <span className="font-medium text-slate-800 dark:text-slate-200">{item.label}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          {item.threshold && (
+                            <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8] bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                              {item.threshold}
+                            </span>
+                          )}
+                          <span className={`font-mono font-bold text-[11px] ${item.passed ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                            {item.value || "-"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-mono font-bold text-[#182542] dark:text-white text-[11px] shrink-0 ml-2">
-                        {item.value || "-"}
-                      </span>
+                      {item.subText && (
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 pl-6 leading-tight">
+                          {item.subText}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -653,20 +718,34 @@ export default function CompanyDetailPage() {
                     {scorecard.growthScore} / 6
                   </span>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2.5 text-xs">
                   {scorecard.growthItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5 last:border-none">
-                      <div className="flex items-center gap-2">
-                        {item.passed ? (
-                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        ) : (
-                          <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
-                        )}
-                        <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
+                    <div key={idx} className="py-1.5 border-b border-slate-50 dark:border-white/5 last:border-none space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {item.passed ? (
+                            <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          ) : (
+                            <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
+                          )}
+                          <span className="font-medium text-slate-800 dark:text-slate-200">{item.label}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          {item.threshold && (
+                            <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8] bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                              {item.threshold}
+                            </span>
+                          )}
+                          <span className={`font-mono font-bold text-[11px] ${item.passed ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                            {item.value || "-"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-mono font-bold text-[#182542] dark:text-white text-[11px] shrink-0 ml-2">
-                        {item.value || "-"}
-                      </span>
+                      {item.subText && (
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 pl-6 leading-tight">
+                          {item.subText}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -683,20 +762,34 @@ export default function CompanyDetailPage() {
                     {scorecard.debtScore} / 6
                   </span>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2.5 text-xs">
                   {scorecard.debtItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5 last:border-none">
-                      <div className="flex items-center gap-2">
-                        {item.passed ? (
-                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        ) : (
-                          <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
-                        )}
-                        <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
+                    <div key={idx} className="py-1.5 border-b border-slate-50 dark:border-white/5 last:border-none space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {item.passed ? (
+                            <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          ) : (
+                            <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
+                          )}
+                          <span className="font-medium text-slate-800 dark:text-slate-200">{item.label}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          {item.threshold && (
+                            <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8] bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                              {item.threshold}
+                            </span>
+                          )}
+                          <span className={`font-mono font-bold text-[11px] ${item.passed ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                            {item.value || "-"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-mono font-bold text-[#182542] dark:text-white text-[11px] shrink-0 ml-2">
-                        {item.value || "-"}
-                      </span>
+                      {item.subText && (
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 pl-6 leading-tight">
+                          {item.subText}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -713,20 +806,34 @@ export default function CompanyDetailPage() {
                     {scorecard.shariahScore} / 6
                   </span>
                 </div>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2.5 text-xs">
                   {scorecard.shariahItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-white/5 last:border-none">
-                      <div className="flex items-center gap-2">
-                        {item.passed ? (
-                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        ) : (
-                          <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
-                        )}
-                        <span className="text-slate-700 dark:text-slate-300">{item.label}</span>
+                    <div key={idx} className="py-1.5 border-b border-slate-50 dark:border-white/5 last:border-none space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {item.passed ? (
+                            <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          ) : (
+                            <XCircle size={15} className="text-rose-500 dark:text-rose-400 shrink-0" />
+                          )}
+                          <span className="font-medium text-slate-800 dark:text-slate-200">{item.label}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0 ml-2">
+                          {item.threshold && (
+                            <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8] bg-slate-100 dark:bg-white/5 px-1.5 py-0.5 rounded">
+                              {item.threshold}
+                            </span>
+                          )}
+                          <span className={`font-mono font-bold text-[11px] ${item.passed ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                            {item.value || "-"}
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-mono font-bold text-[#182542] dark:text-white text-[11px] shrink-0 ml-2">
-                        {item.value || "-"}
-                      </span>
+                      {item.subText && (
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 pl-6 leading-tight">
+                          {item.subText}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1006,7 +1113,7 @@ export default function CompanyDetailPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 6: GELİŞMİŞ MİZAN AI ANALİZ MODÜLÜ (Freemium & PRO Paywall)      */}
+        {/* TAB 6: MİZAN AI 2.0 (Fıkhi ve Finansal Derin Bilanço Sentezi)        */}
         {/* =================================================================== */}
         {activeTab === "AI_ANALIZ" && ai && (
           <div className="space-y-6">
@@ -1020,14 +1127,18 @@ export default function CompanyDetailPage() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-extrabold text-[#182542] dark:text-white">Mizan AI &bull; Fıkhi ve Finansal Sağlık Sentezi</h3>
-                      {isSampleFreeStock && (
+                      <h3 className="text-base font-extrabold text-[#182542] dark:text-white">Mizan AI 2.0 &bull; Fıkhi ve Finansal Bilanço Zekâsı</h3>
+                      {isSampleFreeStock ? (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
                           Örnek Ücretsiz Rapor (BIMAS)
                         </span>
+                      ) : (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300">
+                          Mizan AI 2.0 Aktif
+                        </span>
                       )}
                     </div>
-                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">KAP bilanço dipnotları, DİB/TKBB standartları ve piyasa çarpanlarının algoritmik yapay zekâ sentezi.</p>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">KAP bilanço dipnotları, DİB/TKBB standartları ve piyasa çarpanlarının kurumsal yapay zekâ sentezi.</p>
                   </div>
                 </div>
 
@@ -1145,11 +1256,113 @@ export default function CompanyDetailPage() {
                   </div>
                 </div>
               )}
+
+              {/* Fıkhi Stres Testi & Borçlanma Simülasyonu Banner */}
+              {ai.simulationRiskText && (
+                <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] uppercase font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
+                      <Cpu size={14} className="text-indigo-700 dark:text-indigo-400" />
+                      <span>Mizan AI 2.0 Fıkhi Stres Testi &amp; Borçlanma Simülasyonu</span>
+                    </span>
+                    <p className="text-indigo-950 dark:text-indigo-200 font-normal leading-relaxed text-[11px]">
+                      {ai.simulationRiskText}
+                    </p>
+                  </div>
+                  {ai.maxAdditionalDebtTRY && (
+                    <div className="shrink-0 bg-white/80 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700/50 px-3 py-1.5 rounded-xl text-right">
+                      <div className="text-[9px] uppercase font-bold text-indigo-800 dark:text-indigo-300">Azami Ek Kredi Marjı</div>
+                      <div className="font-mono font-extrabold text-xs text-indigo-950 dark:text-white">{ai.maxAdditionalDebtTRY}</div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* DİB Onaylı Zekât Hesaplama Çubuğu */}
+              {(ai.zakatLongTermPerShareTRY || ai.zakatShortTermTradingPerShareTRY) && (
+                <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] uppercase font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                      <Coins size={14} className="text-amber-700 dark:text-amber-400" />
+                      <span>DİB Din İşleri Yüksek Kurulu Onaylı Hisse Başı Zekât Rehberi</span>
+                    </span>
+                    <p className="text-amber-950 dark:text-amber-200 font-normal leading-relaxed text-[11px]">
+                      DİB fetva yöntemine göre hisse zekâtı yatırım niyetine göre iki farklı fıkhi esasa tabidir:
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {ai.zakatLongTermPerShareTRY && (
+                      <div className="bg-white/80 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-700/50 px-3 py-1.5 rounded-xl text-right">
+                        <div className="text-[9px] uppercase font-bold text-amber-800 dark:text-amber-300">Uzun Vadeli Ortaklık</div>
+                        <div className="font-mono font-extrabold text-xs text-amber-950 dark:text-white">{ai.zakatLongTermPerShareTRY}</div>
+                      </div>
+                    )}
+                    {ai.zakatShortTermTradingPerShareTRY && (
+                      <div className="bg-white/80 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-700/50 px-3 py-1.5 rounded-xl text-right">
+                        <div className="text-[9px] uppercase font-bold text-amber-800 dark:text-amber-300">Kısa Vadeli Ticaret</div>
+                        <div className="font-mono font-extrabold text-xs text-amber-950 dark:text-white">{ai.zakatShortTermTradingPerShareTRY}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* UNLOCKED FULL CONTENT (BIMAS or PRO user) */}
             {isUserPro ? (
               <div className="space-y-6">
+
+                {/* Sektörel İkame & Katılım Alternatifleri (Katılım Dışı Hisseler İçin) */}
+                {data.overallStatus !== "COMPLIANT" && ai.compliantPeerAlternatives && ai.compliantPeerAlternatives.length > 0 && (
+                  <div className="p-6 rounded-[28px] bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/50 space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
+                        <h4 className="text-sm font-extrabold text-[#182542] dark:text-white">
+                          Sektörel İkame &bull; Katılım Uyumlu Alternatifler
+                        </h4>
+                      </div>
+                      <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-2.5 py-0.5 rounded-full">
+                        {ticker} yerine helal portföye eklenebilecek hisseler
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
+                      {ticker} katılım kriterlerini karşılamadığından ötürü, sektöründe veya ilişkili alanlarda faaliyet gösteren ve DİB/TKBB standartlarına %100 uyumlu alternatif hisseler aşağıda listelenmiştir:
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {ai.compliantPeerAlternatives.map((alt) => (
+                        <Link
+                          key={alt.ticker}
+                          href={`/companies/${alt.ticker}`}
+                          className="p-4 rounded-2xl bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 hover:border-emerald-500 transition shadow-xs group block"
+                        >
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="font-extrabold text-sm text-[#182542] dark:text-white group-hover:text-emerald-600 transition">
+                              {alt.ticker}
+                            </span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60">
+                              BIST Katılım
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-600 dark:text-slate-400 font-medium line-clamp-1 mb-2">
+                            {alt.name}
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] border-t border-slate-100 dark:border-white/5 pt-2">
+                            <span className="text-slate-500">Faizli Borç Oranı:</span>
+                            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">%{alt.debtRatioPercent.toFixed(1)}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-[11px] pt-1">
+                            <span className="text-slate-500">F/K &bull; PD/DD:</span>
+                            <span className="font-mono font-bold text-[#182542] dark:text-white">{alt.peRatio} &bull; {alt.pbRatio}</span>
+                          </div>
+                          <div className="mt-2 text-[10px] text-slate-500 italic line-clamp-1">
+                            {alt.reason}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 {/* 6 In-Depth Analysis Bento Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1168,7 +1381,7 @@ export default function CompanyDetailPage() {
                   <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
                       <Coins size={14} className="text-emerald-600 dark:text-emerald-400" />
-                      <span>2. Fıkhi Arındırma &amp; Temettü Yükü</span>
+                      <span>2. Fıkhi Arındırma &amp; Zekât Yükü</span>
                     </h4>
                     <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
                       {ai.purificationZakatNote}

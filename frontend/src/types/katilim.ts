@@ -145,6 +145,19 @@ export interface AiAnalysisReport {
   dupontAiSynthesis?: string;
   targetInvestorProfile?: string;
   shariahActionPlan?: string;
+  simulationRiskText?: string;
+  maxAdditionalDebtTRY?: string;
+  zakatPerShareTRY?: string;
+  zakatLongTermPerShareTRY?: string;
+  zakatShortTermTradingPerShareTRY?: string;
+  compliantPeerAlternatives?: {
+    ticker: string;
+    name: string;
+    debtRatioPercent: number;
+    peRatio: string;
+    pbRatio: string;
+    reason: string;
+  }[];
 }
 
 export interface DetailedBreachDiagnostic {
@@ -160,6 +173,7 @@ export interface ScorecardCriterion {
   passed: boolean;
   value?: string;
   threshold?: string;
+  subText?: string;
 }
 
 export interface CompanyScorecard {
@@ -172,6 +186,14 @@ export interface CompanyScorecard {
   shariahScore: number; // out of 6
   shariahItems: ScorecardCriterion[];
   totalScore: number; // out of 24
+  passedCount?: number;
+  failedCount?: number;
+  categorySummaries?: {
+    profitability: string;
+    growth: string;
+    debt: string;
+    shariah: string;
+  };
   ratingLetter: "A+" | "A" | "B+" | "B" | "C" | "D" | "F";
 }
 

@@ -9,6 +9,7 @@ import {
   AiAnalysisReport,
   DetailedBreachDiagnostic,
   CompanyScorecard,
+  ScorecardCriterion,
   DetailedRatiosGroup,
   DupontAnalysis,
   HistoricalDividendItem,
@@ -364,7 +365,7 @@ export async function GET(
     );
   }
 
-  // 1. Sektörel Rakip Adayları
+  // 1. Sektörel Rakip Adayları & Katılım Uyumlu Alternatifler
   const peerCandidates = companies
     .filter(
       (c) =>
@@ -373,8 +374,35 @@ export async function GET(
     )
     .slice(0, 5);
 
-  // 2. Ana Hisse + Rakipler için BIST Scanner'dan Canlı Veri Çekimi
-  const tickersToScan = [upperTicker, ...peerCandidates.map((p) => p.ticker)];
+  const compliantAlternativesCandidates = companies
+    .filter(
+      (c) =>
+        c.ticker !== upperTicker &&
+        c.bistStatus === "COMPLIANT" &&
+        (c.sector === univ.sector || (univ.subSector && c.subSector === univ.subSector))
+    )
+    .slice(0, 3);
+
+  // Eğer sektörde katılım uyumlu hisse sayısı 3'ten azsa, BIST Katılım'ın güçlü büyük şirketlerinden tamamla
+  if (compliantAlternativesCandidates.length < 3) {
+    const backupStars = ["BIMAS", "ASELS", "ENKAI", "ALARK", "BERA", "TABGD"];
+    for (const bTicker of backupStars) {
+      if (compliantAlternativesCandidates.length >= 3) break;
+      if (bTicker !== upperTicker && !compliantAlternativesCandidates.some((c) => c.ticker === bTicker)) {
+        const found = companies.find((c) => c.ticker === bTicker && c.bistStatus === "COMPLIANT");
+        if (found) compliantAlternativesCandidates.push(found);
+      }
+    }
+  }
+
+  // 2. Ana Hisse + Rakipler + Katılım Alternatifleri için BIST Scanner'dan Canlı Veri Çekimi
+  const tickersToScan = Array.from(
+    new Set([
+      upperTicker,
+      ...peerCandidates.map((p) => p.ticker),
+      ...compliantAlternativesCandidates.map((c) => c.ticker),
+    ])
+  );
   const tvMap = await fetchLiveTradingViewStockFundamentals(tickersToScan);
   const tvData = tvMap.get(upperTicker) || null;
 
@@ -939,25 +967,97 @@ export async function GET(
   };
 
   // =========================================================================
-  // 6. ŞİRKET KARNESİ (Fintables 18 Kriter + Mizan 6 Fıkhi Kriter = 24 Puan)
+  // 6. ŞİRKET KARNESİ 2.0 (Fintables 18 Kriter + Mizan 6 Fıkhi Kriter = 24 Puan)
   // =========================================================================
-  const profItems = [
-    { label: "Brüt kâr marjı pozitif seviyede", passed: (rawGrossMargin ?? 0) > 0, value: grossMarginFormatted },
-    { label: "Esas faaliyet marjı pozitif", passed: (rawOpMargin ?? 0) > 0, value: operatingMarginFormatted },
-    { label: "Net dönem kârı kârlı seyrediyor", passed: (rawNetMargin ?? 0) > 0, value: netMarginFormatted },
-    { label: "Özkaynak kârlılığı (ROE) > %10", passed: (rawRoe ?? 0) > 10, value: roeFormatted, threshold: "> %10" },
-    { label: "Varlık getirisi (ROA) > %5", passed: (rawRoa ?? 0) > 5, value: roaFormatted, threshold: "> %5" },
-    { label: "Yatırılan sermaye kârlılığı (ROIC) pozitif", passed: (rawRoic ?? (rawRoe ?? 0)) > 0, value: roicVal },
+  const profItems: ScorecardCriterion[] = [
+    {
+      label: "Brüt kâr marjı güçlü (> %15)",
+      passed: (rawGrossMargin ?? 0) >= 15,
+      value: grossMarginFormatted,
+      threshold: ">= %15",
+      subText: (rawGrossMargin ?? 0) >= 15 ? "Maliyet artışlarını fiyata yansıtabilme gücü yüksek" : "Brüt kâr marjı dar veya maliyet baskısı altında",
+    },
+    {
+      label: "Esas faaliyet kâr marjı (EBIT) > %8",
+      passed: (rawOpMargin ?? 0) >= 8,
+      value: operatingMarginFormatted,
+      threshold: ">= %8",
+      subText: (rawOpMargin ?? 0) >= 8 ? "Çekirdek operasyonlardan güçlü nakit kâr üretimi" : "Faaliyet marjı zayıf veya operasyonel gider yükü yüksek",
+    },
+    {
+      label: "Net kâr marjı pozitif & verimli (> %5)",
+      passed: (rawNetMargin ?? 0) >= 5,
+      value: netMarginFormatted,
+      threshold: ">= %5",
+      subText: (rawNetMargin ?? 0) >= 5 ? "Hasılatın sağlıklı bir bölümü net kâra dönüşüyor" : "Net marj sınırda veya şirket zarar bölgesinde",
+    },
+    {
+      label: "Özkaynak kârlılığı (ROE) > %20 (Enflasyon Kalkanı)",
+      passed: (rawRoe ?? 0) >= 20,
+      value: roeFormatted,
+      threshold: ">= %20",
+      subText: (rawRoe ?? 0) >= 20 ? "Sermayeyi enflasyona karşı koruyan reel getiri" : "Özkaynak kârlılığı piyasa faiz ve enflasyonunun gerisinde",
+    },
+    {
+      label: "Aktif kârlılığı (ROA) > %6",
+      passed: (rawRoa ?? 0) >= 6,
+      value: roaFormatted,
+      threshold: ">= %6",
+      subText: (rawRoa ?? 0) >= 6 ? "Şirket varlıklarını verimli ciro ve kâra dönüştürüyor" : "Varlık başına yaratılan net kâr sınırlı",
+    },
+    {
+      label: "Yatırılan sermaye kârlılığı (ROIC) > %10",
+      passed: (rawRoic ?? (rawRoe ?? 0)) >= 10,
+      value: roicVal,
+      threshold: ">= %10",
+      subText: (rawRoic ?? (rawRoe ?? 0)) >= 10 ? "Sermaye maliyetini aşan ekonomik katma değer (EVA)" : "Sermaye getiri marjı yetersiz",
+    },
   ];
   const profScore = profItems.filter((i) => i.passed).length;
 
-  const growthItems = [
-    { label: "Yıllıklandırılmış satış hasılatı güçlü", passed: realRevenue > 0, value: formatMcapShort(realRevenue) },
-    { label: "Net dönem kârı pozitif büyüme eğiliminde", passed: realNetIncome > 0, value: formatMcapShort(realNetIncome) },
-    { label: "FAVÖK operasyonel kâr üretimi sürüyor", passed: realEbitda > 0, value: formatMcapShort(realEbitda) },
-    { label: "Özkaynak tabanı korundu ve güçlü", passed: realEquity > 0, value: formatMcapShort(realEquity) },
-    { label: "Duran varlık yatırımları devam ediyor", passed: realNonCurrentAssets > 0, value: formatMcapShort(realNonCurrentAssets) },
-    { label: "Serbest nakit akımı çarpanı pozitif", passed: (computedPToFcf ?? 0) > 0, value: pFcfVal === "A/D" ? "A/D" : `${pFcfVal}x` },
+  const growthItems: ScorecardCriterion[] = [
+    {
+      label: "Yıllık satış hasılatı güçlü ölçekte",
+      passed: realRevenue >= 1_000_000_000 || (realRevenue > 0 && !isBankOrFinance),
+      value: formatMcapShort(realRevenue),
+      threshold: "> ₺1 Mr",
+      subText: realRevenue >= 1_000_000_000 ? "Sektöründe kritik operasyonel ölçek hacmi" : "Daha küçük operasyonel ciro tabanı",
+    },
+    {
+      label: "FAVÖK operasyonel nakit üretimi güçlü",
+      passed: realEbitda >= 100_000_000,
+      value: formatMcapShort(realEbitda),
+      threshold: "> ₺100 Mn",
+      subText: realEbitda >= 100_000_000 ? "Sağlıklı operasyonel nakit akışı tabanı" : "FAVÖK üretimi yetersiz veya negatif",
+    },
+    {
+      label: "Net dönem kârı kârlı seyrediyor",
+      passed: realNetIncome > 0,
+      value: formatMcapShort(realNetIncome),
+      threshold: "> ₺0",
+      subText: realNetIncome > 0 ? "Bilanço net kâr ile özkaynakları büyütüyor" : "Dönem zararı sermayeyi eritiyor",
+    },
+    {
+      label: "Özkaynaklar finansal borçları aşıyor",
+      passed: realEquity > 0 && realEquity >= realTotalDebt,
+      value: formatMcapShort(realEquity),
+      threshold: "Özkaynak > Borç",
+      subText: (realEquity > 0 && realEquity >= realTotalDebt) ? "Özkaynak tabanı borç riskine karşı tam korunaklı" : "Finansal borçlar özkaynak seviyesini aşmış durumda",
+    },
+    {
+      label: "Duran varlık / Kapasite yatırımları dengeli",
+      passed: realTotalAssets > 0 && (realNonCurrentAssets / realTotalAssets) >= 0.25,
+      value: formatMcapShort(realNonCurrentAssets),
+      threshold: "Aktiflerin > %25'i",
+      subText: "Üretim ve hizmet kapasitesini destekleyen kalıcı varlıklar",
+    },
+    {
+      label: "Serbest nakit akımı (FCF) / Nakit üretimi",
+      passed: (rawFcfTtm != null ? rawFcfTtm > 0 : ((computedPToFcf ?? 0) > 0 && (computedPToFcf ?? 0) < 35)),
+      value: rawFcfTtm != null ? formatMcapShort(rawFcfTtm) : (pFcfVal === "A/D" ? "A/D" : `${pFcfVal}x`),
+      threshold: "Pozitif FCF",
+      subText: "İşletme faaliyetlerinden serbest nakit yaratımı",
+    },
   ];
   const growthScore = growthItems.filter((i) => i.passed).length;
 
@@ -966,23 +1066,95 @@ export async function GET(
   const parsedNde = parseFloat(netDebtEbitdaFormatted);
   const parsedDe = parseFloat(deVal);
 
-  const debtItems = [
-    { label: "Cari oran > 1,00 seviyesinde", passed: !isNaN(parsedCr) && parsedCr >= 1.0, value: crVal, threshold: "> 1.0" },
-    { label: "Likit / Asit-Test oranı > 0,50", passed: !isNaN(parsedQr) && parsedQr >= 0.5, value: qrVal, threshold: "> 0.5" },
-    { label: "Net Borç / FAVÖK < 2,50 (Güvenli)", passed: (!isNaN(parsedNde) && parsedNde <= 2.5) || realTotalDebt === 0, value: netDebtEbitdaFormatted, threshold: "< 2.5" },
-    { label: "Finansal Borç / Özkaynak < 1,00", passed: !isNaN(parsedDe) && parsedDe <= 1.0 && realEquity > 0, value: deVal, threshold: "< 1.0" },
-    { label: "Borç / Varlık oranı < %65 eşiğinde", passed: realTotalAssets > 0 && (realTotalDebt / realTotalAssets) < 0.65, value: detailedRatios.debt.debtToAssets },
-    { label: "Özkaynaklar finansal borçları karşılıyor", passed: realEquity > 0 && realEquity >= realTotalDebt, value: formatMcapShort(realEquity) },
+  const debtItems: ScorecardCriterion[] = [
+    {
+      label: "Cari oran >= 1,20 (Likidite Güvenliği)",
+      passed: !isNaN(parsedCr) && parsedCr >= 1.20,
+      value: crVal,
+      threshold: ">= 1.20",
+      subText: (!isNaN(parsedCr) && parsedCr >= 1.20) ? "Kısa vadeli borçlar dönen varlıklarla rahatça ödeniyor" : "Kısa vadeli yükümlülüklerde likidite baskısı",
+    },
+    {
+      label: "Asit-Test oranı >= 0,80 (Hızlı Likidite)",
+      passed: !isNaN(parsedQr) && parsedQr >= 0.80,
+      value: qrVal,
+      threshold: ">= 0.80",
+      subText: (!isNaN(parsedQr) && parsedQr >= 0.80) ? "Stoklara bağımlı olmadan anlık nakit gücü" : "Stok satışı olmaksızın anlık borç ödeme gücü dar",
+    },
+    {
+      label: "Net Borç / FAVÖK < 2,00 (veya Net Nakitte)",
+      passed: (!isNaN(parsedNde) && parsedNde <= 2.0) || realTotalDebt <= realCash,
+      value: realTotalDebt <= realCash ? "Net Nakitte (0x)" : netDebtEbitdaFormatted,
+      threshold: "< 2.0x",
+      subText: ((!isNaN(parsedNde) && parsedNde <= 2.0) || realTotalDebt <= realCash) ? "Mükemmel borç ödeme kapasitesi, düşük finansal risk" : "Yüksek kaldıraç; faiz ödemeleri operasyonel kârı zorluyor",
+    },
+    {
+      label: "Finansal Borç / Özkaynak < 0,80",
+      passed: !isNaN(parsedDe) && parsedDe <= 0.80 && realEquity > 0,
+      value: deVal,
+      threshold: "< 0.80",
+      subText: (!isNaN(parsedDe) && parsedDe <= 0.80) ? "Özkaynak ağırlıklı, sağlam finansman modeli" : "Borçlanma özkaynak seviyesine göre yüksek",
+    },
+    {
+      label: "Borç / Varlık oranı < %45 eşiğinde",
+      passed: realTotalAssets > 0 && (realTotalDebt / realTotalAssets) < 0.45,
+      value: detailedRatios.debt.debtToAssets,
+      threshold: "< %45",
+      subText: "Varlıkların borçla fonlanma oranı güvenli aralıkta",
+    },
+    {
+      label: "Pozitif Net İşletme Sermayesi",
+      passed: realWorkingCapital > 0,
+      value: formatMcapShort(realWorkingCapital),
+      threshold: "> ₺0",
+      subText: realWorkingCapital > 0 ? "Dönen varlıklar kısa vadeli borçları aşıyor" : "Negatif işletme sermayesi; likidite açığı riski",
+    },
   ];
   const debtScore = debtItems.filter((i) => i.passed).length;
 
-  const shariahItems = [
-    { label: "Faizli Borç / Payda < %33 eşiğinde", passed: isDebtOk, value: `%${debtRatio.toFixed(1)}`, threshold: `< %${debtLimit}` },
-    { label: "Faiz Getiren Nakit / Payda < %33 eşiğinde", passed: isCashOk, value: `%${cashRatio.toFixed(1)}`, threshold: `< %${cashLimit}` },
-    { label: "Uygun Olmayan Gelir / Hasılat < %5,00", passed: isIncomeOk, value: `%${impureRatio.toFixed(1)}`, threshold: "< %5.0" },
-    { label: "Faaliyet alanı helal (0 Faiz, Alkol, Kumar)", passed: isSectorCompliant, value: isSectorCompliant ? "Meşru" : "Engelli" },
-    { label: "Konsolide faizli banka iştirak engeli yok", passed: !isHoldingWithBank, value: isHoldingWithBank ? "İştirak İhlali" : "Uyumlu" },
-    { label: "KAP Katılım Formu (KAFİF) eksiksiz ve onaylı", passed: overallStatus === "COMPLIANT", value: overallStatus === "COMPLIANT" ? "Onaylı" : "Kapsam Dışı" },
+  const shariahItems: ScorecardCriterion[] = [
+    {
+      label: "Faizli Borç / Payda < %33,00 (TKBB Sınırı)",
+      passed: isDebtOk,
+      value: `%${debtRatio.toFixed(1)}`,
+      threshold: `< %${debtLimit}`,
+      subText: isDebtOk ? `Güvenlik marjı: +%${(debtLimit - debtRatio).toFixed(1)} puan` : `İhlal: Eşik +%${(debtRatio - debtLimit).toFixed(1)} puan aşıldı`,
+    },
+    {
+      label: "Faiz Getiren Nakit / Payda < %33,00",
+      passed: isCashOk,
+      value: `%${cashRatio.toFixed(1)}`,
+      threshold: `< %${cashLimit}`,
+      subText: isCashOk ? `Güvenlik marjı: +%${(cashLimit - cashRatio).toFixed(1)} puan` : `İhlal: Eşik +%${(cashRatio - cashLimit).toFixed(1)} puan aşıldı`,
+    },
+    {
+      label: "Uygun Olmayan Gelir / Hasılat < %5,00",
+      passed: isIncomeOk,
+      value: `%${impureRatio.toFixed(2)}`,
+      threshold: "< %5.00",
+      subText: isIncomeOk ? "Temettü arındırma oranı fıkhi tolerans sınırları içinde" : `İhlal: Uygunsuz gelir toleransı aşıldı (%${impureRatio.toFixed(2)})`,
+    },
+    {
+      label: "Faaliyet alanı helal (0 Faiz, Alkol, Kumar)",
+      passed: isSectorCompliant,
+      value: isSectorCompliant ? "Meşru" : "Engelli",
+      threshold: "Meşru / Helal",
+      subText: isSectorCompliant ? "Ana sözleşmede dinen yasaklı faaliyet yer almamaktadır" : detailedBreach.primaryReason,
+    },
+    {
+      label: "Konsolide faizli banka iştirak engeli yok",
+      passed: !isHoldingWithBank && !isBankOrFinance,
+      value: (!isHoldingWithBank && !isBankOrFinance) ? "Uyumlu" : "İştirak İhlali",
+      threshold: "%0 Banka İştiraki",
+      subText: (!isHoldingWithBank && !isBankOrFinance) ? "Konsolide yapıda faizli banka veya finans kurumu yok" : "Grup bünyesinde faizli banka iştiraki yer almaktadır",
+    },
+    {
+      label: "KAP Katılım Formu (KAFİF) & XKTUM Onayı",
+      passed: overallStatus === "COMPLIANT",
+      value: overallStatus === "COMPLIANT" ? "Onaylı Bileşen" : "Kapsam Dışı",
+      threshold: "XKTUM Listesinde",
+      subText: overallStatus === "COMPLIANT" ? "Borsa İstanbul Katılım Endeksi resmi bileşenidir" : "Resmi BIST Katılım Endeksi kapsamı dışındadır",
+    },
   ];
   const shariahScore = shariahItems.filter((i) => i.passed).length;
 
@@ -995,6 +1167,35 @@ export async function GET(
   else if (totalCardScore >= 9) ratingLetter = "C";
   else if (totalCardScore >= 6) ratingLetter = "D";
 
+  const scorecardCategorySummaries = {
+    profitability: `Kârlılık karnesinde 6 kriterden ${profScore} tanesi karşılandı. ${
+      profScore >= 5
+        ? "Şirket marjlarını korumayı başararak yüksek sermaye getirisi üretmektedir."
+        : profScore >= 3
+        ? "Kârlılık kabul edilebilir düzeyde ancak artan maliyetler operasyonel marjları baskılamaktadır."
+        : "Zayıf operasyonel marjlar veya net zarar sermaye tabanını aşındırmaktadır."
+    }`,
+    growth: `Büyüme karnesinde 6 kriterden ${growthScore} tanesi başarılı. ${
+      growthScore >= 5
+        ? "Güçlü satış hacmi, pozitif FAVÖK ve sermaye yatırımları ile istikrarlı büyüme devam ediyor."
+        : growthScore >= 3
+        ? "Hasılat tabanı korunuyor ancak serbest nakit akışı ve kâr dönüşümü desteklenmelidir."
+        : "Operasyonel büyüme ve nakit üretimi ivme kaybetmiş durumdadır."
+    }`,
+    debt: `Borçluluk karnesinde 6 kriterden ${debtScore} tanesi olumlu. ${
+      debtScore >= 5
+        ? "Net Borç / FAVÖK ve likidite oranları şirketin finansal şoklara karşı yüksek dayanıklılığını göstermektedir."
+        : debtScore >= 3
+        ? "Borçluluk yönetilebilir sınırda ancak kısa vadeli finansman maliyetleri yakından izlenmelidir."
+        : "Yüksek finansal kaldıraç ve likidite daralması bilanço riskini artırmaktadır."
+    }`,
+    shariah: `Fıkhi uyum karnesinde 6 kriterden ${shariahScore} tanesi tam uyumlu. ${
+      shariahScore === 6
+        ? "DİB Din İşleri Yüksek Kurulu ve BIST Katılım standartlarını eksiksiz karşılamaktadır."
+        : `Şirket ${detailedBreach.primaryReason} nedeniyle katılım kriterlerinin gerisindedir.`
+    }`,
+  };
+
   const scorecard: CompanyScorecard = {
     profitabilityScore: profScore,
     profitabilityItems: profItems,
@@ -1005,6 +1206,9 @@ export async function GET(
     shariahScore: shariahScore,
     shariahItems: shariahItems,
     totalScore: totalCardScore,
+    passedCount: totalCardScore,
+    failedCount: 24 - totalCardScore,
+    categorySummaries: scorecardCategorySummaries,
     ratingLetter,
   };
 
@@ -1131,7 +1335,7 @@ export async function GET(
   });
 
   // =========================================================================
-  // 9. GELİŞMİŞ MİZAN AI ANALİZ MOTORU (Fıkhi, Finansal & Sektörel Sentez)
+  // 9. GELİŞMİŞ MİZAN AI 2.0 ANALİZ VE SENTEZ MOTORU
   // =========================================================================
   const shariahSafetyBuffer = Number((debtLimit - univ.debtRatioPercent).toFixed(1));
   let nextQuarterRiskLevel: "DÜŞÜK" | "ORTA" | "YÜKSEK" = "DÜŞÜK";
@@ -1140,18 +1344,65 @@ export async function GET(
   if (overallStatus === "COMPLIANT") {
     if (shariahSafetyBuffer >= 12) {
       nextQuarterRiskLevel = "DÜŞÜK";
-      nextQuarterRiskOutlook = `Şirketin faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) yasal %${debtLimit} tavanından %${shariahSafetyBuffer} oranında güvenli mesafededir. Mevcut nakit ve borçlanma politikası sürdüğü müddetçe gelecek çeyreklerde Katılım Endeksi dışına çıkma riski çok düşüktür.`;
+      nextQuarterRiskOutlook = `Şirketin faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) yasal %${debtLimit} tavanından %${shariahSafetyBuffer} oranında geniş ve güvenli bir tampona sahiptir. Mevcut bilanço ve nakit akış disiplini sürdükçe gelecek çeyreklerde Katılım Endeksi dışına çıkma riski asgari düzeydedir.`;
     } else if (shariahSafetyBuffer >= 4) {
       nextQuarterRiskLevel = "ORTA";
       nextQuarterRiskOutlook = `Şirketin faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) yasal %${debtLimit} tavanına makul bir mesafededir (%${shariahSafetyBuffer} güvenlik marjı). Yeni banka kredisi kullanımları veya piyasa değeri düşüşleri durumunda eşik aşımı riski çeyreklik bazda yakından izlenmelidir.`;
     } else {
       nextQuarterRiskLevel = "YÜKSEK";
-      nextQuarterRiskOutlook = `Şirketin faizli borç oranı (%${univ.debtRatioPercent.toFixed(1)}) %${debtLimit} tavanına çok yakındır (yalnızca %${shariahSafetyBuffer} tampon). Olası finansal dalgalanmalarda endeksten geçici ihraç riski mevcuttur.`;
+      nextQuarterRiskOutlook = `Şirketin faizli borç oranı (%${univ.debtRatioPercent.toFixed(1)}) %${debtLimit} tavanına çok yakındır (yalnızca %${shariahSafetyBuffer} tampon). Olası finansal dalgalanmalarda veya kredi çekimlerinde Katılım Endeksi'nden geçici ihraç riski mevcuttur.`;
     }
   } else {
     nextQuarterRiskLevel = "YÜKSEK";
-    nextQuarterRiskOutlook = `Şirket halihazırda ${detailedBreach.primaryReason} gerekçesiyle katılım kriterlerini karşılamamaktadır. Portföylere dahil edilmesi caiz değildir.`;
+    nextQuarterRiskOutlook = `Şirket halihazırda ${detailedBreach.primaryReason} gerekçesiyle katılım kriterlerini karşılamamaktadır. Portföylere dahil edilmesi caiz görülmemektedir.`;
   }
+
+  // Zekât Hesaplamaları (DİB Standardı)
+  const sharesTotalNum = sharesCount.toNumber() || 1;
+  const netWorkingCapitalForZakat = Math.max(0, realCurrentAssets - realCurrentLiabilities);
+  const workingCapitalPerShare = sharesTotalNum > 0 ? (netWorkingCapitalForZakat / sharesTotalNum) : 0;
+  const zakatLongTermPerShareNum = workingCapitalPerShare * 0.025;
+  const zakatLongTermPerShareTRY = zakatLongTermPerShareNum > 0 ? `₺${zakatLongTermPerShareNum.toFixed(2)}` : "₺0,00";
+  const zakatShortTermTradingPerShareNum = liveClose * 0.025;
+  const zakatShortTermTradingPerShareTRY = `₺${zakatShortTermTradingPerShareNum.toFixed(2)}`;
+
+  // Azami İlave Faizli Borçlanma Kapasitesi (Eşik Aşılmadan)
+  const maxAdditionalDebtNum = Math.max(0, (denomTRY * 0.33) - debtNumTRY);
+  const maxAdditionalDebtTRY = formatMcapShort(maxAdditionalDebtNum);
+
+  // Piyasa Değeri %20 Düşüş Stres Testi
+  const stressedDenom = Math.max(mcapNum * 0.8, realTotalAssets);
+  const stressedDebtRatio = Number(((debtNumTRY / stressedDenom) * 100).toFixed(1));
+
+  let simulationRiskText = "";
+  if (overallStatus === "COMPLIANT") {
+    if (stressedDebtRatio < 33.0) {
+      simulationRiskText = `Stres Testi Simülasyonu: Hisse fiyatı / piyasa değeri %20 oranında sert bir geri çekilme yaşasa dahi faizli borç rasyosu %${stressedDebtRatio} seviyesinde kalarak %33 sınırının altında güvenle kalmaktadır. Şirket, katılım endeksi sınırını aşmaksızın azami ${maxAdditionalDebtTRY} tutarında ilave faizli kredi kullanma kapasitesine sahiptir.`;
+    } else {
+      simulationRiskText = `Stres Testi Uyarısı: Hisse fiyatında oluşabilecek %20'lik bir piyasa geri çekilmesinde faizli borç rasyosu %${stressedDebtRatio}'ye çıkarak %33 yasal tavanını aşma riski taşımaktadır. Çeyreklik borçlanma hareketleri yakından izlenmelidir.`;
+    }
+  } else {
+    const excessDebt = Math.max(0, debtNumTRY - (denomTRY * 0.33));
+    simulationRiskText = isBankOrFinance || isAlcoholOrTobacco
+      ? `Faaliyet İhlali Analizi: Şirket ana sözleşmesindeki dinen yasaklı faaliyet gelirleri sebebiyle sermaye piyasası katılım kriterlerine uygun değildir. Finansal borç seviyesi düşürülse dahi faaliyet engeli kalkmadıkça katılım endeksine dahil olamaz.`
+      : `Fıkhi Telafi Simülasyonu: Şirketin Katılım Endeksi'ne dönebilmesi için faizli borç yükünü asgari ${formatMcapShort(excessDebt)} azaltması veya piyasa değerini/aktif tabanını artırması gerekmektedir.`;
+  }
+
+  // Sektörel Katılım Alternatifleri (Özellikle Katılım Dışı Şirketler İçin)
+  const compliantPeerAlternatives = compliantAlternativesCandidates.map((c) => {
+    const cTv = tvMap.get(c.ticker.toUpperCase());
+    const cKap = KAP_VERIFIED_RECENT_IPOS_DB[c.ticker.toUpperCase()];
+    const cPe = cTv?.[10] != null && Number(cTv[10]) > 0 ? Number(cTv[10]).toFixed(1) : (cKap?.pe || "A/D");
+    const cPb = cTv?.[11] != null && Number(cTv[11]) > 0 ? Number(cTv[11]).toFixed(2) : (cKap?.pb || "A/D");
+    return {
+      ticker: c.ticker,
+      name: c.name,
+      debtRatioPercent: c.debtRatioPercent,
+      peRatio: cPe,
+      pbRatio: cPb,
+      reason: `Faizli borç oranı düşük (%${c.debtRatioPercent.toFixed(1)}) ve BIST Katılım tam onaylıdır.`,
+    };
+  });
 
   // 1. Fıkhi Güvenlik Skoru
   let shariahScoreVal = 2.0;
@@ -1162,11 +1413,11 @@ export async function GET(
     if (shariahSafetyBuffer >= 12) {
       shariahScoreVal = 9.8;
       shariahStatus = "EXCELLENT";
-      shariahDesc = `Faizli borç (%${univ.debtRatioPercent.toFixed(1)}) ve nakit (%${univ.cashRatioPercent.toFixed(1)}) oranları DİB/TKBB tavanının çok altındadır. Güvenlik marjı (%${shariahSafetyBuffer}) mükemmel seviyededir.`;
+      shariahDesc = `Faizli borç (%${univ.debtRatioPercent.toFixed(1)}) ve nakit (%${univ.cashRatioPercent.toFixed(1)}) oranları DİB/TKBB tavanının çok altındadır. Güvenlik marjı (+%${shariahSafetyBuffer}) mükemmel seviyededir.`;
     } else if (shariahSafetyBuffer >= 5) {
       shariahScoreVal = 8.2;
       shariahStatus = "GOOD";
-      shariahDesc = `Faizli borç oranı kabul edilebilir sınırlar içinde olup %${shariahSafetyBuffer} tampon barındırmaktadır. Fıkhi uygunluk güvence altındadır.`;
+      shariahDesc = `Faizli borç oranı kabul edilebilir sınırlar içinde olup +%${shariahSafetyBuffer} tampon barındırmaktadır. Fıkhi uygunluk güvence altındadır.`;
     } else {
       shariahScoreVal = 6.4;
       shariahStatus = "MODERATE";
@@ -1293,11 +1544,11 @@ export async function GET(
   }
 
   // Temettü & Arındırma Notu
-  let purificationNote = `Hisse başına çeyreklik tahmini arındırma tutarı ₺${univ.purificationPerShareTRY} seviyesindedir. Dağıtılacak temettülerde fıkhi arındırma payı ortalama %${univ.impureIncomePercent.toFixed(2)} olarak hesaplanmaktadır.`;
-
-  if (overallStatus !== "COMPLIANT") {
-    financialHealth = `Finansal bilanço büyüklüğü (${formatMcapShort(realTotalAssets)}) yüksek olsa da katılım portföyleri açısından meşru yatırım evreninde bulunmamaktadır.`;
-    purificationNote = `Hisse katılım dışı olduğu için elde edilecek sermaye kazancı ve temettünün arındırma yöntemiyle caiz kılınması mümkün değildir (Ana sermayenin çekilmesi tavsiye edilir).`;
+  let purificationNote = "";
+  if (overallStatus === "COMPLIANT") {
+    purificationNote = `Hisse başına çeyreklik tahmini arındırma tutarı ₺${univ.purificationPerShareTRY} seviyesindedir. Dağıtılacak brüt temettülerde fıkhi arındırma payı ortalama %${univ.impureIncomePercent.toFixed(2)} olarak hesaplanmaktadır. Zekât yükümlülüğünde ise: Şirkete uzun vadeli temettü/ortaklık amacıyla yatırım yapanlar için hisse başı net zekât tutarı ${zakatLongTermPerShareTRY}, kısa vadeli ticaret (al-sat) amacıyla tutanlar için güncel fiyat üzerinden hisse başı net zekât ${zakatShortTermTradingPerShareTRY}'dir.`;
+  } else {
+    purificationNote = `Hisse katılım dışı olduğu için elde edilecek sermaye kazancı ve temettünün arındırma yöntemiyle caiz kılınması fıkhen mümkün değildir. DİB ve TKBB ilke kararlarına göre hissenin portföyden çıkarılması ve katılım uyumlu alternatiflere geçilmesi tavsiye edilmektedir.`;
   }
 
   // DuPont AI Sentezi
@@ -1353,7 +1604,7 @@ export async function GET(
   const pros = overallStatus === "COMPLIANT"
     ? [
         "BIST Katılım (XKTUM) resmi endeks bileşenidir.",
-        `Faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) %33 yasal tavanının altındadır (Güvenlik marjı: %${shariahSafetyBuffer}).`,
+        `Faizli borç rasyosu (%${univ.debtRatioPercent.toFixed(1)}) %33 yasal tavanının altındadır (Güvenlik marjı: +%${shariahSafetyBuffer} puan).`,
         realNetIncome > 0 ? `Yıllıklandırılmış net kârı ${formatMcapShort(realNetIncome)} olup kârlılık üretmektedir.` : "Güçlü hasılat tabanı ve derin piyasa işlem hacmi.",
         perf1Y && perf1Y > 0 ? `Son 1 yılda yatırımcısına %${perf1Y.toFixed(1)} getiri sağlamıştır.` : "Dengeli piyasa çarpanları.",
       ]
@@ -1414,6 +1665,11 @@ export async function GET(
     dupontAiSynthesis,
     targetInvestorProfile,
     shariahActionPlan,
+    simulationRiskText,
+    maxAdditionalDebtTRY,
+    zakatLongTermPerShareTRY,
+    zakatShortTermTradingPerShareTRY,
+    compliantPeerAlternatives,
   };
 
   const company: CompanyDetailScreening = {
