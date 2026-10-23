@@ -61,6 +61,7 @@ export default function CompanyDetailPage() {
   const [copied, setCopied] = useState(false);
   const [addedToPortfolio, setAddedToPortfolio] = useState(false);
   const [isProUser, setIsProUser] = useState(false);
+  const [isPlusUser, setIsPlusUser] = useState(false);
 
   // Check if user is PRO or if this is the sample free stock (BIMAS)
   const isSampleFreeStock = ticker === "BIMAS";
@@ -71,8 +72,11 @@ export default function CompanyDetailPage() {
       if (savedSettings) {
         try {
           const parsed = JSON.parse(savedSettings);
-          if (parsed.isPro || parsed.subscriptionPlan === "PRO") {
+          if (parsed.isPro || parsed.subscriptionPlan === "PRO" || parsed.subscriptionPlan === "PLUS") {
             setIsProUser(true);
+          }
+          if (parsed.subscriptionPlan === "PLUS") {
+            setIsPlusUser(true);
           }
         } catch {
           // ignore
@@ -81,7 +85,7 @@ export default function CompanyDetailPage() {
     }
   }, []);
 
-  const isUserPro = isSampleFreeStock || isProUser || profile?.is_pro === true;
+  const isUserPro = isSampleFreeStock || isProUser || isPlusUser || profile?.is_pro === true;
 
   useEffect(() => {
     async function loadData() {
@@ -120,7 +124,7 @@ export default function CompanyDetailPage() {
   const handleAddToPortfolio = () => {
     if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("mizan_user_holdings");
+        const saved = localStorage.getItem("mizan_katilim_holdings_v2") || localStorage.getItem("mizan_user_holdings");
         let list: any[] = saved ? JSON.parse(saved) : [];
         if (!Array.isArray(list) || list.length === 0) {
           list = [
@@ -142,6 +146,7 @@ export default function CompanyDetailPage() {
             zakatIntent: "LONG_TERM_DIVIDEND",
           });
         }
+        localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(list));
         localStorage.setItem("mizan_user_holdings", JSON.stringify(list));
       } catch (e) {
         console.error("Local storage error:", e);
