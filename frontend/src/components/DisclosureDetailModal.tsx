@@ -201,7 +201,11 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
                 rel="noopener noreferrer"
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition"
               >
-                <span>Resmi Kaynakta Gör</span>
+                <span>
+                  {disclosure.source === "SPK"
+                    ? "Resmi SPK Bülteni (PDF)"
+                    : "KAP Resmi Sisteminde Gör"}
+                </span>
                 <ExternalLink size={13} />
               </a>
             )}

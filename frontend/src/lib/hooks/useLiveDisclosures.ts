@@ -14,7 +14,7 @@ export function useLiveDisclosures(pollIntervalMs = 25000) {
   const fetchDisclosures = useCallback(async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const res = await fetch("/api/disclosures", { cache: "no-store" });
+      const res = await fetch(`/api/disclosures?_t=${Date.now()}`, { cache: "no-store" });
       if (!res.ok) throw new Error("HTTP error " + res.status);
       const data: DisclosuresApiResponse = await res.json();
 

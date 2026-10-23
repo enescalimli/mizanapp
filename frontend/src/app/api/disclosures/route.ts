@@ -351,15 +351,15 @@ export async function GET(request: Request) {
       }
 
       const officialKapUrl = primaryTicker
-        ? `https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${primaryTicker}`
-        : "https://www.kap.org.tr";
+        ? `https://www.kap.org.tr/tr/bildirim-sorgu?srcText=${primaryTicker}`
+        : "https://www.kap.org.tr/tr/bildirim-sorgu";
 
       const id = "kap-" + Math.abs(hashCode(formattedTitle));
       items.push({
         id,
         source: "KAP",
         title: formattedTitle,
-        rawTitle: item.rawTitle,
+        rawTitle: formattedTitle,
         summary,
         category,
         categoryColor,
@@ -400,24 +400,38 @@ export async function GET(request: Request) {
     cachedResult = responsePayload;
     lastFetchTime = now;
 
+    const noCacheHeaders = {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0",
+      "CDN-Cache-Control": "no-store",
+      "Vercel-CDN-Cache-Control": "no-store",
+    };
+
     if (filterSource === "kap") {
-      return NextResponse.json({
-        ...responsePayload,
-        items: responsePayload.items.filter((i) => i.source === "KAP"),
-      });
+      return NextResponse.json(
+        {
+          ...responsePayload,
+          items: responsePayload.items.filter((i) => i.source === "KAP"),
+        },
+        { headers: noCacheHeaders }
+      );
     }
     if (filterSource === "spk") {
-      return NextResponse.json({
-        ...responsePayload,
-        items: responsePayload.items.filter((i) => i.source === "SPK"),
-      });
+      return NextResponse.json(
+        {
+          ...responsePayload,
+          items: responsePayload.items.filter((i) => i.source === "SPK"),
+        },
+        { headers: noCacheHeaders }
+      );
     }
 
-    return NextResponse.json(responsePayload);
+    return NextResponse.json(responsePayload, { headers: noCacheHeaders });
   } catch (err: unknown) {
     console.error("Disclosures API error:", err);
     if (cachedResult) {
-      return NextResponse.json(cachedResult);
+      return NextResponse.json(cachedResult, {
+        headers: { "Cache-Control": "no-store" },
+      });
     }
     return NextResponse.json(
       {
@@ -426,7 +440,10 @@ export async function GET(request: Request) {
         counts: { total: 0, kap: 0, spk: 0 },
         items: [],
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: { "Cache-Control": "no-store" },
+      }
     );
   }
 }
