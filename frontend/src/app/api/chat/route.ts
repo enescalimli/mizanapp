@@ -20,9 +20,9 @@ import {
 } from "@/lib/data/compliantAlternatives";
 import { pruneConversationHistory } from "@/lib/ai/contextPruner";
 
-// Google Gemini Flash API Ayarları (Ortam değişkeni veya güvenli kodlanmış yedek anahtar)
+// Google Gemini Flash API Ayarları (1.445 TL Bakiye Tanımlı Proje Anahtarı)
 const DEFAULT_GEMINI_KEY = Buffer.from(
-  "QVEuQWI4Uk42S0JLT05wSjZNMlBMQ1JBc3R0WnQyaXliYmVXNkVWaFAzOENUYTZZQlBERHc=",
+  "QVEuQWI4Uk42SzV3MG50R3Zkc1lNWTRjcGJBSzRYanY1QlJCMjM0VkJ0UjYxb3RmT3ItbHc=",
   "base64"
 ).toString("utf-8");
 
@@ -237,14 +237,13 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
     let isLiveGemini = false;
     let successfulModel = "";
 
-    // Kota ve hız optimizasyonlu model öncelik sıralaması
+    // Bakiye ve kota destekli model öncelik sıralaması
     const candidateModels = [
-      "gemini-3-flash-preview",
-      "gemini-3.1-flash-lite-preview",
-      "gemini-3.1-flash-lite",
       "gemini-3.6-flash",
+      "gemini-3-flash-preview",
       "gemini-3.5-flash",
-      "gemini-3.8-flash",
+      "gemini-3.1-flash-lite",
+      "gemini-3.1-flash-lite-preview",
     ];
 
     const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}\n${historySection}\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Kullanıcının sorusuna doğrudan, canlı ve derinlemesine yanıt ver. SPK uyarınca yatırım tavsiyesi olmadığını (YTD) belirt.`;
