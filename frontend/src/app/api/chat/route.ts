@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+export const maxDuration = 30;
 import { BIST_COMPREHENSIVE_UNIVERSE } from "@/lib/data/bistUniverse";
 import {
   SAMPLE_COMPANIES_SUMMARY,
@@ -221,6 +223,9 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
               generationConfig: {
                 temperature: 0.3,
                 maxOutputTokens: 2048,
+                thinkingConfig: {
+                  thinkingBudget: 0,
+                },
               },
             }),
             signal: controller.signal,
