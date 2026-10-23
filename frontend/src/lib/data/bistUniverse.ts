@@ -201,25 +201,25 @@ export function getCompanyByTicker(ticker: string): ExtendedCompanySummary | und
 }
 
 const SECTOR_MAP: Record<string, string> = {
-  "Electronic Technology": "Savunma & Teknoloji",
-  "Technology Services": "Bilişim & Yazılım",
-  "Finance": "Finans & Bankacılık",
-  "Energy Minerals": "Enerji & Rafineri",
-  "Retail Trade": "Perakende & Tüketim",
-  "Industrial Services": "Sanayi & İnşaat",
-  "Transportation": "Ulaştırma & Lojistik",
-  "Process Industries": "Kimya & Kağıt Sanayi",
-  "Non-Energy Minerals": "Demir Çelik & Madencilik",
-  "Consumer Non-Durables": "Gıda & İçecek",
-  "Consumer Durables": "Otomotiv & Dayanıklı Tüketim",
-  "Producer Manufacturing": "Makine & Elektrik Ekipmanları",
-  "Utilities": "Elektrik & Yenilenebilir Enerji",
-  "Communications": "Telekomünikasyon",
-  "Health Technology": "Sağlık & İlaç",
-  "Health Services": "Sağlık Hizmetleri",
+  "Electronic Technology": "Savunma & Bilişim Teknolojileri",
+  "Technology Services": "Savunma & Bilişim Teknolojileri",
+  "Finance": "Finansal Hizmetler & Aracı Kurumlar",
+  "Energy Minerals": "Enerji & Yenilenebilir Enerji",
+  "Retail Trade": "Perakende & Tüketim Malları",
+  "Industrial Services": "Sanayi & İmalat",
+  "Transportation": "Ulaştırma & Havacılık",
+  "Process Industries": "Kimya, İlaç & Plastik",
+  "Non-Energy Minerals": "Demir Çelik & Metal Sanayi",
+  "Consumer Non-Durables": "Gıda, İçecek & Tarım",
+  "Consumer Durables": "Otomotiv & Yan Sanayi",
+  "Producer Manufacturing": "Sanayi & İmalat",
+  "Utilities": "Enerji & Yenilenebilir Enerji",
+  "Communications": "Telekomünikasyon & İletişim",
+  "Health Technology": "Sağlık & Medikal Hizmetler",
+  "Health Services": "Sağlık & Medikal Hizmetler",
   "Commercial Services": "Ticari Hizmetler",
-  "Distribution Services": "Dağıtım & Toptan Ticaret",
-  "Consumer Services": "Turizm & Hizmet",
+  "Distribution Services": "Perakende & Tüketim Malları",
+  "Consumer Services": "Turizm & Otelcilik",
   "Miscellaneous": "Holding & Yatırım",
 };
 
@@ -324,10 +324,17 @@ export async function fetchLiveBistUniverse24x7(): Promise<{
       const currLiab = Math.max(0, Number(d[12] || 0));
       const shares = Math.max(1, Number(d[13] || (closePrice > 0 ? mcap / closePrice : 100_000_000)));
 
-      const isGyo = ticker.endsWith("GYO") || rawIndustry.toLowerCase().includes("real estate");
-      const sectorTr = isGyo
-        ? "Gayrimenkul Yatırım Ortaklığı (GYO)"
-        : SECTOR_MAP[rawSector] || "Sanayi & Üretim";
+      const snapshotEntry = getCompanyByTicker(ticker);
+      const isGyo =
+        ticker.endsWith("GYO") ||
+        rawIndustry.toLowerCase().includes("real estate") ||
+        snapshotEntry?.sector === "Gayrimenkul (GYO)";
+      const sectorTr =
+        snapshotEntry?.sector ||
+        (isGyo ? "Gayrimenkul (GYO)" : SECTOR_MAP[rawSector] || "Sanayi & İmalat");
+      const subSectorTr =
+        snapshotEntry?.subSector ||
+        (isGyo ? "Gayrimenkul Yatırım Ortaklığı (GYO)" : sectorTr);
       const isXktum = xktumSet.has(ticker);
 
       // BIST Katılım Standartları Kuralı: Payda, Toplam Varlıklar (Aktif) veya
@@ -421,9 +428,9 @@ export async function fetchLiveBistUniverse24x7(): Promise<{
       const sign = changePct >= 0 ? "+" : "";
       return {
         ticker,
-        name: desc,
+        name: snapshotEntry?.name || desc,
         sector: sectorTr,
-        subSector: rawIndustry || sectorTr,
+        subSector: subSectorTr,
         bistStatus,
         aaoifiStatus,
         debtRatioPercent: debtRatio,
