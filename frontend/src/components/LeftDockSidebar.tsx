@@ -14,6 +14,7 @@ import {
   Settings,
   HelpCircle,
   LogOut,
+  Sparkles,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import { useAuth } from "@/lib/auth/AuthContext";
@@ -68,6 +69,12 @@ export const LeftDockSidebar: React.FC = () => {
       href: "/portfolio",
       icon: PieChart,
       isActive: pathname.startsWith("/portfolio"),
+    },
+    {
+      label: "Mizan AI Asistan",
+      href: "/asistan",
+      icon: Sparkles,
+      isActive: pathname.startsWith("/asistan"),
     },
     {
       label: "Ayarlar & Tercihler",

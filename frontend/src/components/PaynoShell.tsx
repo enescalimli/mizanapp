@@ -8,6 +8,7 @@ import { Search, Info, ChevronDown, Sparkles } from "lucide-react";
 import { LeftDockSidebar } from "./LeftDockSidebar";
 import { NotificationPopover } from "./NotificationPopover";
 import { FooterLegal } from "./FooterLegal";
+import { MizanChatWidget } from "./MizanChatWidget";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 interface PaynoShellProps {
@@ -168,6 +169,9 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
         <FooterLegal />
 
       </div>
+
+      {/* Sağ Alt Kayan Mizan AI Gemini 3.8 Flash Asistan Widget'ı */}
+      <MizanChatWidget />
     </div>
   );
 };
