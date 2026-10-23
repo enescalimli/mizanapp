@@ -354,9 +354,22 @@ export const MizanChatWidget: React.FC = () => {
                   )}
                 </div>
 
-                <span className="text-[9px] text-slate-400 mt-1 px-1">
-                  {msg.timestamp}
-                </span>
+                <div className="flex items-center justify-between w-full max-w-[88%] text-[9px] text-slate-400 mt-1 px-1">
+                  <span className="flex items-center gap-1">
+                    {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
+                      <>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
+                      </>
+                    ) : msg.role === "assistant" && msg.modelUsed ? (
+                      <>
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
+                        <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
+                      </>
+                    ) : null}
+                  </span>
+                  <span>{msg.timestamp}</span>
+                </div>
 
                 {/* Önerilen Devam Sorusu Hapları */}
                 {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (

@@ -394,9 +394,22 @@ function AsistanContent() {
                     )}
                   </div>
 
-                  <span className="text-[10px] text-slate-400 mt-1 px-1">
-                    {msg.timestamp} {msg.modelUsed ? `• ${msg.modelUsed}` : ""}
-                  </span>
+                  <div className="flex items-center justify-between w-full max-w-[92%] text-[10px] text-slate-400 mt-1 px-1">
+                    <span className="flex items-center gap-1.5">
+                      {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
+                        </>
+                      ) : msg.role === "assistant" && msg.modelUsed ? (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
+                          <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
+                        </>
+                      ) : null}
+                    </span>
+                    <span>{msg.timestamp}</span>
+                  </div>
 
                   {/* Devam Sorusu Önerileri */}
                   {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (

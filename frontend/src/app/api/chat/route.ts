@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 3. Gemini 3.8 Flash İçin Bağlam (Context) Zenginleştirme
+    // 3. Gemini Flash İçin Bağlam (Context) Zenginleştirme
     let contextAddition = "";
     if (stockData) {
       contextAddition += `\n[MEVCUT SORGULANAN HİSSE VERİSİ - BİLGİ DOĞRULANMIŞTIR]:
@@ -194,24 +194,41 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
 `;
     }
 
+    // Önceki konuşma geçmişini bağlama ekle (Çok turlu konuşma hafızası)
+    const recentHistory = messages
+      .slice(-5, -1)
+      .map(
+        (m) =>
+          `${m.role === "user" ? "KULLANICI" : "ASİSTAN"}: ${m.content.slice(0, 300)}`
+      )
+      .join("\n\n");
+
+    const historySection = recentHistory
+      ? `\n[ÖNCEKİ SOHBET GEÇMİŞİ]:\n${recentHistory}\n`
+      : "";
+
     // 4. Gemini Flash Canlı API Çağrısı (Model Kademeli Çağrı)
     let aiText = "";
     let isLiveGemini = false;
     let successfulModel = "";
 
+    // Kota ve hız optimizasyonlu model öncelik sıralaması
     const candidateModels = [
+      "gemini-3-flash-preview",
+      "gemini-3.1-flash-lite-preview",
+      "gemini-3.1-flash-lite",
       "gemini-3.6-flash",
+      "gemini-3.5-flash",
       "gemini-3.8-flash",
-      "gemini-flash-latest",
     ];
 
-    const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}\n\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Yatırım tavsiyesi olmadığını (YTD) belirt.`;
+    const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}\n${historySection}\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Kullanıcının sorusuna doğrudan, canlı ve derinlemesine yanıt ver. SPK uyarınca yatırım tavsiyesi olmadığını (YTD) belirt.`;
 
     for (const modelName of candidateModels) {
       if (aiText) break;
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000);
+        const timeoutId = setTimeout(() => controller.abort(), 7000);
 
         const geminiRes = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
@@ -243,6 +260,9 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
             successfulModel = modelName;
             break;
           }
+        } else {
+          const errStatus = geminiRes.status;
+          console.warn(`Model ${modelName} returned HTTP ${errStatus}`);
         }
       } catch (e) {
         console.warn(`Model ${modelName} call failed, trying next...`, e);
@@ -334,7 +354,7 @@ Detaylı analiz için hisse kodu belirtebilirsiniz (Örn: *“THYAO neden katıl
       text: aiText,
       modelUsed: isLiveGemini
         ? `Google Gemini Flash (${successfulModel}) • Canlı`
-        : "Mizan Fıkhi AI (Deterministik)",
+        : "Mizan Kural Motoru (Gemini kotası dolduğu için devrede)",
       stockData,
       compliantAlternatives,
       purificationCalculation,
