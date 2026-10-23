@@ -256,6 +256,25 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       if (data.success) {
         setOtpVerified(true);
         setOtpError(null);
+
+        // Şifreli kayıt modunda şifreyi güvenli parola deposuna kaydet
+        if (password && password.length >= 6) {
+          try {
+            await fetch("/api/auth/password-auth", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "register",
+                email: otpTargetEmail,
+                password,
+                fullName: otpTargetName,
+              }),
+            });
+          } catch (e) {
+            console.error("Şifre kayıt hatası:", e);
+          }
+        }
+
         setTimeout(() => {
           loginWithDetails(otpTargetEmail, data.user?.fullName || otpTargetName);
           setIsOtpModalOpen(false);
@@ -325,26 +344,33 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         return;
       }
 
-      // Professional registration: send genuine 6-digit confirmation code to email!
+      // Kayıt doğrulama: e-postaya gerçek 6 haneli onay kodu gönderilir
       initiateOtpVerification(email, fullName || email.split("@")[0]);
       return;
     }
 
-    // Login mode
+    // Login mode: Gerçek sunucu tarafı şifre ve kimlik doğrulama kontrolü
     setIsLoading(true);
     try {
-      const { error } = await signIn(email, password);
-      if (error) {
-        // Fallback to verified session
-        loginWithDetails(email, fullName || email.split("@")[0]);
-        setSuccessMessage("Giriş başarılı! Uygulamaya yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/dashboard"), 600);
-      } else {
-        setSuccessMessage("Giriş başarılı! Uygulamaya yönlendiriliyorsunuz...");
-        setTimeout(() => router.push("/dashboard"), 600);
+      const res = await fetch("/api/auth/password-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "login", email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setErrorMessage(data.error || "Girdiğiniz e-posta veya şifre hatalıdır.");
+        setIsLoading(false);
+        return;
       }
+
+      // Doğrulama başarılı: Oturumu başlat ve panoya yönlendir
+      loginWithDetails(data.user.email, data.user.fullName);
+      setSuccessMessage("Giriş başarılı! Uygulamaya yönlendiriliyorsunuz...");
+      setTimeout(() => router.push("/dashboard"), 600);
     } catch (err: any) {
-      setErrorMessage(err.message || "Beklenmeyen bir hata oluştu.");
+      setErrorMessage("Bağlantı hatası: Kimlik doğrulama sunucusuna ulaşılamadı.");
     } finally {
       setIsLoading(false);
     }

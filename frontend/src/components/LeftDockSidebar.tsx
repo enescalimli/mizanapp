@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Sun,
   Moon,
@@ -17,10 +17,27 @@ import {
   LogOut,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
+import { useAuth } from "@/lib/auth/AuthContext";
 
 export const LeftDockSidebar: React.FC = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const { theme, setTheme, isDark } = useTheme();
+  const { signOut } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.error("Çıkış hatası:", err);
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("mizanapp_demo_auth");
+        localStorage.removeItem("mizan_user_session");
+      }
+      router.push("/");
+    }
+  };
 
   const navItems = [
     {
@@ -143,13 +160,14 @@ export const LeftDockSidebar: React.FC = () => {
         </div>
 
         <div className="group relative flex items-center">
-          <Link
-            href="/auth/logout"
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#E03131] hover:bg-red-50/70 dark:hover:bg-red-950/30 transition-all"
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#E03131] hover:bg-red-50/70 dark:hover:bg-red-950/30 transition-all cursor-pointer"
             title="Oturumu Kapat"
           >
             <LogOut size={15} strokeWidth={2} />
-          </Link>
+          </button>
           <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#182542] dark:bg-[#0F172A] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
             Çıkış Yap
           </span>

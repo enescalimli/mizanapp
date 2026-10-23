@@ -119,22 +119,25 @@ export default function LandingPage() {
             </div>
           </Link>
 
-          {/* Menü Linkleri (Masaüstü) */}
+          {/* Menü Linkleri (Masaüstü - Landing Tanıtım ve Önizleme Bölümleri) */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
             {[
-              { label: "626 Tarayıcı", href: "/tarayici" },
-              { label: "Halka Arzlar", href: "/ipo" },
-              { label: "Arındırma & Zekat", href: "/portfolio" },
-              { label: "Fıkhi Standartlar", href: "/rehber" },
+              { label: "626 Tarayıcı", href: "#ozellikler", tab: "TARAYICI" },
+              { label: "Halka Arzlar", href: "#ozellikler", tab: "HALKA_ARZ" },
+              { label: "Arındırma & Zekat", href: "#ozellikler", tab: "ARINDIRMA" },
+              { label: "Fıkhi Standartlar", href: "#standartlar" },
               { label: "SSS", href: "#sss" },
             ].map((item) => (
-              <Link
-                key={item.href}
+              <a
+                key={item.label}
                 href={item.href}
-                className="px-3.5 py-2 rounded-full text-xs xl:text-sm font-semibold text-[#525E75] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5 transition"
+                onClick={() => {
+                  if (item.tab) setActiveFeatureTab(item.tab as any);
+                }}
+                className="px-3.5 py-2 rounded-full text-xs xl:text-sm font-semibold text-[#525E75] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5 transition cursor-pointer"
               >
                 {item.label}
-              </Link>
+              </a>
             ))}
           </nav>
 
