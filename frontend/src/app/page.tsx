@@ -29,6 +29,11 @@ import {
   ChevronRight,
   Calendar,
   Building2,
+  Radio,
+  FileText,
+  Activity,
+  Bot,
+  Bell,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import { StockLogo } from "@/components/StockLogo";
@@ -39,8 +44,8 @@ export default function LandingPage() {
 
   // Active interactive showcase tab
   const [activeFeatureTab, setActiveFeatureTab] = useState<
-    "TARAYICI" | "ARINDIRMA" | "KARNE" | "HALKA_ARZ"
-  >("TARAYICI");
+    "KAP_SPK" | "AI_ASISTAN" | "TARAYICI" | "ARINDIRMA" | "KARNE" | "HALKA_ARZ"
+  >("KAP_SPK");
 
   // Accordion FAQ state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -90,12 +95,12 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#070B14] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200">
       
       {/* =================================================================== */}
       {/* 1. MIDAS-STYLE FROSTED NAVBAR                                       */}
       {/* =================================================================== */}
-      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 dark:bg-[#070B14]/80 border-b border-slate-200/70 dark:border-white/10 transition-colors">
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 dark:bg-[#000000]/85 border-b border-slate-200/70 dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
           
           {/* Logo & Marka */}
@@ -123,6 +128,8 @@ export default function LandingPage() {
           {/* Menü Linkleri (Masaüstü - Landing Tanıtım ve Önizleme Bölümleri) */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
             {[
+              { label: "KAP & SPK", href: "#ozellikler", tab: "KAP_SPK" },
+              { label: "AI Asistan", href: "#ozellikler", tab: "AI_ASISTAN" },
               { label: "626 Tarayıcı", href: "#ozellikler", tab: "TARAYICI" },
               { label: "Halka Arzlar", href: "#ozellikler", tab: "HALKA_ARZ" },
               { label: "Arındırma & Zekat", href: "#ozellikler", tab: "ARINDIRMA" },
@@ -165,7 +172,7 @@ export default function LandingPage() {
             {/* Midas-Style High-Contrast CTA */}
             <Link
               href="/auth/login"
-              className="px-4 sm:px-5 py-2.5 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-[#070B14] text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md shadow-[#182542]/20 dark:shadow-emerald-500/20 active:scale-95 transition-all"
+              className="px-4 sm:px-5 py-2.5 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md shadow-[#182542]/20 dark:shadow-emerald-500/20 active:scale-95 transition-all"
             >
               <span>Uygulamaya Git</span>
               <ArrowRight size={14} strokeWidth={2.5} />
@@ -186,34 +193,34 @@ export default function LandingPage() {
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6 sm:space-y-8">
             
             {/* Top Pill Eyebrow with Beacon */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-[#111726] border border-slate-200/80 dark:border-white/10 shadow-sm text-xs font-bold text-[#182542] dark:text-white">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-sm text-xs font-bold text-[#182542] dark:text-white">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span>Borsa İstanbul 626 Hisse &bull; Canlı DİB Katılım Standartları</span>
+              <span>Canlı KAP &amp; SPK Bildirimleri &bull; Mizan AI &bull; 626 Hisse Taraması</span>
             </div>
 
             {/* Bold Punchy Headline */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#182542] dark:text-white leading-[1.12]">
               Borsa İstanbul’da Helal Yatırımın{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-indigo-600 dark:from-emerald-400 dark:via-teal-300 dark:to-blue-400">
-                Dijital Adresi.
+                Dijital Zekâsı.
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-xl text-[#525E75] dark:text-[#94A3B8] max-w-2xl font-normal leading-relaxed">
-              DİB ve TKBB Danışma Kurulu ilkeleriyle 626 hisseyi canlı tarayın,
-              şirket bilançolarını fıkhi süzgeçten geçirin ve temettü arındırmanızı
-              kuruşu kuruşuna hesaplayın.
+              DİB ve TKBB Danışma Kurulu standartlarıyla 626 hisseyi canlı tarayın,
+              resmi KAP &amp; SPK bültenlerini anlık takip edin, Mizan AI ile icazet danışmanlığı alın ve
+              temettü arındırmanızı kuruşu kuruşuna hesaplayın.
             </p>
 
             {/* Dual CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto pt-2">
               <Link
                 href="/auth/login"
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-[#070B14] text-base font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-[#182542]/25 dark:shadow-emerald-500/25 active:scale-95 transition-all"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black text-base font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-[#182542]/25 dark:shadow-emerald-500/25 active:scale-95 transition-all"
               >
                 <span>Ücretsiz Başla</span>
                 <ArrowRight size={18} strokeWidth={2.4} />
@@ -221,7 +228,7 @@ export default function LandingPage() {
 
               <Link
                 href="/tarayici"
-                className="w-full sm:w-auto px-7 py-4 rounded-full bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-[#161F32] text-[#182542] dark:text-white border border-slate-200/80 dark:border-white/10 text-base font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                className="w-full sm:w-auto px-7 py-4 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-[#151720] text-[#182542] dark:text-white border border-slate-200/80 dark:border-white/10 text-base font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <Search size={16} />
                 <span>626 Hisse Tarayıcısı</span>
@@ -232,11 +239,11 @@ export default function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-6 pt-3 text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8]">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
-                Kredi Kartı Gerekmez
+                Resmi SPK &amp; KAP Akışı
               </span>
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
-                Resmi KAP XBRL Verisi
+                Mizan AI Bilanço Danışmanı
               </span>
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
@@ -254,7 +261,7 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 via-blue-500/10 to-purple-500/20 rounded-[36px] blur-2xl -z-10" />
 
             {/* Main Mockup Bento Container */}
-            <div className="bg-white/90 dark:bg-[#111726]/90 backdrop-blur-2xl rounded-[32px] sm:rounded-[36px] border border-white/90 dark:border-white/10 shadow-[0_30px_90px_rgba(24,37,66,0.12)] dark:shadow-[0_30px_90px_rgba(0,0,0,0.5)] p-4 sm:p-8 space-y-6">
+            <div className="bg-white/90 dark:bg-[#0A0B0E]/95 backdrop-blur-2xl rounded-[32px] sm:rounded-[36px] border border-white/90 dark:border-white/10 shadow-[0_30px_90px_rgba(24,37,66,0.12)] dark:shadow-[0_30px_90px_rgba(0,0,0,0.8)] p-4 sm:p-8 space-y-6">
               
               {/* Mockup Header Bar */}
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
@@ -265,22 +272,22 @@ export default function LandingPage() {
                     <span className="w-3 h-3 rounded-full bg-emerald-400/80 inline-block" />
                   </div>
                   <span className="text-xs font-mono text-[#6E81A0] dark:text-[#94A3B8] font-medium hidden sm:inline">
-                    mizanapp.tr &bull; BIST Katılım Canlı Analiz
+                    mizanapp.tr &bull; Canlı Katılım &amp; Fıkhi Radar Platformu
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    238 Uyumlu Hisse
+                    Canlı BIST &amp; SPK Verisi
                   </span>
                 </div>
               </div>
 
-              {/* Showcase Grid (3 Feature Cards) */}
+              {/* Showcase Grid (3 Premier Feature Cards) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
-                {/* Card 1: BIMAS (Tam Uyumlu Örnek) */}
+                {/* Card 1: 626 Katılım Röntgeni (BIMAS) */}
                 <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-3 hover:border-emerald-500/50 transition">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -317,68 +324,62 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Card 2: AAGYO (Doğru Teşhis & 0.31 PD/DD) */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-3 hover:border-amber-500/50 transition">
+                {/* Card 2: Canlı KAP & SPK Bildirim Akışı (YENİ ÖZELLİK) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-3 hover:border-purple-500/50 transition">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <StockLogo ticker="AAGYO" name="Ağaoğlu Avrasya GYO" size="md" />
+                    <div className="flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 flex items-center justify-center">
+                        <Radio size={14} className="animate-pulse" />
+                      </span>
                       <div>
-                        <span className="text-sm font-extrabold text-[#182542] dark:text-white block font-mono">AAGYO</span>
-                        <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">Ağaoğlu Avrasya GYO</span>
+                        <span className="text-xs font-extrabold text-[#182542] dark:text-white block">KAP &amp; SPK Canlı Akış</span>
+                        <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Resmi Regülasyon Radarı</span>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 text-[10px] font-extrabold">
-                      Gelir Eşik Aşımı
+                    <span className="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 text-[10px] font-extrabold">
+                      Canlı
                     </span>
                   </div>
 
-                  <div className="space-y-1.5 pt-1">
-                    <div className="flex justify-between text-xs font-medium">
-                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Uygunsuz Gelir:</span>
-                      <strong className="text-amber-600 dark:text-amber-400 font-mono">%29,28 (Eşik &gt;%5)</strong>
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#141720] border border-slate-200/60 dark:border-white/10 space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="font-mono font-bold text-purple-600 dark:text-purple-400">REEDR</span>
+                      <span className="text-slate-400 font-mono">14:15</span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-200 dark:bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-amber-500 rounded-full w-[85%]" />
-                    </div>
+                    <p className="text-[11px] font-bold text-[#182542] dark:text-white line-clamp-1">
+                      Pay Piyasasında Devre Kesici Bildirimi
+                    </p>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold block">
+                      ✓ Fıkhi Uygunluk: Etkilenmedi (Uyumlu)
+                    </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/50 dark:border-white/5 text-[11px]">
-                    <div>
-                      <span className="text-[#6E81A0] dark:text-[#94A3B8] block">PD / DD</span>
-                      <strong className="text-emerald-600 dark:text-emerald-400 font-mono font-bold">0,31 (KAP Onaylı)</strong>
-                    </div>
-                    <div>
-                      <span className="text-[#6E81A0] dark:text-[#94A3B8] block">Faizli Borç</span>
-                      <strong className="text-emerald-600 dark:text-emerald-400 font-mono font-bold">%0,00</strong>
-                    </div>
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/50 dark:border-white/5 text-[11px]">
+                    <span className="text-[#6E81A0] dark:text-[#94A3B8]">Resmi SPK Bülteni:</span>
+                    <strong className="text-[#182542] dark:text-white font-mono font-bold">2026/16 Yayında</strong>
                   </div>
                 </div>
 
-                {/* Card 3: Arındırma & Temettü Hesaplayıcı Önizlemesi */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 dark:from-emerald-950/30 dark:to-blue-950/30 border border-emerald-500/30 dark:border-emerald-500/20 space-y-3">
+                {/* Card 3: Mizan AI Katılım Danışmanı (YENİ ÖZELLİK) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-blue-500/5 to-purple-500/10 dark:from-emerald-950/40 dark:to-blue-950/40 border border-emerald-500/30 dark:border-emerald-500/20 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-                      <Coins size={14} />
-                      Otomatik Arındırma
+                      <Sparkles size={14} />
+                      Mizan AI Asistan
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white">
-                      Canlı Hesap
+                      Gemini 3.8
                     </span>
                   </div>
 
-                  <div className="space-y-1">
-                    <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] block">Örnek Temettü Hasılatı:</span>
-                    <strong className="text-lg font-black text-[#182542] dark:text-white font-mono block">₺100.000</strong>
-                  </div>
-
-                  <div className="p-2.5 rounded-xl bg-white/80 dark:bg-[#0B0F17]/80 border border-emerald-500/20 space-y-1">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-[#525E75] dark:text-[#94A3B8]">Helal Net Kazanç:</span>
-                      <span className="text-emerald-700 dark:text-emerald-400 font-mono">₺99.640,00</span>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="p-2 rounded-xl bg-white/90 dark:bg-[#141720] border border-slate-200/50 dark:border-white/10 text-[#182542] dark:text-white text-[11px]">
+                      <span className="text-slate-400 text-[10px] block font-semibold">Soru:</span>
+                      "THYAO bu çeyrek katılım endeksine girer mi?"
                     </div>
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-[#525E75] dark:text-[#94A3B8]">Arındırılacak Pay:</span>
-                      <span className="text-rose-600 dark:text-rose-400 font-mono">₺360,00 (%0,36)</span>
+                    <div className="p-2 rounded-xl bg-emerald-500/15 dark:bg-emerald-950/60 border border-emerald-500/30 text-emerald-900 dark:text-emerald-200 text-[11px] leading-snug">
+                      <span className="text-emerald-600 dark:text-emerald-400 text-[10px] block font-bold">Mizan AI:</span>
+                      Faizli borç rasyosu %34,2 (tavan %33). 1Ç26 KAFİF raporunda borç azaltılmazsa kapsam dışı kalmaya devam eder.
                     </div>
                   </div>
                 </div>
@@ -392,7 +393,7 @@ export default function LandingPage() {
       {/* =================================================================== */}
       {/* 3. INFINITE LIVE TICKER RIBBON (Midas-style market marquee)         */}
       {/* =================================================================== */}
-      <div className="border-y border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-[#0B0F17]/60 backdrop-blur-md overflow-hidden py-3">
+      <div className="border-y border-slate-200/70 dark:border-white/10 bg-white/60 dark:bg-[#000000]/80 backdrop-blur-md overflow-hidden py-3">
         <div className="flex items-center gap-8 animate-marquee whitespace-nowrap">
           {ribbonStocks.map((s, idx) => (
             <Link
@@ -433,7 +434,7 @@ export default function LandingPage() {
       </div>
 
       {/* =================================================================== */}
-      {/* 4. VALUE PROPOSITION: NEDEN MİZAN? (Midas-style 3-Column Bento)      */}
+      {/* 4. VALUE PROPOSITION: NEDEN MİZAN? (Midas-style Modern Grid)        */}
       {/* =================================================================== */}
       <section className="py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-14">
@@ -445,15 +446,41 @@ export default function LandingPage() {
           </h2>
           <p className="text-sm sm:text-base text-[#525E75] dark:text-[#94A3B8]">
             Sıradan borsa uygulamaları sadece fiyatı gösterir. Mizan ise hissenin
-            fıkhi meşruiyetini, finansal sağlamlığını ve arındırma payını kuruşu kuruşuna hesaplar.
+            fıkhi meşruiyetini, KAP &amp; SPK resmi bildirimlerini, yapay zekâ danışmanlığını ve arındırma payını kuruşu kuruşuna sunar.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
-          {/* Card 1 */}
-          <div className="p-7 rounded-[28px] bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+          {/* Card 1: Canlı KAP & SPK Bildirim Akışı */}
+          <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 flex items-center justify-center">
+              <Radio size={24} className="animate-pulse" />
+            </div>
+            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+              Canlı KAP &amp; SPK Bildirim Akışı
+            </h3>
+            <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
+              Devre kesiciler, sermaye artırımları, temettü kararları ve haftalık SPK bültenleri anlık olarak ekranınıza düşer. Fıkhi uygunluğa etkisini tek tıkla görün.
+            </p>
+          </div>
+
+          {/* Card 2: Mizan AI Katılım Danışmanı */}
+          <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
+              <Sparkles size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+              Mizan AI Fıkhi &amp; Finansal Asistan
+            </h3>
+            <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
+              Gemini 3.8 Flash tabanlı akıllı asistan; DİB ve TKBB fetvalarıyla eğitilmiş olup bilanço dipnotlarını analiz eder ve sesli/yazılı sorularınızı yanıtlar.
+            </p>
+          </div>
+
+          {/* Card 3: 626 Hisse 7/24 Radar */}
+          <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 flex items-center justify-center">
               <Scale size={24} />
             </div>
             <h3 className="text-lg font-bold text-[#182542] dark:text-white">
@@ -461,12 +488,12 @@ export default function LandingPage() {
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Borsa İstanbul’daki tüm hisseleri DİB Din İşleri Yüksek Kurulu kriterlerine göre anlık tarayın.
-              Faizli borç (%33), faizli nakit (%33) ve gayrimeşru gelir (%5) sınırları aşıldığında anında haberdar olun.
+              Faizli borç (%33), faizli nakit (%33) ve uygunsuz gelir (%5) sınırları anında denetlenir.
             </p>
           </div>
 
-          {/* Card 2 */}
-          <div className="p-7 rounded-[28px] bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+          {/* Card 4: Kuruşu Kuruşuna Arındırma Motoru */}
+          <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center">
               <Coins size={24} />
             </div>
@@ -474,22 +501,35 @@ export default function LandingPage() {
               Kuruşu Kuruşuna Arındırma Motoru
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
-              Hangi şirketten ne kadar temettü veya sermaye kazancı elde ettiniz? KAP dipnotlarına göre
-              şirketin faizli nema payını kuruşu kuruşuna hesaplayın ve arındırma tutarını hayır kurumlarına aktarın.
+              Şirketlerin açıkladığı temettü veya alım-satım kârlarından arındırılması gereken gayrimeşru nema payını
+              KAP dipnotlarına göre kuruşu kuruşuna hesaplayın ve arındırma defterinizde saklayın.
             </p>
           </div>
 
-          {/* Card 3 */}
-          <div className="p-7 rounded-[28px] bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 flex items-center justify-center">
+          {/* Card 5: Fintables Düzeyinde Şirket Karnesi */}
+          <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center">
               <BarChart3 size={24} />
             </div>
             <h3 className="text-lg font-bold text-[#182542] dark:text-white">
-              Fintables Düzeyinde Şirket Karnesi
+              24 Kriterli Şirket Karnesi
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Sadece helal mi değil mi sorusuyla yetinmeyin. 24 puanlık şirket karnesi, F/K, PD/DD,
-              FD/FAVÖK ve DuPont kârlılık modeli ile hem fıkhen hem finansal olarak en güçlü şirketleri bulun.
+              FD/FAVÖK ve DuPont kârlılık modeli ile hem fıkhen hem finansal olarak en güçlü şirketleri keşfedin.
+            </p>
+          </div>
+
+          {/* Card 6: Halka Arz Radarı */}
+          <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center">
+              <Calendar size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+              Halka Arz (XHARZ) Takvimi
+            </h3>
+            <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
+              Yeni halka arzlarda SPK onaylı izahname ve KAP KAFİF raporunu anında inceleyin; katılım uygunluğunu ve kişi başı tahmini lot dağıtımını anında simüle edin.
             </p>
           </div>
 
@@ -499,7 +539,7 @@ export default function LandingPage() {
       {/* =================================================================== */}
       {/* 5. INTERACTIVE FEATURE DEEP-DIVE (Midas Product Showcase)           */}
       {/* =================================================================== */}
-      <section className="py-16 sm:py-24 bg-slate-100/60 dark:bg-[#0B0F17]/60 border-y border-slate-200/70 dark:border-white/10">
+      <section id="ozellikler" className="py-16 sm:py-24 bg-slate-100/60 dark:bg-[#000000] border-y border-slate-200/70 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -513,35 +553,90 @@ export default function LandingPage() {
             </div>
 
             {/* Feature Tab Selector */}
-            <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-[#111726] rounded-full border border-slate-200/80 dark:border-white/10 shadow-sm overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-[#0E1015] rounded-full border border-slate-200/80 dark:border-white/10 shadow-sm overflow-x-auto scrollbar-none">
               {[
+                { id: "KAP_SPK", label: "KAP & SPK Akışı", isNew: true },
+                { id: "AI_ASISTAN", label: "Mizan AI Asistan", isNew: true },
                 { id: "TARAYICI", label: "626 Tarayıcı" },
-                { id: "ARINDIRMA", label: "Arındırma" },
+                { id: "ARINDIRMA", label: "Arındırma & Zekât" },
                 { id: "KARNE", label: "Şirket Karnesi" },
                 { id: "HALKA_ARZ", label: "Halka Arz" },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveFeatureTab(tab.id as any)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
                     activeFeatureTab === tab.id
-                      ? "bg-[#182542] dark:bg-emerald-500 text-white dark:text-[#070B14] shadow-xs"
+                      ? "bg-[#182542] dark:bg-emerald-500 text-white dark:text-black shadow-xs"
                       : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
                   }`}
                 >
-                  {tab.label}
+                  <span>{tab.label}</span>
+                  {tab.isNew && (
+                    <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full ${
+                      activeFeatureTab === tab.id
+                        ? "bg-white/20 dark:bg-black/20 text-white dark:text-black"
+                        : "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400"
+                    }`}>
+                      YENİ
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Interactive Feature Display */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white dark:bg-[#111726] rounded-[32px] border border-slate-200/80 dark:border-white/10 p-6 sm:p-10 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white dark:bg-[#0A0B0E] rounded-[32px] border border-slate-200/80 dark:border-white/10 p-6 sm:p-10 shadow-sm">
             
             <div className="lg:col-span-5 space-y-5">
-              {activeFeatureTab === "TARAYICI" && (
+              {activeFeatureTab === "KAP_SPK" && (
+                <>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 text-xs font-bold">
+                    <Radio size={13} className="animate-pulse" />
+                    <span>Canlı KAP &amp; SPK Bildirim Motoru</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                    Devre Kesici, Sermaye Artırımı ve SPK Bültenleri Anlık Ekranınızda.
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
+                    Kamuyu Aydınlatma Platformu (KAP) ve SPK resmi verilerini 7/24 kesintisiz tarar. Borsa devre kesicileri, temettü kararları, sermaye artırımları ve KAFİF uygunluk formları yayımlandığı anda fıkhi etki teşhisiyle önünüze gelir.
+                  </p>
+                  <Link
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-purple-600 dark:text-purple-400 hover:underline pt-2"
+                  >
+                    <span>Canlı Bildirimleri Panoda İncele</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </>
+              )}
+
+              {activeFeatureTab === "AI_ASISTAN" && (
                 <>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
+                    <Sparkles size={13} />
+                    <span>Gemini 3.8 Flash Fıkhi Danışman</span>
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                    Akıllı İcazet Denetimi ve Bilanço Dipnot Danışmanı.
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
+                    DİB Din İşleri Yüksek Kurulu ve TKBB standartlarına hâkim yapay zekâ. Hisselerin bilanço dipnotlarındaki faizli nema ve haram faaliyet risklerini tespit eder, sesli veya yazılı sorularınıza anında yanıt verir.
+                  </p>
+                  <Link
+                    href="/asistan"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline pt-2"
+                  >
+                    <span>Mizan AI ile Şimdi Konuş</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </>
+              )}
+
+              {activeFeatureTab === "TARAYICI" && (
+                <>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-xs font-bold">
                     <Search size={13} />
                     <span>Canlı BIST 626 Tarayıcısı</span>
                   </div>
@@ -587,7 +682,7 @@ export default function LandingPage() {
 
               {activeFeatureTab === "KARNE" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 text-xs font-bold">
                     <Award size={13} />
                     <span>24 Kriterli Şirket Karnesi</span>
                   </div>
@@ -632,64 +727,257 @@ export default function LandingPage() {
               )}
             </div>
 
-            {/* Right Screen Graphic */}
-            <div className="lg:col-span-7 bg-slate-50 dark:bg-[#070B14] rounded-2xl p-4 sm:p-6 border border-slate-200/80 dark:border-white/10 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
-                <span className="text-xs font-bold text-[#182542] dark:text-white">
-                  Mizan Finansal Radar Önizlemesi
-                </span>
-                <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8]">
-                  Canlı Senkronize
-                </span>
-              </div>
-
-              {/* Sample Tabular Data */}
-              <div className="space-y-2 text-xs font-medium">
-                {[
-                  { ticker: "BIMAS", sector: "Perakende", pe: "14.2", pb: "3.10", evEbitda: "6.8", status: "COMPLIANT", score: "22/24" },
-                  { ticker: "THYAO", sector: "Ulaştırma", pe: "5.4", pb: "0.85", evEbitda: "4.2", status: "NON_COMPLIANT", score: "12/24" },
-                  { ticker: "AAGYO", sector: "GYO", pe: "A/D", pb: "0.31", evEbitda: "A/D", status: "NON_COMPLIANT", score: "14/24" },
-                  { ticker: "BETAE", sector: "Elektrik", pe: "25.6", pb: "3.24", evEbitda: "19.9", status: "COMPLIANT", score: "19/24" },
-                ].map((row) => (
-                  <div
-                    key={row.ticker}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-[#111726] border border-slate-200/50 dark:border-white/5"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <StockLogo ticker={row.ticker} name={row.ticker} size="sm" />
-                      <div>
-                        <span className="font-mono font-bold text-[#182542] dark:text-white block">{row.ticker}</span>
-                        <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">{row.sector}</span>
-                      </div>
+            {/* Right Screen Graphic (Dynamic by Tab) */}
+            <div className="lg:col-span-7 bg-slate-50 dark:bg-[#0E1015] rounded-2xl p-4 sm:p-6 border border-slate-200/80 dark:border-white/10 space-y-4">
+              
+              {activeFeatureTab === "KAP_SPK" && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Radio size={14} className="text-purple-600 dark:text-purple-400 animate-pulse" />
+                      <span className="text-xs font-bold text-[#182542] dark:text-white">
+                        Resmi KAP &amp; SPK Canlı Akış Önizlemesi
+                      </span>
                     </div>
-
-                    <div className="hidden sm:flex items-center gap-4 text-center font-mono text-[11px]">
-                      <div>
-                        <span className="text-[#6E81A0] dark:text-[#94A3B8] block text-[9px]">F/K</span>
-                        <strong>{row.pe}</strong>
-                      </div>
-                      <div>
-                        <span className="text-[#6E81A0] dark:text-[#94A3B8] block text-[9px]">PD/DD</span>
-                        <strong className="text-emerald-600 dark:text-emerald-400">{row.pb}</strong>
-                      </div>
-                      <div>
-                        <span className="text-[#6E81A0] dark:text-[#94A3B8] block text-[9px]">Karne</span>
-                        <strong>{row.score}</strong>
-                      </div>
-                    </div>
-
-                    <span
-                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
-                        row.status === "COMPLIANT"
-                          ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
-                          : "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300"
-                      }`}
-                    >
-                      {row.status === "COMPLIANT" ? "Uyumlu" : "Katılım Dışı"}
+                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                      Canlı 7/24
                     </span>
                   </div>
-                ))}
-              </div>
+
+                  {/* Disclosure Item 1 */}
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-[#141720] border border-slate-200/60 dark:border-white/10 space-y-1.5 hover:border-purple-500/40 transition">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300">
+                        SPK BÜLTENİ
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">18:45</span>
+                    </div>
+                    <h4 className="text-xs font-extrabold text-[#182542] dark:text-white">
+                      SPK Haftalık Bülteni 2026/16 Yayımlandı
+                    </h4>
+                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      Yeni izahname onayları, bedelsiz sermaye artırımları ve idari para cezaları kararları kurul tarafından ilan edildi.
+                    </p>
+                  </div>
+
+                  {/* Disclosure Item 2 */}
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-[#141720] border border-slate-200/60 dark:border-white/10 space-y-1.5 hover:border-purple-500/40 transition">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+                        KAP • DEVRE KESİCİ
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">14:15</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <StockLogo ticker="REEDR" name="Reeder Teknoloji" size="sm" />
+                      <h4 className="text-xs font-extrabold text-[#182542] dark:text-white">
+                        REEDR Pay Piyasasında Devre Kesici Tetiklendi
+                      </h4>
+                    </div>
+                    <div className="flex items-center justify-between pt-1 text-[10px]">
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ Fıkhi Uygunluk: Etkilenmedi (XKTUM Kapsamında)</span>
+                      <span className="font-mono text-slate-400">BIST 100</span>
+                    </div>
+                  </div>
+
+                  {/* Disclosure Item 3 */}
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-[#141720] border border-slate-200/60 dark:border-white/10 space-y-1.5 hover:border-purple-500/40 transition">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">
+                        KAP • KAFİF FORMU
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">11:30</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <StockLogo ticker="BIMAS" name="BİM" size="sm" />
+                      <h4 className="text-xs font-extrabold text-[#182542] dark:text-white">
+                        BIMAS Katılım Finansı İlkeleri Bilgi Formu Beyanı
+                      </h4>
+                    </div>
+                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
+                      Faizli borç %1,32 • Faizli nakit %2,10 • Uygunsuz gelir %0,23 (Tam Uyumlu)
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {activeFeatureTab === "AI_ASISTAN" && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Sparkles size={14} className="text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-xs font-bold text-[#182542] dark:text-white">
+                        Mizan AI Asistan Canlı Sorgulama
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold">
+                      Gemini 3.8 Flash
+                    </span>
+                  </div>
+
+                  {/* Chat Dialog 1 */}
+                  <div className="flex justify-end">
+                    <div className="max-w-[85%] p-3 rounded-2xl rounded-tr-xs bg-[#182542] text-white text-xs space-y-1 shadow-xs">
+                      <span className="text-[9px] text-slate-300 block font-mono">Yatırımcı Sorusu:</span>
+                      <p>Beton ve çimento hisseleri katılım endeksine uygun mudur, arındırma gerekir mi?</p>
+                    </div>
+                  </div>
+
+                  {/* AI Response 1 */}
+                  <div className="flex justify-start">
+                    <div className="max-w-[92%] p-3.5 rounded-2xl rounded-tl-xs bg-white dark:bg-[#141720] border border-emerald-500/20 text-[#182542] dark:text-white text-xs space-y-2 shadow-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="px-1.5 py-0.5 rounded-md bg-emerald-500 text-black font-mono font-black text-[9px]">Mizan AI</span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">DİB &amp; TKBB Metodolojisi</span>
+                      </div>
+                      <p className="text-[11px] leading-relaxed text-[#525E75] dark:text-[#CBD5E1]">
+                        Çimento ve hazır beton imalatı fıkhen <strong>helal ve meşru</strong> bir faaliyet alanıdır. Ancak hissenin Katılım Endeksi’ne girebilmesi için konvansiyonel faizli banka borçlarının toplam aktiflere oranının <strong>&lt;%33</strong> olması şarttır.
+                      </p>
+                      <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/30 text-[10px] text-emerald-800 dark:text-emerald-300">
+                        Örneğin BETAE sıfır faizli borçla (%0) tam uygundur. Temettü arındırma payı ise KAFİF nema oranına göre hesaplanır.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {(activeFeatureTab === "TARAYICI" || activeFeatureTab === "KARNE") && (
+                <>
+                  <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
+                    <span className="text-xs font-bold text-[#182542] dark:text-white">
+                      Mizan Finansal Radar Önizlemesi
+                    </span>
+                    <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8]">
+                      Canlı Senkronize
+                    </span>
+                  </div>
+
+                  {/* Tabular Data */}
+                  <div className="space-y-2 text-xs font-medium">
+                    {[
+                      { ticker: "BIMAS", sector: "Perakende", pe: "14.2", pb: "3.10", evEbitda: "6.8", status: "COMPLIANT", score: "22/24" },
+                      { ticker: "THYAO", sector: "Ulaştırma", pe: "5.4", pb: "0.85", evEbitda: "4.2", status: "NON_COMPLIANT", score: "12/24" },
+                      { ticker: "AAGYO", sector: "GYO", pe: "A/D", pb: "0.31", evEbitda: "A/D", status: "NON_COMPLIANT", score: "14/24" },
+                      { ticker: "BETAE", sector: "Elektrik", pe: "25.6", pb: "3.24", evEbitda: "19.9", status: "COMPLIANT", score: "19/24" },
+                    ].map((row) => (
+                      <div
+                        key={row.ticker}
+                        className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-[#141720] border border-slate-200/50 dark:border-white/5"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <StockLogo ticker={row.ticker} name={row.ticker} size="sm" />
+                          <div>
+                            <span className="font-mono font-bold text-[#182542] dark:text-white block">{row.ticker}</span>
+                            <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">{row.sector}</span>
+                          </div>
+                        </div>
+
+                        <div className="hidden sm:flex items-center gap-4 text-center font-mono text-[11px]">
+                          <div>
+                            <span className="text-[#6E81A0] dark:text-[#94A3B8] block text-[9px]">F/K</span>
+                            <strong>{row.pe}</strong>
+                          </div>
+                          <div>
+                            <span className="text-[#6E81A0] dark:text-[#94A3B8] block text-[9px]">PD/DD</span>
+                            <strong className="text-emerald-600 dark:text-emerald-400">{row.pb}</strong>
+                          </div>
+                          <div>
+                            <span className="text-[#6E81A0] dark:text-[#94A3B8] block text-[9px]">Karne</span>
+                            <strong>{row.score}</strong>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                            row.status === "COMPLIANT"
+                              ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300"
+                              : "bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300"
+                          }`}
+                        >
+                          {row.status === "COMPLIANT" ? "Uyumlu" : "Katılım Dışı"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {activeFeatureTab === "ARINDIRMA" && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
+                    <span className="text-xs font-bold text-[#182542] dark:text-white">
+                      Kuruşu Kuruşuna Tathir &amp; Arındırma Simülatörü
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
+                      Canlı Hesaplama
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white dark:bg-[#141720] border border-slate-200/70 dark:border-white/10 space-y-3">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Toplam Portföy Temettü Hasılatı:</span>
+                      <strong className="font-mono text-base font-black text-[#182542] dark:text-white">₺100.000,00</strong>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-2 text-xs">
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-emerald-800 dark:text-emerald-300">Helal Net Yatırımcı Payı:</span>
+                        <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">₺99.640,00</span>
+                      </div>
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-rose-700 dark:text-rose-300">Arındırılacak Nema Tutarı:</span>
+                        <span className="font-mono font-bold text-rose-600 dark:text-rose-400">₺360,00 (%0,36)</span>
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
+                      * Arındırma tutarı şirketin ticari mevduatından kaynaklanan cüzi faiz geliridir; yatırımcı mülkiyet iddia etmeksizin hayır kuruluşlarına aktarmalıdır.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeFeatureTab === "HALKA_ARZ" && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
+                    <span className="text-xs font-bold text-[#182542] dark:text-white">
+                      Halka Arz Lot Dağıtım Simülasyonu
+                    </span>
+                    <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold">
+                      XHARZ Radarı
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white dark:bg-[#141720] border border-slate-200/70 dark:border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-xs font-bold text-[#182542] dark:text-white block font-mono">BETAE</span>
+                        <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">Beta Enerji ve Teknoloji A.Ş.</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
+                        Katılım Uyumlu
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center text-xs pt-1 border-t border-slate-200/50 dark:border-white/5">
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-white/5">
+                        <span className="text-[10px] text-slate-400 block">1.5M Katılımcı</span>
+                        <strong className="font-mono text-[#182542] dark:text-white">~35 Lot (₺1.645)</strong>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-white/5">
+                        <span className="text-[10px] text-slate-400 block">2.0M Katılımcı</span>
+                        <strong className="font-mono text-[#182542] dark:text-white">~26 Lot (₺1.222)</strong>
+                      </div>
+                      <div className="p-2 rounded-lg bg-slate-50 dark:bg-white/5">
+                        <span className="text-[10px] text-slate-400 block">2.5M Katılımcı</span>
+                        <strong className="font-mono text-[#182542] dark:text-white">~21 Lot (₺987)</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
 
           </div>
@@ -716,7 +1004,7 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono block">≤ %33,00</span>
             <h4 className="text-sm font-bold text-[#182542] dark:text-white">Faizli Borç Oranı</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -724,7 +1012,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono block">≤ %33,00</span>
             <h4 className="text-sm font-bold text-[#182542] dark:text-white">Faizli Nakit Varlıklar</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -732,7 +1020,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-purple-600 dark:text-purple-400 font-mono block">≤ %5,00</span>
             <h4 className="text-sm font-bold text-[#182542] dark:text-white">Uygunsuz Gelir Limiti</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -740,7 +1028,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/70 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono block">0 Tolerans</span>
             <h4 className="text-sm font-bold text-[#182542] dark:text-white">Haram Faaliyetler</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -754,7 +1042,7 @@ export default function LandingPage() {
       {/* =================================================================== */}
       {/* 7. SIKÇA SORULAN SORULAR (Accordion FAQ)                           */}
       {/* =================================================================== */}
-      <section id="sss" className="py-20 bg-slate-100/60 dark:bg-[#0B0F17]/60 border-y border-slate-200/70 dark:border-white/10">
+      <section id="sss" className="py-20 bg-slate-100/60 dark:bg-[#000000] border-y border-slate-200/70 dark:border-white/10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           <div className="text-center space-y-3">
@@ -772,7 +1060,7 @@ export default function LandingPage() {
               return (
                 <div
                   key={idx}
-                  className="rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/80 dark:border-white/10 overflow-hidden transition shadow-2xs"
+                  className="rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 overflow-hidden transition shadow-2xs"
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
@@ -814,14 +1102,14 @@ export default function LandingPage() {
               Borsa İstanbul’da Helal Birikim Yapmaya Bugün Başlayın.
             </h2>
             <p className="text-sm sm:text-base text-slate-300">
-              626 hisseyi inceleyin, portföyünüzün fıkhi arındırma payını kuruşu kuruşuna öğrenin ve bilinçli yatırımcı olun.
+              626 hisseyi inceleyin, canlı SPK &amp; KAP bildirimlerini anında takip edin ve fıkhi arındırma payınızı kuruşu kuruşuna öğrenin.
             </p>
           </div>
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-[#070B14] font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 active:scale-95 transition-all"
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 active:scale-95 transition-all"
             >
               <span>Uygulamayı Aç — Ücretsiz</span>
               <ArrowRight size={18} strokeWidth={2.4} />
@@ -846,7 +1134,7 @@ export default function LandingPage() {
       {/* =================================================================== */}
       {/* 9. COMPREHENSIVE MIDAS-STYLE FOOTER                                 */}
       {/* =================================================================== */}
-      <footer className="border-t border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#070B14] text-xs text-[#525E75] dark:text-[#94A3B8] transition-colors">
+      <footer className="border-t border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#000000] text-xs text-[#525E75] dark:text-[#94A3B8] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
           
           {/* Top Row: Brand & Multi-column sitemap */}

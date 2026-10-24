@@ -94,7 +94,7 @@ export const TradingViewWidget: React.FC<TradingViewWidgetProps> = memo(
     }, [formattedSymbol, mode, height, interval, themeName]);
 
     return (
-      <div className="w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-[#161F32]/80 backdrop-blur-md shadow-xs">
+      <div className="w-full overflow-hidden rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-md shadow-xs">
         <div
           ref={containerRef}
           className="tradingview-widget-container"

@@ -166,7 +166,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0E1015] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Calendar size={18} />
                   </div>
                   <div>
@@ -187,7 +187,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0E1015] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Calculator size={18} />
                   </div>
                   <div>
@@ -208,7 +208,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0E1015] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Briefcase size={18} />
                   </div>
                   <div>
@@ -229,7 +229,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#161F32] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0E1015] border border-[#E2E8F0] dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <BookOpen size={18} />
                   </div>
                   <div>
@@ -303,7 +303,7 @@ export const FloatingBottomBar: React.FC = () => {
       {/* V14 FLOATING MOBILE BAR                                             */}
       {/* =================================================================== */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 select-none md:hidden w-[94%] max-w-sm">
-        <div className="flex items-center justify-between bg-white/95 dark:bg-[#161F32]/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-full px-3 py-2 shadow-xl ring-1 ring-black/5 transition-all duration-300">
+        <div className="flex items-center justify-between bg-white/95 dark:bg-[#0E1015]/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-full px-3 py-2 shadow-xl ring-1 ring-black/5 transition-all duration-300">
           
           {/* 1. Ana Sayfa */}
           <Link
@@ -355,7 +355,7 @@ export const FloatingBottomBar: React.FC = () => {
               type="button"
               onClick={() => setQuickActionOpen((prev) => !prev)}
               aria-label="Hızlı İşlemler"
-              className={`w-12 h-12 -mt-6 rounded-full bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center shadow-lg shadow-[#182542]/30 border-4 border-[#EEF0F4] dark:border-[#0B0F17] transition-all duration-200 hover:scale-105 active:scale-95 ${
+              className={`w-12 h-12 -mt-6 rounded-full bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center shadow-lg shadow-[#182542]/30 border-4 border-[#EEF0F4] dark:border-[#000000] transition-all duration-200 hover:scale-105 active:scale-95 ${
                 quickActionOpen ? "rotate-45" : ""
               }`}
             >

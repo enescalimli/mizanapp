@@ -138,7 +138,7 @@ export default function DashboardPage() {
           {/* =============================================================== */}
           {/* KOLON 1: TOPLAM PORTFÖY BAKİYESİ (lg:col-span-4)                 */}
           {/* =============================================================== */}
-          <div className="lg:col-span-4 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-5 transition-colors">
+          <div className="lg:col-span-4 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-5 transition-colors">
             
             {/* Üst Satır: Başlık + Para Birimi Değiştirici */}
             <div>
@@ -246,7 +246,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-4 grid grid-cols-2 gap-3 sm:gap-4">
             
             {/* KART 1: PORTFÖY GETİRİSİ (Lacivert Çeyrek Daire Köşe Dolgusu) */}
-            <div className="relative overflow-hidden bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
+            <div className="relative overflow-hidden bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               {/* Orijinal Lacivert İmza Köşe Vurgusu */}
               <div className="absolute -top-1 -left-1 w-24 h-24 rounded-br-[42px] bg-gradient-to-br from-[#182542] via-[#24375d] to-[#273869] p-3 text-white flex flex-col justify-start pointer-events-none shadow-xs">
                 <span className="text-[11px] font-bold leading-tight">
@@ -268,7 +268,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 2: ARINDIRMA YÜKÜ (Terazi) */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Arındırma Yükü
@@ -290,7 +290,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 3: YILLIK TEMETTÜ GELİRİ */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Temettü Geliri
@@ -312,7 +312,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 4: KATILIM ENDEKSİ SKORU */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between min-h-[150px] sm:min-h-[160px] group transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Katılım Uyumu
@@ -338,7 +338,7 @@ export default function DashboardPage() {
           {/* =============================================================== */}
           {/* KOLON 3: CANLI KAP BİLDİRİMLERİ AKIŞI (lg:col-span-4)            */}
           {/* =============================================================== */}
-          <div className="lg:col-span-4 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
+          <div className="lg:col-span-4 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
             <div className="flex items-center justify-between">
               <div>
@@ -458,7 +458,7 @@ export default function DashboardPage() {
           {/* =============================================================== */}
           {/* SOL: CANLI BİST KAP & SPK BİLDİRİM AKIŞI (lg:col-span-8)         */}
           {/* =============================================================== */}
-          <div className="lg:col-span-8 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
+          <div className="lg:col-span-8 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -661,7 +661,7 @@ export default function DashboardPage() {
           {/* =============================================================== */}
           {/* SAĞ: CANLI SPK BÜLTENLERİ & KURUL KARARLARI (lg:col-span-4)      */}
           {/* =============================================================== */}
-          <div className="lg:col-span-4 bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
+          <div className="lg:col-span-4 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-4 transition-colors">
             
             <div className="space-y-1">
               <div className="flex items-center justify-between">

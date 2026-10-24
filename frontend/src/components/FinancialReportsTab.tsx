@@ -175,7 +175,7 @@ export function FinancialReportsTab({
       {/* =================================================================== */}
       {/* 1. ÜST SEÇİM VE KONTROL PANELİ                                      */}
       {/* =================================================================== */}
-      <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
         
         {/* Başlık & İndir */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EDF1F7] dark:border-white/10 pb-3">
@@ -325,7 +325,7 @@ export function FinancialReportsTab({
       {/* 2. GÖRÜNÜM A: ÇOK DÖNEMLİ TABLOLAR (Bilanço, Gelir, Nakit, KAFİF)   */}
       {/* =================================================================== */}
       {statementType !== "DUPONT" && (
-        <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] overflow-hidden transition-colors">
+        <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
@@ -472,7 +472,7 @@ export function FinancialReportsTab({
       {/* =================================================================== */}
       {statementType === "DUPONT" && activeDupont && (
         <div className="space-y-6">
-          <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#EDF1F7] dark:border-white/10 pb-4">
               <div className="space-y-1">
                 <h3 className="text-base font-extrabold text-[#182542] dark:text-white flex items-center gap-2">

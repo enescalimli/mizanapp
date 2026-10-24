@@ -201,7 +201,7 @@ export default function SettingsPage() {
         {/* =================================================================== */}
         {/* HEADER: Apple Frosted Hero & Pro Membership Badge                   */}
         {/* =================================================================== */}
-        <div className="bg-white/70 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+        <div className="bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#182542]/10 dark:border-white/10 pb-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-bold">
               <ShieldCheck size={14} />
@@ -274,7 +274,7 @@ export default function SettingsPage() {
                 className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition shrink-0 ${
                   isActive
                     ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                    : "bg-white/80 dark:bg-[#161F32] hover:bg-white dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10 shadow-2xs"
+                    : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10 shadow-2xs"
                 }`}
               >
                 <Icon size={14} />
@@ -288,7 +288,7 @@ export default function SettingsPage() {
         {/* TAB 1: PROFİL & ÜYELİK (Musaffa & Fintables Stili)                  */}
         {/* =================================================================== */}
         {activeTab === "PROFIL" && (
-          <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div className="flex items-center gap-3 border-b border-[#EDF1F7] dark:border-white/10 pb-4">
               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center font-bold text-sm shadow-xs">
                 {settings.fullName.slice(0, 2).toUpperCase()}
@@ -345,9 +345,9 @@ export default function SettingsPage() {
                   onChange={(e) => setSettings({ ...settings, investorLevel: e.target.value as any })}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
                 >
-                  <option value="BASLANGIC" className="dark:bg-[#161F32]">Başlangıç (BIST Katılım Kriterlerini Yeni Öğreniyor)</option>
-                  <option value="ORTA" className="dark:bg-[#161F32]">Orta Düzey (Düzenli Halka Arz ve Hisse Yatırımcısı)</option>
-                  <option value="ILERI" className="dark:bg-[#161F32]">İleri Düzey (Kapsamlı Bilanço &amp; Arındırma Uzmanı)</option>
+                  <option value="BASLANGIC" className="dark:bg-[#0E1015]">Başlangıç (BIST Katılım Kriterlerini Yeni Öğreniyor)</option>
+                  <option value="ORTA" className="dark:bg-[#0E1015]">Orta Düzey (Düzenli Halka Arz ve Hisse Yatırımcısı)</option>
+                  <option value="ILERI" className="dark:bg-[#0E1015]">İleri Düzey (Kapsamlı Bilanço &amp; Arındırma Uzmanı)</option>
                 </select>
               </div>
             </div>
@@ -461,7 +461,7 @@ export default function SettingsPage() {
                 {/* 2. MİZAN PRO */}
                 <div className={`p-5 rounded-2xl border transition flex flex-col justify-between space-y-4 relative ${
                   subscriptionPlan === "PRO"
-                    ? "bg-white dark:bg-[#161F32] border-amber-500 shadow-lg ring-2 ring-amber-500/20"
+                    ? "bg-white dark:bg-[#0E1015] border-amber-500 shadow-lg ring-2 ring-amber-500/20"
                     : "bg-white dark:bg-white/5 border-slate-200/80 dark:border-white/10 hover:border-amber-400"
                 }`}>
                   <div className="space-y-3">
@@ -652,7 +652,7 @@ export default function SettingsPage() {
         {/* TAB 2: FIKHİ STANDARTLAR & İCAZET (Musaffa & Zoya Inspired)        */}
         {/* =================================================================== */}
         {activeTab === "FIKIH" && (
-          <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div>
               <h3 className="text-base font-bold text-[#182542] dark:text-white">Birincil Fıkhi Standart Tercihi</h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">
@@ -814,7 +814,7 @@ export default function SettingsPage() {
         {/* TAB 3: PİYASA & CANLI VERİ (Fintables Stili)                        */}
         {/* =================================================================== */}
         {activeTab === "PIYASA" && (
-          <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div>
               <h3 className="text-base font-bold text-[#182542] dark:text-white">Piyasa Veri Motoru &amp; Arayüz</h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">
@@ -832,10 +832,10 @@ export default function SettingsPage() {
                   onChange={(e) => setSettings({ ...settings, liveRefreshInterval: Number(e.target.value) })}
                   className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
                 >
-                  <option value={15} className="dark:bg-[#161F32]">15 Saniyede Bir (Ultra Hızlı / Fintables Modu)</option>
-                  <option value={30} className="dark:bg-[#161F32]">30 Saniyede Bir (Dengeli / Önerilen)</option>
-                  <option value={60} className="dark:bg-[#161F32]">60 Saniyede Bir (Veri Tasarruflu)</option>
-                  <option value={0} className="dark:bg-[#161F32]">Yalnızca Manuel (Butona Tıklandığında)</option>
+                  <option value={15} className="dark:bg-[#0E1015]">15 Saniyede Bir (Ultra Hızlı / Fintables Modu)</option>
+                  <option value={30} className="dark:bg-[#0E1015]">30 Saniyede Bir (Dengeli / Önerilen)</option>
+                  <option value={60} className="dark:bg-[#0E1015]">60 Saniyede Bir (Veri Tasarruflu)</option>
+                  <option value={0} className="dark:bg-[#0E1015]">Yalnızca Manuel (Butona Tıklandığında)</option>
                 </select>
               </div>
 
@@ -922,7 +922,7 @@ export default function SettingsPage() {
         {/* TAB 4: BİLDİRİMLER & ALARMLAR                                       */}
         {/* =================================================================== */}
         {activeTab === "BILDIRIM" && (
-          <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
             <div>
               <h3 className="text-base font-bold text-[#182542] dark:text-white">Fıkhi Alarmlar ve KAP Bildirimleri</h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">
@@ -1000,7 +1000,7 @@ export default function SettingsPage() {
         {/* TAB 5: GİZLİLİK & VERİ DIŞA AKTARMA (Data Export & Privacy)         */}
         {/* =================================================================== */}
         {activeTab === "GIZLILIK" && (
-          <div className="bg-white/80 dark:bg-[#161F32]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div>
               <h3 className="text-base font-bold text-[#182542] dark:text-white">Gizlilik ve Veri Güvenliği</h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">

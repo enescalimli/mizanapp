@@ -160,7 +160,7 @@ export default function IpoCalendarPage() {
         {/* ===================================================================== */}
         {/* 1. ÜST HERO BAŞLIK                                                    */}
         {/* ===================================================================== */}
-        <section className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] border border-slate-200/60 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
+        <section className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-slate-200/60 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-bold">
               <ShieldCheck size={14} />
@@ -197,7 +197,7 @@ export default function IpoCalendarPage() {
         {/* 2. DÖRT BİLEŞENLİ BENTO İSTATİSTİK ŞERİDİ                              */}
         {/* ===================================================================== */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-          <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Aktif &amp; Taslak Halka Arz
             </span>
@@ -210,7 +210,7 @@ export default function IpoCalendarPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Katılıma Uygun Bulunan
             </span>
@@ -224,7 +224,7 @@ export default function IpoCalendarPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Taslak İzahname Aşaması
             </span>
@@ -238,7 +238,7 @@ export default function IpoCalendarPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Katılım Dışı / Kapsam Dışı
             </span>
@@ -274,7 +274,7 @@ export default function IpoCalendarPage() {
                   className={`px-4 py-2 rounded-full text-xs font-bold transition ${
                     activeTab === tab.id
                       ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                      : "bg-white dark:bg-[#161F32] text-[#6E81A0] dark:text-[#94A3B8] border border-slate-200/60 dark:border-white/10 hover:text-[#182542] dark:hover:text-white"
+                      : "bg-white dark:bg-[#0E1015] text-[#6E81A0] dark:text-[#94A3B8] border border-slate-200/60 dark:border-white/10 hover:text-[#182542] dark:hover:text-white"
                   }`}
                 >
                   {tab.label}
@@ -284,7 +284,7 @@ export default function IpoCalendarPage() {
 
             <div className="flex items-center gap-3">
               {/* View Mode Toggle: Cards vs Table */}
-              <div className="inline-flex items-center bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 rounded-2xl p-1 shadow-xs">
+              <div className="inline-flex items-center bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 rounded-2xl p-1 shadow-xs">
                 <button
                   type="button"
                   onClick={() => setViewMode("cards")}
@@ -324,7 +324,7 @@ export default function IpoCalendarPage() {
                   placeholder="Şirket, kod veya sektör ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-2xl bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 text-xs font-medium text-[#182542] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#182542]/20 dark:focus:ring-white/20 transition"
+                  className="w-full pl-9 pr-4 py-2 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-xs font-medium text-[#182542] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#182542]/20 dark:focus:ring-white/20 transition"
                 />
               </div>
             </div>
@@ -339,7 +339,7 @@ export default function IpoCalendarPage() {
                 <div
                   key={item.id}
                   onClick={() => setSelectedDetailIpo(item)}
-                  className={`bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-all duration-200 hover:border-slate-300 dark:hover:border-white/20 hover:scale-[1.008] cursor-pointer group ${
+                  className={`bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-all duration-200 hover:border-slate-300 dark:hover:border-white/20 hover:scale-[1.008] cursor-pointer group ${
                     !item.isKatilimCompliant ? "border-rose-200/70 dark:border-rose-900/40" : ""
                   }`}
                 >
@@ -443,7 +443,7 @@ export default function IpoCalendarPage() {
           {/* VIEW 2: TABLO GÖRÜNÜMÜ                                              */}
           {/* =================================================================== */}
           {viewMode === "table" && (
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -602,7 +602,7 @@ export default function IpoCalendarPage() {
         {selectedDetailIpo && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
             <div
-              className="bg-white dark:bg-[#161F32] rounded-[32px] border border-slate-200/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.3)] max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150"
+              className="bg-white dark:bg-[#0E1015] rounded-[32px] border border-slate-200/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.3)] max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150"
               onClick={(e) => e.stopPropagation()}
             >
               

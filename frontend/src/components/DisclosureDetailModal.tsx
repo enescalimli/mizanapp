@@ -56,7 +56,7 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#161F32] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] z-10 p-5 sm:p-7 flex flex-col space-y-5 animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0E1015] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-5 animate-in zoom-in-95 fade-in duration-200">
         
         {/* Top bar: Source badge + Live indicator + Close button */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">

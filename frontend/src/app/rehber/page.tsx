@@ -566,7 +566,7 @@ export default function RehberPage() {
     <PaynoShell badge="rehber">
       <div className="space-y-6 max-w-6xl mx-auto pb-12">
         {/* Apple Design Frosted Hero Header */}
-        <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
+        <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 dark:bg-emerald-950/40 border border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-bold">
               <Scale size={14} className="text-[#0D8B52] dark:text-emerald-400" />
@@ -597,7 +597,7 @@ export default function RehberPage() {
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
               activeTab === "CEVAZLAR"
                 ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#161F32] hover:bg-white dark:hover:bg-[#1c273e] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
             }`}
           >
             <ShieldCheck size={14} />
@@ -608,7 +608,7 @@ export default function RehberPage() {
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
               activeTab === "TERIMLER"
                 ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#161F32] hover:bg-white dark:hover:bg-[#1c273e] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
             }`}
           >
             <BookOpen size={14} />
@@ -619,7 +619,7 @@ export default function RehberPage() {
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
               activeTab === "SSS"
                 ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#161F32] hover:bg-white dark:hover:bg-[#1c273e] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
             }`}
           >
             <HelpCircle size={14} />
@@ -630,7 +630,7 @@ export default function RehberPage() {
             className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
               activeTab === "RASYO"
                 ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#161F32] hover:bg-white dark:hover:bg-[#1c273e] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
             }`}
           >
             <Calculator size={14} />
@@ -643,7 +643,7 @@ export default function RehberPage() {
           <div className="space-y-6">
             {/* Top Authorities Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] p-6 border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] p-6 border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-center text-emerald-800 dark:text-emerald-400 font-extrabold text-sm">
                   DİB
                 </div>
@@ -659,7 +659,7 @@ export default function RehberPage() {
                 </p>
               </div>
 
-              <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] p-6 border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] p-6 border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-500/30 flex items-center justify-center text-blue-800 dark:text-blue-400 font-extrabold text-sm">
                   TKBB
                 </div>
@@ -675,7 +675,7 @@ export default function RehberPage() {
                 </p>
               </div>
 
-              <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] p-6 border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] p-6 border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 flex items-center justify-center text-indigo-800 dark:text-indigo-400 font-extrabold text-sm">
                   İİT
                 </div>
@@ -694,7 +694,7 @@ export default function RehberPage() {
 
             {/* 4 Temel Fıkhi Sütun Bento */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-lg">
                   1. Sütun
                 </span>
@@ -704,7 +704,7 @@ export default function RehberPage() {
                 </p>
               </div>
 
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-800 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded-lg">
                   2. Sütun
                 </span>
@@ -714,7 +714,7 @@ export default function RehberPage() {
                 </p>
               </div>
 
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-800 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-lg">
                   3. Sütun
                 </span>
@@ -724,7 +724,7 @@ export default function RehberPage() {
                 </p>
               </div>
 
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2 transition-colors">
                 <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-800 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-lg">
                   4. Sütun
                 </span>
@@ -736,7 +736,7 @@ export default function RehberPage() {
             </div>
 
             {/* Permitted vs Prohibited Table (12 İşlem Türü) */}
-            <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] p-6 sm:p-7 border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
+            <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] p-6 sm:p-7 border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
               <div>
                 <h2 className="text-base font-extrabold text-[#182542] dark:text-white tracking-tight">
                   Borsa İşlem Türlerine Göre Kapsamlı Fıkhi Hükümler
@@ -870,7 +870,7 @@ export default function RehberPage() {
         {activeTab === "TERIMLER" && (
           <div className="space-y-6">
             {/* Filter and Search Bar for Glossary */}
-            <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-4 transition-colors">
+            <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-4 transition-colors">
               <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto scrollbar-none pb-1 md:pb-0">
                 {["TÜMÜ", "Akid Türü", "Temel Yasak", "Finansal Enstrüman", "Fıkhi İlke", "Resmi Standart", "Zekât & Arındırma"].map((tag) => (
                   <button
@@ -894,7 +894,7 @@ export default function RehberPage() {
                   placeholder="Terimlerde ara (Örn: sukuk, mudaraba)..."
                   value={glossarySearch}
                   onChange={(e) => setGlossarySearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-200 dark:border-white/10 text-xs text-[#182542] dark:text-white bg-white dark:bg-[#111726] focus:outline-none focus:ring-2 focus:ring-[#182542] dark:focus:ring-white/20 transition"
+                  className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-200 dark:border-white/10 text-xs text-[#182542] dark:text-white bg-white dark:bg-[#0A0B0E] focus:outline-none focus:ring-2 focus:ring-[#182542] dark:focus:ring-white/20 transition"
                 />
               </div>
             </div>
@@ -904,7 +904,7 @@ export default function RehberPage() {
               {filteredGlossary.map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white/85 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] p-6 border border-white/90 dark:border-white/10 shadow-2xs flex flex-col justify-between hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:shadow-md transition-all space-y-4"
+                  className="bg-white/85 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] p-6 border border-white/90 dark:border-white/10 shadow-2xs flex flex-col justify-between hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:shadow-md transition-all space-y-4"
                 >
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
@@ -930,7 +930,7 @@ export default function RehberPage() {
             </div>
 
             {filteredGlossary.length === 0 && (
-              <div className="text-center py-12 bg-white/70 dark:bg-[#161F32] rounded-3xl border border-slate-200 dark:border-white/10">
+              <div className="text-center py-12 bg-white/70 dark:bg-[#0E1015] rounded-3xl border border-slate-200 dark:border-white/10">
                 <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">Aramanıza uygun finansal terim bulunamadı.</p>
               </div>
             )}
@@ -941,7 +941,7 @@ export default function RehberPage() {
         {activeTab === "SSS" && (
           <div className="space-y-6">
             {/* Filter and Search */}
-            <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
+            <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 transition-colors">
               <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto scrollbar-none pb-1 sm:pb-0">
                 {["TÜMÜ", "GENEL", "ENDEKS", "HALKA_ARZ", "ARINDIRMA", "ZEKAT"].map((cat) => (
                   <button
@@ -965,7 +965,7 @@ export default function RehberPage() {
                   placeholder="Sorularda ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-200 dark:border-white/10 text-xs text-[#182542] dark:text-white bg-white dark:bg-[#111726] focus:outline-none focus:ring-2 focus:ring-[#182542] dark:focus:ring-white/20 transition"
+                  className="w-full pl-10 pr-4 py-2 rounded-2xl border border-slate-200 dark:border-white/10 text-xs text-[#182542] dark:text-white bg-white dark:bg-[#0A0B0E] focus:outline-none focus:ring-2 focus:ring-[#182542] dark:focus:ring-white/20 transition"
                 />
               </div>
             </div>
@@ -977,7 +977,7 @@ export default function RehberPage() {
                 return (
                   <div
                     key={faq.id}
-                    className="bg-white/85 dark:bg-[#161F32] backdrop-blur-xl rounded-[24px] border border-white/90 dark:border-white/10 overflow-hidden shadow-2xs transition-all"
+                    className="bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl rounded-[24px] border border-white/90 dark:border-white/10 overflow-hidden shadow-2xs transition-all"
                   >
                     <button
                       onClick={() => setOpenFaqId(isOpen ? null : faq.id)}
@@ -1011,7 +1011,7 @@ export default function RehberPage() {
 
         {/* TAB 4: 3 ALTIN RASYO METODOLOJİSİ (DİB & BIST Katılım) */}
         {activeTab === "RASYO" && (
-          <div className="bg-white/80 dark:bg-[#161F32] backdrop-blur-2xl rounded-[28px] p-6 sm:p-8 border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-8 transition-colors">
+          <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] p-6 sm:p-8 border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-8 transition-colors">
             <div>
               <h2 className="text-xl font-extrabold text-[#182542] dark:text-white tracking-tight">
                 Diyanet ve BIST Katılım 3 Altın Rasyo Metodolojisi
@@ -1037,7 +1037,7 @@ export default function RehberPage() {
                   Şirketin kısa ve uzun vadeli tüm konvansiyonel banka kredileri ile ihraç ettiği faizli tahvillerin toplamının,
                   şirketin piyasa değerine veya aktif toplamına oranı %33&apos;ü geçemez.
                 </p>
-                <div className="p-3 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-slate-700 dark:text-slate-300">
+                <div className="p-3 rounded-2xl bg-white dark:bg-[#0A0B0E] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-slate-700 dark:text-slate-300">
                   Formül = Faizli Borçlar / Payda &le; %33.00
                 </div>
               </div>
@@ -1057,7 +1057,7 @@ export default function RehberPage() {
                   Şirketin kasasındaki vadeli mevduat, repo ve faizli tahvil gibi menkul kıymetlerin toplamının,
                   şirket payda değerine oranı %33 eşiğinin altında olmalıdır.
                 </p>
-                <div className="p-3 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-slate-700 dark:text-slate-300">
+                <div className="p-3 rounded-2xl bg-white dark:bg-[#0A0B0E] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-slate-700 dark:text-slate-300">
                   Formül = Vadeli Mevduat + Repo / Payda &le; %33.00
                 </div>
               </div>
@@ -1077,7 +1077,7 @@ export default function RehberPage() {
                   Şirketin brüt faiz gelirleri ve ana faaliyet dışı haram yan gelirlerinin toplam satış hasılatına oranı
                   kesinlikle %5&apos;i aşamaz. Bu oran içerisindeki gelirler arındırılmak zorundadır.
                 </p>
-                <div className="p-3 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-slate-700 dark:text-slate-300">
+                <div className="p-3 rounded-2xl bg-white dark:bg-[#0A0B0E] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-slate-700 dark:text-slate-300">
                   Formül = Faiz Gelirleri / Toplam Satış Hasılatı &le; %5.00
                 </div>
               </div>

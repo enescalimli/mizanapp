@@ -512,7 +512,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
   const gradientId = `midas-gradient-${ticker}`;
 
   return (
-    <div className="rounded-3xl p-5 sm:p-6 bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
+    <div className="rounded-3xl p-5 sm:p-6 bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
       
       {/* Üst Fiyat & Periyot Değişim Başlığı */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">

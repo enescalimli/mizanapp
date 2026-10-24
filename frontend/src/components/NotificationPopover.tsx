@@ -143,8 +143,8 @@ export const NotificationPopover: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full border transition-all duration-200 flex items-center justify-center relative ${
           isOpen
-            ? "bg-[#182542] dark:bg-[#273869] text-white border-[#182542] dark:border-[#273869] shadow-md scale-105"
-            : "bg-white dark:bg-[#161F32] hover:bg-slate-50 dark:hover:bg-[#1c273e] text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border-slate-200/60 dark:border-white/10 shadow-xs"
+            ? "bg-[#182542] dark:bg-[#182542] text-white border-[#182542] dark:border-white/20 shadow-md scale-105"
+            : "bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-[#151720] text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border-slate-200/60 dark:border-white/10 shadow-xs"
         }`}
         title="Canlı Bildirimler & Fıkhi Alarmlar"
         aria-label="Bildirimler"
@@ -153,14 +153,14 @@ export const NotificationPopover: React.FC = () => {
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#12B76A] border-2 border-white dark:border-[#161F32]"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#12B76A] border-2 border-white dark:border-[#0E1015]"></span>
           </span>
         )}
       </button>
 
       {/* Popover Dropdown Panel */}
       {isOpen && (
-        <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-[400px] max-w-[calc(100vw-24px)] bg-white/95 dark:bg-[#161F32]/95 backdrop-blur-2xl rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_rgba(24,37,66,0.18)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-x-3 top-16 sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-[400px] max-w-[calc(100vw-24px)] bg-white/95 dark:bg-[#0E1015]/98 backdrop-blur-2xl rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_rgba(24,37,66,0.18)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.8)] z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           
           {/* Header */}
           <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">

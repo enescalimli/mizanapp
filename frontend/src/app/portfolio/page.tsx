@@ -453,7 +453,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={tickLivePrices}
-              className="w-9 h-9 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-9 h-9 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
               title="Canlı Fiyatları Yenile"
             >
               <RefreshCw size={14} />
@@ -462,7 +462,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={() => setShowCertificateModal(true)}
-              className="rounded-full bg-white dark:bg-[#161F32] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3.5 sm:px-4 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
+              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3.5 sm:px-4 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
               title="Resmi DİB & TKBB Uyumlu Fıkhi Arındırma ve Zekât Belgesi Al (PDF)"
             >
               <FileText size={14} className="text-emerald-600 dark:text-emerald-400" />
@@ -486,7 +486,7 @@ function PortfolioManagementContent() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           
           {/* Kart 1: Toplam Portföy Değeri */}
-          <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
+          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                 Toplam Portföy Değeri
@@ -512,7 +512,7 @@ function PortfolioManagementContent() {
           </div>
 
           {/* Kart 2: Katılım Uyum Oranı */}
-          <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
+          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                 Katılım Uyum Ağırlığı
@@ -537,7 +537,7 @@ function PortfolioManagementContent() {
           {/* Kart 3: Fıkhi Arındırma Yükümlülüğü */}
           <div
             onClick={() => setActiveTab("PURIFICATION")}
-            className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-all cursor-pointer hover:border-[#182542]/30 dark:hover:border-white/20 group"
+            className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-all cursor-pointer hover:border-[#182542]/30 dark:hover:border-white/20 group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
@@ -563,7 +563,7 @@ function PortfolioManagementContent() {
           {/* Kart 4: Yıllık Hisse Zekâtı */}
           <div
             onClick={() => setActiveTab("ZAKAT")}
-            className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-all cursor-pointer hover:border-[#182542]/30 dark:hover:border-white/20 group"
+            className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-all cursor-pointer hover:border-[#182542]/30 dark:hover:border-white/20 group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
@@ -592,7 +592,7 @@ function PortfolioManagementContent() {
         {/* SEGMENTED TAB SELECTOR (Pozisyonlar / Arındırma / Zekât)          */}
         {/* ================================================================= */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 dark:border-white/10 pb-4 overflow-x-auto scrollbar-none">
-          <div className="bg-white dark:bg-[#161F32] p-1 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
+          <div className="bg-white dark:bg-[#0E1015] p-1 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             <button
               type="button"
               onClick={() => setActiveTab("HOLDINGS")}
@@ -667,7 +667,7 @@ function PortfolioManagementContent() {
             )}
 
             {/* Fıkhi Güvenlik ve Kurallar Kontrolü */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
@@ -754,7 +754,7 @@ function PortfolioManagementContent() {
             </div>
 
             {/* Yeni Pozisyon Ekleme Formu */}
-            <div id="yeni-pozisyon" className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
+            <div id="yeni-pozisyon" className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
@@ -780,7 +780,7 @@ function PortfolioManagementContent() {
                     className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none"
                   >
                     {(BIST_COMPREHENSIVE_UNIVERSE.length > 0 ? BIST_COMPREHENSIVE_UNIVERSE : SAMPLE_COMPANIES_SUMMARY).map((c) => (
-                      <option key={c.ticker} value={c.ticker} className="dark:bg-[#161F32]">
+                      <option key={c.ticker} value={c.ticker} className="dark:bg-[#0E1015]">
                         {c.ticker} — {c.name.slice(0, 24)}
                       </option>
                     ))}
@@ -834,8 +834,8 @@ function PortfolioManagementContent() {
                     onChange={(e) => setNewZakatIntent(e.target.value as ZakatIntentionType)}
                     className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none"
                   >
-                    <option value="LONG_TERM_DIVIDEND" className="dark:bg-[#161F32]">Uzun Vade (Temettü)</option>
-                    <option value="TRADING_SHORT_TERM" className="dark:bg-[#161F32]">Kısa Vade (Al-Sat)</option>
+                    <option value="LONG_TERM_DIVIDEND" className="dark:bg-[#0E1015]">Uzun Vade (Temettü)</option>
+                    <option value="TRADING_SHORT_TERM" className="dark:bg-[#0E1015]">Kısa Vade (Al-Sat)</option>
                   </select>
                 </div>
 
@@ -892,7 +892,7 @@ function PortfolioManagementContent() {
                     return (
                       <div
                         key={`bad-${badRow.id}`}
-                        className="bg-white/90 dark:bg-[#161F32]/90 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-amber-500/20 dark:border-white/10 space-y-4 shadow-xs"
+                        className="bg-white/90 dark:bg-[#0E1015]/90 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-amber-500/20 dark:border-white/10 space-y-4 shadow-xs"
                       >
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-3">
                           <div className="flex items-center gap-3">
@@ -999,7 +999,7 @@ function PortfolioManagementContent() {
             )}
 
             {/* Portföy Pozisyonları Tablosu */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
@@ -1099,7 +1099,7 @@ function PortfolioManagementContent() {
           <div className="space-y-6">
             
             {/* Arındırma Açıklama ve Fıkhi Kural Kartı */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
@@ -1145,7 +1145,7 @@ function PortfolioManagementContent() {
             </div>
 
             {/* Hisse Bazlı Arındırma Dökümü Tablosu */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
@@ -1250,7 +1250,7 @@ function PortfolioManagementContent() {
           <div className="space-y-6">
             
             {/* Zekât Fıkhi Esas Kartı */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
@@ -1317,7 +1317,7 @@ function PortfolioManagementContent() {
             </div>
 
             {/* Zekât Tablosu */}
-            <div className="bg-white dark:bg-[#161F32] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
@@ -1723,7 +1723,7 @@ function PortfolioManagementContent() {
 export default function PortfolioManagementPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#0B0F17] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] flex items-center justify-center p-6">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-3 border-[#182542] border-t-transparent rounded-full animate-spin mx-auto" />
           <span className="text-xs font-bold text-[#6E81A0]">Portföy yükleniyor...</span>

@@ -52,12 +52,12 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#0B0F17] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative antialiased py-2.5 sm:py-6 px-2 sm:px-4 lg:px-6 transition-colors duration-200">
+    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative antialiased py-2.5 sm:py-6 px-2 sm:px-4 lg:px-6 transition-colors duration-200">
       {/* Fixed Left Vertical Dock (Desktop only) */}
       <LeftDockSidebar />
 
       {/* Main Floating Rounded Bento Canvas */}
-      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-[#F7F8FA] dark:bg-[#111726] rounded-[24px] sm:rounded-[36px] border border-white/90 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] p-3.5 sm:p-6 lg:p-7 space-y-5 sm:space-y-6 transition-colors duration-200">
+      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-[#F7F8FA] dark:bg-[#0A0B0E] rounded-[24px] sm:rounded-[36px] border border-white/90 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3.5 sm:p-6 lg:p-7 space-y-5 sm:space-y-6 transition-colors duration-200">
         
         {/* ================================================================= */}
         {/* TOP UTILITY BAR (Logo + Search/Actions/Profile)                    */}
@@ -93,7 +93,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             <button
               type="button"
               onClick={handleSearch}
-              className="w-8 h-8 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
               title="626 BIST Katılım Hissesi Ara..."
             >
               <Search size={15} strokeWidth={2.2} />
@@ -106,7 +106,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             <button
               type="button"
               onClick={() => setShowInfoModal(!showInfoModal)}
-              className="w-8 h-8 rounded-full bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
               title="Mizan Fıkhi Standartları Bilgisi"
             >
               <Info size={15} strokeWidth={2.2} />
@@ -115,7 +115,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             {/* Kullanıcı Profil Kapsülü */}
             <Link
               href="/ayarlar"
-              className="bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
+              className="bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
               title="Hesap ve Ayarlar"
             >
               {/* Avatar (Lacivert gradient) */}
@@ -140,7 +140,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 
         {/* Fıkhi Bilgi Modal (Info) */}
         {showInfoModal && (
-          <div className="p-4 rounded-2xl bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/10 shadow-md text-xs text-[#646A78] dark:text-[#94A3B8] space-y-2 relative animate-in fade-in zoom-in-95 duration-150">
+          <div className="p-4 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-md text-xs text-[#646A78] dark:text-[#94A3B8] space-y-2 relative animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between font-bold text-[#182542] dark:text-white">
               <span className="flex items-center gap-1.5">
                 <Sparkles size={14} className="text-[#10B981]" />

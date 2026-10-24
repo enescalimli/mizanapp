@@ -181,7 +181,7 @@ export const MizanChatWidget: React.FC = () => {
             {/* Animasyonlu Parıltı Halkası */}
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white dark:border-[#111726]" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white dark:border-[#0A0B0E]" />
             </span>
 
             <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
@@ -202,10 +202,10 @@ export const MizanChatWidget: React.FC = () => {
 
       {/* 2. AÇILIR MINI ASİSTAN MODAL PENCERESİ */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[600px] max-h-[85vh] bg-white/95 dark:bg-[#111726]/95 backdrop-blur-2xl rounded-[30px] border border-slate-200/90 dark:border-white/15 shadow-[0_25px_70px_rgba(0,0,0,0.25)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[600px] max-h-[85vh] bg-white/95 dark:bg-[#0A0B0E]/98 backdrop-blur-2xl rounded-[30px] border border-slate-200/90 dark:border-white/15 shadow-[0_25px_70px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {/* Üst Bar */}
-          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#182542] via-[#20345e] to-[#0D8B52] dark:from-[#161F32] dark:to-[#0D8B52] text-white flex items-center justify-between border-b border-white/10 shrink-0">
+          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#182542] via-[#20345e] to-[#0D8B52] dark:from-[#0E1015] dark:via-[#182542] dark:to-[#0D8B52] text-white flex items-center justify-between border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
                 <Sparkles size={16} className="text-emerald-300" />
@@ -286,7 +286,7 @@ export const MizanChatWidget: React.FC = () => {
 
                   {/* GENERATIVE UI 1: Hisse Durum Özeti Kartı */}
                   {msg.stockData && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-[#161F32] border border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-white space-y-2 shadow-xs">
+                    <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-white space-y-2 shadow-xs">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <StockLogo ticker={msg.stockData.ticker} name={msg.stockData.name} size="sm" />
@@ -340,7 +340,7 @@ export const MizanChatWidget: React.FC = () => {
                         {msg.compliantAlternatives.map((alt: any) => (
                           <div
                             key={alt.ticker}
-                            className="p-2 rounded-lg bg-white dark:bg-[#161F32] border border-slate-200/60 dark:border-white/10 flex items-center justify-between text-[11px]"
+                            className="p-2 rounded-lg bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 flex items-center justify-between text-[11px]"
                           >
                             <div className="flex items-center gap-2">
                               <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
@@ -442,7 +442,7 @@ export const MizanChatWidget: React.FC = () => {
                         key={idx}
                         type="button"
                         onClick={() => handleSendMessage(q)}
-                        className="px-2.5 py-1 rounded-full bg-white dark:bg-[#161F32] hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left"
+                        className="px-2.5 py-1 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left"
                       >
                         {q}
                       </button>
@@ -472,7 +472,7 @@ export const MizanChatWidget: React.FC = () => {
           </div>
 
           {/* Mesaj Giriş Alanı */}
-          <div className="p-3 bg-white dark:bg-[#111726] border-t border-slate-200/80 dark:border-white/10 shrink-0">
+          <div className="p-3 bg-white dark:bg-[#0A0B0E] border-t border-slate-200/80 dark:border-white/10 shrink-0">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
