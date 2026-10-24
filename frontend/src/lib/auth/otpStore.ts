@@ -69,7 +69,7 @@ export function verifyOtp(
 
         // Clean in-memory if present
         otpStore.delete(normalizedEmail);
-        return { valid: true, fullName: fullName || "Mustafa Çalımlı" };
+        return { valid: true, fullName: fullName || normalizedEmail.split("@")[0] || "Katılım Yatırımcısı" };
       }
     } catch (err) {
       console.warn("Stateless token verify error:", err);

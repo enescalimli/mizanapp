@@ -52,8 +52,87 @@ export default function DashboardPage() {
   const [quickSearch, setQuickSearch] = useState<string>("");
 
   const userDisplayName = useMemo(() => {
-    return profile?.full_name || (user?.user_metadata?.full_name as string) || "Mustafa Çalımlı";
+    return profile?.full_name || (user?.user_metadata?.full_name as string) || "Değerli Yatırımcımız";
   }, [profile?.full_name, user?.user_metadata?.full_name]);
+
+  // Portföy pozisyonlarını yerel depodan oku (Yeni kullanıcıda boş liste)
+  const [userHoldings, setUserHoldings] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved =
+          localStorage.getItem("mizan_katilim_holdings_v2") ||
+          localStorage.getItem("mizan_user_holdings");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setUserHoldings(parsed);
+          }
+        }
+      } catch {
+        // fallback
+      }
+    }
+  }, []);
+
+  const portfolioMetrics = useMemo(() => {
+    if (!userHoldings || userHoldings.length === 0) {
+      return {
+        totalValueTRY: 0,
+        totalCostTRY: 0,
+        netReturnTRY: 0,
+        netReturnPercent: 0,
+        purificationTRY: 0,
+        dividendTRY: 0,
+        compliantRatioText: "-",
+        compliantDetailText: "Portföy Boş",
+        count: 0,
+      };
+    }
+
+    let totalVal = 0;
+    let totalCost = 0;
+    let totalPurification = 0;
+    let compliantCount = 0;
+
+    userHoldings.forEach((h) => {
+      const lots = parseFloat(h.lots) || 0;
+      const cost = parseFloat(h.avgCostTRY) || 0;
+      const comp = companies.find((c) => c.ticker === h.ticker);
+      const price = comp?.priceTRY
+        ? parseFloat(comp.priceTRY.replace(/[^0-9.,]/g, "").replace(",", "."))
+        : cost;
+
+      const val = lots * (price || cost);
+      totalVal += val;
+      totalCost += lots * cost;
+
+      if (comp ? comp.bistStatus === "COMPLIANT" : true) {
+        compliantCount++;
+      }
+      const impureRatio = comp?.impureIncomePercent
+        ? comp.impureIncomePercent / 100
+        : 0.0015;
+      totalPurification += val * impureRatio * 0.25;
+    });
+
+    const netRet = totalVal - totalCost;
+    const netRetPct = totalCost > 0 ? (netRet / totalCost) * 100 : 0;
+    const compPct = Math.round((compliantCount / userHoldings.length) * 100);
+
+    return {
+      totalValueTRY: totalVal,
+      totalCostTRY: totalCost,
+      netReturnTRY: netRet,
+      netReturnPercent: netRetPct,
+      purificationTRY: totalPurification,
+      dividendTRY: totalVal * 0.04,
+      compliantRatioText: `%${compPct} Helal`,
+      compliantDetailText: `${compliantCount}/${userHoldings.length} Kriter Uyumlu`,
+      count: userHoldings.length,
+    };
+  }, [userHoldings, companies]);
 
   // Greeting according to local hour
   const greetingText = useMemo(() => {
@@ -66,9 +145,12 @@ export default function DashboardPage() {
   // Formatted balance
   const formattedBalance = useMemo(() => {
     if (!balanceVisible) return "•••••••• ₺";
-    if (currency === "USD") return "$26,480.00";
-    return "₺842.500,00";
-  }, [balanceVisible, currency]);
+    if (currency === "USD") {
+      const usdVal = portfolioMetrics.totalValueTRY / 32;
+      return `$${usdVal.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return `₺${portfolioMetrics.totalValueTRY.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }, [balanceVisible, currency, portfolioMetrics.totalValueTRY]);
 
   // Live KAP and SPK Disclosures Hook
   const {
@@ -173,10 +255,18 @@ export default function DashboardPage() {
                 </button>
               </div>
 
-              {/* Trend Rozeti (Zümrüt Yeşili) */}
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[11px] font-bold">
-                <span>▲ Geçen aya göre +%5,2</span>
-              </div>
+              {/* Trend Rozeti / Boş Durum Bilgisi */}
+              {portfolioMetrics.count === 0 ? (
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] text-[11px] font-bold">
+                  <span>0 Aktif Pozisyon • Portföy Boş</span>
+                </div>
+              ) : (
+                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[11px] font-bold">
+                  <span>
+                    {portfolioMetrics.netReturnPercent >= 0 ? "▲" : "▼"} Net %{portfolioMetrics.netReturnPercent.toFixed(1)}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Anlamlı Katılım Eylemleri: Hisse Ekle / Arındır */}
@@ -202,7 +292,9 @@ export default function DashboardPage() {
             <div className="pt-3 border-t border-slate-100 dark:border-white/10 space-y-2">
               <div className="flex items-center justify-between text-xs text-[#6E81A0] dark:text-[#94A3B8]">
                 <span className="font-bold">Varlık Dağılımı</span>
-                <span className="text-[11px]">2 Varlık Grubu</span>
+                <span className="text-[11px]">
+                  {portfolioMetrics.count === 0 ? "Pozisyon Yok" : `${portfolioMetrics.count} Hisse`}
+                </span>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -216,7 +308,7 @@ export default function DashboardPage() {
                       Katılım Hisseleri
                     </div>
                     <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
-                      ₺710.000
+                      ₺{portfolioMetrics.totalValueTRY.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                     </div>
                   </div>
                 </div>
@@ -231,7 +323,7 @@ export default function DashboardPage() {
                       Sukuk &amp; Fon
                     </div>
                     <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
-                      ₺132.500
+                      ₺0
                     </div>
                   </div>
                 </div>
@@ -258,10 +350,14 @@ export default function DashboardPage() {
 
               <div className="space-y-1">
                 <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
-                  ₺118.420
+                  ₺{Math.abs(portfolioMetrics.netReturnTRY).toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                 </div>
                 <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
-                  <span>▲ +%18,4</span>
+                  <span>
+                    {portfolioMetrics.count === 0
+                      ? "%0,0"
+                      : `${portfolioMetrics.netReturnTRY >= 0 ? "▲ +" : "▼ -"}%${Math.abs(portfolioMetrics.netReturnPercent).toFixed(1)}`}
+                  </span>
                   <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">net getiri</span>
                 </div>
               </div>
@@ -280,10 +376,14 @@ export default function DashboardPage() {
 
               <div className="space-y-1">
                 <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
-                  ₺1.240,50
+                  ₺{portfolioMetrics.purificationTRY.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
                 <div className="text-[11px] font-bold text-[#273869] dark:text-blue-400 flex items-center gap-0.5">
-                  <span>%0,14</span>
+                  <span>
+                    %{portfolioMetrics.totalValueTRY > 0
+                      ? ((portfolioMetrics.purificationTRY / portfolioMetrics.totalValueTRY) * 100).toFixed(2)
+                      : "0,00"}
+                  </span>
                   <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">pro-rata pay</span>
                 </div>
               </div>
@@ -302,11 +402,11 @@ export default function DashboardPage() {
 
               <div className="space-y-1">
                 <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
-                  ₺34.680
+                  ₺{portfolioMetrics.dividendTRY.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                 </div>
                 <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
-                  <span>▲ +%8</span>
-                  <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">yıllık kâr</span>
+                  <span>{portfolioMetrics.count === 0 ? "₺0" : "▲ +%4"}</span>
+                  <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">tahmini kâr</span>
                 </div>
               </div>
             </div>
@@ -324,10 +424,10 @@ export default function DashboardPage() {
 
               <div className="space-y-1">
                 <div className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
-                  %100 Helal
+                  {portfolioMetrics.compliantRatioText}
                 </div>
                 <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
-                  <span>24/24 Kriter</span>
+                  <span>{portfolioMetrics.compliantDetailText}</span>
                   <span className="text-[#6E81A0] dark:text-[#94A3B8] font-normal ml-1">DİB Onay</span>
                 </div>
               </div>

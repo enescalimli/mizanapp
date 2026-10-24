@@ -45,32 +45,7 @@ export default function PortfolioPurificationPage() {
   useEffect(() => {
     router.replace("/portfolio?tab=arindirma");
   }, [router]);
-  const DEFAULT_POSITIONS: PortfolioPosition[] = [
-    {
-      id: "pos-1",
-      ticker: "BIMAS",
-      lots: "500",
-      purchaseDate: "2026-04-15",
-      receivedDividendTRY: "12500",
-      method: "holding",
-    },
-    {
-      id: "pos-2",
-      ticker: "THYAO",
-      lots: "1000",
-      purchaseDate: "2026-08-01",
-      receivedDividendTRY: "0",
-      method: "holding",
-    },
-    {
-      id: "pos-3",
-      ticker: "ASELS",
-      lots: "2500",
-      purchaseDate: "2026-06-10",
-      receivedDividendTRY: "3750",
-      method: "dividend",
-    },
-  ];
+  const DEFAULT_POSITIONS: PortfolioPosition[] = [];
 
   const [positions, setPositions] = useState<PortfolioPosition[]>(DEFAULT_POSITIONS);
 
@@ -80,7 +55,7 @@ export default function PortfolioPurificationPage() {
       const saved = localStorage.getItem("mizan_purification_positions");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           setPositions(parsed);
         }
       }

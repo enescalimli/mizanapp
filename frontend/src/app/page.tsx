@@ -164,7 +164,7 @@ export default function LandingPage() {
             {/* Giriş Yap */}
             <Link
               href="/auth/login"
-              className="hidden sm:inline-flex px-4 py-2 text-xs sm:text-sm font-bold text-[#182542] dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+              className="hidden sm:inline-flex px-4 py-2 text-xs sm:text-sm font-bold text-[#182542] dark:text-white hover:text-[#273869] dark:hover:text-slate-300 transition"
             >
               Giriş Yap
             </Link>
@@ -172,7 +172,7 @@ export default function LandingPage() {
             {/* Midas-Style High-Contrast CTA */}
             <Link
               href="/auth/login"
-              className="px-4 sm:px-5 py-2.5 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md shadow-[#182542]/20 dark:shadow-emerald-500/20 active:scale-95 transition-all"
+              className="px-4 sm:px-5 py-2.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#182542] text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md shadow-[#182542]/20 dark:shadow-white/10 active:scale-95 transition-all"
             >
               <span>Uygulamaya Git</span>
               <ArrowRight size={14} strokeWidth={2.5} />
@@ -186,8 +186,8 @@ export default function LandingPage() {
       {/* =================================================================== */}
       <section className="relative overflow-hidden pt-12 sm:pt-20 pb-16 sm:pb-28">
         
-        {/* Subtle Ambient Radial Glows */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-emerald-500/10 via-[#182542]/5 to-transparent rounded-full blur-3xl pointer-events-none -z-10 dark:from-emerald-500/15 dark:via-blue-600/10" />
+        {/* Subtle Ambient Radial Glows (Kurumsal Lacivert) */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-[#182542]/12 via-[#273869]/6 to-transparent rounded-full blur-3xl pointer-events-none -z-10 dark:from-blue-950/20 dark:via-transparent" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-6 sm:space-y-8">
@@ -201,10 +201,10 @@ export default function LandingPage() {
               <span>Canlı KAP &amp; SPK Bildirimleri &bull; Mizan AI &bull; 626 Hisse Taraması</span>
             </div>
 
-            {/* Bold Punchy Headline */}
+            {/* Bold Punchy Headline (Prestijli Lacivert / Beyaz Paleti) */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#182542] dark:text-white leading-[1.12]">
               Borsa İstanbul’da Helal Yatırımın{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-teal-500 to-indigo-600 dark:from-emerald-400 dark:via-teal-300 dark:to-blue-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#182542] via-[#273869] to-[#3a5298] dark:from-white dark:via-slate-200 dark:to-blue-300">
                 Dijital Zekâsı.
               </span>
             </h1>
@@ -220,7 +220,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto pt-2">
               <Link
                 href="/auth/login"
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#182542] hover:bg-[#223359] dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white dark:text-black text-base font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-[#182542]/25 dark:shadow-emerald-500/25 active:scale-95 transition-all"
+                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#182542] text-base font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-[#182542]/25 dark:shadow-white/10 active:scale-95 transition-all"
               >
                 <span>Ücretsiz Başla</span>
                 <ArrowRight size={18} strokeWidth={2.4} />
@@ -257,8 +257,8 @@ export default function LandingPage() {
           {/* =================================================================== */}
           <div className="mt-12 sm:mt-16 max-w-5xl mx-auto relative">
             
-            {/* Background Halo */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 via-blue-500/10 to-purple-500/20 rounded-[36px] blur-2xl -z-10" />
+            {/* Background Halo (Lacivert Vurgulu) */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#182542]/15 via-[#273869]/10 to-blue-500/10 rounded-[36px] blur-2xl -z-10" />
 
             {/* Main Mockup Bento Container */}
             <div className="bg-white/90 dark:bg-[#0A0B0E]/95 backdrop-blur-2xl rounded-[32px] sm:rounded-[36px] border border-white/90 dark:border-white/10 shadow-[0_30px_90px_rgba(24,37,66,0.12)] dark:shadow-[0_30px_90px_rgba(0,0,0,0.8)] p-4 sm:p-8 space-y-6">
@@ -567,7 +567,7 @@ export default function LandingPage() {
                   onClick={() => setActiveFeatureTab(tab.id as any)}
                   className={`px-4 py-2 rounded-full text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
                     activeFeatureTab === tab.id
-                      ? "bg-[#182542] dark:bg-emerald-500 text-white dark:text-black shadow-xs"
+                      ? "bg-[#182542] dark:bg-white text-white dark:text-[#182542] shadow-xs"
                       : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
                   }`}
                 >
@@ -575,8 +575,8 @@ export default function LandingPage() {
                   {tab.isNew && (
                     <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full ${
                       activeFeatureTab === tab.id
-                        ? "bg-white/20 dark:bg-black/20 text-white dark:text-black"
-                        : "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400"
+                        ? "bg-white/20 dark:bg-[#182542]/20 text-white dark:text-[#182542]"
+                        : "bg-[#182542]/10 dark:bg-white/10 text-[#182542] dark:text-white"
                     }`}>
                       YENİ
                     </span>
@@ -603,8 +603,8 @@ export default function LandingPage() {
                     Kamuyu Aydınlatma Platformu (KAP) ve SPK resmi verilerini 7/24 kesintisiz tarar. Borsa devre kesicileri, temettü kararları, sermaye artırımları ve KAFİF uygunluk formları yayımlandığı anda fıkhi etki teşhisiyle önünüze gelir.
                   </p>
                   <Link
-                    href="/dashboard"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-purple-600 dark:text-purple-400 hover:underline pt-2"
+                    href="/auth/login"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
                   >
                     <span>Canlı Bildirimleri Panoda İncele</span>
                     <ArrowRight size={14} />
@@ -614,7 +614,7 @@ export default function LandingPage() {
 
               {activeFeatureTab === "AI_ASISTAN" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-xs font-bold">
                     <Sparkles size={13} />
                     <span>Gemini 3.8 Flash Fıkhi Danışman</span>
                   </div>
@@ -625,8 +625,8 @@ export default function LandingPage() {
                     DİB Din İşleri Yüksek Kurulu ve TKBB standartlarına hâkim yapay zekâ. Hisselerin bilanço dipnotlarındaki faizli nema ve haram faaliyet risklerini tespit eder, sesli veya yazılı sorularınıza anında yanıt verir.
                   </p>
                   <Link
-                    href="/asistan"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline pt-2"
+                    href="/auth/login"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
                   >
                     <span>Mizan AI ile Şimdi Konuş</span>
                     <ArrowRight size={14} />
@@ -649,7 +649,7 @@ export default function LandingPage() {
                   </p>
                   <Link
                     href="/tarayici"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline pt-2"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
                   >
                     <span>Tarayıcıyı Şimdi Deneyin</span>
                     <ArrowRight size={14} />
@@ -671,8 +671,8 @@ export default function LandingPage() {
                     otomatik hesaplayın, yıllık zekât matrahınızı tek tıkla görün.
                   </p>
                   <Link
-                    href="/portfolio"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 hover:underline pt-2"
+                    href="/auth/login"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
                   >
                     <span>Portföyünüzü Ekleyin</span>
                     <ArrowRight size={14} />
@@ -1095,7 +1095,7 @@ export default function LandingPage() {
         <div className="relative rounded-[36px] overflow-hidden bg-gradient-to-br from-[#182542] via-[#1c2c4d] to-[#0d1627] text-white p-8 sm:p-14 lg:p-16 text-center space-y-6 shadow-2xl shadow-[#182542]/30 border border-white/10">
           
           <div className="max-w-2xl mx-auto space-y-4">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 block">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-blue-300 block">
               Geleceğinizi Helal Kazançla İnşa Edin
             </span>
             <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
@@ -1109,7 +1109,7 @@ export default function LandingPage() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/30 active:scale-95 transition-all"
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-slate-100 text-[#182542] font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-black/20 active:scale-95 transition-all"
             >
               <span>Uygulamayı Aç — Ücretsiz</span>
               <ArrowRight size={18} strokeWidth={2.4} />

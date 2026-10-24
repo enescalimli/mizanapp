@@ -98,7 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Demo veya Google oturumunu yerel depodan kontrol et
+    // Sadece kullanıcı bilerek oturum açtıysa ve oturumu sakladıysa geri yükle
     const savedDemo = typeof window !== "undefined" ? localStorage.getItem("mizanapp_demo_auth") : null;
     if (savedDemo) {
       try {
@@ -109,13 +109,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           return;
         }
       } catch {
-        // Plain string "true"
+        // Eski veya bozuk oturumu temizle
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("mizanapp_demo_auth");
+        }
       }
-      setUser(DEMO_USER);
-      setProfile(DEMO_PROFILE);
-      setIsDemoUser(true);
-      setLoading(false);
-      return;
     }
 
     if (!isSupabaseConfigured()) {
@@ -198,9 +196,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const signInWithGoogle = async (): Promise<{ error: any }> => {
     if (!isSupabaseConfigured()) {
-      // Supabase OAuth bağlı olmadığında güvenli demo girişini tetikle
-      loginAsDemoUser();
-      return { error: null };
+      return {
+        error: new Error(
+          "Google kimlik doğrulama servisi henüz yapılandırılmadı. Lütfen e-posta ve şifrenizle giriş yapınız."
+        ),
+      };
     }
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({

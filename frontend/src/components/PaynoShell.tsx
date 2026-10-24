@@ -28,11 +28,11 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
   const userDisplayName = useMemo(() => {
-    return profile?.full_name || (user?.user_metadata?.full_name as string) || "Mustafa Çalımlı";
+    return profile?.full_name || (user?.user_metadata?.full_name as string) || "Değerli Yatırımcımız";
   }, [profile?.full_name, user?.user_metadata?.full_name]);
 
   const userEmail = useMemo(() => {
-    return profile?.email || user?.email || "mustafa@mizan.app";
+    return profile?.email || user?.email || "yatirimci@mizanapp.tr";
   }, [profile?.email, user?.email]);
 
   const userInitials = useMemo(() => {

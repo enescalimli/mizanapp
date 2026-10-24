@@ -141,54 +141,8 @@ function PortfolioManagementContent() {
     return () => clearInterval(interval);
   }, []);
 
-  // Portföy Pozisyonları
-  const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [
-    {
-      id: "h-1",
-      ticker: "BIMAS",
-      lots: "300",
-      avgCostTRY: "420.00",
-      purchaseDate: "2024-06-15",
-      purificationMethod: "holding",
-      zakatIntent: "LONG_TERM_DIVIDEND",
-    },
-    {
-      id: "h-2",
-      ticker: "ASELS",
-      lots: "1500",
-      avgCostTRY: "58.20",
-      purchaseDate: "2024-04-10",
-      purificationMethod: "holding",
-      zakatIntent: "LONG_TERM_DIVIDEND",
-    },
-    {
-      id: "h-3",
-      ticker: "THYAO",
-      lots: "250",
-      avgCostTRY: "320.00",
-      purchaseDate: "2024-08-01",
-      purificationMethod: "holding",
-      zakatIntent: "TRADING_SHORT_TERM",
-    },
-    {
-      id: "h-4",
-      ticker: "FROTO",
-      lots: "80",
-      avgCostTRY: "890.00",
-      purchaseDate: "2024-02-20",
-      purificationMethod: "holding",
-      zakatIntent: "LONG_TERM_DIVIDEND",
-    },
-    {
-      id: "h-5",
-      ticker: "TUPRS",
-      lots: "600",
-      avgCostTRY: "155.00",
-      purchaseDate: "2024-05-18",
-      purificationMethod: "holding",
-      zakatIntent: "LONG_TERM_DIVIDEND",
-    },
-  ];
+  // Portföy Pozisyonları (Yeni kullanıcı için varsayılan olarak boş liste)
+  const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [];
 
   const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>(() => {
     if (typeof window !== "undefined") {
@@ -198,7 +152,7 @@ function PortfolioManagementContent() {
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed)) {
             return parsed;
           }
         } catch {
@@ -1028,7 +982,24 @@ function PortfolioManagementContent() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {portfolioAnalysis.rows.map((row) => (
+                    {portfolioAnalysis.rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center">
+                          <div className="max-w-md mx-auto space-y-3">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-[#182542] dark:text-white flex items-center justify-center mx-auto">
+                              <Briefcase size={22} />
+                            </div>
+                            <div className="text-sm font-bold text-[#182542] dark:text-white">
+                              Portföyünüz Henüz Boş
+                            </div>
+                            <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                              Takip etmek istediğiniz BIST hisselerini yukarıdaki forma ekleyerek fıkhi uyumluluk, tahmini arındırma tutarı ve zekât hesaplamalarınızı anında başlatın.
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      portfolioAnalysis.rows.map((row) => (
                       <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
@@ -1083,7 +1054,7 @@ function PortfolioManagementContent() {
                           </button>
                         </td>
                       </tr>
-                    ))}
+                    )))}
                   </tbody>
                 </table>
               </div>
@@ -1176,7 +1147,14 @@ function PortfolioManagementContent() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {portfolioAnalysis.rows.map((row) => (
+                    {portfolioAnalysis.rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-10 text-center text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                          Arındırma hesaplanacak hisse pozisyonu bulunmuyor.
+                        </td>
+                      </tr>
+                    ) : (
+                      portfolioAnalysis.rows.map((row) => (
                       <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
@@ -1214,7 +1192,7 @@ function PortfolioManagementContent() {
                           {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
                         </td>
                       </tr>
-                    ))}
+                    )))}
                   </tbody>
                 </table>
               </div>
@@ -1347,7 +1325,14 @@ function PortfolioManagementContent() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {portfolioAnalysis.rows.map((row) => (
+                    {portfolioAnalysis.rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-10 text-center text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                          Zekât matrahı hesaplanacak hisse pozisyonu bulunmuyor.
+                        </td>
+                      </tr>
+                    ) : (
+                      portfolioAnalysis.rows.map((row) => (
                       <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
@@ -1381,7 +1366,7 @@ function PortfolioManagementContent() {
                           {formatTRY(row.zakatResult.zakatPayableTRY, 2)}
                         </td>
                       </tr>
-                    ))}
+                    )))}
                   </tbody>
                 </table>
               </div>

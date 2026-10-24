@@ -31,7 +31,7 @@ export async function POST(request: Request) {
       message: "E-posta başarıyla doğrulandı.",
       user: {
         email,
-        fullName: result.fullName || "Mustafa Çalımlı",
+        fullName: result.fullName || email.split("@")[0] || "Katılım Yatırımcısı",
       },
     });
   } catch (err: any) {
