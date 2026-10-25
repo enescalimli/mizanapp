@@ -52,7 +52,6 @@ import {
 import { useLiveDisclosures } from "@/lib/hooks/useLiveDisclosures";
 import { DisclosureDetailModal } from "@/components/DisclosureDetailModal";
 import { DisclosureItem } from "@/types/disclosure";
-import { SocialShareModal } from "@/components/SocialShareModal";
 
 type CompanyDetailTab = "FIKIH" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ" | "AKIS";
 
@@ -64,7 +63,6 @@ export default function CompanyDetailPage() {
 
   const [activeTab, setActiveTab] = useState<CompanyDetailTab>("FIKIH");
   const [selectedDisclosure, setSelectedDisclosure] = useState<DisclosureItem | null>(null);
-  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { disclosures, loading: disclosuresLoading, refresh: refreshDisclosures } = useLiveDisclosures();
   const [standard, setStandard] = useState<ScreeningStandardCode>("BIST_KATILIM_DIB");
   const [data, setData] = useState<CompanyDetailScreening | null>(null);
@@ -243,12 +241,11 @@ export default function CompanyDetailPage() {
             </button>
 
             <button
-              onClick={() => setIsShareModalOpen(true)}
+              onClick={handleShare}
               className="px-3 py-1.5 rounded-full bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#182542] dark:text-white border border-white/90 dark:border-white/10 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs backdrop-blur-md"
-              title="Sosyal Medya Kartı Oluştur & Paylaş"
             >
               <Share2 size={12} />
-              <span>Kart Paylaş</span>
+              <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
             </button>
           </div>
         </div>
@@ -1750,27 +1747,6 @@ export default function CompanyDetailPage() {
         disclosure={selectedDisclosure}
         onClose={() => setSelectedDisclosure(null)}
       />
-
-      {/* Sosyal Medya Paylaşım & İndirme Modalı */}
-      {data && (
-        <SocialShareModal
-          isOpen={isShareModalOpen}
-          onClose={() => setIsShareModalOpen(false)}
-          data={{
-            ticker,
-            companyName: data.companyName,
-            sector: data.sector,
-            isCompliant: data.overallStatus === "COMPLIANT",
-            priceTRY: data.currentPriceTRY,
-            change24h: data.change24h,
-            debtRatio: data.ratios?.interestDebt?.ratioPercentage ? parseFloat(data.ratios.interestDebt.ratioPercentage) : undefined,
-            cashRatio: data.ratios?.interestCash?.ratioPercentage ? parseFloat(data.ratios.interestCash.ratioPercentage) : undefined,
-            impureIncomeRatio: data.ratios?.impureIncome?.ratioPercentage ? parseFloat(data.ratios.impureIncome.ratioPercentage) : undefined,
-            purificationTRY: data.purificationMetrics?.purificationPerShareQuarterTRY ? `${data.purificationMetrics.purificationPerShareQuarterTRY} ₺/lot` : undefined,
-            verdictSummary: data.detailedBreach?.detailExplanation || data.aiAnalysis?.verdict,
-          }}
-        />
-      )}
     </PaynoShell>
   );
 }
