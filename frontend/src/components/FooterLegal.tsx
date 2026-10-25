@@ -12,17 +12,24 @@ export const FooterLegal: React.FC = () => {
         {/* Column 1: Brand & Identity */}
         <div className="space-y-3 md:col-span-1">
           <Link href="/" className="inline-flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-xl overflow-hidden bg-[#182542] flex items-center justify-center p-0.5">
+            <div className="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center p-0.5">
               <Image
-                src="/brand/logo.svg"
+                src="/brand/logo-dark.svg"
                 alt="Mizan"
                 width={32}
                 height={32}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain dark:hidden"
+              />
+              <Image
+                src="/brand/logo-white.svg"
+                alt="Mizan"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain hidden dark:block"
               />
             </div>
-            <span className="text-base font-extrabold text-[#182542] tracking-tight">
-              mizan<span className="text-emerald-600 font-serif italic ml-1">katılım</span>
+            <span className="text-base font-extrabold text-[#182542] dark:text-white tracking-tight">
+              mizan<span className="text-[#273869] dark:text-slate-300 font-serif italic ml-1">katılım</span>
             </span>
           </Link>
           <p className="text-[11px] text-[#6E81A0] leading-relaxed">
@@ -42,7 +49,7 @@ export const FooterLegal: React.FC = () => {
           <ul className="space-y-1.5 text-[11px]">
             <li>
               <Link href="/tarayici" className="hover:text-[#182542] transition flex items-center gap-1.5">
-                <span>626 BIST Hisse Tarayıcı</span>
+                <span>BIST Hisse Tarayıcı</span>
                 <span className="text-[9px] font-bold px-1.5 py-0.2 bg-[#182542]/10 text-[#182542] rounded-md">Canlı</span>
               </Link>
             </li>

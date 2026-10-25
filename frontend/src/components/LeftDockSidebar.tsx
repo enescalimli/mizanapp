@@ -47,19 +47,7 @@ export const LeftDockSidebar: React.FC = () => {
       isActive: pathname === "/dashboard" || pathname === "/",
     },
     {
-      label: "Halka Arz Takvimi",
-      href: "/ipo",
-      icon: Calendar,
-      isActive: pathname.startsWith("/ipo"),
-    },
-    {
-      label: "Fıkhi Bildirimler & Bülten",
-      href: "/ayarlar?tab=notifications",
-      icon: Mail,
-      isActive: pathname.startsWith("/ayarlar") && pathname.includes("tab=notifications"),
-    },
-    {
-      label: "626 BIST Katılım Tarayıcı",
+      label: "Hisse Tarayıcı",
       href: "/tarayici",
       icon: FileText,
       isActive: pathname.startsWith("/tarayici"),
@@ -71,23 +59,29 @@ export const LeftDockSidebar: React.FC = () => {
       isActive: pathname.startsWith("/portfolio"),
     },
     {
+      label: "Halka Arz Takvimi",
+      href: "/ipo",
+      icon: Calendar,
+      isActive: pathname.startsWith("/ipo"),
+    },
+    {
       label: "Mizan AI Asistan",
       href: "/asistan",
       icon: Sparkles,
       isActive: pathname.startsWith("/asistan"),
     },
     {
-      label: "Ayarlar & Tercihler",
+      label: "Ayarlar",
       href: "/ayarlar",
       icon: Settings,
-      isActive: pathname.startsWith("/ayarlar") && !pathname.includes("tab=notifications"),
+      isActive: pathname.startsWith("/ayarlar"),
     },
   ];
 
   return (
-    <aside className="fixed left-4 lg:left-6 top-8 bottom-8 z-40 hidden md:flex flex-col justify-between items-center select-none pointer-events-auto transition-colors duration-200">
-      {/* 1. Üst Mini Kapsül: Açık / Koyu Tema Anahtarı */}
-      <div className="bg-white dark:bg-[#0E1015] rounded-full p-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.6)] border border-slate-200/70 dark:border-white/10 flex flex-col items-center gap-1.5 transition-colors">
+    <aside className="fixed left-3 lg:left-5 top-8 bottom-8 z-40 hidden md:flex flex-col justify-between items-center select-none pointer-events-auto transition-colors duration-200">
+      {/* 1. Üst Mini Kapsül: Açık / Koyu Tema Anahtarı (Şeffaf Cam) */}
+      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-full p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-1.5 transition-colors">
         <button
           type="button"
           onClick={() => setTheme("light")}
@@ -105,7 +99,7 @@ export const LeftDockSidebar: React.FC = () => {
           onClick={() => setTheme("dark")}
           className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
             isDark
-              ? "bg-[#182542] text-white shadow-xs border border-white/10"
+              ? "bg-white text-[#182542] shadow-xs"
               : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
           }`}
           title="Karanlık Tema"
@@ -114,8 +108,8 @@ export const LeftDockSidebar: React.FC = () => {
         </button>
       </div>
 
-      {/* 2. Ana Navigasyon Kapsülü: Dikey İkon Dock */}
-      <div className="bg-white dark:bg-[#0E1015] rounded-full py-3.5 px-1.5 shadow-[0_4px_16px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.7)] border border-slate-200/70 dark:border-white/10 flex flex-col items-center gap-3 transition-colors">
+      {/* 2. Ana Navigasyon Kapsülü: Dikey İkon Dock (Şeffaf Cam) */}
+      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-full py-3.5 px-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.7)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-3 transition-colors">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -124,7 +118,7 @@ export const LeftDockSidebar: React.FC = () => {
                 href={item.href}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 ${
                   item.isActive
-                    ? "bg-[#182542] dark:bg-[#182542] text-white shadow-sm scale-105 border border-white/15"
+                    ? "bg-[#182542] text-white dark:bg-white dark:text-[#182542] shadow-sm scale-105"
                     : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
                 }`}
               >
@@ -140,8 +134,8 @@ export const LeftDockSidebar: React.FC = () => {
         })}
       </div>
 
-      {/* 3. Alt Mini Kapsül: Fıkhi Rehber ve Güvenli Çıkış */}
-      <div className="bg-white dark:bg-[#0E1015] rounded-full py-2 px-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.6)] border border-slate-200/70 dark:border-white/10 flex flex-col items-center gap-2 transition-colors">
+      {/* 3. Alt Mini Kapsül: Fıkhi Rehber ve Güvenli Çıkış (Şeffaf Cam) */}
+      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-full py-2 px-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-2 transition-colors">
         <div className="group relative flex items-center">
           <Link
             href="/rehber"

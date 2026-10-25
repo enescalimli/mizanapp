@@ -42,8 +42,8 @@ export const InstitutionalLogosSection: React.FC = () => {
         </svg>
       ),
       description:
-        "BIST 100, BIST Katılım Tüm (XKTUM), Katılım 50 ve Katılım 30 endeksleri dahil 626 pay senedinin anlık seans fiyatları, piyasa değerleri ve işlem hacimleri.",
-      dataItems: ["626 Pay Senedi", "XKTUM Katılım Endeksi", "Anlık Hacim & Piyasa Değeri", "52H Dip/Zirve & Pazar"],
+        "BIST 100, BIST Katılım Tüm (XKTUM), Katılım 50 ve Katılım 30 endeksleri dahil tüm pay senetlerinin anlık seans fiyatları, piyasa değerleri ve işlem hacimleri.",
+      dataItems: ["Tüm BIST Pay Senetleri", "XKTUM Katılım Endeksi", "Anlık Hacim & Piyasa Değeri", "52H Dip/Zirve & Pazar"],
     },
     {
       id: "kap",
@@ -271,7 +271,7 @@ export const InstitutionalLogosSection: React.FC = () => {
               href="/tarayici"
               className="px-4 py-2 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs"
             >
-              <span>Canlı 626 Hissede İncele</span>
+              <span>Canlı Hisseleri İncele</span>
               <ArrowUpRight size={13} />
             </Link>
           </div>

@@ -34,8 +34,8 @@ export default function ErrorPage({
               className="w-full h-full object-contain"
             />
           </div>
-          <span className="text-xl font-black tracking-tight text-[#182542]">
-            mizan<span className="text-emerald-600 font-serif italic ml-1">katılım</span>
+          <span className="text-xl font-black tracking-tight text-[#182542] dark:text-white">
+            mizan<span className="text-[#273869] dark:text-slate-300 font-serif italic ml-1">katılım</span>
           </span>
         </Link>
       </header>

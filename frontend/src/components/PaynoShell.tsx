@@ -56,23 +56,31 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
       {/* Fixed Left Vertical Dock (Desktop only) */}
       <LeftDockSidebar />
 
-      {/* Main Floating Rounded Bento Canvas */}
-      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-[#F7F8FA] dark:bg-[#0A0B0E] rounded-[24px] sm:rounded-[36px] border border-white/90 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3.5 sm:p-6 lg:p-7 space-y-5 sm:space-y-6 transition-colors duration-200">
+      {/* Main Floating Rounded Bento Canvas (Şeffaf Cam & Frosted Glass) */}
+      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-white/70 dark:bg-[#0A0B0E]/80 backdrop-blur-2xl rounded-[24px] sm:rounded-[36px] border border-white/80 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3 sm:p-6 lg:p-7 space-y-4 sm:space-y-6 transition-colors duration-200">
         
         {/* ================================================================= */}
         {/* TOP UTILITY BAR (Logo + Search/Actions/Profile)                    */}
         {/* ================================================================= */}
         <header className="flex items-center justify-between gap-3 sm:gap-4">
           
-          {/* Sol Logo & Marka Adı (Proje dosyasındaki lacivert squircle logo) */}
+          {/* Sol Logo & Marka Adı (Yüksek çözünürlüklü şeffaf logo) */}
           <Link href="/dashboard" className="inline-flex items-center gap-2.5 group shrink-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] dark:bg-[#0F172A] border border-white/20 p-0.5 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 p-0.5 flex items-center justify-center">
               <Image
-                src="/brand/logo.svg"
+                src="/brand/logo-dark.svg"
                 alt="Mizan Katılım"
                 width={36}
                 height={36}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain dark:hidden"
+                priority
+              />
+              <Image
+                src="/brand/logo-white.svg"
+                alt="Mizan Katılım"
+                width={36}
+                height={36}
+                className="w-full h-full object-contain hidden dark:block"
                 priority
               />
             </div>
@@ -80,7 +88,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               <span className="text-base sm:text-lg font-black tracking-tight text-[#182542] dark:text-white">
                 mizan
               </span>
-              <span className="text-[11px] font-semibold text-[#6E81A0] dark:text-[#8C9BB0] hidden sm:inline">
+              <span className="text-[11px] font-bold text-[#273869] dark:text-slate-300 hidden sm:inline">
                 {badge}
               </span>
             </div>
@@ -94,7 +102,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               type="button"
               onClick={handleSearch}
               className="w-8 h-8 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
-              title="626 BIST Katılım Hissesi Ara..."
+              title="BIST Katılım Hissesi Ara..."
             >
               <Search size={15} strokeWidth={2.2} />
             </button>
@@ -155,7 +163,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               </button>
             </div>
             <p>
-              Mizan Katılım Finans, Borsa İstanbul bünyesindeki 626 hisseyi Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu ve TKBB Danışma Kurulu standartlarına göre çeyreklik KAP finansal dipnotlarından arındırır ve filtreler.
+              Mizan Katılım Finans, Borsa İstanbul bünyesindeki hisseleri Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu ve TKBB Danışma Kurulu standartlarına göre çeyreklik KAP finansal dipnotlarından arındırır ve filtreler.
             </p>
           </div>
         )}
@@ -165,13 +173,13 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
           {children}
         </main>
 
-        {/* Kurumsal ve Yasal Footer */}
-        <FooterLegal />
+        {/* Kurumsal ve Yasal Footer (Asistan sayfasında aşağı kaymayı engellemek için gizlenir) */}
+        {pathname !== "/asistan" && <FooterLegal />}
 
       </div>
 
-      {/* Sağ Alt Kayan Mizan AI Gemini 3.8 Flash Asistan Widget'ı */}
-      <MizanChatWidget />
+      {/* Sağ Alt Kayan Mizan AI Gemini 3.8 Flash Asistan Widget'ı (Asistan sayfasında gizlenir) */}
+      {pathname !== "/asistan" && <MizanChatWidget />}
     </div>
   );
 };

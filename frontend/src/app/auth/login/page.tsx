@@ -33,19 +33,27 @@ export default function LoginPage() {
           <span>Ana Sayfaya Dön</span>
         </Link>
 
-        <Link href="/" className="inline-flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-xl bg-[#182542] dark:bg-[#0F172A] border border-white/20 p-1 flex items-center justify-center shadow-xs">
+        <Link href="/" className="inline-flex items-center gap-2.5 group">
+          <div className="w-8 h-8 rounded-xl p-0.5 flex items-center justify-center shadow-xs">
             <Image
-              src="/brand/logo.svg"
+              src="/brand/logo-dark.svg"
               alt="Mizan Katılım"
               width={32}
               height={32}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain dark:hidden"
+              priority
+            />
+            <Image
+              src="/brand/logo-white.svg"
+              alt="Mizan Katılım"
+              width={32}
+              height={32}
+              className="w-full h-full object-contain hidden dark:block"
               priority
             />
           </div>
           <span className="text-base font-black tracking-tight text-[#182542] dark:text-white">
-            mizan <span className="text-emerald-600 dark:text-emerald-400 font-bold text-xs">katılım</span>
+            mizan <span className="text-[#273869] dark:text-slate-300 font-bold text-xs">katılım</span>
           </span>
         </Link>
       </div>
@@ -104,13 +112,13 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* 3. 626 BIST Katılım Taraması */}
+            {/* 3. BIST Katılım Taraması */}
             <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#273869]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                 <Scale size={16} />
               </div>
               <h3 className="text-xs font-extrabold text-[#182542] dark:text-white">
-                626 Hisse 3 Altın Rasyo
+                BIST Katılım 3 Altın Rasyo
               </h3>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
                 Diyanet ve TKBB standartlarında faizli borç, nakit ve gelir tavanı anlık filtresi.

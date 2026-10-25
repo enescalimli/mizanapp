@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | Mizan Katılım Finans",
   },
   description:
-    "BIST Katılım (DİB/TKBB) standartlarında 626 hisse uygunluk tarama, çeyreklik KAP bilanço dipnot analizi, kuruşu kuruşuna arındırma ve hisse zekâtı SaaS platformu.",
+    "BIST Katılım (DİB/TKBB) standartlarında hisse uygunluk tarama, çeyreklik KAP bilanço dipnot analizi, kuruşu kuruşuna arındırma ve hisse zekâtı SaaS platformu.",
   keywords: [
     "bist katılım",
     "helal hisse",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "Mizan Katılım Finans",
     title: "mizan katılım — Borsa İstanbul Helal Hisse Tarama & Arındırma Platformu",
     description:
-      "BIST Katılım (DİB/TKBB) standartlarında 626 hisse tarama, anlık arındırma hesabı ve hisse zekâtı platformu.",
+      "BIST Katılım (DİB/TKBB) standartlarında hisse tarama, anlık arındırma hesabı ve hisse zekâtı platformu.",
     images: [
       {
         url: "/brand/logo-180.png",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "mizan katılım — Borsa İstanbul Helal Hisse Tarama & Arındırma",
     description:
-      "BIST Katılım standartlarında 626 hisse uygunluk tarama ve kuruşu kuruşuna arındırma platformu.",
+      "BIST Katılım standartlarında hisse uygunluk tarama ve kuruşu kuruşuna arındırma platformu.",
     images: ["/brand/logo-180.png"],
   },
   robots: {

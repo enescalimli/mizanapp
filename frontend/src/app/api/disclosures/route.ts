@@ -171,7 +171,7 @@ async function fetchSpkOfficialAnnouncements(): Promise<Array<{ title: string; l
 }
 
 // 3. Fetch Pure Official KAP Disclosures (Strict Filter & Clean Formatter)
-async function fetchKapOfficialDisclosures(): Promise<Array<{ rawTitle: string; pubDate: string }>> {
+async function fetchKapOfficialDisclosures(): Promise<Array<{ rawTitle: string; pubDate: string; link: string }>> {
   try {
     const url = `https://news.google.com/rss/search?q=${encodeURIComponent('"KAP ***" OR "BORSA İSTANBUL BISTECH" when:3d')}&hl=tr&gl=TR&ceid=TR:tr`;
     const res = await fetch(url, {
@@ -180,16 +180,17 @@ async function fetchKapOfficialDisclosures(): Promise<Array<{ rawTitle: string; 
     });
     if (!res.ok) return [];
     const text = await res.text();
-    const items: Array<{ rawTitle: string; pubDate: string }> = [];
+    const items: Array<{ rawTitle: string; pubDate: string; link: string }> = [];
     const itemRegex = /<item>([\s\S]*?)<\/item>/g;
     let match;
     while ((match = itemRegex.exec(text)) !== null) {
       const block = match[1];
       const title = (block.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || "";
       const pubDate = (block.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || "";
+      const link = (block.match(/<link>([\s\S]*?)<\/link>/) || [])[1] || "";
       // Only keep official KAP disclosures containing the *** delimiter
       if (title.includes("***")) {
-        items.push({ rawTitle: cleanHtml(title), pubDate });
+        items.push({ rawTitle: cleanHtml(title), pubDate, link: link.trim() });
       }
     }
     return items;
@@ -350,9 +351,10 @@ export async function GET(request: Request) {
         }
       }
 
+      // Official KAP direct company / disclosure URL
       const officialKapUrl = primaryTicker
-        ? `https://www.kap.org.tr/tr/bildirim-sorgu?srcText=${primaryTicker}`
-        : "https://www.kap.org.tr/tr/bildirim-sorgu";
+        ? `https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${primaryTicker}`
+        : "https://www.kap.org.tr/tr/bist-sirketler";
 
       const id = "kap-" + Math.abs(hashCode(formattedTitle));
       items.push({

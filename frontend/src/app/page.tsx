@@ -78,7 +78,7 @@ export default function LandingPage() {
     },
     {
       q: "Mizan platformunu kullanmak ücretli mi?",
-      a: "Temel BIST Katılım tarayıcısı, 626 hissenin fıkhi uygunluk durumu, örnek hisse incelemeleri ve halka arz takvimi tamamen ücretsizdir. Kapsamlı kuruşu kuruşuna portföy arındırma defteri, Fintables düzeyinde 24 kriterli şirket karnesi ve derinlemesine bilanço dipnot analizleri ise Mizan PRO abonelerine sunulmaktadır.",
+      a: "Temel BIST Katılım tarayıcısı, hisselerin fıkhi uygunluk durumu, örnek hisse incelemeleri ve halka arz takvimi tamamen ücretsizdir. Kapsamlı kuruşu kuruşuna portföy arındırma defteri, Fintables düzeyinde 24 kriterli şirket karnesi ve derinlemesine bilanço dipnot analizleri ise Mizan PRO abonelerine sunulmaktadır.",
     },
     {
       q: "Bilanço ve hisse verileri ne sıklıkla güncellenir?",
@@ -105,13 +105,21 @@ export default function LandingPage() {
           
           {/* Logo & Marka */}
           <Link href="/" className="inline-flex items-center gap-3 group shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 bg-[#182542] dark:bg-[#0F172A] border border-white/20 p-1 flex items-center justify-center">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 p-1 flex items-center justify-center">
               <Image
-                src="/brand/logo.svg"
+                src="/brand/logo-dark.svg"
                 alt="Mizan Katılım"
                 width={38}
                 height={38}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain dark:hidden"
+                priority
+              />
+              <Image
+                src="/brand/logo-white.svg"
+                alt="Mizan Katılım"
+                width={38}
+                height={38}
+                className="w-full h-full object-contain hidden dark:block"
                 priority
               />
             </div>
@@ -119,7 +127,7 @@ export default function LandingPage() {
               <span className="text-xl sm:text-2xl font-black tracking-tight text-[#182542] dark:text-white">
                 mizan
               </span>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-bold text-[#273869] dark:text-slate-300">
                 katılım
               </span>
             </div>
@@ -130,7 +138,7 @@ export default function LandingPage() {
             {[
               { label: "KAP & SPK", href: "#ozellikler", tab: "KAP_SPK" },
               { label: "AI Asistan", href: "#ozellikler", tab: "AI_ASISTAN" },
-              { label: "626 Tarayıcı", href: "#ozellikler", tab: "TARAYICI" },
+              { label: "Hisse Tarayıcı", href: "#ozellikler", tab: "TARAYICI" },
               { label: "Halka Arzlar", href: "#ozellikler", tab: "HALKA_ARZ" },
               { label: "Arındırma & Zekat", href: "#ozellikler", tab: "ARINDIRMA" },
               { label: "Fıkhi Standartlar", href: "#standartlar" },
@@ -198,7 +206,7 @@ export default function LandingPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span>Canlı KAP &amp; SPK Bildirimleri &bull; Mizan AI &bull; 626 Hisse Taraması</span>
+              <span>Canlı KAP &amp; SPK Bildirimleri &bull; Mizan AI &bull; BIST Katılım Taraması</span>
             </div>
 
             {/* Bold Punchy Headline (Prestijli Lacivert / Beyaz Paleti) */}
@@ -211,7 +219,7 @@ export default function LandingPage() {
 
             {/* Subtitle */}
             <p className="text-base sm:text-xl text-[#525E75] dark:text-[#94A3B8] max-w-2xl font-normal leading-relaxed">
-              DİB ve TKBB Danışma Kurulu standartlarıyla 626 hisseyi canlı tarayın,
+              DİB ve TKBB Danışma Kurulu standartlarıyla BIST hisselerini canlı tarayın,
               resmi KAP &amp; SPK bültenlerini anlık takip edin, Mizan AI ile icazet danışmanlığı alın ve
               temettü arındırmanızı kuruşu kuruşuna hesaplayın.
             </p>
@@ -231,7 +239,7 @@ export default function LandingPage() {
                 className="w-full sm:w-auto px-7 py-4 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-[#151720] text-[#182542] dark:text-white border border-slate-200/80 dark:border-white/10 text-base font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <Search size={16} />
-                <span>626 Hisse Tarayıcısı</span>
+                <span>BIST Hisse Tarayıcısı</span>
               </Link>
             </div>
 
@@ -287,7 +295,7 @@ export default function LandingPage() {
               {/* Showcase Grid (3 Premier Feature Cards) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 
-                {/* Card 1: 626 Katılım Röntgeni (BIMAS) */}
+                {/* Card 1: BIST Katılım Röntgeni (BIMAS) */}
                 <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-3 hover:border-emerald-500/50 transition">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -478,13 +486,13 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Card 3: 626 Hisse 7/24 Radar */}
+          {/* Card 3: BIST Katılım 7/24 Radar */}
           <div className="p-7 rounded-[28px] bg-white dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 flex items-center justify-center">
               <Scale size={24} />
             </div>
             <h3 className="text-lg font-bold text-[#182542] dark:text-white">
-              626 Hisse 7/24 Fıkhi Radar
+              BIST Katılım 7/24 Fıkhi Radar
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Borsa İstanbul’daki tüm hisseleri DİB Din İşleri Yüksek Kurulu kriterlerine göre anlık tarayın.
@@ -557,7 +565,7 @@ export default function LandingPage() {
               {[
                 { id: "KAP_SPK", label: "KAP & SPK Akışı", isNew: true },
                 { id: "AI_ASISTAN", label: "Mizan AI Asistan", isNew: true },
-                { id: "TARAYICI", label: "626 Tarayıcı" },
+                { id: "TARAYICI", label: "Hisse Tarayıcı" },
                 { id: "ARINDIRMA", label: "Arındırma & Zekât" },
                 { id: "KARNE", label: "Şirket Karnesi" },
                 { id: "HALKA_ARZ", label: "Halka Arz" },
@@ -638,7 +646,7 @@ export default function LandingPage() {
                 <>
                   <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-xs font-bold">
                     <Search size={13} />
-                    <span>Canlı BIST 626 Tarayıcısı</span>
+                    <span>Canlı BIST Katılım Tarayıcısı</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
                     Borsa İstanbul’daki Her Hissenin Fıkhi Röntgeni.
@@ -1102,7 +1110,7 @@ export default function LandingPage() {
               Borsa İstanbul’da Helal Birikim Yapmaya Bugün Başlayın.
             </h2>
             <p className="text-sm sm:text-base text-slate-300">
-              626 hisseyi inceleyin, canlı SPK &amp; KAP bildirimlerini anında takip edin ve fıkhi arındırma payınızı kuruşu kuruşuna öğrenin.
+              Borsa İstanbul hisselerini inceleyin, canlı SPK &amp; KAP bildirimlerini anında takip edin ve fıkhi arındırma payınızı kuruşu kuruşuna öğrenin.
             </p>
           </div>
 
@@ -1162,7 +1170,7 @@ export default function LandingPage() {
                 Ürünler
               </h4>
               <ul className="space-y-2">
-                <li><Link href="/tarayici" className="hover:text-emerald-600 dark:hover:text-white transition">626 BIST Tarayıcısı</Link></li>
+                <li><Link href="/tarayici" className="hover:text-emerald-600 dark:hover:text-white transition">BIST Katılım Tarayıcısı</Link></li>
                 <li><Link href="/ipo" className="hover:text-emerald-600 dark:hover:text-white transition">Halka Arz Takvimi</Link></li>
                 <li><Link href="/portfolio" className="hover:text-emerald-600 dark:hover:text-white transition">Arındırma Motoru</Link></li>
                 <li><Link href="/companies/BIMAS" className="hover:text-emerald-600 dark:hover:text-white transition">Şirket Karnesi</Link></li>

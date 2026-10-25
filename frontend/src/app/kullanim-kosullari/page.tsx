@@ -86,7 +86,7 @@ export default function TermsOfServicePage() {
               Hizmet Kapsamı ve Abonelik Modelleri
             </h3>
             <p>
-              Mizan, kullanıcılarına Freemium (ücretsiz) ve Mizan PRO (aylık/yıllık ücretli abonelik) modelleri sunar. Freemium hesaplar temel BIST Katılım filtrelerine ve kısıtlı arındırma hesaplarına erişebilirken; Mizan PRO üyeleri 626 hissenin tamamı için anlık KAP bildirimleri, limitsiz arındırma arşivleme, bilanço dipnot röntgeni ve PDF raporlama özelliklerine sahip olur.
+              Mizan, kullanıcılarına Freemium (ücretsiz) ve Mizan PRO (aylık/yıllık ücretli abonelik) modelleri sunar. Freemium hesaplar temel BIST Katılım filtrelerine ve kısıtlı arındırma hesaplarına erişebilirken; Mizan PRO üyeleri tüm hisseler için anlık KAP bildirimleri, limitsiz arındırma arşivleme, bilanço dipnot röntgeni ve PDF raporlama özelliklerine sahip olur.
             </p>
           </section>
 

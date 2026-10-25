@@ -115,23 +115,23 @@ export const FloatingBottomBar: React.FC = () => {
             onClick={() => setQuickActionOpen(false)}
           />
 
-          {/* Quick Action Modal */}
-          <div className="relative w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl shadow-[#273869]/25 border border-[#E2E8F0] space-y-5 animate-in fade-in zoom-in-95 duration-200 z-10 mb-20 sm:mb-0">
+          {/* Quick Action Modal (Karanlık Mod & Şeffaf Cam Tasarımı) */}
+          <div className="relative w-full max-w-md bg-white/95 dark:bg-[#0E1015]/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200/80 dark:border-white/10 space-y-4 animate-in fade-in zoom-in-95 duration-200 z-10 mb-20 sm:mb-0">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#EDF1F4] pb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#273869] text-white flex items-center justify-center">
-                  <Plus size={20} />
+                <div className="w-8 h-8 rounded-full bg-[#182542] dark:bg-white text-white dark:text-[#182542] flex items-center justify-center">
+                  <Plus size={18} />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-[#182542]">Hızlı Katılım İşlemleri</h3>
-                  <p className="text-xs text-[#6E81A0]">7/24 BIST Katılım &amp; Arındırma Araçları</p>
+                  <h3 className="font-bold text-sm text-[#182542] dark:text-white">Hızlı Katılım İşlemleri</h3>
+                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">BIST Katılım &amp; Arındırma Araçları</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setQuickActionOpen(false)}
-                className="w-8 h-8 rounded-full bg-[#F3F6FB] hover:bg-[#E5EAF2] text-[#405881] flex items-center justify-center transition"
+                className="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-slate-600 dark:text-slate-300 flex items-center justify-center transition"
               >
                 <X size={16} />
               </button>
@@ -142,22 +142,22 @@ export const FloatingBottomBar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => handleProtectedAction("/tarayici")}
-                className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] hover:bg-[#F0F4FA] border border-[#E2E8F0] transition group text-left"
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/60 dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-[#E2E8F0] text-[#273869] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-[#273869] dark:text-blue-400 flex items-center justify-center shadow-xs">
                     <Search size={18} />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#182542] group-hover:text-[#273869]">
+                    <div className="text-xs font-bold text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400">
                       Hisse Uygunluk Sorgula
                     </div>
-                    <div className="text-[11px] text-[#6E81A0]">
-                      626 BIST hissesi için DİB &amp; TKBB rasyoları
+                    <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      BIST hisseleri için DİB &amp; TKBB rasyoları
                     </div>
                   </div>
                 </div>
-                <ArrowUpRight size={16} className="text-[#8B9BB4] group-hover:text-[#273869] transition" />
+                <ArrowUpRight size={16} className="text-[#8B9BB4] dark:text-[#94A3B8] group-hover:text-[#273869] dark:group-hover:text-blue-400 transition" />
               </button>
 
               <button
@@ -303,7 +303,7 @@ export const FloatingBottomBar: React.FC = () => {
       {/* V14 FLOATING MOBILE BAR                                             */}
       {/* =================================================================== */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 select-none md:hidden w-[94%] max-w-sm">
-        <div className="flex items-center justify-between bg-white/95 dark:bg-[#0E1015]/95 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 rounded-full px-3 py-2 shadow-xl ring-1 ring-black/5 transition-all duration-300">
+        <div className="flex items-center justify-between bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-full px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-300">
           
           {/* 1. Ana Sayfa */}
           <Link

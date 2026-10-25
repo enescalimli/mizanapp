@@ -36,8 +36,8 @@ export default function NotFoundPage() {
               className="w-full h-full object-contain"
             />
           </div>
-          <span className="text-xl font-black tracking-tight text-[#182542]">
-            mizan<span className="text-emerald-600 font-serif italic ml-1">katılım</span>
+          <span className="text-xl font-black tracking-tight text-[#182542] dark:text-white">
+            mizan<span className="text-[#273869] dark:text-slate-300 font-serif italic ml-1">katılım</span>
           </span>
         </Link>
 
@@ -99,7 +99,7 @@ export default function NotFoundPage() {
               className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#182542] text-xs font-bold flex items-center gap-1.5 transition"
             >
               <BarChart3 size={14} />
-              <span>626 Hisse Tarayıcı</span>
+              <span>Hisse Tarayıcı</span>
             </Link>
             <Link
               href="/ipo"

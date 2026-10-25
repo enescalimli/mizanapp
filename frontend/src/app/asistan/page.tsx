@@ -7,17 +7,12 @@ import {
   Sparkles,
   Send,
   Trash2,
-  Mic,
-  MicOff,
-  Volume2,
-  VolumeX,
   ArrowRight,
   ShieldCheck,
   ArrowLeftRight,
 } from "lucide-react";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
-import { useVoiceChat } from "@/lib/hooks/useVoiceChat";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 
 interface ChatMessage {
@@ -62,22 +57,6 @@ function AsistanContent() {
       timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
     },
   ]);
-
-  // Sesli Sohbet (Speech-to-Text & Text-to-Speech)
-  const {
-    isListening,
-    startListening,
-    stopListening,
-    isSpeaking,
-    activeSpeakingId,
-    speak,
-    stopSpeaking,
-    hasSpeechSupport,
-  } = useVoiceChat({
-    onTranscript: (transcript) => {
-      setInput(transcript);
-    },
-  });
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -355,125 +334,77 @@ function AsistanContent() {
                     </span>
                   )}
 
-                  {/* Sesli Yanıt Dinleme (TTS) */}
-                  {msg.role === "assistant" && (
-                    <button
-                      type="button"
-                      onClick={() => speak(msg.content, msg.id)}
-                      className={`p-1 px-2 rounded-md transition flex items-center gap-1 ${
-                        isSpeaking && activeSpeakingId === msg.id
-                          ? "bg-emerald-500 text-white animate-pulse"
-                          : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400"
-                      }`}
-                      title={isSpeaking && activeSpeakingId === msg.id ? "Sesi Durdur" : "Sesli Yanıt Dinle (TTS)"}
-                    >
-                      {isSpeaking && activeSpeakingId === msg.id ? (
-                        <>
-                          <VolumeX size={12} />
-                          <span className="text-[9px] font-bold">Durdur</span>
-                        </>
-                      ) : (
-                        <>
-                          <Volume2 size={12} />
-                          <span className="text-[9px]">Sesli Dinle</span>
-                        </>
-                      )}
-                    </button>
-                  )}
+                  </div>
+                  <span>{msg.timestamp}</span>
                 </div>
-                <span>{msg.timestamp}</span>
+
+                {/* Devam Sorusu Önerileri */}
+                {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-2 max-w-[92%] sm:max-w-[85%]">
+                    {msg.suggestedQuestions.map((q, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSend(q)}
+                        className="px-3 py-1 rounded-full bg-white/70 dark:bg-[#0E1015]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/10 text-xs text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm shadow-2xs"
+                      >
+                        {q} &rarr;
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
+            ))}
 
-              {/* Devam Sorusu Önerileri */}
-              {msg.suggestedQuestions && msg.suggestedQuestions.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-2 max-w-[92%] sm:max-w-[85%]">
-                  {msg.suggestedQuestions.map((q, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleSend(q)}
-                      className="px-3 py-1 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-200 transition text-left shadow-2xs"
-                    >
-                      {q} &rarr;
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {loading && (
-            <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 max-w-[70%] shadow-xs">
-              <div className="w-4 h-4 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
-              <span className="text-xs text-slate-600 dark:text-slate-300 font-medium animate-pulse">
-                Mizan AI fıkhi ve finansal verileri analiz ediyor...
-              </span>
-            </div>
-          )}
-
-          {isListening && (
-            <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs animate-pulse">
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping inline-block" />
-              <span className="font-semibold">Mikrofon Aktif: Konuşmanızı dinliyorum...</span>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* ================================================================= */}
-        {/* TEMİZ VE KULLANIMI KOLAY MESAJ GİRİŞ ALANI                        */}
-        {/* ================================================================= */}
-        <div className="pt-2 pb-1 shrink-0 space-y-2">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSend();
-            }}
-            className="flex items-center gap-2 bg-white dark:bg-[#0E1015] border border-slate-200/90 dark:border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#0D8B52] shadow-sm transition-all"
-          >
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={isListening ? "Dinleniyor..." : "Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?, BIMAS arındırması ne kadar?)..."}
-              disabled={loading}
-              className="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
-            />
-
-            {/* Mikrofon ile Sesli Soru Düğmesi */}
-            {hasSpeechSupport && (
-              <button
-                type="button"
-                onClick={isListening ? stopListening : startListening}
-                className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition ${
-                  isListening
-                    ? "bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/40"
-                    : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/20"
-                }`}
-                title={isListening ? "Dinlemeyi Durdur" : "Sesle Sor (Mikrofon)"}
-              >
-                {isListening ? <MicOff size={16} /> : <Mic size={16} />}
-              </button>
+            {loading && (
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/70 dark:bg-[#0E1015]/70 backdrop-blur-md border border-slate-200/60 dark:border-white/10 max-w-[70%] shadow-xs">
+                <div className="w-4 h-4 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
+                <span className="text-xs text-slate-600 dark:text-slate-300 font-medium animate-pulse">
+                  Mizan AI fıkhi ve finansal verileri analiz ediyor...
+                </span>
+              </div>
             )}
 
-            <button
-              type="submit"
-              disabled={!input.trim() || loading}
-              className="w-9 h-9 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-200 dark:disabled:bg-white/10 disabled:text-slate-400 text-white flex items-center justify-center shrink-0 shadow-xs transition"
-            >
-              <Send size={15} />
-            </button>
-          </form>
-
-          <div className="flex items-center justify-between text-[10px] text-slate-400 px-2">
-            <span>DİB 2021/11 &amp; TKBB Standart 1 Esaslıdır</span>
-            <span>SPK Uyarısı: Yatırım Tavsiyesi Değildir (YTD)</span>
+            <div ref={messagesEndRef} />
           </div>
-        </div>
 
-      </div>
-    </PaynoShell>
+          {/* ================================================================= */}
+          {/* TEMİZ VE KULLANIMI KOLAY MESAJ GİRİŞ ALANI                        */}
+          {/* ================================================================= */}
+          <div className="pt-2 pb-1 shrink-0 space-y-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="flex items-center gap-2 bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#0D8B52] shadow-sm transition-all"
+            >
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?, BIMAS arındırması ne kadar?)..."
+                disabled={loading}
+                className="w-full bg-transparent text-sm text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
+              />
+
+              <button
+                type="submit"
+                disabled={!input.trim() || loading}
+                className="w-9 h-9 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-200 dark:disabled:bg-white/10 disabled:text-slate-400 text-white flex items-center justify-center shrink-0 shadow-xs transition"
+              >
+                <Send size={15} />
+              </button>
+            </form>
+
+            <div className="flex items-center justify-between text-[10px] text-slate-400 px-2">
+              <span>DİB 2021/11 &amp; TKBB Standart 1 Esaslıdır</span>
+              <span>SPK Uyarısı: Yatırım Tavsiyesi Değildir (YTD)</span>
+            </div>
+          </div>
+
+        </div>
+      </PaynoShell>
   );
 }
 

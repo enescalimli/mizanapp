@@ -177,10 +177,10 @@ export default function TarayiciPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
-              Borsa İstanbul Katılım Hisseleri (626)
+              Borsa İstanbul Katılım Hisseleri
             </h1>
             <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
-              Diyanet İşleri Başkanlığı ve TKBB standartlarına göre 626 hissenin anlık uygunluk denetimi.
+              Diyanet İşleri Başkanlığı ve TKBB standartlarına göre BIST hisselerinin anlık uygunluk denetimi.
             </p>
           </div>
 
@@ -320,7 +320,7 @@ export default function TarayiciPage() {
             >
               {sectorList.map((sec) => (
                 <option key={sec} value={sec}>
-                  {sec === "TÜMÜ" ? "Tüm Sektörler (626)" : sec}
+                  {sec === "TÜMÜ" ? "Tüm Sektörler" : sec}
                 </option>
               ))}
             </select>
@@ -331,7 +331,7 @@ export default function TarayiciPage() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="626 Hisse Ara (örn: BIMAS, THYAO)..."
+                placeholder="BIST Hisse Ara (örn: BIMAS, THYAO)..."
                 className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-xs text-[#182542] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 shadow-xs"
               />
             </div>

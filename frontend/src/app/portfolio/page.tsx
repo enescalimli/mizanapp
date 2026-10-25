@@ -33,6 +33,7 @@ import {
   BadgeCheck,
   Award,
   ExternalLink,
+  PieChart,
 } from "lucide-react";
 import {
   PortfolioHoldingItem,
@@ -381,6 +382,30 @@ function PortfolioManagementContent() {
     };
   }, [holdings, livePrices, useCeilingRounding, globalZakatIntent]);
 
+  // Daire grafik ve görsel analiz için hisse ağırlıkları
+  const holdingsChartData = useMemo(() => {
+    if (!portfolioAnalysis.rows || portfolioAnalysis.rows.length === 0 || portfolioAnalysis.totalMarketValue.lte(0)) {
+      return [];
+    }
+    const palette = ["#182542", "#0D8B52", "#2563EB", "#7C3AED", "#F59E0B", "#0891B2", "#DC2626", "#475569"];
+    const totalValNum = portfolioAnalysis.totalMarketValue.toNumber();
+
+    return portfolioAnalysis.rows
+      .map((r, i) => {
+        const valNum = r.positionValueTRY.toNumber();
+        const weight = totalValNum > 0 ? (valNum / totalValNum) * 100 : 0;
+        return {
+          ticker: r.ticker,
+          name: r.companyName,
+          valueTRY: valNum,
+          weightPercent: weight,
+          color: palette[i % palette.length],
+          isCompliant: r.isCompliant,
+        };
+      })
+      .sort((a, b) => b.valueTRY - a.valueTRY);
+  }, [portfolioAnalysis.rows, portfolioAnalysis.totalMarketValue]);
+
   // Portföydeki Katılım Dışı Hisselerin Listesi
   const nonCompliantHoldings = useMemo(() => {
     return portfolioAnalysis.rows.filter((r) => !r.isCompliant);
@@ -620,6 +645,227 @@ function PortfolioManagementContent() {
               </div>
             )}
 
+            {/* ============================================================= */}
+            {/* PORTFÖY GÖRSEL ANALİZ & GRAFİKLER                              */}
+            {/* ============================================================= */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+              
+              {/* GRAFİK 1: VARLIK AĞIRLIK DAĞILIMI (DONUT) */}
+              <div className="lg:col-span-6 bg-white/75 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[26px] p-5 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                      <PieChart size={15} className="text-[#0D8B52] dark:text-emerald-400" />
+                      <span>Varlık Ağırlık Dağılımı</span>
+                    </h3>
+                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      Portföydeki hisselerin toplam piyasa değerine oranları
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#182542] dark:text-white">
+                    {holdingsChartData.length} Varlık
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
+                  {/* SVG Donut */}
+                  <div className="relative w-32 h-32 shrink-0 flex items-center justify-center">
+                    <svg className="w-32 h-32 -rotate-90" viewBox="0 0 100 100">
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="36"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="11"
+                        className="text-slate-200/70 dark:text-white/10"
+                      />
+
+                      {holdingsChartData.length === 0 ? (
+                        <circle
+                          cx="50"
+                          cy="50"
+                          r="36"
+                          fill="none"
+                          stroke="#94A3B8"
+                          strokeWidth="11"
+                          strokeDasharray="226.19"
+                          strokeDashoffset="0"
+                          opacity="0.3"
+                        />
+                      ) : (
+                        (() => {
+                          let accumulated = 0;
+                          const circumference = 2 * Math.PI * 36;
+                          return holdingsChartData.map((h, i) => {
+                            const dasharray = `${(h.weightPercent / 100) * circumference} ${circumference}`;
+                            const dashoffset = -((accumulated / 100) * circumference);
+                            accumulated += h.weightPercent;
+                            return (
+                              <circle
+                                key={i}
+                                cx="50"
+                                cy="50"
+                                r="36"
+                                fill="none"
+                                stroke={h.color}
+                                strokeWidth="11"
+                                strokeDasharray={dasharray}
+                                strokeDashoffset={dashoffset}
+                                className="transition-all duration-500"
+                              />
+                            );
+                          });
+                        })()
+                      )}
+                    </svg>
+
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                      <span className="text-xs font-mono font-black text-[#182542] dark:text-white leading-none">
+                        {holdingsChartData.length === 0 ? "0" : holdingsChartData.length}
+                      </span>
+                      <span className="text-[9px] uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8] font-bold">
+                        Pozisyon
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Lejant */}
+                  <div className="flex-1 w-full space-y-1.5">
+                    {holdingsChartData.length === 0 ? (
+                      <div className="text-center py-4 text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                        Portföye hisse eklediğinizde ağırlık dağılımı burada görselleştirilir.
+                      </div>
+                    ) : (
+                      holdingsChartData.map((h) => (
+                        <div key={h.ticker} className="flex items-center justify-between text-xs py-0.5">
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: h.color }} />
+                            <span className="font-bold text-[#182542] dark:text-white">{h.ticker}</span>
+                            <span className="text-[10px] text-slate-400 truncate max-w-[100px]">{h.name}</span>
+                          </div>
+                          <div className="text-right shrink-0 font-mono">
+                            <span className="font-bold text-[#182542] dark:text-white">
+                              ₺{h.valueTRY.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
+                            </span>
+                            <span className="text-[10px] text-slate-400 ml-1.5 font-semibold">
+                              (%{h.weightPercent.toFixed(1)})
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* GRAFİK 2: MALİYET VS PİYASA DEĞERİ & FIKHİ RÖNTGEN */}
+              <div className="lg:col-span-6 bg-white/75 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[26px] p-5 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                      <TrendingUp size={15} className="text-[#2563EB] dark:text-blue-400" />
+                      <span>Maliyet &amp; Fıkhi Röntgen</span>
+                    </h3>
+                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      Sermaye büyümesi ve helal varlık uyum dengesi
+                    </p>
+                  </div>
+                  <span className={`text-xs font-bold font-mono px-2 py-0.5 rounded-full ${
+                    portfolioAnalysis.totalPnlTRY.gte(0)
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
+                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
+                  }`}>
+                    {portfolioAnalysis.totalPnlTRY.gte(0) ? "▲ +" : "▼ "}
+                    %{portfolioAnalysis.totalPnlPercent.toFixed(1)}
+                  </span>
+                </div>
+
+                <div className="space-y-4 py-1">
+                  {/* Maliyet vs Piyasa Değeri Barları */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Piyasa Değeri / Maliyet Karşılaştırması</span>
+                      <span className="font-mono font-bold text-[#182542] dark:text-white">
+                        {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
+                      </span>
+                    </div>
+
+                    <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden flex">
+                      <div
+                        className="h-full bg-[#182542] dark:bg-[#273869] transition-all duration-500"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            portfolioAnalysis.totalCostBasis.gt(0) && portfolioAnalysis.totalMarketValue.gt(0)
+                              ? (portfolioAnalysis.totalCostBasis.toNumber() /
+                                  Math.max(
+                                    portfolioAnalysis.totalMarketValue.toNumber(),
+                                    portfolioAnalysis.totalCostBasis.toNumber()
+                                  )) *
+                                  100
+                              : 0
+                          )}%`,
+                        }}
+                        title={`Maliyet: ${formatTRY(portfolioAnalysis.totalCostBasis, 2)}`}
+                      />
+                      <div
+                        className={`h-full transition-all duration-500 ${
+                          portfolioAnalysis.totalPnlTRY.gte(0) ? "bg-emerald-500" : "bg-rose-500"
+                        }`}
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            portfolioAnalysis.totalCostBasis.gt(0) && portfolioAnalysis.totalMarketValue.gt(0)
+                              ? (Math.abs(portfolioAnalysis.totalPnlTRY.toNumber()) /
+                                  Math.max(
+                                    portfolioAnalysis.totalMarketValue.toNumber(),
+                                    portfolioAnalysis.totalCostBasis.toNumber()
+                                  )) *
+                                  100
+                              : 0
+                          )}%`,
+                        }}
+                        title={`Net Getiri: ${formatTRY(portfolioAnalysis.totalPnlTRY, 2)}`}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                      <span>Maliyet: {formatTRY(portfolioAnalysis.totalCostBasis, 2)}</span>
+                      <span>Net: {formatTRY(portfolioAnalysis.totalPnlTRY, 2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Katılım Uyumluluk Barı */}
+                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Katılım Kriteri Uyumluluk Oranı</span>
+                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                        %{portfolioAnalysis.halalWeightPercent.toFixed(1)} Helal
+                      </span>
+                    </div>
+
+                    <div className="w-full h-2.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden flex">
+                      <div
+                        className="h-full bg-emerald-500 transition-all duration-500"
+                        style={{ width: `${portfolioAnalysis.halalWeightPercent.toNumber()}%` }}
+                      />
+                      <div
+                        className="h-full bg-rose-500 transition-all duration-500"
+                        style={{ width: `${100 - portfolioAnalysis.halalWeightPercent.toNumber()}%` }}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                      <span>DİB / TKBB Katılım Uyumlu</span>
+                      <span>Arındırma: {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
             {/* Fıkhi Güvenlik ve Kurallar Kontrolü */}
             <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
               <div className="flex items-center justify-between">
@@ -715,7 +961,7 @@ function PortfolioManagementContent() {
                     Portföye Yeni Hisse Ekle
                   </h3>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    626 BIST hissesi arasından seçim yapın
+                    BIST hisseleri arasından seçim yapın
                   </p>
                 </div>
               </div>

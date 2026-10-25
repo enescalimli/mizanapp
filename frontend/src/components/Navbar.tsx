@@ -24,7 +24,7 @@ export const Navbar: React.FC = () => {
   const { user, profile, signOut, isDemoUser } = useAuth();
 
   const navLinks = [
-    { href: "/", label: "Hisse Tarayıcı", icon: BarChart3, count: "626" },
+    { href: "/", label: "Hisse Tarayıcı", icon: BarChart3 },
     { href: "/ipo", label: "Halka Arzlar", icon: Calendar, count: "Yeni" },
     { href: "/portfolio", label: "Portföy & Arındırma", icon: Briefcase },
     { href: "/rehber", label: "Fıkıh & Cevazlar", icon: Scale },

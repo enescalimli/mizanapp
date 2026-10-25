@@ -573,7 +573,7 @@ export default function RehberPage() {
               <span>Diyanet İşleri Başkanlığı ve TKBB Standartları</span>
             </div>
             <span className="text-xs font-mono font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-              626 BIST Hisse Fıkhi Kütüphanesi
+              BIST Katılım Fıkhi Kütüphanesi
             </span>
           </div>
 
@@ -1098,14 +1098,14 @@ export default function RehberPage() {
                   Hisselerinizin Bu Kurallara Uygunluğunu Denetleyin
                 </h4>
                 <p className="text-xs text-emerald-800 dark:text-emerald-400 font-normal mt-0.5">
-                  Borsa İstanbul&apos;daki 626 hissenin güncel rasyolarını anlık olarak tarayabilirsiniz.
+                  Borsa İstanbul&apos;daki tüm hisselerin güncel rasyolarını anlık olarak tarayabilirsiniz.
                 </p>
               </div>
               <Link
                 href="/tarayici"
                 className="px-5 py-2.5 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs inline-flex items-center gap-2 shrink-0 transition-colors shadow-xs"
               >
-                <span>626 Hisse Taramasına Git</span>
+                <span>Hisse Taramasına Git</span>
                 <ArrowRight size={13} />
               </Link>
             </div>

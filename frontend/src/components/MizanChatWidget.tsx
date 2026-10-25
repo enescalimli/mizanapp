@@ -17,13 +17,8 @@ import {
   Bot,
   User,
   ChevronDown,
-  Mic,
-  MicOff,
-  Volume2,
-  VolumeX,
 } from "lucide-react";
 import { StockLogo } from "./StockLogo";
-import { useVoiceChat } from "@/lib/hooks/useVoiceChat";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 
 interface ChatMessage {
@@ -50,21 +45,10 @@ export const MizanChatWidget: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Sesli Sohbet (Speech-to-Text & Text-to-Speech)
-  const {
-    isListening,
-    startListening,
-    stopListening,
-    isSpeaking,
-    activeSpeakingId,
-    speak,
-    stopSpeaking,
-    hasSpeechSupport,
-  } = useVoiceChat({
-    onTranscript: (transcript) => {
-      setInput(transcript);
-    },
-  });
+  // Asistan sayfasında tam sayfa asistan zaten var, yüzen widget gizlenir
+  if (pathname === "/asistan") {
+    return null;
+  }
 
   // Sayfa bağlamından hisse kodu tespiti (Örn: /companies/THYAO -> THYAO)
   const currentTicker = React.useMemo(() => {
@@ -169,13 +153,13 @@ export const MizanChatWidget: React.FC = () => {
 
   return (
     <>
-      {/* 1. SAĞ ALT KAYAN AKILLI TETİKLEYİCİ DÜĞME */}
+      {/* 1. SAĞ ALT KAYAN AKILLI TETİKLEYİCİ DÜĞME (Mobilde alt barın üstünde) */}
       {!isOpen && (
-        <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 animate-in fade-in slide-in-from-bottom-3 duration-300">
+        <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 animate-in fade-in slide-in-from-bottom-3 duration-300">
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-2.5 px-4 py-3 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#182542] via-[#1f325c] to-[#0D8B52] dark:from-[#273869] dark:via-[#1e3059] dark:to-[#0D8B52] text-white shadow-[0_10px_30px_rgba(13,139,82,0.35)] hover:shadow-[0_15px_40px_rgba(13,139,82,0.5)] hover:scale-105 active:scale-95 transition-all duration-200 border border-white/20 select-none"
+            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#182542] via-[#1f325c] to-[#0D8B52] dark:from-[#273869] dark:via-[#1e3059] dark:to-[#0D8B52] text-white shadow-[0_10px_30px_rgba(13,139,82,0.35)] hover:shadow-[0_15px_40px_rgba(13,139,82,0.5)] hover:scale-105 active:scale-95 transition-all duration-200 border border-white/20 select-none backdrop-blur-xl"
             title="Mizan AI Fıkhi & Finansal Asistan"
           >
             {/* Animasyonlu Parıltı Halkası */}
@@ -202,10 +186,10 @@ export const MizanChatWidget: React.FC = () => {
 
       {/* 2. AÇILIR MINI ASİSTAN MODAL PENCERESİ */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[600px] max-h-[85vh] bg-white/95 dark:bg-[#0A0B0E]/98 backdrop-blur-2xl rounded-[30px] border border-slate-200/90 dark:border-white/15 shadow-[0_25px_70px_rgba(0,0,0,0.8)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white/85 dark:bg-[#0A0B0E]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {/* Üst Bar */}
-          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#182542] via-[#20345e] to-[#0D8B52] dark:from-[#0E1015] dark:via-[#182542] dark:to-[#0D8B52] text-white flex items-center justify-between border-b border-white/10 shrink-0">
+          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#182542] via-[#20345e] to-[#0D8B52] dark:from-[#0E1015]/95 dark:via-[#182542]/95 dark:to-[#0D8B52]/90 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
                 <Sparkles size={16} className="text-emerald-300" />
@@ -408,28 +392,6 @@ export const MizanChatWidget: React.FC = () => {
                       </span>
                     )}
 
-                    {/* Sesli Yanıt Dinleme (TTS) */}
-                    {msg.role === "assistant" && (
-                      <button
-                        type="button"
-                        onClick={() => speak(msg.content, msg.id)}
-                        className={`p-1 rounded transition flex items-center gap-0.5 ${
-                          isSpeaking && activeSpeakingId === msg.id
-                            ? "bg-emerald-500 text-white animate-pulse"
-                            : "hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400"
-                        }`}
-                        title={isSpeaking && activeSpeakingId === msg.id ? "Sesi Durdur" : "Sesli Yanıt Dinle (TTS)"}
-                      >
-                        {isSpeaking && activeSpeakingId === msg.id ? (
-                          <>
-                            <VolumeX size={11} />
-                            <span className="text-[8px] font-bold">Durdur</span>
-                          </>
-                        ) : (
-                          <Volume2 size={11} />
-                        )}
-                      </button>
-                    )}
                   </div>
                   <span>{msg.timestamp}</span>
                 </div>
@@ -442,7 +404,7 @@ export const MizanChatWidget: React.FC = () => {
                         key={idx}
                         type="button"
                         onClick={() => handleSendMessage(q)}
-                        className="px-2.5 py-1 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left"
+                        className="px-2.5 py-1 rounded-full bg-white/70 dark:bg-[#0E1015]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm"
                       >
                         {q}
                       </button>
@@ -453,7 +415,7 @@ export const MizanChatWidget: React.FC = () => {
             ))}
 
             {loading && (
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-100 dark:bg-white/10 max-w-[70%]">
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/70 dark:bg-white/10 backdrop-blur-md max-w-[70%]">
                 <div className="w-4 h-4 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
                 <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium animate-pulse">
                   Gemini 3.8 Flash fıkhi standartları inceliyor...
@@ -461,54 +423,31 @@ export const MizanChatWidget: React.FC = () => {
               </div>
             )}
 
-            {isListening && (
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-[11px] animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping inline-block" />
-                <span>Mikrofon aktif: Konuşmanızı dinliyorum...</span>
-              </div>
-            )}
-
             <div ref={messagesEndRef} />
           </div>
 
           {/* Mesaj Giriş Alanı */}
-          <div className="p-3 bg-white dark:bg-[#0A0B0E] border-t border-slate-200/80 dark:border-white/10 shrink-0">
+          <div className="p-3 bg-white/80 dark:bg-[#0A0B0E]/80 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 shrink-0">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              className="flex items-center gap-2 bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl px-3 py-1.5 focus-within:border-[#0D8B52] transition-colors"
+              className="flex items-center gap-2 bg-slate-100/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 rounded-2xl px-3 py-1.5 focus-within:border-[#0D8B52] transition-colors"
             >
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={isListening ? "Dinleniyor..." : "Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?)..."}
+                placeholder="Bir hisse veya fıkhi konu sorun (örn: THYAO caiz mi?)..."
                 disabled={loading}
                 className="w-full bg-transparent text-xs text-slate-900 dark:text-white placeholder:text-slate-400 outline-none"
               />
 
-              {/* Mikrofon ile Sesli Soru Düğmesi */}
-              {hasSpeechSupport && (
-                <button
-                  type="button"
-                  onClick={isListening ? stopListening : startListening}
-                  className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition ${
-                    isListening
-                      ? "bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/40"
-                      : "bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200"
-                  }`}
-                  title={isListening ? "Dinlemeyi Durdur" : "Sesle Sor (Mikrofon)"}
-                >
-                  {isListening ? <MicOff size={13} /> : <Mic size={13} />}
-                </button>
-              )}
-
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="w-8 h-8 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-300 dark:disabled:bg-white/10 text-white flex items-center justify-center shrink-0 transition"
+                className="w-8 h-8 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-300 dark:disabled:bg-white/10 text-white flex items-center justify-center shrink-0 transition shadow-xs"
               >
                 <Send size={13} />
               </button>

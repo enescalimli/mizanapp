@@ -44,9 +44,16 @@ import {
   PieChart,
   Target,
   Compass,
+  Radio,
+  ExternalLink,
+  FileText,
+  RefreshCw,
 } from "lucide-react";
+import { useLiveDisclosures } from "@/lib/hooks/useLiveDisclosures";
+import { DisclosureDetailModal } from "@/components/DisclosureDetailModal";
+import { DisclosureItem } from "@/types/disclosure";
 
-type CompanyDetailTab = "FIKIH" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ";
+type CompanyDetailTab = "FIKIH" | "KARNE" | "RASYOLAR" | "FINANSALLAR" | "TEMETTU_RAKIP" | "AI_ANALIZ" | "AKIS";
 
 export default function CompanyDetailPage() {
   const params = useParams();
@@ -55,6 +62,8 @@ export default function CompanyDetailPage() {
   const { user, profile } = useAuth();
 
   const [activeTab, setActiveTab] = useState<CompanyDetailTab>("FIKIH");
+  const [selectedDisclosure, setSelectedDisclosure] = useState<DisclosureItem | null>(null);
+  const { disclosures, loading: disclosuresLoading, refresh: refreshDisclosures } = useLiveDisclosures();
   const [standard, setStandard] = useState<ScreeningStandardCode>("BIST_KATILIM_DIB");
   const [data, setData] = useState<CompanyDetailScreening | null>(null);
   const [loading, setLoading] = useState(true);
@@ -185,7 +194,7 @@ export default function CompanyDetailPage() {
             className="px-4 py-2.5 rounded-full bg-[#182542] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs"
           >
             <ArrowLeft size={13} />
-            <span>626 Hisse Tarayıcısına Dön</span>
+            <span>Hisse Tarayıcısına Dön</span>
           </Link>
         </div>
       </div>
@@ -214,7 +223,7 @@ export default function CompanyDetailPage() {
           <div className="flex items-center gap-2">
             <Link href="/tarayici" className="hover:text-[#182542] dark:hover:text-white transition flex items-center gap-1.5 font-bold">
               <ArrowLeft size={13} />
-              <span>626 BIST Tarayıcı</span>
+              <span>BIST Tarayıcı</span>
             </Link>
             <span>/</span>
             <span>Şirketler</span>
@@ -374,6 +383,7 @@ export default function CompanyDetailPage() {
           <div className="bg-white dark:bg-[#0E1015] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             {[
               { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
+              { id: "AKIS", label: "Akış (KAP & SPK)", icon: Radio, badge: "Canlı" },
               { id: "KARNE", label: "Şirket Karnesi", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
               { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
               { id: "FINANSALLAR", label: "Finansal Raporlar & Tablolar", icon: FileSpreadsheet },
@@ -1511,7 +1521,7 @@ export default function CompanyDetailPage() {
                       {ticker} İçin Tam Yapay Zekâ Analizini Açın
                     </h4>
                     <p className="text-xs text-white/80 leading-relaxed font-normal">
-                      Mizan PRO ile 626 hissenin tamamında anlık yapay zeka bilanço özetine, temettü arındırma projeksiyonuna ve risk alarmlarına erişin.
+                      Mizan PRO ile tüm BIST şirketlerinde anlık yapay zeka bilanço özetine, temettü arındırma projeksiyonuna ve risk alarmlarına erişin.
                     </p>
                   </div>
 
@@ -1539,7 +1549,204 @@ export default function CompanyDetailPage() {
           </div>
         )}
 
+        {/* =================================================================== */}
+        {/* TAB: AKIŞ (KAP & SPK BİLDİRİMLERİ)                                  */}
+        {/* =================================================================== */}
+        {activeTab === "AKIS" && (
+          <div className="space-y-5">
+            {/* Akış Başlık Kartı */}
+            <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#2563EB] text-white flex items-center justify-center shadow-xs">
+                    <Radio size={20} className="animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-extrabold text-[#182542] dark:text-white">
+                        {ticker} &bull; Canlı KAP &amp; SPK Akışı
+                      </h3>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                        <span>Canlı</span>
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      Kamuyu Aydınlatma Platformu resmi şirket bildirimleri ve SPK kurul kararları
+                    </p>
+                  </div>
+                </div>
+
+                {/* Resmi Dış Bağlantılar */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <a
+                    href={`https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                  >
+                    <span>KAP Resmi Sayfası</span>
+                    <ExternalLink size={12} />
+                  </a>
+
+                  <a
+                    href="https://spk.gov.tr/spk-bultenleri"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition flex items-center gap-1.5"
+                  >
+                    <span>SPK Bültenleri</span>
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Hisseye Özel Bildirim Listesi */}
+            {(() => {
+              const tickerDisclosures = disclosures.filter(
+                (d) =>
+                  d.ticker === ticker ||
+                  (d.rawTitle && d.rawTitle.includes(`*** ${ticker} ***`)) ||
+                  (d.title && d.title.toUpperCase().includes(ticker))
+              );
+
+              return (
+                <div className="space-y-3">
+                  {disclosuresLoading && tickerDisclosures.length === 0 ? (
+                    <div className="p-8 text-center bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl border border-white/80 dark:border-white/10">
+                      <RefreshCw size={20} className="animate-spin text-slate-400 mx-auto mb-2" />
+                      <p className="text-xs text-[#6E81A0]">KAP ve SPK resmi akışı kontrol ediliyor...</p>
+                    </div>
+                  ) : tickerDisclosures.length > 0 ? (
+                    tickerDisclosures.map((item) => (
+                      <div
+                        key={item.id}
+                        className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-[22px] border border-white/80 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3 transition hover:border-[#182542]/30 dark:hover:border-white/20"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                              {item.category}
+                            </span>
+                            <span className="text-xs font-mono text-[#6E81A0] dark:text-[#94A3B8]">
+                              {item.pubDate ? new Date(item.pubDate).toLocaleString("tr-TR") : item.timeAgo}
+                            </span>
+                          </div>
+
+                          <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                            {item.publisher}
+                          </span>
+                        </div>
+
+                        <div>
+                          <h4 className="text-sm font-bold text-[#182542] dark:text-white leading-snug">
+                            {item.title}
+                          </h4>
+                          {item.summary && (
+                            <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-1.5 leading-relaxed">
+                              {item.summary}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Fıkhi Uyarı / Katılım Notu */}
+                        {item.islamicFinanceNote && (
+                          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 text-[11px] text-slate-700 dark:text-slate-300 flex items-start gap-2">
+                            <Scale size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                            <span>{item.islamicFinanceNote}</span>
+                          </div>
+                        )}
+
+                        {/* Eylem Düğmeleri */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-white/5 text-xs">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedDisclosure(item)}
+                            className="inline-flex items-center gap-1.5 font-bold text-[#182542] dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300"
+                          >
+                            <Sparkles size={12} className="text-amber-500" />
+                            <span>Mizan AI Fıkhi Analizi &amp; Ayrıntı</span>
+                          </button>
+
+                          <a
+                            href={item.url || `https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                          >
+                            <span>KAP Resmi Bildirimini Aç</span>
+                            <ExternalLink size={11} />
+                          </a>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-8 text-center bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-[26px] border border-white/80 dark:border-white/10 space-y-3">
+                      <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-500 flex items-center justify-center mx-auto">
+                        <FileText size={18} />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-[#182542] dark:text-white">
+                          Son 72 Saatte Yeni KAP Bildirimi Bulunmuyor
+                        </h4>
+                        <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] max-w-md mx-auto">
+                          {ticker} hissesine ait tüm geçmiş özel durum açıklamalarını, bilanço dipnotlarını ve SPK bülten kayıtlarını resmi KAP sayfası üzerinden görüntüleyebilirsiniz.
+                        </p>
+                      </div>
+                      <a
+                        href={`https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#182542] dark:bg-[#273869] text-white text-xs font-bold hover:scale-105 transition shadow-xs"
+                      >
+                        <span>KAP {ticker} Resmi Şirket Sayfasına Git</span>
+                        <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  )}
+
+                  {/* Genel Piyasa ve SPK Bültenleri (Her zaman faydalı ek bilgi) */}
+                  <div className="mt-6 pt-4 border-t border-slate-200/60 dark:border-white/10 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8]">
+                        Son Borsa İstanbul &amp; SPK Piyasa Bildirimleri
+                      </h4>
+                      <span className="text-[10px] text-slate-400 font-mono">BIST Geneli</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {disclosures.slice(0, 4).map((d) => (
+                        <div
+                          key={d.id}
+                          onClick={() => setSelectedDisclosure(d)}
+                          className="p-3.5 rounded-2xl bg-white/70 dark:bg-[#0E1015]/70 backdrop-blur-md border border-white/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 transition cursor-pointer space-y-1.5"
+                        >
+                          <div className="flex items-center justify-between text-[10px]">
+                            <span className="font-bold text-blue-600 dark:text-blue-400">{d.category}</span>
+                            <span className="font-mono text-slate-400">{d.timeAgo}</span>
+                          </div>
+                          <p className="text-xs font-bold text-[#182542] dark:text-white line-clamp-2">
+                            {d.title}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+          </div>
+        )}
+
       </div>
+
+      {/* KAP & SPK Ayrıntı / Mizan AI Analiz Modalı */}
+      <DisclosureDetailModal
+        disclosure={selectedDisclosure}
+        onClose={() => setSelectedDisclosure(null)}
+      />
     </PaynoShell>
   );
 }
