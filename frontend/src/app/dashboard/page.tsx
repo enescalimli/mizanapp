@@ -46,24 +46,43 @@ export default function DashboardPage() {
     }
   }, [loading, user, isDemoUser, router]);
 
-  // Kullanıcı Portföyü (LocalStorage'dan oku, boşsa [])
+  // Kullanıcı Portföyü & E-posta Senkronizasyonu
+  const userEmail = user?.email?.toLowerCase().trim() || "";
   const [userHoldings, setUserHoldings] = useState<Array<{ ticker: string; lots: number; avgCostTRY: number }>>([]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("mizan_user_holdings");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            setUserHoldings(parsed);
-          }
+    if (typeof window === "undefined") return;
+
+    const storageKey = userEmail ? `mizan_holdings_${userEmail}` : "mizan_user_holdings";
+    try {
+      const saved = localStorage.getItem(storageKey) || localStorage.getItem("mizan_user_holdings");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setUserHoldings(parsed);
         }
-      } catch {
-        // ignore
       }
+    } catch {
+      // ignore
     }
-  }, []);
+
+    if (userEmail) {
+      fetch(`/api/portfolio/sync?email=${encodeURIComponent(userEmail)}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && Array.isArray(data.holdings) && data.holdings.length > 0) {
+            const mapped = data.holdings.map((h: any) => ({
+              ticker: h.ticker,
+              lots: parseFloat(h.lots) || 0,
+              avgCostTRY: parseFloat(h.avgCostTRY) || 0,
+            }));
+            setUserHoldings(mapped);
+            localStorage.setItem(storageKey, JSON.stringify(data.holdings));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [userEmail]);
 
   // Portföy Finansal & Fıkhi Metrikleri
   const portfolioMetrics = useMemo(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, Suspense } from "react";
+import React, { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
@@ -142,34 +142,102 @@ function PortfolioManagementContent() {
     return () => clearInterval(interval);
   }, []);
 
-  // Portföy Pozisyonları (Yeni kullanıcı için varsayılan olarak boş liste)
-  const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [];
+  // Portföy Pozisyonları & E-posta Bazlı Bulut Senkronizasyonu
+  const userEmail = user?.email?.toLowerCase().trim() || "";
+  const [isSyncingCloud, setIsSyncingCloud] = useState<boolean>(false);
+  const [lastSyncedTime, setLastSyncedTime] = useState<string | null>(null);
+  const isInitialLoadDone = useRef<boolean>(false);
 
-  const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>(() => {
-    if (typeof window !== "undefined") {
-      const saved =
-        localStorage.getItem("mizan_katilim_holdings_v2") ||
-        localStorage.getItem("mizan_user_holdings");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            return parsed;
-          }
-        } catch {
-          // fallback
+  // Depolama anahtarı: Kullanıcı e-postası varsa ona özel, yoksa genel anahtar
+  const getStorageKey = (email?: string) => {
+    return email ? `mizan_holdings_${email.toLowerCase().trim()}` : "mizan_user_holdings";
+  };
+
+  const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [];
+  const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>([]);
+
+  // 1. E-posta veya Kullanıcı değiştiğinde yerelden anında yükle ve bulutla senkronize et
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const activeKey = getStorageKey(userEmail);
+    const localSaved =
+      localStorage.getItem(activeKey) ||
+      localStorage.getItem("mizan_katilim_holdings_v2") ||
+      localStorage.getItem("mizan_user_holdings");
+
+    let initialHoldings: PortfolioHoldingItem[] = [];
+    if (localSaved) {
+      try {
+        const parsed = JSON.parse(localSaved);
+        if (Array.isArray(parsed)) {
+          initialHoldings = parsed;
+          setHoldings(parsed);
         }
+      } catch {
+        // fallback
       }
     }
-    return DEFAULT_HOLDINGS;
-  });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(holdings));
-      localStorage.setItem("mizan_user_holdings", JSON.stringify(holdings));
+    if (!userEmail) {
+      isInitialLoadDone.current = true;
+      return;
     }
-  }, [holdings]);
+
+    // Buluttan e-postaya bağlı güncel portföyü çek
+    setIsSyncingCloud(true);
+    fetch(`/api/portfolio/sync?email=${encodeURIComponent(userEmail)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.holdings)) {
+          if (data.holdings.length > 0) {
+            setHoldings(data.holdings);
+            localStorage.setItem(activeKey, JSON.stringify(data.holdings));
+            localStorage.setItem("mizan_user_holdings", JSON.stringify(data.holdings));
+          } else if (data.holdings.length === 0 && initialHoldings.length > 0) {
+            // İlk cihazdaki portföyü buluta aktar
+            fetch("/api/portfolio/sync", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: userEmail, holdings: initialHoldings }),
+            }).catch(() => {});
+          }
+          setLastSyncedTime(new Date().toLocaleTimeString("tr-TR"));
+        }
+      })
+      .catch((err) => {
+        console.warn("[PORTFOLIO-SYNC] Cloud sync fetch failed:", err);
+      })
+      .finally(() => {
+        setIsSyncingCloud(false);
+        isInitialLoadDone.current = true;
+      });
+  }, [userEmail]);
+
+  // 2. Portföy değiştiğinde yerel hafızaya ve buluta otomatik kaydet
+  useEffect(() => {
+    if (typeof window === "undefined" || !isInitialLoadDone.current) return;
+
+    const activeKey = getStorageKey(userEmail);
+    localStorage.setItem(activeKey, JSON.stringify(holdings));
+    localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(holdings));
+    localStorage.setItem("mizan_user_holdings", JSON.stringify(holdings));
+
+    if (userEmail) {
+      fetch("/api/portfolio/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, holdings }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setLastSyncedTime(new Date().toLocaleTimeString("tr-TR"));
+          }
+        })
+        .catch((e) => console.warn("[PORTFOLIO-SYNC] Cloud save error:", e));
+    }
+  }, [holdings, userEmail]);
 
   // Resmi Fıkhi İcazet / PDF Sertifika Modalı
   const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);
@@ -217,10 +285,6 @@ function PortfolioManagementContent() {
     });
 
     setHoldings(updated);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(updated));
-      localStorage.setItem("mizan_user_holdings", JSON.stringify(updated));
-    }
 
     setSwapNotification({
       fromTicker,
@@ -423,9 +487,21 @@ function PortfolioManagementContent() {
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
               Katılım Portföyüm &amp; Fıkhi Arındırma
             </h1>
-            <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
-              Canlı BIST hisse pozisyonları, kuruş hassasiyetli fıkhi arındırma ve %2,5 hisse zekâtı yönetimi.
-            </p>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
+                Canlı BIST hisse pozisyonları, kuruş hassasiyetli fıkhi arındırma ve %2,5 hisse zekâtı yönetimi.
+              </p>
+              {userEmail && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isSyncingCloud ? "bg-amber-400 animate-ping" : "bg-emerald-500"}`} />
+                  <span>
+                    {isSyncingCloud
+                      ? "Bulutla Senkronize Ediliyor..."
+                      : `${userEmail} ile senkronize${lastSyncedTime ? ` (${lastSyncedTime})` : ""}`}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-2.5">

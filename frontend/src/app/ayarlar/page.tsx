@@ -186,7 +186,17 @@ export default function SettingsPage() {
         "Dikkat: Yerel portföy ve arındırma kayıtlarınız sıfırlanacaktır. Bu işlem geri alınamaz. Onaylıyor musunuz?"
       )
     ) {
+      const userEmail = user?.email?.toLowerCase().trim() || "";
+      if (userEmail) {
+        localStorage.removeItem(`mizan_holdings_${userEmail}`);
+        fetch("/api/portfolio/sync", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: userEmail, holdings: [] }),
+        }).catch(() => {});
+      }
       localStorage.removeItem("mizan_user_holdings");
+      localStorage.removeItem("mizan_katilim_holdings_v2");
       localStorage.removeItem("mizan_purification_positions");
       localStorage.removeItem("mizan_user_settings");
       alert("Tüm yerel veriler sıfırlandı.");

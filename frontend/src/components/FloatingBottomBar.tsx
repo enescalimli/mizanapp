@@ -55,6 +55,7 @@ export const FloatingBottomBar: React.FC = () => {
   const isExcludedPath =
     pathname === "/" ||
     pathname.startsWith("/auth") ||
+    pathname.startsWith("/social-studio") ||
     pathname.startsWith("/gizlilik") ||
     pathname.startsWith("/kullanim") ||
     pathname.startsWith("/cerez") ||

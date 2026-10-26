@@ -133,15 +133,16 @@ export default function CompanyDetailPage() {
   const handleAddToPortfolio = () => {
     if (typeof window !== "undefined") {
       try {
-        const saved = localStorage.getItem("mizan_katilim_holdings_v2") || localStorage.getItem("mizan_user_holdings");
+        const userEmail = user?.email?.toLowerCase().trim() || "";
+        const storageKey = userEmail ? `mizan_holdings_${userEmail}` : "mizan_user_holdings";
+        const saved = localStorage.getItem(storageKey) || localStorage.getItem("mizan_user_holdings");
         let list: any[] = saved ? JSON.parse(saved) : [];
-        if (!Array.isArray(list) || list.length === 0) {
-          list = [
-            { id: "h-1", ticker: "BIMAS", lots: "300", avgCostTRY: "420.00", purchaseDate: "2024-05-15", purificationMethod: "holding", zakatIntent: "LONG_TERM_DIVIDEND" },
-            { id: "h-2", ticker: "ASELS", lots: "1500", avgCostTRY: "58.00", purchaseDate: "2024-06-20", purificationMethod: "holding", zakatIntent: "LONG_TERM_DIVIDEND" },
-          ];
+        if (!Array.isArray(list)) {
+          list = [];
         }
         const existingIdx = list.findIndex((h) => h.ticker === ticker);
+        const currentPriceVal = data?.currentPriceTRY ? String(data.currentPriceTRY) : "100.00";
+
         if (existingIdx >= 0) {
           list[existingIdx].lots = String(Number(list[existingIdx].lots || 0) + 100);
         } else {
@@ -149,14 +150,23 @@ export default function CompanyDetailPage() {
             id: `h-${Date.now()}`,
             ticker,
             lots: "100",
-            avgCostTRY: data?.ratios?.spotMarketCapTRY ? String(parseFloat(data.ratios.denominatorValueTRY) / 1000000) : "100.00",
+            avgCostTRY: currentPriceVal,
             purchaseDate: new Date().toISOString().slice(0, 10),
             purificationMethod: "holding",
             zakatIntent: "LONG_TERM_DIVIDEND",
           });
         }
-        localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(list));
+        localStorage.setItem(storageKey, JSON.stringify(list));
         localStorage.setItem("mizan_user_holdings", JSON.stringify(list));
+        localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(list));
+
+        if (userEmail) {
+          fetch("/api/portfolio/sync", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: userEmail, holdings: list }),
+          }).catch(() => {});
+        }
       } catch (e) {
         console.error("Local storage error:", e);
       }
