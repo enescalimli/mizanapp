@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PortfolioHoldingItem } from "@/types/katilim";
-import { supabase, isSupabaseConfigured } from "@/lib/supabaseClient";
+import { supabaseAdmin, isSupabaseConfigured } from "@/lib/supabaseClient";
 import fs from "fs";
 import path from "path";
 
@@ -76,14 +76,14 @@ export async function GET(request: Request) {
     if (isSupabaseConfigured()) {
       try {
         // Profili veya portföyü çek
-        const { data: profile } = await supabase
+        const { data: profile } = await supabaseAdmin
           .from("profiles")
           .select("id")
           .eq("email", email)
           .single();
 
         if (profile?.id) {
-          const { data: portfolios } = await supabase
+          const { data: portfolios } = await supabaseAdmin
             .from("portfolios")
             .select("id")
             .eq("user_id", profile.id)
@@ -92,7 +92,7 @@ export async function GET(request: Request) {
 
           if (portfolios && portfolios.length > 0) {
             const portfolioId = portfolios[0].id;
-            const { data: holdingsData, error: holdingsErr } = await supabase
+            const { data: holdingsData, error: holdingsErr } = await supabaseAdmin
               .from("portfolio_holdings")
               .select("*")
               .eq("portfolio_id", portfolioId)
@@ -201,7 +201,7 @@ export async function POST(request: Request) {
       try {
         // Profil var mı kontrol et, yoksa oluştur
         let userId: string | null = null;
-        const { data: profile } = await supabase
+        const { data: profile } = await supabaseAdmin
           .from("profiles")
           .select("id")
           .eq("email", email)
@@ -211,7 +211,7 @@ export async function POST(request: Request) {
           userId = profile.id;
         } else {
           // Yeni profil oluştur
-          const { data: newProfile, error: profileErr } = await supabase
+          const { data: newProfile, error: profileErr } = await supabaseAdmin
             .from("profiles")
             .insert({
               email,
@@ -229,7 +229,7 @@ export async function POST(request: Request) {
         if (userId) {
           // Varsayılan portföyü bul veya oluştur
           let portfolioId: string | null = null;
-          const { data: existingPortfolios } = await supabase
+          const { data: existingPortfolios } = await supabaseAdmin
             .from("portfolios")
             .select("id")
             .eq("user_id", userId)
@@ -238,7 +238,7 @@ export async function POST(request: Request) {
           if (existingPortfolios && existingPortfolios.length > 0) {
             portfolioId = existingPortfolios[0].id;
           } else {
-            const { data: newPf, error: pfErr } = await supabase
+            const { data: newPf, error: pfErr } = await supabaseAdmin
               .from("portfolios")
               .insert({
                 user_id: userId,
@@ -256,7 +256,7 @@ export async function POST(request: Request) {
 
           if (portfolioId) {
             // Önceki pozisyonları temizle ve yenilerini ekle (Full Sync Replacement)
-            await supabase
+            await supabaseAdmin
               .from("portfolio_holdings")
               .delete()
               .eq("portfolio_id", portfolioId);
@@ -273,7 +273,7 @@ export async function POST(request: Request) {
                 purification_method: h.purificationMethod === "dividend" ? "DIVIDEND_BASED" : "HOLDING_PRORATA",
               }));
 
-              await supabase.from("portfolio_holdings").insert(rowsToInsert);
+              await supabaseAdmin.from("portfolio_holdings").insert(rowsToInsert);
             }
             supabasePersisted = true;
           }
