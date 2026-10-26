@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mizan Katılım — Yüksek Kaliteli Logo Açılış Animasyonu Vitrini</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ease-spring-polish: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-cinematic-unfold: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-subtle-exit: cubic-bezier(0.4, 0, 0.6, 1);
+      --navy-950: #020617;
+      --navy-900: #0f172a;
+      --emerald: #12b76a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #172554 0%, #090d16 55%, #020617 100%);
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 20px;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 8px 14px;
+      z-index: 20;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 15px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 180ms var(--ease-spring-polish), background 180ms var(--ease-spring-polish);
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn.active {
+      background: #ffffff;
+      color: #0f172a;
+      border-color: #ffffff;
+    }
+
+    .stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin: auto 0;
+      padding: 40px 20px;
+    }
+
+    .icon-frame {
+      width: 210px;
+      height: 210px;
+      position: relative;
+      border-radius: 46px;
+      overflow: hidden;
+      box-shadow:
+        0 30px 70px -15px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+    }
+
+    /* Mode 1: Jakub + Emil Polish (2.2s) */
+    .mode-polish .icon-frame {
+      animation: containerPolish 1250ms var(--ease-spring-polish) both;
+    }
+    .mode-polish .wing-left {
+      transform-origin: 420px 510px;
+      animation: leftWingPolish 1250ms var(--ease-spring-polish) 220ms both;
+    }
+    .mode-polish .wing-right {
+      transform-origin: 600px 510px;
+      animation: rightWingPolish 1300ms var(--ease-spring-polish) 480ms both;
+    }
+    .mode-polish .wing-flap {
+      transform-origin: 525px 540px;
+      animation: flapPolish 1200ms var(--ease-spring-polish) 820ms both;
+    }
+    .mode-polish .wordmark {
+      animation: containerPolish 1100ms var(--ease-spring-polish) 650ms both;
+    }
+
+    /* Mode 2: Jhey + Jakub Cinematic (3.8s) */
+    .mode-cinematic .icon-frame {
+      animation: containerCinematic 2100ms var(--ease-cinematic-unfold) both;
+    }
+    .mode-cinematic .squircle-stroke {
+      stroke-dasharray: 3600;
+      animation: strokeDraw 2600ms var(--ease-cinematic-unfold) 150ms both;
+    }
+    .mode-cinematic .wing-left {
+      transform-origin: 420px 510px;
+      animation: leftWingCinematic 1900ms var(--ease-cinematic-unfold) 450ms both;
+    }
+    .mode-cinematic .wing-right {
+      transform-origin: 600px 510px;
+      animation: rightWingCinematic 2000ms var(--ease-cinematic-unfold) 900ms both;
+    }
+    .mode-cinematic .wing-flap {
+      transform-origin: 525px 540px;
+      animation: flapCinematic 1950ms var(--ease-cinematic-unfold) 1450ms both;
+    }
+    .mode-cinematic .light-sweep {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.28) 50%, transparent 80%);
+      pointer-events: none;
+      animation: lightSweep 1800ms var(--ease-cinematic-unfold) 1950ms both;
+    }
+    .mode-cinematic .wordmark {
+      animation: containerPolish 1600ms var(--ease-cinematic-unfold) 1200ms both;
+    }
+
+    .wordmark {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wordmark-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .brand-title {
+      font-size: 46px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--emerald);
+      display: inline-block;
+    }
+
+    .brand-sub {
+      font-size: 20px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .brand-tagline {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    @keyframes containerPolish {
+      0% { opacity: 0; transform: translateY(8px) scale(0.92); filter: blur(4px); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+    }
+    @keyframes leftWingPolish {
+      0% { opacity: 0; transform: translate3d(-14px, 8px, 0) scale(0.94); filter: blur(4px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0px); }
+    }
+    @keyframes rightWingPolish {
+      0% { opacity: 0; transform: translate3d(14px, 8px, 0) scale(0.94); filter: blur(4px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0px); }
+    }
+    @keyframes flapPolish {
+      0% { opacity: 0; transform: translate3d(8px, -6px, 0) scale(0.93); filter: blur(3px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0px); }
+    }
+    @keyframes containerCinematic {
+      0% { opacity: 0; transform: perspective(1000px) rotateX(14deg) rotateY(-10deg) translateY(14px) scale(0.9); filter: blur(6px); }
+      100% { opacity: 1; transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1); filter: blur(0px); }
+    }
+    @keyframes strokeDraw {
+      0% { stroke-dashoffset: 3600; opacity: 0.2; }
+      60% { opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 1; }
+    }
+    @keyframes leftWingCinematic {
+      0% { opacity: 0; transform: translate3d(-28px, 14px, 0) scale(0.9); filter: blur(6px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0px); }
+    }
+    @keyframes rightWingCinematic {
+      0% { opacity: 0; transform: translate3d(28px, 14px, 0) scale(0.9); filter: blur(6px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0px); }
+    }
+    @keyframes flapCinematic {
+      0% { opacity: 0; transform: translate3d(18px, -12px, 0) scale(0.9); filter: blur(5px); }
+      100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); filter: blur(0px); }
+    }
+    @keyframes lightSweep {
+      0% { transform: translateX(-140%) skewX(-22deg); opacity: 0; }
+      35% { opacity: 0.85; }
+      100% { transform: translateX(220%) skewX(-22deg); opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+        filter: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="mode-cinematic" id="rootBody">
+  <div class="toolbar">
+    <button class="btn" id="btnPolish" onclick="setMode('polish')">Jakub + Emil (Polish · 2.2sn)</button>
+    <button class="btn active" id="btnCinematic" onclick="setMode('cinematic')">Jhey + Jakub (Cinematic 3D · 3.8sn)</button>
+    <button class="btn" onclick="replay()">↻ Tekrar Oynat</button>
+  </div>
+
+  <main class="stage" id="stageContainer">
+    <div class="icon-frame" onclick="replay()" title="Tekrar oynatmak için tıklayın">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="100%" height="100%">
+        <defs>
+          <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#111827"/>
+            <stop offset="50%" stop-color="#0f172a"/>
+            <stop offset="100%" stop-color="#020617"/>
+          </linearGradient>
+          <linearGradient id="borderGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45"/>
+            <stop offset="50%" stop-color="#ffffff" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0.3"/>
+          </linearGradient>
+          <linearGradient id="emblemSurface" x1="320" y1="350" x2="500" y2="660" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="40%" stop-color="#f8fafc"/>
+            <stop offset="75%" stop-color="#e2e8f0"/>
+            <stop offset="100%" stop-color="#cbd5e1"/>
+          </linearGradient>
+          <linearGradient id="rightBaseSurface" x1="565" y1="630" x2="690" y2="360" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#94a3b8"/>
+            <stop offset="20%" stop-color="#cbd5e1"/>
+            <stop offset="50%" stop-color="#e2e8f0"/>
+            <stop offset="80%" stop-color="#f8fafc"/>
+            <stop offset="100%" stop-color="#ffffff"/>
+          </linearGradient>
+          <linearGradient id="flapSurface" x1="525" y1="520" x2="574" y2="520" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="75%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#f1f5f9"/>
+          </linearGradient>
+          <filter id="emblemFloat" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000000" flood-opacity="0.6"/>
+            <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.35"/>
+          </filter>
+          <filter id="creaseShadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+            <feOffset in="blur" dx="4" dy="1" result="offset"/>
+            <feFlood flood-color="#020617" flood-opacity="0.4" result="color"/>
+            <feComposite in="color" in2="offset" operator="in" result="shadow"/>
+            <feMerge>
+              <feMergeNode in="shadow"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <rect width="1024" height="1024" rx="224" fill="url(#bgGrad)" />
+        <rect class="squircle-stroke" width="1020" height="1020" x="2" y="2" rx="223" fill="none" stroke="url(#borderGrad)" stroke-width="5" />
+
+        <g transform="translate(-317.44, -311.77) scale(1.62)" filter="url(#emblemFloat)">
+          <path class="wing-left" d="M 324 349 L 444 421 C 492 449.8 499 500 499 510 L 499 668 L 379 596 C 366 588.2 324 565 324 519 Z" fill="url(#emblemSurface)" />
+          <path class="wing-right" d="M 700 349 L 580 421 C 532 449.8 525 500 525 510 L 525 668 L 645 596 C 658 588.2 700 565 700 519 Z" fill="url(#rightBaseSurface)" />
+          <path class="wing-flap" d="M 603 407 C 581 429 574 453 574 475 L 574 580 C 574 607 569 641.6 525 668 L 525 510 C 525 500 532 449.8 580 421 Z" fill="url(#flapSurface)" filter="url(#creaseShadow)" />
+        </g>
+      </svg>
+      <div class="light-sweep"></div>
+    </div>
+
+    <div class="wordmark">
+      <div class="wordmark-row">
+        <span class="brand-title">mizan</span>
+        <span class="brand-dot"></span>
+        <span class="brand-sub">katılım</span>
+      </div>
+      <div class="brand-tagline">BIST Katılım &bull; Fıkhi Finans Radarı</div>
+    </div>
+  </main>
+
+  <script>
+    function setMode(mode) {
+      const body = document.getElementById('rootBody');
+      body.className = 'mode-' + mode;
+      document.getElementById('btnPolish').classList.toggle('active', mode === 'polish');
+      document.getElementById('btnCinematic').classList.toggle('active', mode === 'cinematic');
+      replay();
+    }
+
+    function replay() {
+      const stage = document.getElementById('stageContainer');
+      const clone = stage.cloneNode(true);
+      stage.parentNode.replaceChild(clone, stage);
+    }
+  </script>
+</body>
+</html>

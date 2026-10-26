@@ -159,11 +159,7 @@ export const InstitutionalLogosSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 sm:py-24 border-t border-slate-200/80 dark:border-white/10 bg-slate-50/25 dark:bg-white/[0.015] backdrop-blur-xs transition-colors relative z-10 overflow-hidden">
-      {/* Background ambient accents */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-
+    <section className="pt-20 sm:pt-24 pb-4 border-t border-slate-200/80 dark:border-white/10 transition-colors relative z-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
         
         {/* Section Header */}

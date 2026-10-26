@@ -122,7 +122,7 @@ export default function LandingPage() {
           
           {/* Logo & Marka */}
           <Link href="/" className="inline-flex items-center gap-3 group shrink-0 mizan-logo-pressable">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0 p-1 flex items-center justify-center">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 overflow-visible group-hover:scale-105 transition-transform duration-200 shrink-0 flex items-center justify-center">
               <AnimatedMizanLogo
                 variant="emblem-auto"
                 motionStyle="polish"
@@ -205,19 +205,20 @@ export default function LandingPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-[#182542]/12 via-[#273869]/6 to-transparent rounded-full blur-3xl pointer-events-none -z-10 dark:from-blue-950/20 dark:via-transparent" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-7">
+          <div
+            id="mizan-hero-text-block"
+            className="flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-7"
+          >
             
-            {/* Hero Centerpiece High-Resolution Animated Dark Squircle Icon (3.8s Cinematic Unfold) */}
+            {/* Hero Centerpiece Pure Mizan Emblem Icon (No Square Box, 3.8s Cinematic Unfold) */}
             <div className="flex flex-col items-center gap-3">
-              <div className="rounded-[22px] p-1 bg-white/40 dark:bg-white/5 backdrop-blur-md border border-slate-200/70 dark:border-white/10 shadow-[0_18px_45px_-12px_rgba(15,23,42,0.28)] dark:shadow-[0_20px_60px_-12px_rgba(0,0,0,0.85)]">
-                <AnimatedMizanLogo
-                  variant="squircle-dark"
-                  motionStyle="cinematic"
-                  size={68}
-                  showWordmark={false}
-                  replayOnClick
-                />
-              </div>
+              <AnimatedMizanLogo
+                variant="emblem-auto"
+                motionStyle="cinematic"
+                size={68}
+                showWordmark={false}
+                replayOnClick
+              />
 
               {/* Top Pill Eyebrow with Beacon */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/65 dark:bg-[#0E1015]/70 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm text-xs font-bold text-[#182542] dark:text-white">
@@ -229,7 +230,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Bold Punchy Headline (Prestijli Lacivert / Beyaz Paleti) */}
+            {/* Bold Punchy Headline (Prestijli Lacivert / Beyaz Paleti — Orijinal Boyut) */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#182542] dark:text-white leading-[1.12]">
               Borsa İstanbul’da Helal Yatırımın{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#182542] via-[#273869] to-[#3a5298] dark:from-white dark:via-slate-200 dark:to-blue-300">
@@ -237,8 +238,11 @@ export default function LandingPage() {
               </span>
             </h1>
 
-            {/* Subtitle */}
-            <p className="text-base sm:text-xl text-[#525E75] dark:text-[#94A3B8] max-w-2xl font-normal leading-relaxed">
+            {/* Subtitle (Orijinal Boyut — Yapraklar bu metnin sağ ve sol boşluğuna hizalanır) */}
+            <p
+              id="mizan-hero-subtitle"
+              className="text-base sm:text-xl text-[#525E75] dark:text-[#94A3B8] max-w-2xl font-normal leading-relaxed"
+            >
               DİB ve TKBB Danışma Kurulu standartlarıyla BIST hisselerini canlı tarayın,
               resmi KAP &amp; SPK bültenlerini anlık takip edin, Mizan AI ile icazet danışmanlığı alın ve
               temettü arındırmanızı kuruşu kuruşuna hesaplayın.
@@ -1158,6 +1162,15 @@ export default function LandingPage() {
       {/* 8.5 OFFICIAL DATA & STANDARDS INTEGRATIONS (BIST, KAP, TKBB, TV)   */}
       {/* =================================================================== */}
       <InstitutionalLogosSection />
+
+      {/* =================================================================== */}
+      {/* 8.8 MIZAN LOGO MERGE SHOWCASE STAGE (Açık Birleşme Alanı)          */}
+      {/* =================================================================== */}
+      <div
+        id="mizan-logo-merge-stage"
+        aria-hidden="true"
+        className="relative z-0 w-full h-[520px] sm:h-[560px] lg:h-[600px] pointer-events-none select-none"
+      />
 
       {/* =================================================================== */}
       {/* 9. COMPREHENSIVE MIDAS-STYLE FOOTER                                 */}

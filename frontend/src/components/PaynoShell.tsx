@@ -71,7 +71,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
           
           {/* Sol Logo & Marka Adı (Yüksek çözünürlüklü animasyonlu vektörel logo) */}
           <Link href="/dashboard" className="inline-flex items-center gap-2.5 group shrink-0 mizan-logo-pressable">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0 p-0.5 flex items-center justify-center">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 overflow-visible group-hover:scale-105 transition-transform duration-200 shrink-0 flex items-center justify-center">
               <AnimatedMizanLogo
                 variant="emblem-auto"
                 motionStyle="polish"

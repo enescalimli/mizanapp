@@ -36,11 +36,11 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Sol: Payno Tarzı Minimalist Geometrik Marka & Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0 mizan-logo-pressable">
-          <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-orbix-sm flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+          <div className="w-10 h-10 overflow-visible flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
             <AnimatedMizanLogo
-              variant="squircle-dark"
+              variant="emblem-auto"
               motionStyle="polish"
-              size={40}
+              size={38}
               showWordmark={false}
             />
           </div>

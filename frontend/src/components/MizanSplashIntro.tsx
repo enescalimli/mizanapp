@@ -18,8 +18,8 @@ export const triggerMizanSplashReplay = (detail?: SplashReplayDetail) => {
 
 export const MizanSplashIntro: React.FC = () => {
   const [phase, setPhase] = useState<"hidden" | "entering" | "exiting">("hidden");
-  const [motionStyle, setMotionStyle] = useState<MizanMotionStyle>("polish");
-  const [variant, setVariant] = useState<MizanLogoVariant>("squircle-dark");
+  const [motionStyle, setMotionStyle] = useState<MizanMotionStyle>("cinematic");
+  const [variant, setVariant] = useState<MizanLogoVariant>("emblem-auto");
   const [replaySeed, setReplaySeed] = useState(0);
 
   const dismissSplash = useCallback(() => {
@@ -44,7 +44,7 @@ export const MizanSplashIntro: React.FC = () => {
 
     sessionStorage.setItem(SESSION_SPLASH_KEY, "1");
     setMotionStyle("cinematic");
-    setVariant("squircle-dark");
+    setVariant("emblem-auto");
     setPhase("entering");
   }, []);
 
@@ -55,7 +55,7 @@ export const MizanSplashIntro: React.FC = () => {
     const handleReplay = (e: Event) => {
       const customEvent = e as CustomEvent<SplashReplayDetail>;
       const nextStyle = customEvent.detail?.motionStyle || "cinematic";
-      const nextVariant = customEvent.detail?.variant || "squircle-dark";
+      const nextVariant = customEvent.detail?.variant || "emblem-auto";
       setMotionStyle(nextStyle);
       setVariant(nextVariant);
       setReplaySeed((s) => s + 1);
@@ -121,17 +121,15 @@ export const MizanSplashIntro: React.FC = () => {
         className="pointer-events-none absolute w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-[#182542]/15 via-[#273869]/10 to-emerald-500/10 dark:from-blue-500/15 dark:via-[#273869]/20 dark:to-emerald-500/10 blur-3xl"
       />
 
-      {/* Center High-Resolution Animated Icon & Brand */}
+      {/* Center High-Resolution Pure Animated Icon & Brand (No Square Box) */}
       <div className="relative flex flex-col items-center gap-5">
-        <div className="rounded-[32px] shadow-[0_24px_60px_-12px_rgba(24,37,66,0.28)] dark:shadow-[0_24px_70px_-12px_rgba(0,0,0,0.85)]">
-          <AnimatedMizanLogo
-            key={replaySeed}
-            variant={variant}
-            motionStyle={motionStyle}
-            size={136}
-            showWordmark={false}
-          />
-        </div>
+        <AnimatedMizanLogo
+          key={replaySeed}
+          variant={variant}
+          motionStyle={motionStyle}
+          size={136}
+          showWordmark={false}
+        />
 
         {/* Brand Typography & Subtitle */}
         <div

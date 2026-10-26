@@ -79,8 +79,8 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
       effectiveMotion === "instant"
         ? 50
         : effectiveMotion === "polish"
-          ? 2200
-          : 3800;
+          ? 3400
+          : 4800;
     const timer = window.setTimeout(() => {
       onAnimationComplete();
     }, totalMs);
@@ -93,62 +93,62 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
   const isLightIcon = variant === "squircle-light" || variant === "square-light";
   const cornerRadius = isSquircle ? 224 : isSquare ? 96 : 0;
 
-  // Timing tokens per designer weighting (Extended, unhurried choreography)
+  // Timing tokens: Yavaş, net ve soldurmasız (3.2s - 4.5s) yaprak kavuşması
   const containerAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanContainerPolishIn 1250ms var(--ease-spring-polish) both`,
-          willChange: "transform, opacity, filter",
+          animation: `mizanContainerPolishIn 2800ms var(--ease-spring-polish) both`,
+          willChange: "transform",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanContainerCinematicIn 2100ms var(--ease-cinematic-unfold) both`,
-            willChange: "transform, opacity, filter",
+             animation: `mizanContainerCinematicIn 3800ms var(--ease-cinematic-unfold) both`,
+             willChange: "transform",
           }
         : {};
 
   const leftWingAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanLeftWingPolish 1250ms var(--ease-spring-polish) 220ms both`,
+          animation: `mizanLeftWingPolish 2800ms var(--ease-spring-polish) 100ms both`,
           transformOrigin: "420px 510px",
-          willChange: "transform, opacity, filter",
+          willChange: "transform",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanLeftWingCinematic 1900ms var(--ease-cinematic-unfold) 450ms both`,
+            animation: `mizanLeftWingCinematic 3600ms var(--ease-cinematic-unfold) 150ms both`,
             transformOrigin: "420px 510px",
-            willChange: "transform, opacity, filter",
+            willChange: "transform",
           }
         : {};
 
   const rightWingAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanRightWingPolish 1300ms var(--ease-spring-polish) 480ms both`,
+          animation: `mizanRightWingPolish 2900ms var(--ease-spring-polish) 250ms both`,
           transformOrigin: "600px 510px",
-          willChange: "transform, opacity, filter",
+          willChange: "transform",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanRightWingCinematic 2000ms var(--ease-cinematic-unfold) 900ms both`,
+            animation: `mizanRightWingCinematic 3800ms var(--ease-cinematic-unfold) 350ms both`,
             transformOrigin: "600px 510px",
-            willChange: "transform, opacity, filter",
+            willChange: "transform",
           }
         : {};
 
   const flapAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanFlapCreasePolish 1200ms var(--ease-spring-polish) 820ms both`,
+          animation: `mizanFlapCreasePolish 2800ms var(--ease-spring-polish) 450ms both`,
           transformOrigin: "525px 540px",
-          willChange: "transform, opacity, filter",
+          willChange: "transform",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanFlapOrigamiFold 1950ms var(--ease-cinematic-unfold) 1450ms both`,
+            animation: `mizanFlapOrigamiFold 3800ms var(--ease-cinematic-unfold) 650ms both`,
             transformOrigin: "525px 540px",
-            willChange: "transform, opacity, filter",
+            willChange: "transform",
           }
         : {};
 
@@ -156,18 +156,18 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
     effectiveMotion === "cinematic"
       ? {
           strokeDasharray: 3600,
-          animation: `mizanSquircleStrokeDraw 2600ms var(--ease-cinematic-unfold) 150ms both`,
+          animation: `mizanSquircleStrokeDraw 3800ms var(--ease-cinematic-unfold) 100ms both`,
         }
       : {};
 
   const wordmarkAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanContainerPolishIn 1100ms var(--ease-spring-polish) 650ms both`,
+          animation: `mizanContainerPolishIn 2400ms var(--ease-spring-polish) 300ms both`,
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanContainerPolishIn 1600ms var(--ease-cinematic-unfold) 1200ms both`,
+            animation: `mizanContainerPolishIn 3200ms var(--ease-cinematic-unfold) 500ms both`,
           }
         : {};
 
@@ -362,7 +362,7 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                 style={strokeDrawStyle}
               />
 
-              {/* Three-Part Geometric Mizan Emblem */}
+               {/* Two-Leaf Geometric Mizan Emblem (Right Leaf + Fold Flap unified) */}
               <g transform="translate(-317.44, -311.77) scale(1.62)" filter={`url(#emblemFloat-${uniqueId})`}>
                 {/* 1. Left Wing */}
                 <path
@@ -378,34 +378,30 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                   fill={`url(#emblemSurface-${uniqueId})`}
                 />
 
-                {/* 2. Right Wing Base */}
-                <path
-                  className="mizan-anim-wing-right"
-                  style={rightWingAnimStyle}
-                  d="M 700 349
-                     L 580 421
-                     C 532 449.8 525 500 525 510
-                     L 525 668
-                     L 645 596
-                     C 658 588.2 700 565 700 519
-                     Z"
-                  fill={`url(#rightBaseSurface-${uniqueId})`}
-                />
-
-                {/* 3. Right Wing Origami Fold Flap */}
-                <path
-                  className="mizan-anim-wing-flap"
-                  style={flapAnimStyle}
-                  d="M 603 407
-                     C 581 429 574 453 574 475
-                     L 574 580
-                     C 574 607 569 641.6 525 668
-                     L 525 510
-                     C 525 500 532 449.8 580 421
-                     Z"
-                  fill={`url(#flapSurface-${uniqueId})`}
-                  filter={`url(#creaseShadow-${uniqueId})`}
-                />
+                {/* 2. Right Wing (Base + Origami Fold Flap permanently attached together) */}
+                <g className="mizan-anim-wing-right" style={rightWingAnimStyle}>
+                  <path
+                    d="M 700 349
+                       L 580 421
+                       C 532 449.8 525 500 525 510
+                       L 525 668
+                       L 645 596
+                       C 658 588.2 700 565 700 519
+                       Z"
+                    fill={`url(#rightBaseSurface-${uniqueId})`}
+                  />
+                  <path
+                    d="M 603 407
+                       C 581 429 574 453 574 475
+                       L 574 580
+                       C 574 607 569 641.6 525 668
+                       L 525 510
+                       C 525 500 532 449.8 580 421
+                       Z"
+                    fill={`url(#flapSurface-${uniqueId})`}
+                    filter={`url(#creaseShadow-${uniqueId})`}
+                  />
+                </g>
               </g>
             </svg>
 
@@ -426,11 +422,11 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
           /* =============================================================== */
           /* TRANSPARENT EMBLEM (logo-dark.svg / logo-white.svg / 4K Hybrid) */
           /* =============================================================== */
-          <div className="relative w-full h-full flex items-center justify-center">
+          <div className="relative w-full h-full flex items-center justify-center overflow-visible">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="292 288.5 440 440"
-              className={`w-full h-full block transition-opacity duration-300 ${
+              className={`w-full h-full block overflow-visible transition-opacity duration-300 ${
                 variant === "4k-hybrid" && is4kLoaded ? "opacity-0" : "opacity-100"
               } ${
                 variant === "emblem-auto"
@@ -526,19 +522,17 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                   d="M 324 349 L 444 421 C 492 449.8 499 500 499 510 L 499 668 L 379 596 C 366 588.2 324 565 324 519 Z"
                   fill="#0f172a"
                 />
-                <path
-                  className="mizan-anim-wing-right"
-                  style={rightWingAnimStyle}
-                  d="M 700 349 L 580 421 C 532 449.8 525 500 525 510 L 525 668 L 645 596 C 658 588.2 700 565 700 519 Z"
-                  fill={`url(#navyRightBase-${uniqueId})`}
-                />
-                <path
-                  className="mizan-anim-wing-flap"
-                  style={flapAnimStyle}
-                  d="M 603 407 C 581 429 574 453 574 475 L 574 580 C 574 607 569 641.6 525 668 L 525 510 C 525 500 532 449.8 580 421 Z"
-                  fill="#1e293b"
-                  filter={`url(#emblemCrease-${uniqueId})`}
-                />
+                <g className="mizan-anim-wing-right" style={rightWingAnimStyle}>
+                  <path
+                    d="M 700 349 L 580 421 C 532 449.8 525 500 525 510 L 525 668 L 645 596 C 658 588.2 700 565 700 519 Z"
+                    fill={`url(#navyRightBase-${uniqueId})`}
+                  />
+                  <path
+                    d="M 603 407 C 581 429 574 453 574 475 L 574 580 C 574 607 569 641.6 525 668 L 525 510 C 525 500 532 449.8 580 421 Z"
+                    fill="#1e293b"
+                    filter={`url(#emblemCrease-${uniqueId})`}
+                  />
+                </g>
               </g>
 
               {/* Dark-theme White Group (shown when emblem-white or dark mode in emblem-auto) */}
@@ -557,19 +551,17 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                   d="M 324 349 L 444 421 C 492 449.8 499 500 499 510 L 499 668 L 379 596 C 366 588.2 324 565 324 519 Z"
                   fill={`url(#whiteLeft-${uniqueId})`}
                 />
-                <path
-                  className="mizan-anim-wing-right"
-                  style={rightWingAnimStyle}
-                  d="M 700 349 L 580 421 C 532 449.8 525 500 525 510 L 525 668 L 645 596 C 658 588.2 700 565 700 519 Z"
-                  fill={`url(#whiteRightBase-${uniqueId})`}
-                />
-                <path
-                  className="mizan-anim-wing-flap"
-                  style={flapAnimStyle}
-                  d="M 603 407 C 581 429 574 453 574 475 L 574 580 C 574 607 569 641.6 525 668 L 525 510 C 525 500 532 449.8 580 421 Z"
-                  fill={`url(#whiteFlap-${uniqueId})`}
-                  filter={`url(#emblemCrease-${uniqueId})`}
-                />
+                <g className="mizan-anim-wing-right" style={rightWingAnimStyle}>
+                  <path
+                    d="M 700 349 L 580 421 C 532 449.8 525 500 525 510 L 525 668 L 645 596 C 658 588.2 700 565 700 519 Z"
+                    fill={`url(#whiteRightBase-${uniqueId})`}
+                  />
+                  <path
+                    d="M 603 407 C 581 429 574 453 574 475 L 574 580 C 574 607 569 641.6 525 668 L 525 510 C 525 500 532 449.8 580 421 Z"
+                    fill={`url(#whiteFlap-${uniqueId})`}
+                    filter={`url(#emblemCrease-${uniqueId})`}
+                  />
+                </g>
               </g>
             </svg>
 

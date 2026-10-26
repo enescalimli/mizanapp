@@ -3,10 +3,12 @@
 import React, { useEffect, useRef } from "react";
 
 export const ScrollBackgroundMizanLogo: React.FC = () => {
-  const stageRef = useRef<HTMLDivElement | null>(null);
+  const stageWrapperRef = useRef<HTMLDivElement | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const masterEmblemRef = useRef<SVGGElement | null>(null);
   const leftWingRef = useRef<SVGPathElement | null>(null);
-  const rightWingRef = useRef<SVGPathElement | null>(null);
-  const flapWingRef = useRef<SVGPathElement | null>(null);
+  const rightWingGroupRef = useRef<SVGGElement | null>(null);
+  const wordmarkGroupRef = useRef<SVGGElement | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -14,70 +16,168 @@ export const ScrollBackgroundMizanLogo: React.FC = () => {
     if (prefersReduced) return;
 
     let rafId = 0;
-    let currentProgress = 0;
-    let targetProgress = 0;
+    let currentScrollY = window.scrollY;
+    let targetScrollY = window.scrollY;
 
     const updateTargetScroll = () => {
-      const maxScroll = Math.max(
-        1,
-        document.documentElement.scrollHeight - window.innerHeight
-      );
-      targetProgress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+      targetScrollY = window.scrollY;
     };
 
+    // Gentle, unhurried sine easing so movement is smooth from start to finish
+    const easeInOutSine = (t: number): number => -(Math.cos(Math.PI * t) - 1) / 2;
+
     const tick = () => {
-      // Smooth spring-like damping interpolation (60/120fps direct DOM transform)
-      const diff = targetProgress - currentProgress;
-      currentProgress += diff * 0.065;
-
-      const p = currentProgress;
-      // Smooth wave 0 -> 1 -> 0 for graceful 3D wing separation & re-convergence
-      const explodeFactor = Math.sin(p * Math.PI);
-      // Secondary harmonic wave for subtle "Mizan" (balance scale) motion
-      const balanceWave = Math.sin(p * Math.PI * 2);
-
-      if (stageRef.current) {
-        const rotX = 14 * explodeFactor - 4 * balanceWave;
-        const rotY = -18 * explodeFactor + 8 * Math.sin(p * Math.PI * 1.5);
-        const rotZ = (p - 0.5) * 14;
-        const scale = 1 + 0.14 * explodeFactor;
-        const translateY = (p - 0.5) * -55;
-
-        stageRef.current.style.transform = `perspective(1400px) translate3d(0px, ${translateY.toFixed(
-          1
-        )}px, 0px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(
-          2
-        )}deg) rotateZ(${rotZ.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      // Smooth, responsive scroll tracking without excessive lag at the bottom
+      currentScrollY += (targetScrollY - currentScrollY) * 0.065;
+      if (Math.abs(targetScrollY - currentScrollY) < 0.5) {
+        currentScrollY = targetScrollY;
       }
 
+      const viewportCenterY = window.innerHeight / 2;
+      const stageEl = document.getElementById("mizan-logo-merge-stage");
+      const subtitleEl = document.getElementById("mizan-hero-subtitle");
+
+      // Measure actual rendered SVG height scale (viewBox height is 1024)
+      const svgRect = svgRef.current ? svgRef.current.getBoundingClientRect() : null;
+      const svgHeightPx = svgRect ? svgRect.height : window.innerHeight * 0.72;
+      const pxPerViewBoxUnit = svgHeightPx / 1024;
+      // 1 local unit inside <g scale(1.62)> in screen pixels:
+      const localToPx = 1.62 * pxPerViewBoxUnit;
+
+      // Measure Hero subtitle (<p max-w-2xl>) so leaves sit cleanly in the left & right open spaces
+      let subtitleHalfWidthPx = Math.min(336, window.innerWidth * 0.3);
+      let convergenceStartScrollY = 120;
+
+      if (subtitleEl) {
+        const subRect = subtitleEl.getBoundingClientRect();
+        subtitleHalfWidthPx = subRect.width / 2;
+        const subDocBottom = window.scrollY + subRect.bottom;
+        convergenceStartScrollY = Math.max(
+          80,
+          subDocBottom - viewportCenterY - 40
+        );
+      }
+
+      // Compute horizontal spread in local SVG units:
+      // At spread = 0, Left Leaf inner edge is 13 local units from center, outer edge is 188 local units from center.
+      // 1) Guarantee outer edge NEVER goes off-screen (keep at least 36px inside viewport border)
+      const halfViewportW = window.innerWidth / 2;
+      const maxSpreadForScreen = Math.max(
+        140,
+        (halfViewportW - Math.max(32, window.innerWidth * 0.045)) /
+          Math.max(0.2, localToPx) -
+          188
+      );
+      // 2) Clear the subtitle's half-width by at least 28px
+      const minSpreadForText =
+        (subtitleHalfWidthPx + 28) / Math.max(0.2, localToPx) - 13;
+
+      // Place leaf comfortably in the open margin between subtitle and screen edge, strictly clamped inside screen
+      const idealSpread =
+        minSpreadForText + Math.max(0, (maxSpreadForScreen - minSpreadForText) * 0.45);
+      const maxSpreadLocal = Math.min(
+        maxSpreadForScreen,
+        Math.max(200, idealSpread)
+      );
+
+      // Calculate scroll distance where the open merge stage comes into view
+      const maxPageScroll = Math.max(
+        1200,
+        document.documentElement.scrollHeight - window.innerHeight
+      );
+      let mergeScrollY = maxPageScroll * 0.82;
+      let stageOffsetY = 0;
+
+      if (stageEl) {
+        const rect = stageEl.getBoundingClientRect();
+        const stageCenterY = rect.top + rect.height / 2;
+        const stageDocCenterY = window.scrollY + stageCenterY;
+
+        // Finish merging right as the open stage enters the lower-middle of the viewport (65% height)
+        // so the logo is already 100% united when looking at the open space
+        mergeScrollY = Math.min(
+          maxPageScroll * 0.9,
+          Math.max(
+            convergenceStartScrollY + 900,
+            stageDocCenterY - window.innerHeight * 0.65
+          )
+        );
+
+        // Lock the vertical position of the logo inside #mizan-logo-merge-stage once it reaches center
+        // so neither the "7/24 Kesintisiz Veri Hattı" banner above nor the Footer below overlaps it
+        if (stageCenterY < viewportCenterY) {
+          stageOffsetY = stageCenterY - viewportCenterY;
+        }
+      }
+
+      if (stageWrapperRef.current) {
+        stageWrapperRef.current.style.transform = `translate3d(0px, ${stageOffsetY.toFixed(
+          2
+        )}px, 0px)`;
+      }
+
+      const effectiveScroll = Math.max(0, currentScrollY - convergenceStartScrollY);
+      const effectiveSpan = Math.max(700, mergeScrollY - convergenceStartScrollY);
+      const rawAssembly = Math.min(1, Math.max(0, effectiveScroll / effectiveSpan));
+      const assembled = easeInOutSine(rawAssembly);
+
+      // separation = 1 at top of page (two leaves standing apart outside Hero text),
+      // separation = 0 when united inside #mizan-logo-merge-stage
+      const separation = 1 - assembled;
+
+      // Keep the united emblem + "mizan katılım" wordmark slightly larger (0.90x) and slightly lower
+      // inside #mizan-logo-merge-stage
+      if (masterEmblemRef.current) {
+        const endScale = 1 - assembled * 0.1;
+        const endShiftY = -assembled * 8;
+        masterEmblemRef.current.setAttribute(
+          "transform",
+          `translate(512, ${(512 + endShiftY).toFixed(2)}) scale(${endScale.toFixed(
+            4
+          )}) translate(-512, -512)`
+        );
+      }
+
+      // 1. SOL YAPRAK: Uses native SVG transform with explicit (420, 510) pivot so Safari never shifts origin.
+      // At top of page (separation = 1), ly = +115 places the leaf lower down beside the subtitle and CTA buttons.
       if (leftWingRef.current) {
-        const lx = -48 * explodeFactor - 10 * balanceWave;
-        const ly = 20 * explodeFactor + 12 * balanceWave;
-        const lRot = -7 * explodeFactor - 2.5 * balanceWave;
-        leftWingRef.current.style.transform = `translate3d(${lx.toFixed(
-          1
-        )}px, ${ly.toFixed(1)}px, 0px) rotate(${lRot.toFixed(2)}deg)`;
+        const lx = -maxSpreadLocal * separation;
+        const ly = 115 * separation;
+        const lRot = -13 * separation;
+        leftWingRef.current.setAttribute(
+          "transform",
+          `translate(${lx.toFixed(2)}, ${ly.toFixed(2)}) rotate(${lRot.toFixed(
+            2
+          )}, 420, 510)`
+        );
       }
 
-      if (rightWingRef.current) {
-        const rx = 48 * explodeFactor + 10 * balanceWave;
-        const ry = 20 * explodeFactor - 12 * balanceWave;
-        const rRot = 7 * explodeFactor + 2.5 * balanceWave;
-        rightWingRef.current.style.transform = `translate3d(${rx.toFixed(
-          1
-        )}px, ${ry.toFixed(1)}px, 0px) rotate(${rRot.toFixed(2)}deg)`;
+      // 2. SAĞ YAPRAK (Taban + Üstündeki Küçük Katlama Parçası Tek Bütün Halinde)
+      if (rightWingGroupRef.current) {
+        const rx = maxSpreadLocal * separation;
+        const ry = 115 * separation;
+        const rRot = 13 * separation;
+        rightWingGroupRef.current.setAttribute(
+          "transform",
+          `translate(${rx.toFixed(2)}, ${ry.toFixed(2)}) rotate(${rRot.toFixed(
+            2
+          )}, 600, 510)`
+        );
       }
 
-      if (flapWingRef.current) {
-        const fx = 22 * explodeFactor;
-        const fy = -32 * explodeFactor + 6 * balanceWave;
-        const fRot = 9 * explodeFactor;
-        const fScale = 1 + 0.05 * explodeFactor;
-        flapWingRef.current.style.transform = `translate3d(${fx.toFixed(
-          1
-        )}px, ${fy.toFixed(1)}px, 0px) rotate(${fRot.toFixed(
-          2
-        )}deg) scale(${fScale.toFixed(3)})`;
+      // 3. "mizan katılım" WORDMARK (Inside SVG at y=858 right below the united emblem):
+      if (wordmarkGroupRef.current) {
+        const wordmarkProgress = Math.min(
+          1,
+          Math.max(0, (assembled - 0.82) / 0.16)
+        );
+        const wmEase = easeInOutSine(wordmarkProgress);
+        const wmY = 858 + (1 - wmEase) * 22;
+        wordmarkGroupRef.current.style.opacity = wmEase.toFixed(3);
+        wordmarkGroupRef.current.setAttribute(
+          "transform",
+          `translate(512, ${wmY.toFixed(2)})`
+        );
       }
 
       rafId = window.requestAnimationFrame(tick);
@@ -100,130 +200,111 @@ export const ScrollBackgroundMizanLogo: React.FC = () => {
       aria-hidden="true"
       className="fixed inset-0 pointer-events-none z-0 flex items-center justify-center overflow-hidden select-none"
     >
-      {/* 3D Scroll-Driven Pure Transparent Mizan Emblem Stage */}
+      {/* Full-Viewport Wide Stage — 100% Crisp Opacity (No Fading / No Dimming / No Blur) */}
       <div
-        ref={stageRef}
-        className="relative w-[420px] h-[420px] sm:w-[580px] sm:h-[580px] lg:w-[680px] lg:h-[680px] flex items-center justify-center opacity-[0.13] dark:opacity-[0.16] transition-opacity duration-500"
+        ref={stageWrapperRef}
         style={{ willChange: "transform" }}
+        className="w-screen h-screen flex items-center justify-center opacity-100"
       >
-        {/* 4.2s Extended Opening Animation Wrapper */}
-        <div
-          className="w-full h-full relative"
-          style={{
-            animation:
-              "mizanContainerCinematicIn 2600ms var(--ease-cinematic-unfold) both",
-          }}
+        <svg
+          ref={svgRef}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-500 0 2024 1024"
+          preserveAspectRatio="xMidYMid meet"
+          className="w-auto shrink-0 h-[72vh] sm:h-[78vh] lg:h-[84vh] max-h-[820px] opacity-100 overflow-visible"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="292 288.5 440 440"
-            className="w-full h-full overflow-visible"
-          >
-            <defs>
-              {/* LIGHT MODE: Pure Obsidian / Black Emblem Gradients (logo-dark.svg) */}
-              <linearGradient
-                id="mizanBlackLeftGrad"
-                x1="320"
-                y1="350"
-                x2="500"
-                y2="660"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#020617" />
-                <stop offset="55%" stopColor="#090d16" />
-                <stop offset="100%" stopColor="#0f172a" />
-              </linearGradient>
-
-              <linearGradient
-                id="mizanBlackRightBaseGrad"
-                x1="565"
-                y1="630"
-                x2="685"
-                y2="370"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#334155" />
-                <stop offset="35%" stopColor="#1e293b" />
-                <stop offset="70%" stopColor="#0f172a" />
-                <stop offset="100%" stopColor="#020617" />
-              </linearGradient>
-
-              <linearGradient
-                id="mizanBlackFlapGrad"
-                x1="525"
-                y1="520"
-                x2="574"
-                y2="520"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#0f172a" />
-                <stop offset="100%" stopColor="#020617" />
-              </linearGradient>
-
-              {/* DARK MODE: Pure White / Silver Emblem Gradients (logo-white.svg) */}
-              <linearGradient
-                id="mizanWhiteLeftGrad"
-                x1="320"
-                y1="350"
-                x2="500"
-                y2="660"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="45%" stopColor="#f8fafc" />
-                <stop offset="100%" stopColor="#cbd5e1" />
-              </linearGradient>
-
-              <linearGradient
-                id="mizanWhiteRightBaseGrad"
-                x1="565"
-                y1="630"
-                x2="690"
-                y2="360"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#94a3b8" />
-                <stop offset="30%" stopColor="#cbd5e1" />
-                <stop offset="75%" stopColor="#f8fafc" />
-                <stop offset="100%" stopColor="#ffffff" />
-              </linearGradient>
-
-              <linearGradient
-                id="mizanWhiteFlapGrad"
-                x1="525"
-                y1="520"
-                x2="574"
-                y2="520"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="100%" stopColor="#e2e8f0" />
-              </linearGradient>
-
-              <filter id="mizanCreaseDepth" x="-25%" y="-25%" width="150%" height="150%">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
-                <feOffset in="blur" dx="4" dy="2" result="offset" />
-                <feFlood floodColor="#000000" floodOpacity="0.38" result="color" />
-                <feComposite in="color" in2="offset" operator="in" result="shadow" />
-                <feMerge>
-                  <feMergeNode in="shadow" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
-
-            {/* 1. LEFT WING */}
-            <g
-              style={{
-                animation:
-                  "mizanLeftWingCinematic 2400ms var(--ease-cinematic-unfold) 350ms both",
-                transformOrigin: "420px 510px",
-              }}
+          <defs>
+            {/* LIGHT MODE: Crisp Pure Black / Obsidian Leaves (logo-dark.svg) */}
+            <linearGradient
+              id="scrollLeftWingLight"
+              x1="320"
+              y1="350"
+              x2="500"
+              y2="660"
+              gradientUnits="userSpaceOnUse"
             >
+              <stop offset="0%" stopColor="#020617" />
+              <stop offset="55%" stopColor="#0f172a" />
+              <stop offset="100%" stopColor="#1e293b" />
+            </linearGradient>
+
+            <linearGradient
+              id="scrollRightWingLight"
+              x1="565"
+              y1="630"
+              x2="690"
+              y2="360"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#475569" />
+              <stop offset="30%" stopColor="#334155" />
+              <stop offset="65%" stopColor="#1e293b" />
+              <stop offset="100%" stopColor="#0f172a" />
+            </linearGradient>
+
+            <linearGradient
+              id="scrollFlapLight"
+              x1="525"
+              y1="520"
+              x2="574"
+              y2="520"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#1e293b" />
+              <stop offset="100%" stopColor="#020617" />
+            </linearGradient>
+
+            {/* DARK MODE: Crisp Pure White / Silver Leaves (logo-white.svg) */}
+            <linearGradient
+              id="scrollLeftWingDark"
+              x1="320"
+              y1="350"
+              x2="500"
+              y2="660"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="45%" stopColor="#f8fafc" />
+              <stop offset="80%" stopColor="#e2e8f0" />
+              <stop offset="100%" stopColor="#cbd5e1" />
+            </linearGradient>
+
+            <linearGradient
+              id="scrollRightWingDark"
+              x1="565"
+              y1="630"
+              x2="690"
+              y2="360"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#94a3b8" />
+              <stop offset="25%" stopColor="#cbd5e1" />
+              <stop offset="60%" stopColor="#e2e8f0" />
+              <stop offset="100%" stopColor="#ffffff" />
+            </linearGradient>
+
+            <linearGradient
+              id="scrollFlapDark"
+              x1="525"
+              y1="520"
+              x2="574"
+              y2="520"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="75%" stopColor="#ffffff" />
+              <stop offset="100%" stopColor="#e2e8f0" />
+            </linearGradient>
+          </defs>
+
+          {/* High-Resolution 2-Leaf Mizan Emblem + Wordmark — 100% Sharp & Unfaded */}
+          <g ref={masterEmblemRef}>
+            <g transform="translate(-317.44, -311.77) scale(1.62)">
+              {/* 1. SOL YAPRAK (Native SVG transform around exact 420,510 pivot) */}
               <path
                 ref={leftWingRef}
-                style={{ transformOrigin: "420px 510px", willChange: "transform" }}
-                className="fill-[url(#mizanBlackLeftGrad)] dark:fill-[url(#mizanWhiteLeftGrad)]"
+                transform="translate(-310, 115) rotate(-13, 420, 510)"
+                className="fill-[url(#scrollLeftWingLight)] dark:fill-[url(#scrollLeftWingDark)]"
                 d="M 324 349
                    L 444 421
                    C 492 449.8 499 500 499 510
@@ -232,54 +313,71 @@ export const ScrollBackgroundMizanLogo: React.FC = () => {
                    C 366 588.2 324 565 324 519
                    Z"
               />
+
+              {/* 2. SAĞ YAPRAK (Taban + Üstündeki Küçük Katlama Parçası Tek Bütün Halinde, 600,510 pivot) */}
+              <g
+                ref={rightWingGroupRef}
+                transform="translate(310, 115) rotate(13, 600, 510)"
+              >
+                <path
+                  className="fill-[url(#scrollRightWingLight)] dark:fill-[url(#scrollRightWingDark)]"
+                  d="M 700 349
+                     L 580 421
+                     C 532 449.8 525 500 525 510
+                     L 525 668
+                     L 645 596
+                     C 658 588.2 700 565 700 519
+                     Z"
+                />
+                <path
+                  className="fill-[url(#scrollFlapLight)] dark:fill-[url(#scrollFlapDark)]"
+                  d="M 603 407
+                     C 581 429 574 453 574 475
+                     L 574 580
+                     C 574 607 569 641.6 525 668
+                     L 525 510
+                     C 525 500 532 449.8 580 421
+                     Z"
+                />
+              </g>
             </g>
 
-            {/* 2. RIGHT WING BASE */}
+            {/* 3. "mizan katılım" WORDMARK — En sonda birleştiğinde logonun tam altında (y=858) belirir */}
             <g
-              style={{
-                animation:
-                  "mizanRightWingCinematic 2600ms var(--ease-cinematic-unfold) 850ms both",
-                transformOrigin: "600px 510px",
-              }}
+              ref={wordmarkGroupRef}
+              transform="translate(512, 880)"
+              style={{ opacity: 0 }}
             >
-              <path
-                ref={rightWingRef}
-                style={{ transformOrigin: "600px 510px", willChange: "transform" }}
-                className="fill-[url(#mizanBlackRightBaseGrad)] dark:fill-[url(#mizanWhiteRightBaseGrad)]"
-                d="M 700 349
-                   L 580 421
-                   C 532 449.8 525 500 525 510
-                   L 525 668
-                   L 645 596
-                   C 658 588.2 700 565 700 519
-                   Z"
-              />
+              <text
+                x="0"
+                y="0"
+                textAnchor="middle"
+                style={{
+                  fontFamily:
+                    '"Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, sans-serif',
+                }}
+              >
+                <tspan
+                  className="fill-[#020617] dark:fill-white"
+                  fontWeight="900"
+                  fontSize="72"
+                  letterSpacing="-0.03em"
+                >
+                  mizan
+                </tspan>
+                <tspan dx="16" />
+                <tspan
+                  className="fill-[#273869] dark:fill-[#cbd5e1]"
+                  fontWeight="700"
+                  fontSize="42"
+                  letterSpacing="-0.01em"
+                >
+                  katılım
+                </tspan>
+              </text>
             </g>
-
-            {/* 3. RIGHT WING ORIGAMI FOLD FLAP */}
-            <g
-              style={{
-                animation:
-                  "mizanFlapOrigamiFold 2500ms var(--ease-cinematic-unfold) 1450ms both",
-                transformOrigin: "525px 540px",
-              }}
-            >
-              <path
-                ref={flapWingRef}
-                style={{ transformOrigin: "525px 540px", willChange: "transform" }}
-                className="fill-[url(#mizanBlackFlapGrad)] dark:fill-[url(#mizanWhiteFlapGrad)]"
-                filter="url(#mizanCreaseDepth)"
-                d="M 603 407
-                   C 581 429 574 453 574 475
-                   L 574 580
-                   C 574 607 569 641.6 525 668
-                   L 525 510
-                   C 525 500 532 449.8 580 421
-                   Z"
-              />
-            </g>
-          </svg>
-        </div>
+          </g>
+        </svg>
       </div>
     </div>
   );
