@@ -70,7 +70,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
       holding.impureIncomeQuarterTRY,
       holding.totalSharesOutstanding,
       lotsDec,
-      daysHeldInQuarter,
+      totalDaysHeld,
       90,
       useCeiling
     );
@@ -90,7 +90,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
       netHalalProceeds,
       purifDeductionPercent,
     };
-  }, [selectedLots, holding, daysHeldInQuarter, useCeiling]);
+  }, [selectedLots, holding, totalDaysHeld, useCeiling]);
 
   const handleApplyPreset = (ratio: number) => {
     const count = Math.max(1, Math.round(totalLotsNumber * ratio));
@@ -154,7 +154,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
               Elde Tutulan Süre
             </span>
             <span className="font-mono font-bold text-emerald-700 tabular-nums">
-              {totalDaysHeld} Gün ({daysHeldInQuarter}/90 Pro-Rata)
+              {totalDaysHeld} Gün ({totalDaysHeld}/365 Yıllık Pro-Rata)
             </span>
           </div>
           <div>
@@ -246,7 +246,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
                 Ödenecek Arındırma Borcu (Düşülecek)
               </span>
               <span className="text-[10px] text-slate-500 font-mono">
-                {daysHeldInQuarter} günlük oransal pay ({formatPercent(simulation.purifDeductionPercent, 2)})
+                {totalDaysHeld} günlük oransal pay ({formatPercent(simulation.purifDeductionPercent, 2)})
               </span>
             </div>
             <span className="text-lg font-bold font-mono text-amber-700 tabular-nums">

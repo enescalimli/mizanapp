@@ -25,8 +25,8 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
 }) => {
   const [method, setMethod] = useState<"holding" | "dividend">("holding");
   const [lotCount, setLotCount] = useState<string>("1000");
-  const [daysHeld, setDaysHeld] = useState<number>(90);
-  const [periodDays, setPeriodDays] = useState<number>(90);
+  const [daysHeld, setDaysHeld] = useState<number>(365);
+  const [periodDays] = useState<number>(90);
   const [dividendAmountTRY, setDividendAmountTRY] = useState<string>("10000");
   const [useCeiling, setUseCeiling] = useState<boolean>(true);
   const [showZakat, setShowZakat] = useState<boolean>(false);
@@ -50,11 +50,12 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
         };
       }
 
-      // Holding Period Pro-Rata
+      // Holding Period Pro-Rata (TKBB Pay Senedi Standardı Madde 3.2.1 & 3.6.2)
       const lots = toDecimal(lotCount || "0");
       const impureQuarter = toDecimal(impureIncomeQuarterTRY || "0");
       const shares = toDecimal(totalSharesOutstanding || "1");
-      const pShare = impureQuarter.dividedBy(shares);
+      const propPShare = toDecimal(purificationPerShareTRY || "0");
+      const pShare = propPShare.gt(0) ? propPShare : impureQuarter.dividedBy(shares);
       const factor = toDecimal(daysHeld).dividedBy(periodDays || 90);
       const raw = pShare.times(lots).times(factor);
 
@@ -85,6 +86,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
     dividendPurificationRatio,
     impureIncomeQuarterTRY,
     totalSharesOutstanding,
+    purificationPerShareTRY,
     useCeiling,
   ]);
 
@@ -200,26 +202,28 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
               </div>
             </div>
 
-            {/* Days Held Slider */}
+            {/* Days Held Slider (up to 365 days across full year) */}
             <div>
               <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-1.5">
-                <span>Elde Tutulan Gün Sayısı (Çeyrek İçinde)</span>
+                <span>Elde Tutulan Gün Sayısı (Yıllık 365 Gün Bazlı)</span>
                 <span className="text-emerald-700 font-mono tabular-nums font-bold">
-                  {daysHeld} / {periodDays} Gün
+                  {daysHeld} / 365 Gün (%
+                  {((daysHeld / 365) * 100).toFixed(1)})
                 </span>
               </div>
               <input
                 type="range"
                 min="1"
-                max={periodDays}
+                max="365"
                 value={daysHeld}
                 onChange={(e) => setDaysHeld(parseInt(e.target.value))}
                 className="w-full accent-emerald-600 bg-slate-200 h-1.5 rounded-lg cursor-pointer"
               />
               <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono mt-1">
-                <span>1 Gün (Al-Sat)</span>
-                <span>45 Gün (Ara Dönem)</span>
-                <span>{periodDays} Gün (Tam Dönem)</span>
+                <button type="button" onClick={() => setDaysHeld(30)} className="hover:text-emerald-700">30 Gün (1 Ay)</button>
+                <button type="button" onClick={() => setDaysHeld(90)} className="hover:text-emerald-700">90 Gün (3 Ay)</button>
+                <button type="button" onClick={() => setDaysHeld(180)} className="hover:text-emerald-700">180 Gün (6 Ay)</button>
+                <button type="button" onClick={() => setDaysHeld(365)} className="hover:text-emerald-700">365 Gün (1 Yıl)</button>
               </div>
             </div>
 
@@ -266,15 +270,15 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
 
             <div className="border-t border-emerald-200/80 pt-3 mt-4 space-y-2 text-xs text-slate-600 font-normal">
               <div className="flex items-center justify-between">
-                <span>Hisse Başı Çeyreklik Uygunsuz Gelir:</span>
+                <span>Hisse Başı Yıllık Uygunsuz Gelir:</span>
                 <span className="font-mono tabular-nums text-slate-800 font-semibold">
-                  {formatTRY(purificationPerShareTRY, 4)} / pay
+                  {formatTRY(calculation.pShare.times(4), 4)} / pay
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Elde Tutma Oranı (Pro-Rata):</span>
+                <span>Elde Tutma Oranı (Yıllık Pro-Rata):</span>
                 <span className="font-mono tabular-nums text-slate-800 font-semibold">
-                  %{(calculation.proRata.toNumber() * 100).toFixed(2)} ({daysHeld}/{periodDays} gün)
+                  %{((daysHeld / 365) * 100).toFixed(2)} ({daysHeld}/365 gün)
                 </span>
               </div>
               <div className="flex items-center justify-between">

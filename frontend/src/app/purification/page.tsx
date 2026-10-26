@@ -87,19 +87,19 @@ export default function PortfolioPurificationPage() {
       const lots = toDecimal(pos.lots || "0");
       const marketValue = lots.times(price);
 
-      // Purification calculation
+      // Purification calculation (TKBB Pay Senedi Standardı Madde 3.2.1 & 3.6.2)
       const impureRatio = toDecimal(
         detail?.purificationMetrics.dividendPurificationRatio ||
           (toDecimal(summary?.impureIncomePercent || 1.5).div(100)).toFixed(4)
       );
       const totalShares = toDecimal(
-        detail?.purificationMetrics.totalSharesOutstanding || "100000000"
+        detail?.purificationMetrics.totalSharesOutstanding || "1000000000"
       );
-      const impureQuarter = toDecimal(
-        detail?.purificationMetrics.impureIncomeIsolatedQuarterTRY ||
-          totalShares.times(price).times(impureRatio).times(0.03).round().toString()
+      const pShareQuarter = toDecimal(
+        detail?.purificationMetrics.purificationPerShareQuarterTRY ||
+          summary?.purificationPerShareTRY ||
+          "0"
       );
-      const pShareQuarter = impureQuarter.dividedBy(totalShares);
       const divPurificationRatio = impureRatio;
 
       // Automatically calculate days held from purchaseDate
@@ -109,7 +109,7 @@ export default function PortfolioPurificationPage() {
       let rawPurification = new Decimal(0);
 
       if (pos.method === "holding") {
-        const factor = toDecimal(daysHeldInQuarter).dividedBy(90);
+        const factor = toDecimal(totalDaysHeld).dividedBy(90);
         rawPurification = pShareQuarter.times(lots).times(factor);
       } else {
         const divAmount = toDecimal(pos.receivedDividendTRY || "0");
@@ -414,7 +414,7 @@ export default function PortfolioPurificationPage() {
                           className="px-2 py-1 rounded-lg bg-white border border-slate-200 text-slate-900 text-xs font-mono tabular-nums focus:outline-none focus:border-emerald-500"
                         />
                         <div className="text-[10px] text-emerald-700 font-mono tabular-nums font-semibold">
-                          {pos.totalDaysHeld} Gün ({pos.daysHeldInQuarter}/90 Pro-Rata)
+                          {pos.totalDaysHeld} Gün ({pos.totalDaysHeld}/365 Yıllık Pro-Rata)
                         </div>
                       </div>
                     ) : (

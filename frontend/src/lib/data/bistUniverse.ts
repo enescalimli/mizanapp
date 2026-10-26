@@ -418,9 +418,22 @@ export async function fetchLiveBistUniverse24x7(): Promise<{
         aaoifiStatus = "NON_COMPLIANT";
       }
 
-      const impureIncomeTry =
-        totalRev > 0 ? (totalRev * (impureRatio / 100)) / 4 : closePrice * 0.004 * shares;
-      const purifPerShare = Math.max(0.001, impureIncomeTry / shares);
+      // TKBB Pay Senedi Standardı Madde 3.6.2:
+      // Faiz gelirlerinden yalnızca enflasyon oranını aşan reel faiz kısmı + mahzurlu faaliyet geliri arındırılır.
+      // Tahmini nominal uygunsuz gelirin enflasyon arındırması sonrası reel arındırmaya tabi kısmı (~%35 reel pay):
+      const isConventionalFin =
+        ["Finance", "Insurance", "Bankacılık", "Sigorta"].includes(rawSector) &&
+        !["ALBRK", "QNBFK", "VAKFN"].includes(ticker);
+      const nominalImpureQuarterTry =
+        totalRev > 0 ? (totalRev * (impureRatio / 100)) / 4 : closePrice * 0.0025 * shares;
+      const quarterInflationErosionTry = cashSt * 0.085; // ~%8.5 çeyreklik TÜFE anapara değer kaybı telafisi (Madde 3.6.2)
+      const realImpureQuarterTry = Math.max(
+        nominalImpureQuarterTry * 0.25,
+        nominalImpureQuarterTry - quarterInflationErosionTry
+      );
+      const purifPerShare = isConventionalFin
+        ? 0
+        : Math.max(0.0001, realImpureQuarterTry / shares);
       const netCurrAssets = Math.max(0, currAssets - currLiab);
       const zakatPerShare =
         netCurrAssets > 0 ? Math.max(0.1, netCurrAssets / shares) : closePrice * 0.22;

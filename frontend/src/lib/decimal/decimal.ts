@@ -77,49 +77,114 @@ export function formatCompactNumber(
 /**
  * Calculates calendar days elapsed between purchaseDate and valuationDate.
  * Investors NEVER manually type days held; it is computed deterministically from date.
+ * Uses current date dynamically when valuationDateStr is omitted.
  */
 export function calculateDaysHeld(
   purchaseDateStr: string,
-  valuationDateStr: string = "2026-10-19"
+  valuationDateStr?: string
 ): {
   totalDaysHeld: number;
   daysHeldInQuarter: number;
+  daysHeldInSixMonths: number;
   formattedPurchaseDate: string;
 } {
   try {
     const pDate = new Date(purchaseDateStr);
-    const vDate = new Date(valuationDateStr);
+    const vDate = valuationDateStr ? new Date(valuationDateStr) : new Date();
     const diffMs = vDate.getTime() - pDate.getTime();
-    const diffDays = Math.max(Math.floor(diffMs / (1000 * 60 * 60 * 24)), 1);
+    const diffDays = isNaN(diffMs)
+      ? 365
+      : Math.max(Math.floor(diffMs / (1000 * 60 * 60 * 24)), 1);
 
-    // Quarter is normalized to 90 days pro-rata as per TKBB rules
+    // Single-quarter window (90 days) and TKBB 6-month reporting window (182 days)
     const daysInQuarter = Math.min(diffDays, 90);
+    const daysInSixMonths = Math.min(diffDays, 182);
 
-    const formatted = new Intl.DateTimeFormat("tr-TR", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    }).format(pDate);
+    const formatted = isNaN(diffMs)
+      ? "1 Yıl (365 Gün)"
+      : new Intl.DateTimeFormat("tr-TR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        }).format(pDate);
 
     return {
       totalDaysHeld: diffDays,
       daysHeldInQuarter: daysInQuarter,
+      daysHeldInSixMonths: daysInSixMonths,
       formattedPurchaseDate: formatted,
     };
   } catch {
     return {
-      totalDaysHeld: 90,
+      totalDaysHeld: 365,
       daysHeldInQuarter: 90,
-      formattedPurchaseDate: purchaseDateStr,
+      daysHeldInSixMonths: 182,
+      formattedPurchaseDate: purchaseDateStr || "1 Yıl (365 Gün)",
     };
   }
 }
 
+/**
+ * TKBB Pay Senedi İhracı ve Alım-Satımı Standardı Madde 3.6.2 & Arındırma Rehberi:
+ * Faiz gelirlerinin arındırılmasında, ilgili bilanço dönemindeki enflasyon (TÜFE) oranını
+ * aşan reel kısım esas alınır; anaparanın enflasyon karşısındaki değer kaybını telafi eden
+ * kısım mahzurlu kazanç matrahından düşülür.
+ */
+export function applyTkbbInflationAdjustmentClient(params: {
+  grossInterestIncomeTRY: string | number | Decimal;
+  nonCompliantOperatingIncomeTRY?: string | number | Decimal;
+  interestBearingCashTRY?: string | number | Decimal;
+  periodInflationRateDecimal?: string | number | Decimal;
+  nominalInterestRateDecimal?: string | number | Decimal;
+}): Decimal {
+  const grossInterest = Decimal.max(new Decimal(0), toDecimal(params.grossInterestIncomeTRY));
+  const nonCompliantOp = Decimal.max(
+    new Decimal(0),
+    toDecimal(params.nonCompliantOperatingIncomeTRY || 0)
+  );
+  const cashPrincipal = Decimal.max(
+    new Decimal(0),
+    toDecimal(params.interestBearingCashTRY || 0)
+  );
+  const inflationRate = Decimal.max(
+    new Decimal(0),
+    toDecimal(params.periodInflationRateDecimal || 0)
+  );
+  const nominalRate = Decimal.max(
+    new Decimal(0),
+    toDecimal(params.nominalInterestRateDecimal || 0)
+  );
+
+  let realInterestIncome = grossInterest;
+
+  if (cashPrincipal.gt(0) && inflationRate.gt(0)) {
+    const inflationCompensation = cashPrincipal.times(inflationRate);
+    realInterestIncome = Decimal.max(new Decimal(0), grossInterest.minus(inflationCompensation));
+  } else if (inflationRate.gt(0) && nominalRate.gt(0)) {
+    if (nominalRate.lte(inflationRate)) {
+      realInterestIncome = new Decimal(0);
+    } else {
+      const realPortionRatio = nominalRate.minus(inflationRate).dividedBy(nominalRate);
+      realInterestIncome = grossInterest.times(realPortionRatio);
+    }
+  }
+
+  return realInterestIncome.plus(nonCompliantOp);
+}
+
+/**
+ * TKBB Danışma Kurulu "Mahzurlu Kazançları Arındırmaya İlişkin Uygulama Rehberi" Formülü:
+ * Arındırma Tutarı = (Dönemlik Mahzurlu Gelir / Toplam Pay Adedi) * Sahip Olunan Pay Adedi * (Elde Tutulan Gün / Dönem Gün Sayısı)
+ *
+ * Not: Yatırımcı hisseyi 1 çeyrekten (90 gün) veya 6 aydan (182 gün) daha uzun süre tuttuysa,
+ * gün sayısı 90'a kesilmez (clamping yapılmaz); tutulan tüm günlerin (`daysHeld / periodTotalDays`)
+ * oransal karşılığı eksiksiz hesaplanır.
+ */
 export function calculateHoldingPurificationClient(
   impureIncomeQuarterTRY: string | Decimal,
   totalSharesOutstanding: string | Decimal,
   quantityLots: string | Decimal,
-  daysHeldInQuarter: number,
+  daysHeld: number,
   periodTotalDays: number = 90,
   useCeiling: boolean = true
 ): {
@@ -132,7 +197,7 @@ export function calculateHoldingPurificationClient(
   const shares = toDecimal(totalSharesOutstanding);
   const lots = toDecimal(quantityLots);
 
-  if (shares.isZero() || periodTotalDays <= 0 || lots.lte(0) || daysHeldInQuarter <= 0) {
+  if (shares.isZero() || periodTotalDays <= 0 || lots.lte(0) || daysHeld <= 0) {
     return {
       purificationPerShare: new Decimal(0),
       proRataFactor: new Decimal(0),
@@ -141,11 +206,11 @@ export function calculateHoldingPurificationClient(
     };
   }
 
-  // EC-03: Even if company is loss-making, positive impure income is purified per share
+  // EC-03: Şirket net dönem zararı açıklamış olsa bile pozitif mahzurlu gelir pay başına arındırılır
   const safeImpure = Decimal.max(new Decimal(0), impure);
   const pShare = safeImpure.dividedBy(shares);
-  const clampedDays = Math.min(Math.max(daysHeldInQuarter, 1), periodTotalDays);
-  const factor = new Decimal(clampedDays).dividedBy(periodTotalDays);
+  const effectiveDays = Math.max(daysHeld, 1);
+  const factor = new Decimal(effectiveDays).dividedBy(periodTotalDays);
   const raw = pShare.times(lots).times(factor);
 
   const roundingMode = useCeiling
@@ -185,6 +250,7 @@ export function calculateDividendPurificationClient(
 
 /**
  * Computes exact purification fee deducted and net halal proceeds when selling a position.
+ * Uses totalDaysHeld so multi-quarter holding durations are purified in full without 90-day truncation.
  */
 export function calculateSellPurificationAndProceeds(params: {
   holdingId: string;
@@ -206,13 +272,13 @@ export function calculateSellPurificationAndProceeds(params: {
   const costBasis = lots.times(cost);
   const realizedPnl = grossProceeds.minus(costBasis);
 
-  const { daysHeldInQuarter } = calculateDaysHeld(params.purchaseDate);
+  const { totalDaysHeld } = calculateDaysHeld(params.purchaseDate);
 
   const purif = calculateHoldingPurificationClient(
     params.impureIncomeQuarterTRY,
     params.totalSharesOutstanding,
     lots,
-    daysHeldInQuarter,
+    totalDaysHeld,
     90,
     params.useCeiling !== undefined ? params.useCeiling : true
   );
@@ -233,7 +299,7 @@ export function calculateSellPurificationAndProceeds(params: {
     costBasisTRY: costBasis.toFixed(2),
     realizedPnlTRY: realizedPnl.toFixed(2),
     purchaseDate: params.purchaseDate,
-    daysHeldInPeriod: daysHeldInQuarter,
+    daysHeldInPeriod: totalDaysHeld,
     purificationPerShareQuarterTRY: purif.purificationPerShare.toFixed(6),
     purificationFeePayableTRY: purif.totalPurificationPayable.toFixed(2),
     netHalalProceedsTRY: netHalalProceeds.toFixed(2),

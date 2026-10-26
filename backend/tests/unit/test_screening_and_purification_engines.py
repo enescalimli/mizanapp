@@ -587,3 +587,85 @@ class TestPurificationAndZakatEngine:
                 impure_income_total=Decimal("10.0000"),
                 total_revenue=Decimal("1000.0000"),
             )
+
+    def test_tkbb_inflation_adjustment_standard_3_6_2(self) -> None:
+        """TKBB Pay Senedi Standardı Madde 3.6.2:
+        Faiz gelirlerinden enflasyon erozyonu (Anapara * Dönem Enflasyon Oranı) düşüldükten
+        sonra kalan reel faiz + faiz dışı mahzurlu faaliyet gelirinin arındırmaya tabi olduğunu doğrular.
+        """
+        # 100M TL vadeli mevduat anaparası, %8.5 çeyreklik enflasyon -> 8.5M TL anapara erozyonu
+        # 12M TL nominal faiz geliri -> 12M - 8.5M = 3.5M TL reel faiz
+        # + 1.5M TL faiz dışı mahzurlu gelir = 5.0M TL arındırmaya tabi toplam gelir
+        adjusted = PurificationEngine.apply_tkbb_inflation_adjustment(
+            interest_income_period=Decimal("12000000.0000"),
+            interest_bearing_cash_principal=Decimal("100000000.0000"),
+            period_inflation_rate=Decimal("0.08500000"),
+            other_impure_operating_income=Decimal("1500000.0000"),
+        )
+        assert adjusted == Decimal("5000000.0000")
+
+        # Enflasyon erozyonu nominal faiz gelirinden yüksekse reel faiz 0 olur (negatife düşmez),
+        # yalnızca faiz dışı mahzurlu faaliyet geliri arındırılır.
+        adjusted_high_inf = PurificationEngine.apply_tkbb_inflation_adjustment(
+            interest_income_period=Decimal("6000000.0000"),
+            interest_bearing_cash_principal=Decimal("100000000.0000"),
+            period_inflation_rate=Decimal("0.10000000"),
+            other_impure_operating_income=Decimal("2000000.0000"),
+        )
+        assert adjusted_high_inf == Decimal("2000000.0000")
+
+    def test_multi_quarter_holding_purification_no_90_day_clamping(self) -> None:
+        """90 günü aşan (örn. 180 gün / 2 çeyrek veya 365 gün / 1 yıl) elde tutma sürelerinde
+        arındırma tutarının 90 güne kırpılmadan tam süre üzerinden hesaplandığını doğrular.
+        """
+        res_180 = PurificationEngine.calculate_holding_purification(
+            ticker="BIMAS",
+            fiscal_period="2026-Q2",
+            impure_income_isolated_quarter=Decimal("9000000.0000"),
+            total_shares_outstanding=Decimal("100000000.000000"),
+            quantity_lots=Decimal("1000.000000"),
+            days_held=180,
+            period_total_days=90,
+        )
+        # P_share = 0.09 TL/çeyrek; 180 gün = 2.0 çeyrek -> 1000 * 0.09 * 2 = 180.00 TL
+        assert res_180.purification_per_share == Decimal("0.09000000")
+        assert res_180.total_purification_raw == Decimal("180.0000")
+        assert res_180.total_purification_payable == Decimal("180.00")
+
+    def test_tkbb_standard_3_2_1_no_double_counting_holding_and_dividend(self) -> None:
+        """TKBB Standardı Madde 3.2.1: Pay başına elde tutma arındırması yapılan bir hissede
+        dağıtılan temettü için ayrıca ikinci kez (mükerrer) arındırma yapılmadığını doğrular.
+        """
+        hold_bimas = PurificationEngine.calculate_holding_purification(
+            ticker="BIMAS",
+            fiscal_period="2026-Q2",
+            impure_income_isolated_quarter=Decimal("9000000.0000"),
+            total_shares_outstanding=Decimal("100000000.000000"),
+            quantity_lots=Decimal("1000.000000"),
+            days_held=90,
+            period_total_days=90,
+        )
+        div_bimas = PurificationEngine.calculate_dividend_purification(
+            ticker="BIMAS",
+            dividend_received=Decimal("10000.0000"),
+            impure_income_total=Decimal("9000000.0000"),
+            total_revenue=Decimal("900000000.0000"),
+        )
+        div_other = PurificationEngine.calculate_dividend_purification(
+            ticker="ASELS",
+            dividend_received=Decimal("5000.0000"),
+            impure_income_total=Decimal("5000000.0000"),
+            total_revenue=Decimal("500000000.0000"),
+        )
+
+        report = PurificationEngine.build_comprehensive_report(
+            holding_items=[hold_bimas],
+            dividend_items=[div_bimas, div_other],
+        )
+        # BIMAS holding = 90.00 TL; BIMAS dividend (100.00 TL) mükerrer olduğu için dışlandı;
+        # ASELS dividend = 50.00 TL -> Toplam = 140.00 TL
+        assert len(report.dividend_purification_items) == 1
+        assert report.dividend_purification_items[0].ticker == "ASELS"
+        assert report.total_holding_purification_raw == Decimal("90.0000")
+        assert report.total_dividend_purification_raw == Decimal("50.0000")
+        assert report.total_purification_payable == Decimal("140.00")

@@ -182,24 +182,24 @@ const FAQS: FAQItem[] = [
     category: "ARINDIRMA",
     question: "Hisse senedi arındırması (Purification) nedir ve kimlere vaciptir?",
     answer:
-      "Katılım endeksindeki şirketler ana faaliyeti helal olsa dahi cüzi oranda (en fazla %5) vadeli mevduat faizi veya repo geliri elde edebilirler. Yatırımcı, şirketten elde ettiği temettüden veya hissenin elde tutulduğu süreye isabet eden bu faizli geliri hesaplayıp sevap beklemeksizin ihtiyaç sahiplerine veya hayır kurumlarına bağışlamalıdır. Bu işlem helal kazancı korumak için fıkhi bir yükümlülüktür.",
-    reference: "TKBB Danışma Kurulu İlke Kararları & DİB Fetvaları",
+      "Katılım endeksindeki şirketler ana faaliyeti helal olsa dahi cüzi oranda (en fazla %5) vadeli mevduat faizi, repo veya uygunsuz yan faaliyet geliri elde edebilirler. TKBB Danışma Kurulu 'Pay Senedi İhracı ve Alım-Satımı Standardı' uyarınca yatırımcı, şirketin dönemlik mahzurlu gelirlerinden kendi payına ve hisseyi elinde tuttuğu süreye isabet eden tutarı hesaplayıp sevap beklemeksizin ihtiyaç sahiplerine veya hayır kurumlarına vermelidir.",
+    reference: "TKBB Danışma Kurulu Pay Senedi Standardı (Madde 3.2.1 & 3.6.2)",
   },
   {
     id: "faq-18",
     category: "ARINDIRMA",
-    question: "Arındırma tutarı nasıl hesaplanır? (Temettü ve Pro-Rata)",
+    question: "Arındırma tutarı resmi standartlara göre nasıl hesaplanır?",
     answer:
-      "İki yöntem uygulanır: 1) Temettü Arındırması: Şirketin o mali yıldaki 'Faiz Geliri / Toplam Hasılat' oranı kadar, alınan brüt temettüden düşülür (Örn: %1 faiz geliri varsa 1.000 ₺ temettünün 10 ₺'si bağışlanır). 2) Pro-Rata (Günlük) Arındırma: Hisse başına çeyreklik arındırma tutarı, hissenin portföyde tutulduğu gün sayısıyla çarpılarak hesaplanır. Mizan her iki yöntemi de kuruşu kuruşuna sunar.",
-    reference: "TKBB Katılım İlkeleri Temettü Arındırma Rehberi",
+      "TKBB Danışma Kurulu 'Mahzurlu Kazançları Arındırmaya İlişkin Uygulama Rehberi'ne göre esas yöntem Pay Başına Günlük (Pro-Rata) Arındırma'dır: 1) Şirketin faiz gelirlerinden öncelikle enflasyon oranı kadar olan kısım (anaparanın değer kaybı telafisi olduğu için, Madde 3.6.2) düşülür ve kalan reel faiz + mahzurlu faaliyet geliri toplam pay (ödenmiş sermaye) sayısına bölünerek '1 Pay Başına Dönemlik Arındırma Tutarı' bulunur. 2) Bu tutar sahip olunan lot sayısı ve 'Elde Tutulan Gün / Dönem Gün Sayısı' ile çarpılır. Alternatif pratik yöntemde ise alınan brüt temettü, uygunsuz gelir oranıyla çarpılarak arındırılır. Hisse fiyat artışından doğan sermaye kazancı (alım-satım kârı) ise arındırmaya tabi değildir.",
+    reference: "TKBB Mahzurlu Kazançları Arındırma Uygulama Rehberi",
   },
   {
     id: "faq-19",
     category: "ARINDIRMA",
-    question: "Temettü vermeyen hissede arındırma yapmak gerekir mi?",
+    question: "Şirket zarar ettiyse veya temettü dağıtmadıysa arındırma yapmak gerekir mi?",
     answer:
-      "Şirket o yıl temettü dağıtmadıysa ve kârını bünyesinde tuttuysa, yatırımcı sermaye kazancı (hisse fiyat artışı) elde ettiğinde ihtiyatlı görüşe göre hisse başına düşen cüzi faiz payını pro-rata olarak hesaplayıp arındırabilir. Ancak yaygın fetva, arındırmanın öncelikli olarak nakit tahsil edilen kâr payı (temettü) üzerinden yapılacağı yönündedir.",
-    reference: "İslam Fıkıh Akademisi Taharet Kararları",
+      "Evet. TKBB Danışma Kurulu Pay Senedi Standardı Madde 3.2.1'e göre: 'Şirketin kâr elde edip etmemesi ya da kâr dağıtımı (temettü) yapıp yapmaması arındırma yükümlülüğü açısından farklılık oluşturmaz.' Çünkü şirketin kasasına giren faiz/mahzurlu gelir, şirket zarar açıklasa veya temettü dağıtmasa dahi şirket malvarlığına karışmıştır. Ancak pay başına elde tutma arındırması yapan yatırımcının, aldığı temettü için ayrıca ikinci kez (mükerrer) arındırma yapmasına gerek yoktur.",
+    reference: "TKBB Pay Senedi İhracı ve Alım-Satımı Standardı Madde 3.2.1",
   },
   {
     id: "faq-20",
@@ -422,9 +422,9 @@ const GLOSSARY: GlossaryTerm[] = [
   {
     term: "Fıkhi Arındırma (Purification)",
     arabicName: "تطهير",
-    shortDesc: "Hisse gelirindeki faizli veya gayrimeşru kısmın hayra bağışlanması.",
+    shortDesc: "Şirketin mahzurlu gelirlerinden pay başına düşen kısmın hayra verilmesi.",
     fullDesc:
-      "Şirketin kazancına karışan düşük oranlı (azami %5) faiz veya uygunsuz gelirlerin, yatırımcının temettü veya değer kazancından hesaplanarak sevap beklemeksizin ihtiyaç sahiplerine dağıtılması fıkhi yükümlülüğüdür.",
+      "TKBB Pay Senedi Standardı (Madde 3.2.1 & 3.6.2) uyarınca şirketin kazancına karışan düşük oranlı (azami %5) faiz (enflasyon farkı düşülmüş reel kısım) veya mahzurlu gelirlerin, pay başına ve elde tutulan gün sayısına göre hesaplanarak sevap beklemeksizin ihtiyaç sahiplerine verilmesi yükümlülüğüdür. Hisse fiyat artışından doğan sermaye kazancı arındırmaya tabi değildir.",
     tag: "Zekât & Arındırma",
   },
   {

@@ -70,7 +70,7 @@ export const SAMPLE_COMPANIES_SUMMARY: CompanySummary[] = [
     impureIncomePercent: 6.20,
     priceTRY: "259.00",
     change24h: "-2.26%",
-    purificationPerShareTRY: "2.8500",
+    purificationPerShareTRY: "0.6210",
     zatableNetAssetsPerShareTRY: "24.1000",
     breachReasonSummary: "Uçak içi alkollü içecek sunumu/satışı ve toplam faizli finansal borç yükü (%38.74) sebebiyle BIST Katılım Endeksi dışındadır.",
     previousQuarterStatus: "NON_COMPLIANT",
@@ -314,7 +314,7 @@ export const SAMPLE_COMPANIES_SUMMARY: CompanySummary[] = [
     impureIncomePercent: 94.20,
     priceTRY: "118.50",
     change24h: "+1.80%",
-    purificationPerShareTRY: "8.2500",
+    purificationPerShareTRY: "0.0000",
     zatableNetAssetsPerShareTRY: "0.0000",
     breachReasonSummary: "Ana faaliyet alanı geleneksel faizli bankacılık olduğu için doğrudan kapsam dışıdır.",
     previousQuarterStatus: "NON_COMPLIANT",
@@ -333,6 +333,8 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
 
   const priceNum = parseFloat(summary.priceTRY || "50") || 50;
   const mcapNum = (summary as any).marketCapTRY || (priceNum * 250_000_000);
+  const sharesNum = Math.max(10_000_000, Math.round(mcapNum / priceNum));
+  const pShareNum = parseFloat(summary.purificationPerShareTRY || "0") || 0;
   const assetsNum = Math.round(mcapNum * 1.25);
   const denomNum = Math.max(mcapNum, assetsNum);
   const revenueNum = Math.round(mcapNum * 1.15);
@@ -435,11 +437,11 @@ function buildDetailFromSummary(summary: CompanySummary): CompanyDetailScreening
       },
     },
     purificationMetrics: {
-      purificationPerShareQuarterTRY: `${summary.purificationPerShareTRY}0000`,
+      purificationPerShareQuarterTRY: pShareNum.toFixed(8),
       dividendPurificationRatio: (summary.impureIncomePercent / 100).toFixed(8),
       zatableNetCurrentAssetsPerShareTRY: `${summary.zatableNetAssetsPerShareTRY || "12.5000"}0000`,
-      totalSharesOutstanding: "1000000000.000000",
-      impureIncomeIsolatedQuarterTRY: (parseFloat(summary.purificationPerShareTRY) * 1000000000).toFixed(4),
+      totalSharesOutstanding: sharesNum.toFixed(6),
+      impureIncomeIsolatedQuarterTRY: (pShareNum * sharesNum).toFixed(4),
     },
   };
 }

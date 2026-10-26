@@ -66,15 +66,21 @@ export async function POST(request: Request) {
       const { totalDaysHeld, daysHeldInQuarter, formattedPurchaseDate } =
         calculateDaysHeld(h.purchaseDate || "2026-06-01");
 
-      // Purification via Phase 2 PurificationEngine formula
-      const impureQuarter = toDecimal(
-        detail?.purificationMetrics.impureIncomeIsolatedQuarterTRY || "0"
-      );
+      // Purification via TKBB Standard 3.2.1 & 3.6.2 (no 90-day clamping)
       const totalShares = toDecimal(
         detail?.purificationMetrics.totalSharesOutstanding || "1000000000"
       );
+      const pShareQuarter = toDecimal(
+        detail?.purificationMetrics.purificationPerShareQuarterTRY ||
+          summary?.purificationPerShareTRY ||
+          "0"
+      );
+      const impureQuarter = detail
+        ? toDecimal(detail.purificationMetrics.impureIncomeIsolatedQuarterTRY)
+        : pShareQuarter.times(totalShares);
       const divRatio = toDecimal(
-        detail?.purificationMetrics.dividendPurificationRatio || "0"
+        detail?.purificationMetrics.dividendPurificationRatio ||
+          (summary ? (summary.impureIncomePercent / 100).toFixed(8) : "0")
       );
 
       let payablePurification = new Decimal(0);
@@ -90,15 +96,17 @@ export async function POST(request: Request) {
           impureQuarter,
           totalShares,
           lots,
-          daysHeldInQuarter,
+          totalDaysHeld,
           90,
           useCeiling
         );
         payablePurification = holdRes.totalPurificationPayable;
       }
 
-      totalPurificationPayable =
-        totalPurificationPayable.plus(payablePurification);
+      if (evalResult.status !== "NON_COMPLIANT") {
+        totalPurificationPayable =
+          totalPurificationPayable.plus(payablePurification);
+      }
 
       // Zakat calculation
       const zakatRes = calculateZakatForPositionClient({

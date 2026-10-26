@@ -90,6 +90,9 @@ function PortfolioManagementContent() {
 
   // Fıkhi İhtiyat ve Yuvarlama
   const [useCeilingRounding, setUseCeilingRounding] = useState<boolean>(true);
+  // Arındırma Hesaplama Modu: "TKBB_REAL" (Enflasyon Arındırmalı) | "KAFIF_GROSS" (Enflasyon İndirimsiz Brüt - Helal Finans Uyumlu)
+  const [purificationMode, setPurificationMode] = useState<"TKBB_REAL" | "KAFIF_GROSS">("TKBB_REAL");
+  const [includeNonCompliantInPurification, setIncludeNonCompliantInPurification] = useState<boolean>(false);
 
   // Fıkhi Kontrol Anahtarları
   const [autoPurification, setAutoPurification] = useState<boolean>(true);
@@ -299,11 +302,59 @@ function PortfolioManagementContent() {
   const [newTicker, setNewTicker] = useState<string>("BIMAS");
   const [newLots, setNewLots] = useState<string>("100");
   const [newAvgCost, setNewAvgCost] = useState<string>("482.50");
-  const [newPurchaseDate, setNewPurchaseDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
+  const [newDaysHeldInput, setNewDaysHeldInput] = useState<string>("365");
+  const [newPurchaseDate, setNewPurchaseDate] = useState<string>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 365);
+    return d.toISOString().split("T")[0];
+  });
   const [newZakatIntent, setNewZakatIntent] =
     useState<ZakatIntentionType>("LONG_TERM_DIVIDEND");
+
+  const handleNewDateChange = (dateStr: string) => {
+    setNewPurchaseDate(dateStr);
+    const { totalDaysHeld } = calculateDaysHeld(dateStr);
+    setNewDaysHeldInput(String(totalDaysHeld));
+  };
+
+  const handleNewDaysChange = (daysStr: string) => {
+    setNewDaysHeldInput(daysStr);
+    const daysNum = Math.max(1, parseInt(daysStr) || 1);
+    const d = new Date();
+    d.setDate(d.getDate() - daysNum);
+    setNewPurchaseDate(d.toISOString().split("T")[0]);
+  };
+
+  const handleUpdateHoldingDays = (id: string, days: number) => {
+    const validDays = Math.max(1, Math.min(36500, Math.round(days || 1)));
+    const d = new Date();
+    d.setDate(d.getDate() - validDays);
+    const isoDate = d.toISOString().split("T")[0];
+    setHoldings((prev) =>
+      prev.map((h) =>
+        h.id === id
+          ? ({ ...h, purchaseDate: isoDate, customDaysHeld: validDays } as PortfolioHoldingItem)
+          : h
+      )
+    );
+  };
+
+  const handleUpdateHoldingDate = (id: string, dateStr: string) => {
+    const { totalDaysHeld } = calculateDaysHeld(dateStr);
+    setHoldings((prev) =>
+      prev.map((h) =>
+        h.id === id
+          ? ({ ...h, purchaseDate: dateStr, customDaysHeld: totalDaysHeld } as PortfolioHoldingItem)
+          : h
+      )
+    );
+  };
+
+  const handleUpdateHoldingLots = (id: string, lotsStr: string) => {
+    setHoldings((prev) =>
+      prev.map((h) => (h.id === id ? { ...h, lots: lotsStr } : h))
+    );
+  };
 
   const handleSelectNewTicker = (ticker: string) => {
     setNewTicker(ticker);
@@ -364,19 +415,34 @@ function PortfolioManagementContent() {
       totalMarketValue = totalMarketValue.plus(positionValue);
       totalCostBasis = totalCostBasis.plus(positionCost);
 
-      const { totalDaysHeld, daysHeldInQuarter } = calculateDaysHeld(item.purchaseDate);
+      const customDays = (item as any).customDaysHeld;
+      const calcDateRes = calculateDaysHeld(item.purchaseDate);
+      const totalDaysHeld =
+        typeof customDays === "number" && customDays > 0
+          ? customDays
+          : calcDateRes.totalDaysHeld;
+      const daysHeldInQuarter = Math.min(totalDaysHeld, 90);
       const detail = DETAILED_COMPANIES_DATABASE[item.ticker];
       const compSummary = getCompanySummary(item.ticker);
+      const isCompliant = compSummary?.bistStatus === "COMPLIANT" || compSummary?.bistStatus === "GRACE_PERIOD_TOLERANCE";
 
-      // Fıkhi arındırma
-      const impureIncome = detail?.purificationMetrics?.impureIncomeIsolatedQuarterTRY || "500000";
-      const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "100000000";
+      // Fıkhi arındırma (TKBB Reel vs KAFİF Brüt Enflasyon İndirimsiz)
+      const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "1000000000";
+      const basePShareQuarter = new Decimal(
+        detail?.purificationMetrics?.purificationPerShareQuarterTRY ||
+          compSummary?.purificationPerShareTRY ||
+          "0"
+      );
+      // KAFİF Brüt modunda enflasyon erozyonu düşülmemiş nominal KAFİF mahzurlu geliri baz alınır
+      const grossMultiplier = purificationMode === "KAFIF_GROSS" ? new Decimal("3.85") : new Decimal("1");
+      const effectivePShareQuarter = basePShareQuarter.times(grossMultiplier);
+      const impureIncome = effectivePShareQuarter.times(new Decimal(totalShares)).toFixed(4);
 
       const purCalc = calculateHoldingPurificationClient(
         impureIncome,
         totalShares,
         lotsDec,
-        daysHeldInQuarter,
+        totalDaysHeld,
         90,
         useCeilingRounding
       );
@@ -395,17 +461,16 @@ function PortfolioManagementContent() {
         intent: effectiveIntent,
       });
 
-      totalExitPurificationPayable = totalExitPurificationPayable.plus(
-        purCalc.totalPurificationPayable
-      );
-      totalZakatPayable = totalZakatPayable.plus(zakCalc.zakatPayableTRY);
-      totalZakatBase = totalZakatBase.plus(zakCalc.zakatBaseTRY);
-
-      const isCompliant = compSummary?.bistStatus === "COMPLIANT";
-
       if (isCompliant) {
         compliantMarketValue = compliantMarketValue.plus(positionValue);
       }
+      if (isCompliant || includeNonCompliantInPurification || purificationMode === "KAFIF_GROSS") {
+        totalExitPurificationPayable = totalExitPurificationPayable.plus(
+          purCalc.totalPurificationPayable
+        );
+      }
+      totalZakatPayable = totalZakatPayable.plus(zakCalc.zakatPayableTRY);
+      totalZakatBase = totalZakatBase.plus(zakCalc.zakatBaseTRY);
 
       return {
         ...item,
@@ -444,7 +509,7 @@ function PortfolioManagementContent() {
       totalZakatPayable,
       totalZakatBase,
     };
-  }, [holdings, livePrices, useCeilingRounding, globalZakatIntent]);
+  }, [holdings, livePrices, useCeilingRounding, globalZakatIntent, purificationMode, includeNonCompliantInPurification]);
 
   // Daire grafik ve görsel analiz için hisse ağırlıkları
   const holdingsChartData = useMemo(() => {
@@ -1091,14 +1156,26 @@ function PortfolioManagementContent() {
 
                 <div>
                   <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Alış Tarihi
+                    Alış Tarihi / Gün ({newDaysHeldInput} Gün)
                   </label>
-                  <input
-                    type="date"
-                    value={newPurchaseDate}
-                    onChange={(e) => setNewPurchaseDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
-                  />
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      type="number"
+                      min="1"
+                      max="36500"
+                      value={newDaysHeldInput}
+                      onChange={(e) => handleNewDaysChange(e.target.value)}
+                      title="Elde Tutulan Gün Sayısı"
+                      placeholder="Gün"
+                      className="w-20 px-2.5 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
+                    />
+                    <input
+                      type="date"
+                      value={newPurchaseDate}
+                      onChange={(e) => handleNewDateChange(e.target.value)}
+                      className="w-full px-2.5 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -1408,10 +1485,32 @@ function PortfolioManagementContent() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                    İhtiyat Kuralı (Yukarı Yuvarlama):
-                  </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="inline-flex rounded-full bg-slate-100 dark:bg-white/10 p-1 text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setPurificationMode("TKBB_REAL")}
+                      className={`px-3 py-1 rounded-full transition ${
+                        purificationMode === "TKBB_REAL"
+                          ? "bg-[#182542] text-white shadow-2xs"
+                          : "text-[#6E81A0] dark:text-[#94A3B8]"
+                      }`}
+                    >
+                      TKBB Reel (Enflasyon Arındırmalı)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPurificationMode("KAFIF_GROSS")}
+                      className={`px-3 py-1 rounded-full transition ${
+                        purificationMode === "KAFIF_GROSS"
+                          ? "bg-[#0D8B52] text-white shadow-2xs"
+                          : "text-[#6E81A0] dark:text-[#94A3B8]"
+                      }`}
+                    >
+                      KAFİF Brüt (Helal Finans Uyumlu)
+                    </button>
+                  </div>
+
                   <button
                     type="button"
                     onClick={() => setUseCeilingRounding(!useCeilingRounding)}
@@ -1421,7 +1520,7 @@ function PortfolioManagementContent() {
                         : "bg-slate-200 dark:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
                     }`}
                   >
-                    <span>{useCeilingRounding ? "Aktif" : "Pasif"}</span>
+                    <span>Yukarı Yuvarlama: {useCeilingRounding ? "Aktif" : "Pasif"}</span>
                   </button>
                 </div>
               </div>
@@ -1429,9 +1528,9 @@ function PortfolioManagementContent() {
               <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-[#182542] dark:text-amber-200 flex items-start gap-3">
                 <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <span className="font-bold block">Fıkhi Hüküm &amp; İnfak Sorumluluğu</span>
+                  <span className="font-bold block">Fıkhi Hüküm &amp; TKBB Arındırma Standardı (Madde 3.2.1 &amp; 3.6.2)</span>
                   <p className="leading-relaxed">
-                    Hissenin kazancına karışan düşük oranlı (azami %5) faiz veya gayrimeşru gelirler, yatırımcının temettü ve sermaye kazancından hesaplanarak sevap beklemeksizin yoksullara veya kamu yararına infak edilmelidir. Mizan, hissenin portföyde tutulduğu gün sayısına (365 pro-rata) göre kuruşu kuruşuna hesaplar.
+                    Katılım endeksi şirketlerinin kazancına karışan düşük oranlı (azami %5) faiz veya mahzurlu gelirler; <strong>pay başına düşen yıllık/dönemlik mahzurlu gelir</strong> üzerinden ve hissenin portföyde <strong>tutulduğu toplam gün sayısı (365 gün pro-rata)</strong> oranında hesaplanarak sevap beklemeksizin infak edilmelidir. Tablodaki <strong>Tutulan Gün</strong> veya <strong>Alış Tarihi</strong> alanını doğrudan değiştirerek istediğiniz gün sayısı (örn. 30, 180, 365, 730 gün) üzerinden hesaplama yapabilirsiniz.
                   </p>
                 </div>
               </div>
@@ -1442,10 +1541,10 @@ function PortfolioManagementContent() {
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                    Hisse Başına Güncel Arındırma Hesabı
+                    Hisse Başına Güncel Arındırma Hesabı (365 Gün Yıllık Esaslı)
                   </h3>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Alış tarihinden itibaren geçen gün ve çeyreklik şüpheli gelir dağılımı
+                    Elde tutulan gün sayısını veya alış tarihini tablodan doğrudan değiştirebilirsiniz
                   </p>
                 </div>
                 <div className="text-right">
@@ -1461,10 +1560,10 @@ function PortfolioManagementContent() {
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[#6E81A0] dark:text-[#94A3B8] font-bold text-[11px]">
                       <th className="py-3 px-4">Hisse Senedi</th>
-                      <th className="py-3 px-4 text-center">Tutulan Gün</th>
+                      <th className="py-3 px-4 text-center">Tutulan Gün &amp; Alış Tarihi</th>
                       <th className="py-3 px-4 text-right">Lot Miktarı</th>
-                      <th className="py-3 px-4 text-right">Hisse Başı Arındırma</th>
-                      <th className="py-3 px-4 text-right">Gün Oranı (Pro-Rata)</th>
+                      <th className="py-3 px-4 text-right">Pay Başı Yıllık Mahzurlu Gelir</th>
+                      <th className="py-3 px-4 text-right">Yıllık Gün Oranı (Pro-Rata)</th>
                       <th className="py-3 px-4 text-right font-black text-[#182542] dark:text-white">Toplam Arındırılacak</th>
                     </tr>
                   </thead>
@@ -1493,25 +1592,75 @@ function PortfolioManagementContent() {
                         </td>
 
                         <td className="py-3 px-4 text-center font-mono">
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/10 font-bold text-[#182542] dark:text-white">
-                            {row.daysHeld} Gün
-                          </span>
+                          <div className="flex flex-col items-center gap-1.5">
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                type="number"
+                                min="1"
+                                max="36500"
+                                value={row.daysHeld}
+                                onChange={(e) =>
+                                  handleUpdateHoldingDays(row.id, parseInt(e.target.value) || 1)
+                                }
+                                className="w-20 px-2 py-1 rounded-lg bg-[#F8F9FA] dark:bg-white/10 border border-slate-200 dark:border-white/15 text-center font-bold text-[#182542] dark:text-white text-xs outline-none focus:border-emerald-500"
+                              />
+                              <span className="text-[11px] font-bold text-[#182542] dark:text-white">Gün</span>
+                              <input
+                                type="date"
+                                value={row.purchaseDate || ""}
+                                onChange={(e) => handleUpdateHoldingDate(row.id, e.target.value)}
+                                className="px-2 py-1 rounded-lg bg-[#F8F9FA] dark:bg-white/10 border border-slate-200 dark:border-white/15 text-[11px] font-mono text-[#6E81A0] dark:text-slate-300 outline-none focus:border-emerald-500"
+                              />
+                            </div>
+                            <div className="flex items-center gap-1">
+                              {[30, 90, 180, 365].map((presetDays) => (
+                                <button
+                                  key={presetDays}
+                                  type="button"
+                                  onClick={() => handleUpdateHoldingDays(row.id, presetDays)}
+                                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition ${
+                                    row.daysHeld === presetDays
+                                      ? "bg-[#0D8B52] text-white"
+                                      : "bg-slate-100 dark:bg-white/5 text-[#6E81A0] hover:bg-slate-200"
+                                  }`}
+                                >
+                                  {presetDays}G
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         </td>
 
                         <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
-                          {row.lots} Lot
+                          <div className="inline-flex items-center gap-1">
+                            <input
+                              type="number"
+                              min="1"
+                              value={row.lots}
+                              onChange={(e) => handleUpdateHoldingLots(row.id, e.target.value)}
+                              className="w-24 px-2 py-1 rounded-lg bg-[#F8F9FA] dark:bg-white/10 border border-slate-200 dark:border-white/15 text-right font-bold text-[#182542] dark:text-white text-xs outline-none focus:border-emerald-500"
+                            />
+                            <span>Lot</span>
+                          </div>
                         </td>
 
                         <td className="py-3 px-4 text-right font-mono text-[#6E81A0] dark:text-[#94A3B8]">
-                          {formatTRY(row.purificationResult.purificationPerShare, 4)} / hisse
+                          {formatTRY(row.purificationResult.purificationPerShare.times(4), 4)} / pay (yıllık)
                         </td>
 
                         <td className="py-3 px-4 text-right font-mono text-xs">
-                          {row.daysHeldInQuarter} / 90 gün
+                          {row.daysHeld} / 365 gün (%
+                          {((row.daysHeld / 365) * 100).toFixed(1)})
                         </td>
 
                         <td className="py-3 px-4 text-right font-mono font-black text-sm text-[#0D8B52] dark:text-emerald-400">
-                          {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
+                          {row.isCompliant || includeNonCompliantInPurification || purificationMode === "KAFIF_GROSS" ? (
+                            formatTRY(row.purificationResult.totalPurificationPayable, 2)
+                          ) : (
+                            <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400">
+                              Kapsam Dışı (İkame Gerekli)
+                            </span>
+                          )}
                         </td>
                       </tr>
                     )))}
@@ -1892,7 +2041,7 @@ function PortfolioManagementContent() {
                     2. Kuruş Hassasiyetli Fıkhi Arındırma (Purification) İnfak Matrahı
                   </h4>
                   <p className="text-[11px] text-slate-600">
-                    Hisse kazançlarına karışan şüpheli/faiz gelirleri, portföyde tutulan gün sayısına göre pro-rata (365 gün esasıyla) hesaplanmıştır.
+                    TKBB Danışma Kurulu Pay Senedi Standardı (Madde 3.2.1 &amp; 3.6.2) uyarınca enflasyondan arındırılmış pay başı çeyreklik mahzurlu gelir, portföyde tutulan toplam gün sayısına göre (pro-rata) hesaplanmıştır. Katılım dışı hisseler rutin arındırma sertifikasına dahil edilmez; tasfiye/ikame gerektirir.
                   </p>
                   <table className="w-full text-left text-xs border border-slate-200 border-collapse">
                     <thead className="bg-slate-100 text-slate-700 text-[10px]">
@@ -1900,7 +2049,7 @@ function PortfolioManagementContent() {
                         <th className="p-2 border border-slate-200">Hisse</th>
                         <th className="p-2 border border-slate-200 text-center">Alış Tarihi</th>
                         <th className="p-2 border border-slate-200 text-center">Tutulan Gün</th>
-                        <th className="p-2 border border-slate-200 text-right">Hisse Başı Şüpheli Pay</th>
+                        <th className="p-2 border border-slate-200 text-right">Pay Başı Çeyreklik Mahzurlu Gelir</th>
                         <th className="p-2 border border-slate-200 text-right">Arındırılacak Tutar</th>
                       </tr>
                     </thead>
@@ -1911,7 +2060,11 @@ function PortfolioManagementContent() {
                           <td className="p-2 border border-slate-200 text-center font-mono">{r.purchaseDate}</td>
                           <td className="p-2 border border-slate-200 text-center font-mono">{r.daysHeld} Gün</td>
                           <td className="p-2 border border-slate-200 text-right font-mono">{formatTRY(r.purificationResult.purificationPerShare, 4)}</td>
-                          <td className="p-2 border border-slate-200 text-right font-mono font-bold text-[#0D8B52]">{formatTRY(r.purificationResult.totalPurificationPayable, 2)}</td>
+                          <td className="p-2 border border-slate-200 text-right font-mono font-bold text-[#0D8B52]">
+                            {r.isCompliant
+                              ? formatTRY(r.purificationResult.totalPurificationPayable, 2)
+                              : "Kapsam Dışı (İkame)"}
+                          </td>
                         </tr>
                       ))}
                       <tr className="bg-emerald-50/50 font-bold">

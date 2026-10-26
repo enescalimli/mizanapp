@@ -1543,12 +1543,25 @@ export async function GET(
     financialHealth = `Şirketin yıllıklandırılmış hasılatı ${formatMcapShort(realRevenue)}, net kârı ise ${formatMcapShort(realNetIncome)} seviyesindedir. F/K çarpanı (${peFormatted}) ve FAVÖK marjı (${ebitdaMarginFormatted}) ile sektöründe güçlü operasyonel kârlılık üretmektedir. Net Borç/FAVÖK çarpanı (${netDebtEbitdaFormatted}) borç yükünün yönetilebilir olduğunu göstermektedir.`;
   }
 
-  // Temettü & Arındırma Notu
+  // Temettü & Arındırma Notu (TKBB Pay Senedi İhracı ve Alım-Satımı Standardı Madde 3.2.1 & 3.6.2)
+  const resolvedPurifPerShareStr =
+    detailedRecord?.purificationMetrics?.purificationPerShareQuarterTRY ||
+    univ.purificationPerShareTRY ||
+    "0.0000";
+  const resolvedPurifPerShareDec = new Decimal(resolvedPurifPerShareStr || "0");
+  const resolvedTotalSharesStr =
+    detailedRecord?.purificationMetrics?.totalSharesOutstanding ||
+    sharesCount.toString();
+  const resolvedTotalSharesDec = new Decimal(resolvedTotalSharesStr || "1");
+  const resolvedImpureQuarterStr = resolvedPurifPerShareDec
+    .mul(resolvedTotalSharesDec)
+    .toFixed(2);
+
   let purificationNote = "";
   if (overallStatus === "COMPLIANT") {
-    purificationNote = `Hisse başına çeyreklik tahmini arındırma tutarı ₺${univ.purificationPerShareTRY} seviyesindedir. Dağıtılacak brüt temettülerde fıkhi arındırma payı ortalama %${univ.impureIncomePercent.toFixed(2)} olarak hesaplanmaktadır. Zekât yükümlülüğünde ise: Şirkete uzun vadeli temettü/ortaklık amacıyla yatırım yapanlar için hisse başı net zekât tutarı ${zakatLongTermPerShareTRY}, kısa vadeli ticaret (al-sat) amacıyla tutanlar için güncel fiyat üzerinden hisse başı net zekât ${zakatShortTermTradingPerShareTRY}'dir.`;
+    purificationNote = `TKBB Danışma Kurulu Arındırma Rehberi'ne göre (enflasyon farkı düşülmüş) pay başına çeyreklik arındırma tutarı ₺${Number(resolvedPurifPerShareStr).toFixed(4)} seviyesindedir. Şirketin kâr/zarar etmesi veya temettü dağıtıp dağıtmaması elde tutma arındırma yükümlülüğünü değiştirmez (Madde 3.2.1); pay başı arındırma yapıldığında temettü için ayrıca mükerrer arındırma yapılmaz. Zekât yükümlülüğünde ise: Uzun vadeli ortaklık/temettü yatırımcıları için pay başı net zekât ${zakatLongTermPerShareTRY}, kısa vadeli al-sat yapanlar için cari fiyat üzerinden pay başı net zekât ${zakatShortTermTradingPerShareTRY}'dir.`;
   } else {
-    purificationNote = `Hisse katılım dışı olduğu için elde edilecek sermaye kazancı ve temettünün arındırma yöntemiyle caiz kılınması fıkhen mümkün değildir. DİB ve TKBB ilke kararlarına göre hissenin portföyden çıkarılması ve katılım uyumlu alternatiflere geçilmesi tavsiye edilmektedir.`;
+    purificationNote = `Hisse katılım dışı olduğu için elde edilecek sermaye kazancı ve temettünün rutin arındırma yöntemiyle caiz kılınması fıkhen mümkün değildir. DİB ve TKBB ilke kararlarına göre hissenin portföyden tasfiye/ikame edilmesi ve katılım uyumlu alternatiflere geçilmesi gerekmektedir.`;
   }
 
   // DuPont AI Sentezi
@@ -1596,9 +1609,9 @@ export async function GET(
   // Fıkhi Aksiyon Rehberi
   let shariahActionPlan = "";
   if (overallStatus === "COMPLIANT") {
-    shariahActionPlan = `1. Hisse BIST Katılım (XKTUM) resmi endeks bileşenidir; alım-satımında fıkhi engel bulunmamaktadır.\n2. Temettü ödemesi alındığında veya yıl sonunda brüt temettü/kâr payının %${univ.impureIncomePercent.toFixed(2)}'si faiz arındırması olarak hak sahipliği iddia edilmeksizin hayır kurumlarına aktarılmalıdır.\n3. Güvenlik tamponu (%${shariahSafetyBuffer}) geniş olduğu için bir sonraki çeyrekte endeksten düşme endişesi taşımadan orta-uzun vadeli pozisyon korunabilir.`;
+    shariahActionPlan = `1. Hisse BIST Katılım (XKTUM) resmi endeks bileşenidir; alım-satımında fıkhi engel bulunmamaktadır ve hisse değer artışından doğan sermaye kazancı arındırmaya tabi değildir.\n2. TKBB Danışma Kurulu standardına göre elde tutulan gün sayısı oranında pay başına çeyreklik ₺${Number(resolvedPurifPerShareStr).toFixed(4)} (veya pratik yöntemle alınan brüt temettünün %${univ.impureIncomePercent.toFixed(2)}'si) sevap beklentisi olmaksızın hayır kurumlarına verilerek arındırılmalıdır.\n3. Güvenlik tamponu (%${shariahSafetyBuffer}) geniş olduğu için bir sonraki çeyrekte endeksten düşme endişesi taşımadan orta-uzun vadeli pozisyon korunabilir.`;
   } else {
-    shariahActionPlan = `1. DİB Din İşleri Yüksek Kurulu ve BIST Katılım standartları gereği bu hisseye yeni yatırım yapılması caiz görülmemektedir.\n2. Portföyünde hisse bulunan katılım yatırımcılarının ana sermayelerini koruyarak uygun bir piyasa koşulunda pozisyondan çıkış yapmaları tavsiye edilir.\n3. Katılım dışı hissede kalınan sürede elde edilen faizli gelir ve haksız kazanç payları arındırma amacıyla elden çıkarılmalıdır.`;
+    shariahActionPlan = `1. DİB Din İşleri Yüksek Kurulu ve TKBB Danışma Kurulu standartları gereği bu hisseye yeni yatırım yapılması caiz görülmemektedir.\n2. Portföyünde hisse bulunan katılım yatırımcılarının ana sermayelerini koruyarak uygun bir piyasa koşulunda pozisyondan çıkış (tasfiye/ikame) yapmaları tavsiye edilir.\n3. Katılım dışı hissede kalınan sürede tahakkuk eden mahzurlu gelir payları mülkiyetten çıkarılmalıdır.`;
   }
 
   const pros = overallStatus === "COMPLIANT"
@@ -1790,11 +1803,11 @@ export async function GET(
       },
     },
     purificationMetrics: {
-      purificationPerShareQuarterTRY: detailedRecord?.purificationMetrics?.purificationPerShareQuarterTRY || univ.purificationPerShareTRY,
+      purificationPerShareQuarterTRY: resolvedPurifPerShareStr,
       dividendPurificationRatio: (impureRatio / 100).toFixed(4),
       zatableNetCurrentAssetsPerShareTRY: detailedRecord?.purificationMetrics?.zatableNetCurrentAssetsPerShareTRY || univ.zatableNetAssetsPerShareTRY || "5.0000",
-      totalSharesOutstanding: sharesCount.toString(),
-      impureIncomeIsolatedQuarterTRY: (impureNumTRY / 4).toFixed(2),
+      totalSharesOutstanding: resolvedTotalSharesStr,
+      impureIncomeIsolatedQuarterTRY: resolvedImpureQuarterStr,
     },
   };
 

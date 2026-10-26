@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       useConservativeCeiling = false,
     } = body;
 
-    // Determine ratios
+    // Determine ratios & synchronized TKBB per-share metrics
     const impureIncomeRatio = detailedCompany
       ? detailedCompany.purificationMetrics.dividendPurificationRatio
       : (toDecimal(univ?.impureIncomePercent || 1.5).div(100)).toFixed(4);
@@ -49,9 +49,13 @@ export async function POST(request: Request) {
       ? detailedCompany.purificationMetrics.totalSharesOutstanding
       : String(Math.max(10_000_000, Math.round(mcap / (price || 1))));
 
+    const pShareQuarter = detailedCompany
+      ? toDecimal(detailedCompany.purificationMetrics.purificationPerShareQuarterTRY)
+      : toDecimal(univ?.purificationPerShareTRY || "0");
+
     const impureQuarter = detailedCompany
       ? detailedCompany.purificationMetrics.impureIncomeIsolatedQuarterTRY
-      : String(Math.round(mcap * (parseFloat(impureIncomeRatio) * 0.03)));
+      : pShareQuarter.times(toDecimal(totalShares)).toFixed(4);
 
     if (calculationMethod === "DIVIDEND_BASED" || (body as any).calculationMethod === "DIVIDEND_PRO_RATA") {
       const divAmount = dividendReceivedTRY || "0.0000";

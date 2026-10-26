@@ -21,12 +21,43 @@ from app.domain.value_objects.money import (
 class HoldingPurifier:
     """Yöntem 1: Hisse Başına / Dönem Bazlı Arındırma (Holding Period Pro-Rata Purification).
 
-    Formül:
-        P_holding = (Toplam Uygunsuz Gelir / Toplam Pay Sayısı) * Lot * (Eldeki Gün / Dönem Gün)
+    Formül (TKBB Pay Senedi İhracı ve Alım-Satımı Standardı Madde 3.2.1 & 3.6.2):
+        P_holding = (Enflasyondan Arındırılmış Dönemlik Mahzurlu Gelir / Toplam Pay Sayısı)
+                    * Lot * (Eldeki Gün / Dönem Gün)
 
-    EC-03 Kuralı: Şirket net dönem zararı açıklasa dahi (net_income < 0),
-    pozitif faiz/uygunsuz geliri (impure_income > 0) varsa arındırma tam olarak hesaplanır.
+    EC-03 & TKBB Madde 3.2.1 Kuralı: Şirketin kâr elde edip etmemesi (net_income < 0)
+    ya da kâr dağıtımı (temettü) yapıp yapmaması arındırma yükümlülüğü açısından
+    farklılık oluşturmaz; pozitif mahzurlu geliri varsa arındırma tam olarak hesaplanır.
     """
+
+    @staticmethod
+    def apply_tkbb_inflation_adjustment(
+        interest_income_period: Decimal,
+        interest_bearing_cash_principal: Decimal,
+        period_inflation_rate: Decimal,
+        other_impure_operating_income: Decimal = ZERO,
+    ) -> Decimal:
+        """TKBB Pay Senedi Standardı Madde 3.6.2:
+        'Faiz gelirlerinden, enflasyon oranı kadar olan kısım (anaparanın değer kaybı
+        telafisi olduğu için) düşüldükten sonra kalan reel faiz kısmı arındırmaya tabi tutulur.'
+        Faiz dışı mahzurlu faaliyet gelirleri ise enflasyon indirimine tabi tutulmadan tam eklenir.
+        """
+        interest_inc = quantize_amount(strict_decimal(interest_income_period))
+        principal = quantize_amount(strict_decimal(interest_bearing_cash_principal))
+        inf_rate = strict_decimal(period_inflation_rate)
+        other_impure = quantize_amount(strict_decimal(other_impure_operating_income))
+
+        if interest_inc < ZERO:
+            raise ValueError(f"interest_income_period cannot be negative: {interest_inc}")
+        if principal < ZERO:
+            raise ValueError(f"interest_bearing_cash_principal cannot be negative: {principal}")
+        if other_impure < ZERO:
+            raise ValueError(f"other_impure_operating_income cannot be negative: {other_impure}")
+
+        effective_inf_rate = max(ZERO, inf_rate)
+        inflation_erosion = quantize_amount(principal * effective_inf_rate, rounding=ROUND_HALF_UP)
+        real_interest_above_inflation = max(ZERO, interest_inc - inflation_erosion)
+        return quantize_amount(real_interest_above_inflation + other_impure, rounding=ROUND_HALF_UP)
 
     @staticmethod
     def calculate_direct(
@@ -41,6 +72,7 @@ class HoldingPurifier:
         period_end_date: Optional[date] = None,
         net_income_isolated_quarter: Optional[Decimal] = None,  # EC-03: Net zarar olsa bile arındırma sıfırlanmaz
         payable_rounding: str = ROUND_HALF_UP,
+        strict_single_period: bool = False,
     ) -> HoldingPurificationResult:
         impure = quantize_amount(strict_decimal(impure_income_isolated_quarter))
         shares = quantize_share_quantity(strict_decimal(total_shares_outstanding))
@@ -54,7 +86,9 @@ class HoldingPurifier:
             raise ValueError(f"quantity_lots cannot be negative: {lots}")
         if period_total_days <= 0:
             raise ValueError(f"period_total_days must be positive: {period_total_days}")
-        if days_held < 0 or days_held > period_total_days:
+        if days_held < 0:
+            raise ValueError(f"days_held ({days_held}) cannot be negative")
+        if strict_single_period and days_held > period_total_days:
             raise ValueError(
                 f"days_held ({days_held}) must be between 0 and period_total_days ({period_total_days})"
             )

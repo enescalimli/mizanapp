@@ -49,6 +49,23 @@ class PurificationEngine:
     """
 
     @staticmethod
+    def apply_tkbb_inflation_adjustment(
+        interest_income_period: Decimal,
+        interest_bearing_cash_principal: Decimal,
+        period_inflation_rate: Decimal,
+        other_impure_operating_income: Decimal = ZERO,
+    ) -> Decimal:
+        """TKBB Pay Senedi Standardı Madde 3.6.2 uyarınca faiz gelirlerinden enflasyon
+        erozyonunu düşerek arındırmaya tabi reel mahzurlu geliri hesaplar.
+        """
+        return HoldingPurifier.apply_tkbb_inflation_adjustment(
+            interest_income_period=interest_income_period,
+            interest_bearing_cash_principal=interest_bearing_cash_principal,
+            period_inflation_rate=period_inflation_rate,
+            other_impure_operating_income=other_impure_operating_income,
+        )
+
+    @staticmethod
     def calculate_holding_purification(
         ticker: str,
         fiscal_period: str,
@@ -61,6 +78,7 @@ class PurificationEngine:
         period_end_date: Optional[date] = None,
         net_income_isolated_quarter: Optional[Decimal] = None,
         payable_rounding: str = ROUND_HALF_UP,
+        strict_single_period: bool = False,
     ) -> HoldingPurificationResult:
         """Gün bazlı hisse tutma süresine göre doğrudan arındırma hesaplar."""
         return HoldingPurifier.calculate_direct(
@@ -75,6 +93,7 @@ class PurificationEngine:
             period_end_date=period_end_date,
             net_income_isolated_quarter=net_income_isolated_quarter,
             payable_rounding=payable_rounding,
+            strict_single_period=strict_single_period,
         )
 
     @staticmethod
@@ -178,14 +197,30 @@ class PurificationEngine:
         dividend_items: Sequence[DividendPurificationResult],
         zakat_report: Optional[ZakatPortfolioReport] = None,
         payable_rounding: str = ROUND_HALF_UP,
+        deduplicate_by_ticker: bool = True,
     ) -> ComprehensivePurificationAndZakatReport:
-        """Dönem bazlı hisse arındırmaları, temettü arındırmaları ve zekat raporunu birleştirir."""
+        """Dönem bazlı hisse arındırmaları, temettü arındırmaları ve zekat raporunu birleştirir.
+
+        TKBB Pay Senedi Standardı Madde 3.2.1: Pay başına elde tutma arındırması yapılan
+        bir hisse senedinde, dağıtılan temettü için ayrıca ikinci kez (mükerrer) arındırma yapılmaz.
+        """
+        holding_tickers = {
+            h.ticker.upper().strip()
+            for h in holding_items
+            if h.total_purification_raw > ZERO
+        }
+        effective_dividend_items = [
+            d
+            for d in dividend_items
+            if not (deduplicate_by_ticker and d.ticker.upper().strip() in holding_tickers)
+        ]
+
         total_holding = quantize_amount(
             sum((h.total_purification_raw for h in holding_items), ZERO),
             rounding=ROUND_HALF_UP,
         )
         total_div = quantize_amount(
-            sum((d.purification_raw for d in dividend_items), ZERO),
+            sum((d.purification_raw for d in effective_dividend_items), ZERO),
             rounding=ROUND_HALF_UP,
         )
         total_raw = quantize_amount(
@@ -199,7 +234,7 @@ class PurificationEngine:
 
         return ComprehensivePurificationAndZakatReport(
             holding_purification_items=list(holding_items),
-            dividend_purification_items=list(dividend_items),
+            dividend_purification_items=effective_dividend_items,
             total_holding_purification_raw=total_holding,
             total_dividend_purification_raw=total_div,
             total_purification_raw=total_raw,
