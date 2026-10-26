@@ -48,12 +48,10 @@ export const FloatingBottomBar: React.FC = () => {
   }, [quickActionOpen]);
 
   // Mobil barın gizleneceği sayfalar:
-  // 1. Ana Landing Sayfası
-  // 2. Giriş, Kayıt, Çıkış gibi tüm Yetkilendirme (/auth/*) sayfaları
-  // 3. Yasal / Sözleşme sayfaları
-  // 4. Kullanıcı oturum açmamışsa (misafir modunda) uygulama alt barı kesinlikle gösterilmez
+  // 1. Giriş, Kayıt, Çıkış gibi Yetkilendirme (/auth/*) sayfaları
+  // 2. Yasal / Sözleşme sayfaları
+  // 3. Sosyal Medya Studio
   const isExcludedPath =
-    pathname === "/" ||
     pathname.startsWith("/auth") ||
     pathname.startsWith("/social-studio") ||
     pathname.startsWith("/gizlilik") ||
@@ -62,9 +60,7 @@ export const FloatingBottomBar: React.FC = () => {
     pathname.startsWith("/mesafeli") ||
     pathname.startsWith("/iade");
 
-  // React Hook kuralları gereği tüm hook'lar çalıştırıldıktan sonra koşullu render çıkışı yapılır
   if (isExcludedPath) return null;
-  if (!loading && !user && !isDemoUser) return null;
 
   const handleProtectedAction = (href: string) => {
     setQuickActionOpen(false);
@@ -77,16 +73,16 @@ export const FloatingBottomBar: React.FC = () => {
 
   const navItems = [
     {
-      label: "Ana Sayfa",
-      href: "/",
+      label: "Genel Bakış",
+      href: "/dashboard",
       icon: Home,
-      isActive: pathname === "/",
+      isActive: pathname === "/" || pathname === "/dashboard",
     },
     {
-      label: "Hisseler",
-      href: "/#screener-table",
+      label: "Tarayıcı",
+      href: "/tarayici",
       icon: BarChart3,
-      isActive: pathname === "/" && typeof window !== "undefined" && window.location.hash === "#screener-table",
+      isActive: pathname.startsWith("/tarayici"),
     },
     // Center FAB is rendered in the middle
     {

@@ -43,7 +43,7 @@ export const MizanSplashIntro: React.FC = () => {
     if (alreadySeen) return;
 
     sessionStorage.setItem(SESSION_SPLASH_KEY, "1");
-    setMotionStyle("polish");
+    setMotionStyle("cinematic");
     setVariant("squircle-dark");
     setPhase("entering");
   }, []);
@@ -66,10 +66,10 @@ export const MizanSplashIntro: React.FC = () => {
     return () => window.removeEventListener("mizan:replay-splash", handleReplay);
   }, []);
 
-  // Auto-transition from entering -> subtle exit -> hidden
+  // Auto-transition from entering -> subtle exit -> hidden (Extended 3.8s cinematic / 2.6s polish)
   useEffect(() => {
     if (phase === "entering") {
-      const holdDuration = motionStyle === "cinematic" ? 1350 : 720;
+      const holdDuration = motionStyle === "cinematic" ? 3900 : 2600;
       const timer = window.setTimeout(() => {
         setPhase("exiting");
       }, holdDuration);
@@ -77,7 +77,7 @@ export const MizanSplashIntro: React.FC = () => {
     }
 
     if (phase === "exiting") {
-      const exitDuration = 280;
+      const exitDuration = 540;
       const timer = window.setTimeout(() => {
         setPhase("hidden");
       }, exitDuration);
@@ -110,7 +110,7 @@ export const MizanSplashIntro: React.FC = () => {
       className="fixed inset-0 z-[120] flex flex-col items-center justify-center bg-[#EEF0F4]/95 dark:bg-[#020617]/95 backdrop-blur-2xl cursor-pointer select-none mizan-splash-container"
       style={{
         animation: isExiting
-          ? "mizanSplashSubtleExit 270ms var(--ease-subtle-exit) forwards"
+          ? "mizanSplashSubtleExit 520ms var(--ease-subtle-exit) forwards"
           : undefined,
         willChange: "transform, opacity, filter",
       }}
@@ -123,12 +123,12 @@ export const MizanSplashIntro: React.FC = () => {
 
       {/* Center High-Resolution Animated Icon & Brand */}
       <div className="relative flex flex-col items-center gap-5">
-        <div className="rounded-[28px] shadow-[0_24px_60px_-12px_rgba(24,37,66,0.28)] dark:shadow-[0_24px_70px_-12px_rgba(0,0,0,0.85)]">
+        <div className="rounded-[32px] shadow-[0_24px_60px_-12px_rgba(24,37,66,0.28)] dark:shadow-[0_24px_70px_-12px_rgba(0,0,0,0.85)]">
           <AnimatedMizanLogo
             key={replaySeed}
             variant={variant}
             motionStyle={motionStyle}
-            size={108}
+            size={136}
             showWordmark={false}
           />
         </div>
@@ -139,8 +139,8 @@ export const MizanSplashIntro: React.FC = () => {
           style={{
             animation:
               motionStyle === "cinematic"
-                ? "mizanContainerPolishIn 620ms var(--ease-cinematic-unfold) 320ms both"
-                : "mizanContainerPolishIn 380ms var(--ease-spring-polish) 110ms both",
+                ? "mizanContainerPolishIn 1400ms var(--ease-cinematic-unfold) 950ms both"
+                : "mizanContainerPolishIn 1000ms var(--ease-spring-polish) 550ms both",
           }}
         >
           <div className="flex items-baseline gap-2">

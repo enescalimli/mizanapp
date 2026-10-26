@@ -39,13 +39,6 @@ export default function DashboardPage() {
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
   const [currency, setCurrency] = useState<"TRY" | "USD">("TRY");
 
-  // Auth gate: Giriş yapmamış kullanıcıyı anında /auth/login'e yönlendir
-  useEffect(() => {
-    if (!loading && !user && !isDemoUser) {
-      router.replace("/auth/login");
-    }
-  }, [loading, user, isDemoUser, router]);
-
   // Kullanıcı Portföyü & E-posta Senkronizasyonu
   const userEmail = user?.email?.toLowerCase().trim() || "";
   const [userHoldings, setUserHoldings] = useState<Array<{ ticker: string; lots: number; avgCostTRY: number }>>([]);
@@ -217,6 +210,39 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Misafir Kullanıcı Giriş & Senkronizasyon Çağrısı */}
+        {!user && !isDemoUser && (
+          <div className="bg-gradient-to-r from-[#182542] via-[#273869] to-[#182542] text-white p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                <Sparkles size={18} className="text-emerald-400" />
+              </div>
+              <div>
+                <span className="text-xs sm:text-sm font-bold block">
+                  Katılım Portföyünüzü ve Cihazlar Arası Senkronizasyonu Başlatın
+                </span>
+                <span className="text-[11px] text-slate-300">
+                  Giriş yaparak hisse pozisyonlarınızı, kuruşu kuruşuna arındırma hesabınızı ve bulut yedeğinizi koruyun.
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href="/auth/login"
+                className="px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-xs"
+              >
+                Giriş Yap
+              </Link>
+              <Link
+                href="/auth/register"
+                className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition"
+              >
+                Kayıt Ol
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* =================================================================== */}
         {/* 2. ANA METRİKLER (Row 1): PORTFÖY DEĞERİ & DAİRE GRAFİK + 2x2 BENTO   */}

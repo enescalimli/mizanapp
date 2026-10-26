@@ -98,21 +98,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    // Sadece kullanıcı bilerek oturum açtıysa ve oturumu sakladıysa geri yükle
-    const savedDemo = typeof window !== "undefined" ? localStorage.getItem("mizanapp_demo_auth") : null;
-    if (savedDemo) {
+    // 1. Sadece kullanıcı bilerek oturum açtıysa ve oturumu sakladıysa geri yükle
+    let hasLocalAuth = false;
+    if (typeof window !== "undefined") {
       try {
-        const parsed = JSON.parse(savedDemo);
-        if (parsed && parsed.email) {
-          loginWithDetails(parsed.email, parsed.fullName || parsed.email.split("@")[0]);
-          setLoading(false);
-          return;
+        const savedDemo = localStorage.getItem("mizanapp_demo_auth");
+        if (savedDemo) {
+          const parsed = JSON.parse(savedDemo);
+          if (parsed && parsed.email) {
+            loginWithDetails(parsed.email, parsed.fullName || parsed.email.split("@")[0]);
+            hasLocalAuth = true;
+          }
         }
       } catch {
-        // Eski veya bozuk oturumu temizle
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("mizanapp_demo_auth");
-        }
+        localStorage.removeItem("mizanapp_demo_auth");
       }
     }
 
@@ -121,32 +120,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
-    // Gerçek Supabase oturumu kontrol et
+    // 2. Gerçek Supabase oturumu kontrol et (Var olan yerel oturumu ezme)
     supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       const activeSession = data?.session ?? null;
-      setSession(activeSession);
-      setUser(activeSession?.user ?? null);
       if (activeSession?.user) {
+        setSession(activeSession);
+        setUser(activeSession.user);
+        setIsDemoUser(false);
         loadProfile(activeSession.user.id, activeSession.user.email || "");
       }
+      setLoading(false);
+    }).catch(() => {
       setLoading(false);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event: string, authSession: Session | null) => {
-      setSession(authSession);
-      setUser(authSession?.user ?? null);
+    } = supabase.auth.onAuthStateChange((event: string, authSession: Session | null) => {
       if (authSession?.user) {
+        setSession(authSession);
+        setUser(authSession.user);
+        setIsDemoUser(false);
         loadProfile(authSession.user.id, authSession.user.email || "");
-      } else if (!isDemoUser) {
-        setProfile(null);
+      } else if (event === "SIGNED_OUT") {
+        setSession(null);
+        if (!hasLocalAuth) {
+          setUser(null);
+          setProfile(null);
+        }
       }
       setLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, [isDemoUser]);
+  }, []);
 
   const signIn = async (email: string, pass: string) => {
     if (!isSupabaseConfigured()) {
@@ -179,13 +186,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const signOut = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("mizanapp_demo_auth");
+    }
     if (isDemoUser) {
       setUser(null);
       setProfile(null);
       setIsDemoUser(false);
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("mizanapp_demo_auth");
-      }
       return;
     }
     await signOutUser();
@@ -247,6 +254,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(customUser);
     setProfile(customProfile);
     setIsDemoUser(true);
+    setLoading(false);
     if (typeof window !== "undefined") {
       localStorage.setItem("mizanapp_demo_auth", JSON.stringify({ email, fullName }));
     }

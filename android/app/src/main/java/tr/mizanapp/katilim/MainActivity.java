@@ -2,6 +2,7 @@ package tr.mizanapp.katilim;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
         swipeRefresh = findViewById(R.id.swipeRefreshLayout);
         webView = findViewById(R.id.webView);
 
+        // Beyaz parlamayı (white flash) engellemek için WebView arka planını saf siyah yap
+        webView.setBackgroundColor(Color.parseColor("#000000"));
+        swipeRefresh.setProgressBackgroundColorSchemeColor(Color.parseColor("#0E1015"));
         swipeRefresh.setColorSchemeResources(R.color.accent_emerald, R.color.primary_navy);
         swipeRefresh.setOnRefreshListener(() -> webView.reload());
 
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setSupportZoom(true);

@@ -403,20 +403,24 @@ html.dark .apple-segmented-item.active {
 }
 
 :root {
-  /* Jakub Krehel + Emil Kowalski: Production spring (bounce: 0) & iOS sheet curve */
-  --ease-spring-polish: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Jakub Krehel + Emil Kowalski: Smooth unhurried spring (bounce: 0) */
+  --ease-spring-polish: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-vaul-out: cubic-bezier(0.32, 0.72, 0, 1);
   /* Jhey Tompkins + Jakub Krehel: Expressive 3D unfolding curve */
   --ease-cinematic-unfold: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-subtle-exit: cubic-bezier(0.4, 0, 0.6, 1);
 }
 
-/* Mode 1: Jakub + Emil — Refined Production Polish (280ms - 480ms, scale >= 0.90) */
+/* Mode 1: Jakub + Emil — Extended Smooth Production Polish (1.8s - 2.4s) */
 @keyframes mizanContainerPolishIn {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.92);
-    filter: blur(4px);
+    transform: translateY(14px) scale(0.9);
+    filter: blur(8px);
+  }
+  40% {
+    opacity: 0.85;
+    filter: blur(2px);
   }
   100% {
     opacity: 1;
@@ -428,8 +432,12 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanLeftWingPolish {
   0% {
     opacity: 0;
-    transform: translate3d(-14px, 8px, 0) scale(0.94);
-    filter: blur(4px);
+    transform: translate3d(-36px, 22px, 0) scale(0.9);
+    filter: blur(8px);
+  }
+  50% {
+    opacity: 0.9;
+    filter: blur(2px);
   }
   100% {
     opacity: 1;
@@ -441,8 +449,12 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanRightWingPolish {
   0% {
     opacity: 0;
-    transform: translate3d(14px, 8px, 0) scale(0.94);
-    filter: blur(4px);
+    transform: translate3d(36px, 22px, 0) scale(0.9);
+    filter: blur(8px);
+  }
+  50% {
+    opacity: 0.9;
+    filter: blur(2px);
   }
   100% {
     opacity: 1;
@@ -454,8 +466,12 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanFlapCreasePolish {
   0% {
     opacity: 0;
-    transform: translate3d(8px, -6px, 0) scale(0.93);
-    filter: blur(3px);
+    transform: translate3d(24px, -18px, 0) scale(0.9);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 0.95;
+    filter: blur(1px);
   }
   100% {
     opacity: 1;
@@ -464,13 +480,13 @@ html.dark .apple-segmented-item.active {
   }
 }
 
-/* Mode 2: Jhey + Jakub — Cinematic 3D Unfold & Squircle Stroke Draw (650ms - 1050ms) */
+/* Mode 2: Jhey + Jakub — Extended Cinematic 3D Unfold & Squircle Stroke Draw (3.2s - 4.2s) */
 @keyframes mizanSquircleStrokeDraw {
   0% {
     stroke-dashoffset: 3600;
-    opacity: 0.2;
+    opacity: 0.15;
   }
-  60% {
+  45% {
     opacity: 1;
   }
   100% {
@@ -482,8 +498,13 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanContainerCinematicIn {
   0% {
     opacity: 0;
-    transform: perspective(1000px) rotateX(14deg) rotateY(-10deg) translateY(14px) scale(0.9);
-    filter: blur(6px);
+    transform: perspective(1000px) rotateX(18deg) rotateY(-14deg) translateY(24px) scale(0.9);
+    filter: blur(10px);
+  }
+  45% {
+    opacity: 0.92;
+    transform: perspective(1000px) rotateX(4deg) rotateY(-3deg) translateY(4px) scale(0.97);
+    filter: blur(2px);
   }
   100% {
     opacity: 1;
@@ -495,12 +516,17 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanLeftWingCinematic {
   0% {
     opacity: 0;
-    transform: translate3d(-28px, 14px, 0) scale(0.9);
-    filter: blur(6px);
+    transform: translate3d(-52px, 28px, 0) rotate(-6deg) scale(0.9);
+    filter: blur(10px);
+  }
+  55% {
+    opacity: 0.92;
+    transform: translate3d(-6px, 4px, 0) rotate(-1deg) scale(0.98);
+    filter: blur(2px);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
     filter: blur(0px);
   }
 }
@@ -508,12 +534,17 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanRightWingCinematic {
   0% {
     opacity: 0;
-    transform: translate3d(28px, 14px, 0) scale(0.9);
-    filter: blur(6px);
+    transform: translate3d(52px, 28px, 0) rotate(6deg) scale(0.9);
+    filter: blur(10px);
+  }
+  55% {
+    opacity: 0.92;
+    transform: translate3d(6px, 4px, 0) rotate(1deg) scale(0.98);
+    filter: blur(2px);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
     filter: blur(0px);
   }
 }
@@ -521,30 +552,34 @@ html.dark .apple-segmented-item.active {
 @keyframes mizanFlapOrigamiFold {
   0% {
     opacity: 0;
-    transform: translate3d(18px, -12px, 0) scale(0.9);
-    filter: blur(5px);
+    transform: translate3d(34px, -24px, 0) rotate(8deg) scale(0.9);
+    filter: blur(8px);
   }
-  65% {
-    opacity: 1;
-    filter: blur(0px);
+  60% {
+    opacity: 0.95;
+    transform: translate3d(4px, -3px, 0) rotate(1deg) scale(0.98);
+    filter: blur(1px);
   }
   100% {
     opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
     filter: blur(0px);
   }
 }
 
 @keyframes mizanLightSweep {
   0% {
-    transform: translateX(-140%) skewX(-22deg);
+    transform: translateX(-150%) skewX(-22deg);
     opacity: 0;
   }
-  35% {
-    opacity: 0.85;
+  30% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.65;
   }
   100% {
-    transform: translateX(220%) skewX(-22deg);
+    transform: translateX(230%) skewX(-22deg);
     opacity: 0;
   }
 }
@@ -558,8 +593,8 @@ html.dark .apple-segmented-item.active {
   }
   100% {
     opacity: 0;
-    transform: translateY(-12px) scale(0.985);
-    filter: blur(4px);
+    transform: translateY(-14px) scale(0.975);
+    filter: blur(6px);
   }
 }
 

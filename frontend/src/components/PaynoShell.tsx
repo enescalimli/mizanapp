@@ -25,7 +25,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, profile } = useAuth();
+  const { user, profile, isDemoUser } = useAuth();
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
   const userDisplayName = useMemo(() => {
@@ -111,29 +111,38 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               <Info size={15} strokeWidth={2.2} />
             </button>
 
-            {/* Kullanıcı Profil Kapsülü */}
-            <Link
-              href="/ayarlar"
-              className="bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
-              title="Hesap ve Ayarlar"
-            >
-              {/* Avatar (Lacivert gradient) */}
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center text-[11px] font-bold font-mono shrink-0 shadow-xs">
-                {userInitials}
-              </div>
+            {/* Kullanıcı Profil Kapsülü veya Giriş Yap Butonu */}
+            {user || isDemoUser ? (
+              <Link
+                href="/ayarlar"
+                className="bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
+                title="Hesap ve Ayarlar"
+              >
+                {/* Avatar (Lacivert gradient) */}
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center text-[11px] font-bold font-mono shrink-0 shadow-xs">
+                  {userInitials}
+                </div>
 
-              {/* Kullanıcı Bilgisi */}
-              <div className="hidden sm:flex flex-col text-left leading-none max-w-[110px]">
-                <span className="text-xs font-bold text-[#182542] dark:text-white truncate group-hover:text-[#273869] dark:group-hover:text-blue-400 transition">
-                  {userDisplayName}
-                </span>
-                <span className="text-[10px] text-[#6E81A0] dark:text-[#8C9BB0] truncate mt-0.5">
-                  {userEmail}
-                </span>
-              </div>
+                {/* Kullanıcı Bilgisi */}
+                <div className="hidden sm:flex flex-col text-left leading-none max-w-[110px]">
+                  <span className="text-xs font-bold text-[#182542] dark:text-white truncate group-hover:text-[#273869] dark:group-hover:text-blue-400 transition">
+                    {userDisplayName}
+                  </span>
+                  <span className="text-[10px] text-[#6E81A0] dark:text-[#8C9BB0] truncate mt-0.5">
+                    {userEmail}
+                  </span>
+                </div>
 
-              <ChevronDown size={12} className="text-[#8C93A3] shrink-0" />
-            </Link>
+                <ChevronDown size={12} className="text-[#8C93A3] shrink-0" />
+              </Link>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="px-3.5 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+              >
+                <span>Giriş Yap</span>
+              </Link>
+            )}
           </div>
         </header>
 

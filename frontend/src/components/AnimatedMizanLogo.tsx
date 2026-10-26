@@ -79,8 +79,8 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
       effectiveMotion === "instant"
         ? 50
         : effectiveMotion === "polish"
-          ? 520
-          : 1150;
+          ? 2200
+          : 3800;
     const timer = window.setTimeout(() => {
       onAnimationComplete();
     }, totalMs);
@@ -93,16 +93,16 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
   const isLightIcon = variant === "squircle-light" || variant === "square-light";
   const cornerRadius = isSquircle ? 224 : isSquare ? 96 : 0;
 
-  // Timing tokens per designer weighting
+  // Timing tokens per designer weighting (Extended, unhurried choreography)
   const containerAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanContainerPolishIn 420ms var(--ease-spring-polish) both`,
+          animation: `mizanContainerPolishIn 1250ms var(--ease-spring-polish) both`,
           willChange: "transform, opacity, filter",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanContainerCinematicIn 820ms var(--ease-cinematic-unfold) both`,
+            animation: `mizanContainerCinematicIn 2100ms var(--ease-cinematic-unfold) both`,
             willChange: "transform, opacity, filter",
           }
         : {};
@@ -110,13 +110,13 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
   const leftWingAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanLeftWingPolish 400ms var(--ease-spring-polish) 45ms both`,
+          animation: `mizanLeftWingPolish 1250ms var(--ease-spring-polish) 220ms both`,
           transformOrigin: "420px 510px",
           willChange: "transform, opacity, filter",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanLeftWingCinematic 720ms var(--ease-cinematic-unfold) 140ms both`,
+            animation: `mizanLeftWingCinematic 1900ms var(--ease-cinematic-unfold) 450ms both`,
             transformOrigin: "420px 510px",
             willChange: "transform, opacity, filter",
           }
@@ -125,13 +125,13 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
   const rightWingAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanRightWingPolish 420ms var(--ease-spring-polish) 95ms both`,
+          animation: `mizanRightWingPolish 1300ms var(--ease-spring-polish) 480ms both`,
           transformOrigin: "600px 510px",
           willChange: "transform, opacity, filter",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanRightWingCinematic 760ms var(--ease-cinematic-unfold) 240ms both`,
+            animation: `mizanRightWingCinematic 2000ms var(--ease-cinematic-unfold) 900ms both`,
             transformOrigin: "600px 510px",
             willChange: "transform, opacity, filter",
           }
@@ -140,13 +140,13 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
   const flapAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanFlapCreasePolish 380ms var(--ease-spring-polish) 160ms both`,
+          animation: `mizanFlapCreasePolish 1200ms var(--ease-spring-polish) 820ms both`,
           transformOrigin: "525px 540px",
           willChange: "transform, opacity, filter",
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanFlapOrigamiFold 780ms var(--ease-cinematic-unfold) 380ms both`,
+            animation: `mizanFlapOrigamiFold 1950ms var(--ease-cinematic-unfold) 1450ms both`,
             transformOrigin: "525px 540px",
             willChange: "transform, opacity, filter",
           }
@@ -156,18 +156,18 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
     effectiveMotion === "cinematic"
       ? {
           strokeDasharray: 3600,
-          animation: `mizanSquircleStrokeDraw 950ms var(--ease-cinematic-unfold) 60ms both`,
+          animation: `mizanSquircleStrokeDraw 2600ms var(--ease-cinematic-unfold) 150ms both`,
         }
       : {};
 
   const wordmarkAnimStyle: React.CSSProperties =
     effectiveMotion === "polish"
       ? {
-          animation: `mizanContainerPolishIn 420ms var(--ease-spring-polish) 140ms both`,
+          animation: `mizanContainerPolishIn 1100ms var(--ease-spring-polish) 650ms both`,
         }
       : effectiveMotion === "cinematic"
         ? {
-            animation: `mizanContainerPolishIn 680ms var(--ease-cinematic-unfold) 360ms both`,
+            animation: `mizanContainerPolishIn 1600ms var(--ease-cinematic-unfold) 1200ms both`,
           }
         : {};
 
@@ -417,7 +417,7 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                 style={{
                   background:
                     "linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.28) 50%, transparent 80%)",
-                  animation: "mizanLightSweep 900ms var(--ease-cinematic-unfold) 420ms both",
+                  animation: "mizanLightSweep 1800ms var(--ease-cinematic-unfold) 1950ms both",
                 }}
               />
             )}

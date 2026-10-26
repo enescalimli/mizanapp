@@ -188,7 +188,7 @@ export default function LogoAnimationStudioPage() {
                       Jakub Krehel + Emil Kowalski
                     </span>
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 dark:text-emerald-600">
-                      420ms &bull; Spring
+                      2.2sn &bull; Spring
                     </span>
                   </div>
                   <p
@@ -219,7 +219,7 @@ export default function LogoAnimationStudioPage() {
                       Jhey Tompkins + Jakub Krehel
                     </span>
                     <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-300 dark:text-sky-600">
-                      950ms &bull; 3D &amp; Shimmer
+                      3.8sn &bull; 3D &amp; Shimmer
                     </span>
                   </div>
                   <p
@@ -365,8 +365,8 @@ export default function LogoAnimationStudioPage() {
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
                   <span className="text-xs font-mono uppercase tracking-wider text-slate-300">
                     {selectedMotion === "polish"
-                      ? "Jakub + Emil • Production Spring (420ms)"
-                      : "Jhey + Jakub • 3D Origami & Specular Sweep (950ms)"}
+                      ? "Jakub + Emil • Production Spring (2.2 Saniye)"
+                      : "Jhey + Jakub • 3D Origami & Specular Sweep (3.8 Saniye)"}
                   </span>
                 </div>
 
