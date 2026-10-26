@@ -53,6 +53,7 @@ export const FloatingBottomBar: React.FC = () => {
   // 3. Sosyal Medya Studio
   const isExcludedPath =
     pathname === "/" ||
+    pathname.startsWith("/mobile") ||
     pathname.startsWith("/tanitim") ||
     pathname.startsWith("/logo-animasyon") ||
     pathname.startsWith("/auth") ||

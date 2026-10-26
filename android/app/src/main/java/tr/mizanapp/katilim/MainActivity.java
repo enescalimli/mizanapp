@@ -19,7 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String APP_URL = "https://mizanapp.tr/dashboard";
+    private static final String APP_URL = "https://mizanapp.tr/mobile";
     private WebView webView;
     private SwipeRefreshLayout swipeRefresh;
 
