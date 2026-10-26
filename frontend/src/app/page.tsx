@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import { StockLogo } from "@/components/StockLogo";
+import { AnimatedMizanLogo } from "@/components/AnimatedMizanLogo";
 import { InstitutionalLogosSection } from "@/components/landing/InstitutionalLogosSection";
 
 export default function LandingPage() {
@@ -104,23 +105,13 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
           
           {/* Logo & Marka */}
-          <Link href="/" className="inline-flex items-center gap-3 group shrink-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 p-1 flex items-center justify-center">
-              <Image
-                src="/brand/logo-dark.svg"
-                alt="Mizan Katılım"
-                width={38}
-                height={38}
-                className="w-full h-full object-contain dark:hidden"
-                priority
-              />
-              <Image
-                src="/brand/logo-white.svg"
-                alt="Mizan Katılım"
-                width={38}
-                height={38}
-                className="w-full h-full object-contain hidden dark:block"
-                priority
+          <Link href="/" className="inline-flex items-center gap-3 group shrink-0 mizan-logo-pressable">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0 p-1 flex items-center justify-center">
+              <AnimatedMizanLogo
+                variant="emblem-auto"
+                motionStyle="polish"
+                size={36}
+                showWordmark={false}
               />
             </div>
             <div className="flex items-baseline gap-1.5">

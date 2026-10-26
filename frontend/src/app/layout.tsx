@@ -3,13 +3,14 @@ import Script from "next/script";
 import "./globals.css";
 import { FloatingBottomBar } from "@/components/FloatingBottomBar";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
+import { MizanSplashIntro } from "@/components/MizanSplashIntro";
 import { AuthProvider } from "@/lib/auth/AuthContext";
 import { ThemeProvider } from "@/lib/theme/ThemeContext";
 
 export const viewport: Viewport = {
   themeColor: "#182542",
   width: "device-width",
-  initialScale: 1,
+  initialScale: 0.9,
   maximumScale: 5,
 };
 
@@ -78,6 +79,9 @@ export default function RootLayout({
         <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
         <ThemeProvider>
           <AuthProvider>
+            {/* Oturum Başına Bir Kez Çalışan Yüksek Çözünürlüklü Logo Açılış Animasyonu */}
+            <MizanSplashIntro />
+
             {children}
 
             {/* Granüler Çerez İzin Banner'ı */}

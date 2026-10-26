@@ -65,3 +65,10 @@ redis_data/
 .DS_Store
 .agents/
 *.tsbuildinfo
+
+# Android
+.gradle/
+local.properties
+*.apk
+*.aab
+

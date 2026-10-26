@@ -9,6 +9,7 @@ import { LeftDockSidebar } from "./LeftDockSidebar";
 import { NotificationPopover } from "./NotificationPopover";
 import { FooterLegal } from "./FooterLegal";
 import { MizanChatWidget } from "./MizanChatWidget";
+import { AnimatedMizanLogo } from "./AnimatedMizanLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 interface PaynoShellProps {
@@ -64,24 +65,14 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
         {/* ================================================================= */}
         <header className="flex items-center justify-between gap-3 sm:gap-4">
           
-          {/* Sol Logo & Marka Adı (Yüksek çözünürlüklü şeffaf logo) */}
-          <Link href="/dashboard" className="inline-flex items-center gap-2.5 group shrink-0">
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform shrink-0 p-0.5 flex items-center justify-center">
-              <Image
-                src="/brand/logo-dark.svg"
-                alt="Mizan Katılım"
-                width={36}
-                height={36}
-                className="w-full h-full object-contain dark:hidden"
-                priority
-              />
-              <Image
-                src="/brand/logo-white.svg"
-                alt="Mizan Katılım"
-                width={36}
-                height={36}
-                className="w-full h-full object-contain hidden dark:block"
-                priority
+          {/* Sol Logo & Marka Adı (Yüksek çözünürlüklü animasyonlu vektörel logo) */}
+          <Link href="/dashboard" className="inline-flex items-center gap-2.5 group shrink-0 mizan-logo-pressable">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl overflow-hidden shadow-xs group-hover:scale-105 transition-transform duration-200 shrink-0 p-0.5 flex items-center justify-center">
+              <AnimatedMizanLogo
+                variant="emblem-auto"
+                motionStyle="polish"
+                size={34}
+                showWordmark={false}
               />
             </div>
             <div className="flex items-baseline gap-1.5">

@@ -17,6 +17,7 @@ import {
   Bell,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { AnimatedMizanLogo } from "./AnimatedMizanLogo";
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -34,15 +35,13 @@ export const Navbar: React.FC = () => {
     <header className="sticky top-0 z-50 pt-4 pb-2 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Sol: Payno Tarzı Minimalist Geometrik Marka & Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-10 h-10 rounded-2xl bg-white border border-[#E2E8F0] shadow-orbix-sm p-1.5 flex items-center justify-center transition-transform group-hover:scale-105">
-            <Image
-              src="/brand/logo.svg"
-              alt="Mizan"
-              width={30}
-              height={30}
-              className="w-full h-full object-contain"
-              priority
+        <Link href="/" className="flex items-center gap-2.5 group shrink-0 mizan-logo-pressable">
+          <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-orbix-sm flex items-center justify-center transition-transform duration-200 group-hover:scale-105">
+            <AnimatedMizanLogo
+              variant="squircle-dark"
+              motionStyle="polish"
+              size={40}
+              showWordmark={false}
             />
           </div>
           <div className="flex items-baseline gap-1">

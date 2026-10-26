@@ -30,6 +30,14 @@
     scroll-behavior: smooth;
   }
 
+  /* Mobil Cihazlar İçin Optimize Edilmiş %90 Görünüm Ölçeği */
+  @media (max-width: 768px) {
+    html {
+      font-size: 14.4px; /* 16px'in %90'ı */
+      zoom: 0.9;
+    }
+  }
+
   html.dark {
     background-color: #000000;
     color: #F1F3F7;
@@ -377,4 +385,212 @@ html.dark .apple-segmented-item.active {
 .animate-marquee:hover {
   animation-play-state: paused;
 }
+
+/* ============================================================================
+   MIZAN LOGO OPENING ANIMATION SYSTEM (Jakub + Emil Polish & Jhey + Jakub 3D)
+   ============================================================================ */
+
+@property --mizan-shimmer-angle {
+  syntax: "<angle>";
+  initial-value: 115deg;
+  inherits: false;
+}
+
+@property --mizan-glow-opacity {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: false;
+}
+
+:root {
+  /* Jakub Krehel + Emil Kowalski: Production spring (bounce: 0) & iOS sheet curve */
+  --ease-spring-polish: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-vaul-out: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Jhey Tompkins + Jakub Krehel: Expressive 3D unfolding curve */
+  --ease-cinematic-unfold: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-subtle-exit: cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+/* Mode 1: Jakub + Emil — Refined Production Polish (280ms - 480ms, scale >= 0.90) */
+@keyframes mizanContainerPolishIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.92);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanLeftWingPolish {
+  0% {
+    opacity: 0;
+    transform: translate3d(-14px, 8px, 0) scale(0.94);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanRightWingPolish {
+  0% {
+    opacity: 0;
+    transform: translate3d(14px, 8px, 0) scale(0.94);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanFlapCreasePolish {
+  0% {
+    opacity: 0;
+    transform: translate3d(8px, -6px, 0) scale(0.93);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+/* Mode 2: Jhey + Jakub — Cinematic 3D Unfold & Squircle Stroke Draw (650ms - 1050ms) */
+@keyframes mizanSquircleStrokeDraw {
+  0% {
+    stroke-dashoffset: 3600;
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes mizanContainerCinematicIn {
+  0% {
+    opacity: 0;
+    transform: perspective(1000px) rotateX(14deg) rotateY(-10deg) translateY(14px) scale(0.9);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanLeftWingCinematic {
+  0% {
+    opacity: 0;
+    transform: translate3d(-28px, 14px, 0) scale(0.9);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanRightWingCinematic {
+  0% {
+    opacity: 0;
+    transform: translate3d(28px, 14px, 0) scale(0.9);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanFlapOrigamiFold {
+  0% {
+    opacity: 0;
+    transform: translate3d(18px, -12px, 0) scale(0.9);
+    filter: blur(5px);
+  }
+  65% {
+    opacity: 1;
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes mizanLightSweep {
+  0% {
+    transform: translateX(-140%) skewX(-22deg);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(220%) skewX(-22deg);
+    opacity: 0;
+  }
+}
+
+/* Subtle Exit Recipe (Jakub: Exits are subtler than enters) */
+@keyframes mizanSplashSubtleExit {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.985);
+    filter: blur(4px);
+  }
+}
+
+.mizan-logo-pressable {
+  transition: transform 180ms var(--ease-spring-polish);
+}
+
+.mizan-logo-pressable:active {
+  transform: scale(0.97);
+}
+
+/* Mandatory Accessibility: Respect prefers-reduced-motion across all animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none !important;
+  }
+  .mizan-anim-item,
+  .mizan-anim-wing-left,
+  .mizan-anim-wing-right,
+  .mizan-anim-wing-flap,
+  .mizan-anim-stroke,
+  .mizan-anim-sweep,
+  .mizan-splash-container {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    filter: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
 

@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.MizanKatilim" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary_navy</item>
+        <item name="colorPrimaryDark">@color/pure_black</item>
+        <item name="colorAccent">@color/accent_emerald</item>
+        <item name="android:statusBarColor">@color/pure_black</item>
+        <item name="android:navigationBarColor">@color/pure_black</item>
+        <item name="android:windowBackground">@color/pure_black</item>
+    </style>
+</resources>
