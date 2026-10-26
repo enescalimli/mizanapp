@@ -19,7 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String APP_URL = "https://mizanapp.tr";
+    private static final String APP_URL = "https://mizanapp.tr/dashboard";
     private WebView webView;
     private SwipeRefreshLayout swipeRefresh;
 
@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         settings.setBuiltInZoomControls(false);
         settings.setDisplayZoomControls(false);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        
+        // APK olduğunu belirt
+        String defaultUa = settings.getUserAgentString();
+        settings.setUserAgentString(defaultUa + " MizanAppAndroid/1.0");
         
         // %90 Görünüm Ölçeğini Native Olarak Uygula
         settings.setTextZoom(90);

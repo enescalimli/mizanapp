@@ -10,6 +10,7 @@ import { NotificationPopover } from "./NotificationPopover";
 import { FooterLegal } from "./FooterLegal";
 import { MizanChatWidget } from "./MizanChatWidget";
 import { AnimatedMizanLogo } from "./AnimatedMizanLogo";
+import { ScrollBackgroundMizanLogo } from "./landing/ScrollBackgroundMizanLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 
 interface PaynoShellProps {
@@ -54,11 +55,14 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 
   return (
     <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative antialiased py-2.5 sm:py-6 px-2 sm:px-4 lg:px-6 transition-colors duration-200">
+      {/* Scroll-Driven 3D Background Mizan Emblem (Black in Light Mode, White in Dark Mode) */}
+      <ScrollBackgroundMizanLogo />
+
       {/* Fixed Left Vertical Dock (Desktop only) */}
       <LeftDockSidebar />
 
       {/* Main Floating Rounded Bento Canvas (Şeffaf Cam & Frosted Glass) */}
-      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-white/70 dark:bg-[#0A0B0E]/80 backdrop-blur-2xl rounded-[24px] sm:rounded-[36px] border border-white/80 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3 sm:p-6 lg:p-7 space-y-4 sm:space-y-6 transition-colors duration-200">
+      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl rounded-[24px] sm:rounded-[36px] border border-white/75 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3 sm:p-6 lg:p-7 space-y-4 sm:space-y-6 transition-colors duration-200">
         
         {/* ================================================================= */}
         {/* TOP UTILITY BAR (Logo + Search/Actions/Profile)                    */}

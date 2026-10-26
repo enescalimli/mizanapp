@@ -159,7 +159,7 @@ export const InstitutionalLogosSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-20 sm:py-24 border-t border-slate-200/80 dark:border-white/10 bg-slate-50/60 dark:bg-[#000000] transition-colors relative overflow-hidden">
+    <section className="py-20 sm:py-24 border-t border-slate-200/80 dark:border-white/10 bg-slate-50/25 dark:bg-white/[0.015] backdrop-blur-xs transition-colors relative z-10 overflow-hidden">
       {/* Background ambient accents */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -187,7 +187,7 @@ export const InstitutionalLogosSection: React.FC = () => {
           {institutions.map((inst) => (
             <div
               key={inst.id}
-              className={`rounded-3xl p-6 bg-white dark:bg-[#0A0B0E] border border-slate-200/80 dark:border-white/10 ${inst.borderColor} transition-all duration-200 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:-translate-y-1 group`}
+              className={`rounded-3xl p-6 bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 ${inst.borderColor} transition-all duration-200 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:-translate-y-1 group`}
             >
               {/* Card Top: Logo & Status Badge */}
               <div className="space-y-4">
@@ -248,7 +248,7 @@ export const InstitutionalLogosSection: React.FC = () => {
         </div>
 
         {/* Unified Data Pipeline Flow Banner */}
-        <div className="rounded-2xl p-4 sm:p-5 bg-white dark:bg-[#0A0B0E] border border-slate-200/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-2xs">
+        <div className="rounded-2xl p-4 sm:p-5 bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-2xs">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <Database size={20} />
