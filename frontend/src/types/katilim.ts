@@ -342,6 +342,7 @@ export interface PortfolioHoldingItem {
   receivedDividendTRY?: string;
   purificationMethod: "holding" | "dividend";
   zakatIntent: ZakatIntentionType;
+  basket?: string; // "MAIN" | "TEMETTU" | "BUYUME" | "HALKA_ARZ" or custom
 }
 
 export interface PortfolioTransactionItem {

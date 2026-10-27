@@ -37,6 +37,14 @@ import {
   History,
   Clock,
   CheckCheck,
+  Calendar,
+  Upload,
+  FolderPlus,
+  Folder,
+  Layers,
+  SlidersHorizontal,
+  Activity,
+  BellRing,
 } from "lucide-react";
 import {
   PortfolioHoldingItem,
@@ -75,15 +83,17 @@ function PortfolioManagementContent() {
     }
   }, [loading, user, isDemoUser, router]);
 
-  // Aktif Ana Sekme: Pozisyonlar, Fıkhi Arındırma, İşlem Geçmişi & İnfak Defteri, Hisse Zekâtı
+  // Aktif Ana Sekme: Pozisyonlar, Temettü & Olay Takvimi, Fıkhi Arındırma, İşlem Geçmişi & İnfak Defteri, Hisse Zekâtı
   const initialTab = searchParams.get("tab");
-  const [activeTab, setActiveTab] = useState<"HOLDINGS" | "PURIFICATION" | "TRANSACTIONS" | "ZAKAT">(
+  const [activeTab, setActiveTab] = useState<"HOLDINGS" | "CALENDAR" | "PURIFICATION" | "TRANSACTIONS" | "ZAKAT">(
     initialTab === "arindirma"
       ? "PURIFICATION"
       : initialTab === "zekat"
       ? "ZAKAT"
       : initialTab === "islemler" || initialTab === "gecmis"
       ? "TRANSACTIONS"
+      : initialTab === "takvim" || initialTab === "temettu"
+      ? "CALENDAR"
       : "HOLDINGS"
   );
 
@@ -92,6 +102,7 @@ function PortfolioManagementContent() {
     if (tabParam === "arindirma") setActiveTab("PURIFICATION");
     else if (tabParam === "zekat") setActiveTab("ZAKAT");
     else if (tabParam === "islemler" || tabParam === "gecmis") setActiveTab("TRANSACTIONS");
+    else if (tabParam === "takvim" || tabParam === "temettu") setActiveTab("CALENDAR");
     else if (tabParam === "pozisyonlar") setActiveTab("HOLDINGS");
   }, [searchParams]);
 
@@ -413,6 +424,37 @@ function PortfolioManagementContent() {
     }
   };
 
+  // =========================================================================
+  // MİZAN PORTFÖY 2.0: ÇOKLU SEPET, BENCHMARK GRAFİK & CSV YÖNETİMİ
+  // =========================================================================
+  // 1. Çoklu Portföy Sepet Mimarisi (Snowball Modeli)
+  const [activeBasket, setActiveBasket] = useState<string>("ALL");
+  const [customBaskets, setCustomBaskets] = useState<string[]>([
+    "Temettü Emekliliği",
+    "Büyüme & Teknoloji",
+    "Halka Arz Sepeti",
+  ]);
+  const [newBasketModalOpen, setNewBasketModalOpen] = useState<boolean>(false);
+  const [newBasketName, setNewBasketName] = useState<string>("");
+  const [newHoldingBasket, setNewHoldingBasket] = useState<string>("Genel Portföy");
+
+  // 2. İnteraktif Varlık Grafiği & Benchmark Kıyaslama (Midas + Robinhood)
+  const [chartTimeframe, setChartTimeframe] = useState<"1G" | "1H" | "1A" | "3A" | "1Y" | "ALL">("1A");
+  const [benchmarkIndex, setBenchmarkIndex] = useState<"NONE" | "XKTUM" | "XU100">("XKTUM");
+  const [scrubbedPoint, setScrubbedPoint] = useState<{
+    label: string;
+    value: number;
+    pnl: number;
+    portfolioPercent?: number;
+    benchmarkPercent?: number;
+    alphaPercent?: number;
+  } | null>(null);
+
+  // 3. CSV / Excel İçe ve Dışa Aktarma
+  const [csvImportModalOpen, setCsvImportModalOpen] = useState<boolean>(false);
+  const [csvInputText, setCsvInputText] = useState<string>("");
+  const [csvNotice, setCsvNotice] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
   const handleAddHolding = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTicker || !newLots || !newAvgCost) return;
@@ -425,10 +467,119 @@ function PortfolioManagementContent() {
       purchaseDate: newPurchaseDate,
       purificationMethod: "holding",
       zakatIntent: newZakatIntent,
+      basket: newHoldingBasket,
     };
 
     setHoldings((prev) => [newItem, ...prev]);
     setNewLots("100");
+  };
+
+  const handleExportCSV = () => {
+    const headers = [
+      "Hisse Kodu",
+      "Şirket Unvanı",
+      "Lot Adedi",
+      "Ortalama Maliyet (₺)",
+      "Güncel Fiyat (₺)",
+      "Piyasa Değeri (₺)",
+      "Kâr/Zarar (₺)",
+      "Kâr/Zarar (%)",
+      "Arındırma Borcu (₺)",
+      "Katılım Durumu",
+      "Alış Tarihi",
+      "Sepet",
+    ];
+    const csvRows = portfolioAnalysis.rows.map((r) => [
+      r.ticker,
+      `"${r.companyName}"`,
+      r.lots,
+      r.avgCostTRY,
+      r.curPriceTRY.toFixed(2),
+      r.positionValueTRY.toFixed(2),
+      r.positionPnlTRY.toFixed(2),
+      `%${r.positionPnlPercent.toFixed(2)}`,
+      r.purificationResult.totalPurificationPayable.toFixed(2),
+      r.isCompliant ? "Katılım Uyumlu" : "Kapsam Dışı",
+      r.purchaseDate,
+      (r as any).basket || "Genel Portföy",
+    ]);
+    const csvContent = "\uFEFF" + [headers.join(";"), ...csvRows.map((e) => e.join(";"))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Mizan_Portfoy_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleImportCSV = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!csvInputText.trim()) return;
+
+    try {
+      const lines = csvInputText.trim().split("\n");
+      const importedHoldings: PortfolioHoldingItem[] = [];
+
+      for (const line of lines) {
+        const parts = line.split(/[;,,\t]/).map((p) => p.trim().replace(/^["']|["']$/g, ""));
+        if (parts.length >= 2) {
+          const rawTicker = parts[0].toUpperCase();
+          if (rawTicker === "HISSE" || rawTicker === "TICKER") continue;
+          const lotsNum = parseFloat(parts[1]) || 1;
+          const avgCostNum = parseFloat(parts[2]) || parseFloat(livePrices[rawTicker] || "50.00");
+          const purchaseDateStr = parts[3] && parts[3].includes("-") ? parts[3] : new Date().toISOString().split("T")[0];
+          const basketStr = parts[4] || "Genel Portföy";
+
+          importedHoldings.push({
+            id: `h-import-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+            ticker: rawTicker,
+            lots: String(lotsNum),
+            avgCostTRY: avgCostNum.toFixed(2),
+            purchaseDate: purchaseDateStr,
+            purificationMethod: "holding",
+            zakatIntent: "LONG_TERM_DIVIDEND",
+            basket: basketStr,
+          });
+        }
+      }
+
+      if (importedHoldings.length > 0) {
+        setHoldings((prev) => [...importedHoldings, ...prev]);
+        setCsvNotice({
+          type: "success",
+          text: `${importedHoldings.length} hisse pozisyonu başarıyla içe aktarıldı!`,
+        });
+        setCsvInputText("");
+        setTimeout(() => {
+          setCsvImportModalOpen(false);
+          setCsvNotice(null);
+        }, 1500);
+      } else {
+        setCsvNotice({
+          type: "error",
+          text: "Geçerli format bulunamadı. Örnek: BIMAS, 100, 480.00, 2026-01-15",
+        });
+      }
+    } catch (err: any) {
+      setCsvNotice({
+        type: "error",
+        text: `İçe aktarma hatası: ${err?.message || "Bilinmeyen hata"}`,
+      });
+    }
+  };
+
+  const handleCreateBasket = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = newBasketName.trim();
+    if (!trimmed) return;
+    if (!customBaskets.includes(trimmed)) {
+      setCustomBaskets((prev) => [...prev, trimmed]);
+    }
+    setActiveBasket(trimmed);
+    setNewBasketName("");
+    setNewBasketModalOpen(false);
   };
 
   const handleRemoveHolding = (id: string) => {
@@ -659,6 +810,7 @@ function PortfolioManagementContent() {
   const portfolioAnalysis = useMemo(() => {
     let totalMarketValue = new Decimal(0);
     let totalCostBasis = new Decimal(0);
+    let totalTodayPnlTRY = new Decimal(0);
     let compliantMarketValue = new Decimal(0);
     let totalExitPurificationPayable = new Decimal(0);
     let totalZakatPayable = new Decimal(0);
@@ -684,6 +836,13 @@ function PortfolioManagementContent() {
       const detail = DETAILED_COMPANIES_DATABASE[item.ticker];
       const compSummary = getCompanySummary(item.ticker);
       const isCompliant = compSummary?.bistStatus === "COMPLIANT" || compSummary?.bistStatus === "GRACE_PERIOD_TOLERANCE";
+
+      // Günlük Kâr/Zarar Katkısı (Today's P&L)
+      const change24hStr = compSummary?.change24h || "+0.00%";
+      const changePercentNum = parseFloat(change24hStr.replace("%", "").replace("+", "").trim()) || 0;
+      const prevPrice = curPriceDec.dividedBy(new Decimal(1).plus(new Decimal(changePercentNum).dividedBy(100)));
+      const holdingTodayGain = positionValue.minus(lotsDec.times(prevPrice));
+      totalTodayPnlTRY = totalTodayPnlTRY.plus(holdingTodayGain);
 
       // Fıkhi arındırma (TKBB Reel vs KAFİF Brüt Enflasyon İndirimsiz)
       const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "1000000000";
@@ -736,11 +895,16 @@ function PortfolioManagementContent() {
         companyName: compSummary?.name || item.ticker,
         sector: compSummary?.sector || "BIST",
         isCompliant,
+        debtRatioPercent: compSummary?.debtRatioPercent ?? 0,
+        cashRatioPercent: compSummary?.cashRatioPercent ?? 0,
+        impureIncomePercent: compSummary?.impureIncomePercent ?? 0,
+        change24hStr,
         curPriceTRY: curPriceDec,
         positionCostTRY: positionCost,
         positionValueTRY: positionValue,
         positionPnlTRY: positionPnl,
         positionPnlPercent,
+        holdingTodayGainTRY: holdingTodayGain,
         daysHeld: totalDaysHeld,
         daysHeldInQuarter,
         purificationResult: purCalc,
@@ -753,9 +917,175 @@ function PortfolioManagementContent() {
       ? totalPnlTRY.dividedBy(totalCostBasis).times(100)
       : new Decimal(0);
 
+    const todayPnlTRY = totalTodayPnlTRY;
+    const prevDayTotal = totalMarketValue.minus(todayPnlTRY);
+    const todayPnlPercent = prevDayTotal.gt(0)
+      ? todayPnlTRY.dividedBy(prevDayTotal).times(100)
+      : new Decimal(0);
+
     const halalWeightPercent = totalMarketValue.gt(0)
       ? compliantMarketValue.dividedBy(totalMarketValue).times(100)
       : new Decimal(100);
+
+    // Sektörel Dağılım Röntgeni (Simply Wall St)
+    const sectorMap: Record<string, { sector: string; valueTRY: Decimal; count: number }> = {};
+    rows.forEach((r) => {
+      const sec = r.sector || "Diğer";
+      if (!sectorMap[sec]) sectorMap[sec] = { sector: sec, valueTRY: new Decimal(0), count: 0 };
+      sectorMap[sec].valueTRY = sectorMap[sec].valueTRY.plus(r.positionValueTRY);
+      sectorMap[sec].count += 1;
+    });
+    const sectorBreakdown = Object.values(sectorMap)
+      .map((s) => ({
+        sector: s.sector,
+        valueTRY: s.valueTRY,
+        weightPercent: totalMarketValue.gt(0)
+          ? s.valueTRY.dividedBy(totalMarketValue).times(100).toNumber()
+          : 0,
+        count: s.count,
+      }))
+      .sort((a, b) => b.weightPercent - a.weightPercent);
+
+    // KAFİF Erken Uyarı Risk Radarı (Zoya Modeli)
+    const kafifAlerts = rows
+      .map((r) => {
+        const debt = r.debtRatioPercent;
+        const impure = r.impureIncomePercent;
+        const isNearBreach = debt >= 25 && debt < 33;
+        const isBreached = debt >= 33 || impure >= 5.0 || !r.isCompliant;
+        return {
+          ticker: r.ticker,
+          companyName: r.companyName,
+          debtRatioPercent: debt,
+          impureIncomePercent: impure,
+          isNearBreach,
+          isBreached,
+          warningMessage: isBreached
+            ? `${r.ticker} faizli borç (%${debt.toFixed(1)}) veya mahzurlu gelir eşiğini aşarak katılım dışı kalmıştır.`
+            : isNearBreach
+            ? `${r.ticker} faizli finansal borç oranı %${debt.toFixed(1)} ile %33 tavanına yaklaştı! Gelecek çeyrekte endeksten çıkma riski var.`
+            : null,
+        };
+      })
+      .filter((k) => k.isNearBreach || k.isBreached);
+
+    // Yoğunlaşma Riski (Concentration Risk)
+    const maxHolding = rows.reduce(
+      (max, curr) => (curr.positionValueTRY.gt(max?.positionValueTRY || 0) ? curr : max),
+      rows[0] || null
+    );
+    const maxHoldingWeight =
+      maxHolding && totalMarketValue.gt(0)
+        ? maxHolding.positionValueTRY.dividedBy(totalMarketValue).times(100).toNumber()
+        : 0;
+
+    const maxSector = sectorBreakdown[0] || null;
+    const isSingleStockConcentrated = maxHoldingWeight > 35;
+    const isSectorConcentrated = maxSector ? maxSector.weightPercent > 50 : false;
+
+    // Aylık Temettü Nakit Akışı (Stock Events Modeli)
+    const monthlyDividendMap: number[] = Array(12).fill(0);
+    let totalAnnualProjectedDividends = 0;
+
+    rows.forEach((r) => {
+      const val = r.positionValueTRY.toNumber();
+      const t = r.ticker;
+      let yieldRate = 0.035;
+      let months = [4, 10]; // Mayıs & Kasım
+
+      if (t === "BIMAS") { yieldRate = 0.038; months = [4, 10]; }
+      else if (t === "FROTO") { yieldRate = 0.052; months = [2, 10]; }
+      else if (t === "TUPRS") { yieldRate = 0.065; months = [2, 8]; }
+      else if (t === "EREGL") { yieldRate = 0.045; months = [3]; }
+      else if (t === "ASELS") { yieldRate = 0.015; months = [3, 10]; }
+      else if (t === "MAVI") { yieldRate = 0.040; months = [4]; }
+
+      const annualDiv = val * yieldRate;
+      totalAnnualProjectedDividends += annualDiv;
+      months.forEach((m) => {
+        monthlyDividendMap[m] += annualDiv / months.length;
+      });
+    });
+
+    const projectedYieldOnCost = totalCostBasis.gt(0)
+      ? (totalAnnualProjectedDividends / totalCostBasis.toNumber()) * 100
+      : 0;
+
+    // Portföye Özel Canlı KAP Akışı (Stock Events Modeli)
+    const portfolioTickers = new Set(rows.map((r) => r.ticker));
+    const allSampleKap = [
+      {
+        id: "kap-1",
+        ticker: "BIMAS",
+        companyName: "BİM Birleşik Mağazalar A.Ş.",
+        date: "Bugün 17:42",
+        type: "DIVIDEND",
+        title: "Nakit Kâr Payı Dağıtım Tarihi ve Oranı",
+        summary: "Yönetim Kurulu pay başına brüt ₺5,00 nakit temettünün 15 Mayıs ve 15 Kasım tarihlerinde 2 taksitle ödenmesini Genel Kurul'a teklif etti.",
+        badge: "Temettü Kararı",
+      },
+      {
+        id: "kap-2",
+        ticker: "ASELS",
+        companyName: "Aselsan Elektronik Sanayi A.Ş.",
+        date: "Bugün 16:15",
+        type: "KAFIF",
+        title: "2026/Q1 Katılım Finans İlkeleri Bilgi Formu",
+        summary: "Katılım Finans İlkelerine Uygunluk Raporu açıklandı. Faizli borç oranı %14,2 (Tavan %33), nakit oranı %8,4 ile BIST Katılım kriterlerine tam uyumludur.",
+        badge: "KAFİF Tasdik Formu",
+      },
+      {
+        id: "kap-3",
+        ticker: "FROTO",
+        companyName: "Ford Otomotiv Sanayi A.Ş.",
+        date: "Dün 18:30",
+        type: "FINANCIAL",
+        title: "2026 1. Çeyrek Finansal Rapor Açıklama Takvimi",
+        summary: "Şirketin 2026/Q1 konsolide mali tablolarının 8 Mayıs 2026 seans bitimi sonrası KAP'ta ilan edileceği bildirilmiştir.",
+        badge: "Bilanço Takvimi",
+      },
+      {
+        id: "kap-4",
+        ticker: "THYAO",
+        companyName: "Türk Hava Yolları A.O.",
+        date: "25 Nisan 2026",
+        type: "COMPLIANCE",
+        title: "Katılım Endeksi Periyodik Değerlendirme Bilgilendirmesi",
+        summary: "KAFİF borç rasyoları güncellemesi yayımlandı. Faizli borç oranı %38,74 ile %33 eşiğinin üzerinde kalmaya devam etmektedir.",
+        badge: "Kapsam Dışı İkazı",
+      },
+      {
+        id: "kap-5",
+        ticker: "TUPRS",
+        companyName: "Tüpraş Türkiye Petrol Rafinerileri A.Ş.",
+        date: "24 Nisan 2026",
+        type: "DIVIDEND",
+        title: "Olağan Genel Kurul Kâr Dağıtım Onayı",
+        summary: "Genel Kurul toplantısında pay sahiplerine hisse başına brüt ₺10,35 nakit kâr payı dağıtımı oy birliğiyle kabul edildi.",
+        badge: "Temettü Onayı",
+      },
+      {
+        id: "kap-6",
+        ticker: "EREGL",
+        companyName: "Ereğli Demir ve Çelik Fabrikaları T.A.Ş.",
+        date: "22 Nisan 2026",
+        type: "KAFIF",
+        title: "Katılım Finans Kriterleri Güncellemesi",
+        summary: "Şirketin BIST Katılım Tüm Endeksi'ndeki ağırlığı ve KAFİF arındırma katsayısı pay başına ₺0,284 olarak güncellendi.",
+        badge: "KAFİF Güncellemesi",
+      },
+      {
+        id: "kap-7",
+        ticker: "MAVI",
+        companyName: "Mavi Giyim Sanayi ve Ticaret A.Ş.",
+        date: "20 Nisan 2026",
+        type: "DIVIDEND",
+        title: "Kâr Payı Dağıtım Bildirimi",
+        summary: "Pay başına brüt ₺4,20 nakit temettü 8 Mayıs 2026 tarihinde hak sahiplerinin hesaplarına geçecektir.",
+        badge: "Temettü Tarihi",
+      },
+    ];
+    const portfolioKapDisclosures = allSampleKap.filter((k) => portfolioTickers.has(k.ticker));
 
     return {
       rows,
@@ -763,10 +1093,23 @@ function PortfolioManagementContent() {
       totalCostBasis,
       totalPnlTRY,
       totalPnlPercent,
+      todayPnlTRY,
+      todayPnlPercent,
       halalWeightPercent,
       totalExitPurificationPayable,
       totalZakatPayable,
       totalZakatBase,
+      sectorBreakdown,
+      kafifAlerts,
+      isSingleStockConcentrated,
+      maxHolding,
+      maxHoldingWeight,
+      isSectorConcentrated,
+      maxSector,
+      monthlyDividendMap,
+      totalAnnualProjectedDividends,
+      projectedYieldOnCost,
+      portfolioKapDisclosures,
     };
   }, [holdings, livePrices, useCeilingRounding, globalZakatIntent, purificationMode, includeNonCompliantInPurification]);
 
@@ -799,21 +1142,86 @@ function PortfolioManagementContent() {
     return portfolioAnalysis.rows.filter((r) => !r.isCompliant);
   }, [portfolioAnalysis.rows]);
 
+  // Seçili sepete göre filtrelenmiş hisseler (Snowball Modeli)
+  const filteredRows = useMemo(() => {
+    if (activeBasket === "ALL") return portfolioAnalysis.rows;
+    return portfolioAnalysis.rows.filter(
+      (r) => (r as any).basket === activeBasket
+    );
+  }, [portfolioAnalysis.rows, activeBasket]);
+
+  // İnteraktif Varlık Çizgi Grafiği & Benchmark Veri Noktaları (Midas + Robinhood)
+  const timelineData = useMemo(() => {
+    const totalVal = portfolioAnalysis.totalMarketValue.toNumber();
+    if (totalVal <= 0) return [];
+
+    let labels: string[] = [];
+    let portfolioDeltas: number[] = [];
+    let benchmarkDeltas: number[] = [];
+
+    if (chartTimeframe === "1G") {
+      labels = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+      portfolioDeltas = [-0.3, 0.1, 0.4, 0.2, 0.7, 0.9, 0.6, 1.2, 1.39];
+      benchmarkDeltas = [-0.1, 0.0, 0.2, 0.1, 0.4, 0.5, 0.4, 0.8, 0.95];
+    } else if (chartTimeframe === "1H") {
+      labels = ["Pzt", "Sal", "Çar", "Per", "Cum", "Pzt", "Bugün"];
+      portfolioDeltas = [-1.2, -0.4, 0.8, 1.4, 2.1, 2.8, 3.4];
+      benchmarkDeltas = [-0.8, -0.2, 0.4, 0.9, 1.2, 1.6, 2.0];
+    } else if (chartTimeframe === "1A") {
+      labels = ["1 Nis", "6 Nis", "11 Nis", "16 Nis", "21 Nis", "26 Nis", "Bugün"];
+      portfolioDeltas = [-2.5, -0.8, 1.6, 3.8, 5.2, 7.1, 8.4];
+      benchmarkDeltas = [-1.5, -0.3, 0.8, 2.1, 3.4, 4.8, 5.5];
+    } else if (chartTimeframe === "3A") {
+      labels = ["Şubat", "Mart", "Nisan", "Bugün"];
+      portfolioDeltas = [1.2, 5.8, 12.4, 16.8];
+      benchmarkDeltas = [0.8, 4.1, 8.5, 12.0];
+    } else {
+      labels = ["2025/Q2", "2025/Q3", "2025/Q4", "2026/Q1", "Bugün"];
+      portfolioDeltas = [5.0, 12.5, 18.0, 26.5, 34.2];
+      benchmarkDeltas = [3.2, 8.4, 13.0, 18.5, 24.0];
+    }
+
+    const currentPnlVal = portfolioAnalysis.totalPnlTRY.toNumber();
+
+    return labels.map((label, idx) => {
+      const pDelta = portfolioDeltas[idx] ?? 0;
+      const bDelta = benchmarkDeltas[idx] ?? 0;
+      const pointVal = Math.round(totalVal * (1 + pDelta / 100));
+      const pointPnl = Math.round(currentPnlVal * (1 + pDelta / 100));
+      const alpha = +(pDelta - bDelta).toFixed(2);
+
+      return {
+        label,
+        value: pointVal,
+        pnl: pointPnl,
+        portfolioPercent: pDelta,
+        benchmarkPercent: bDelta,
+        alphaPercent: alpha,
+      };
+    });
+  }, [portfolioAnalysis.totalMarketValue, portfolioAnalysis.totalPnlTRY, chartTimeframe]);
+
   return (
     <PaynoShell badge="portföy">
       <div className="space-y-6">
         
         {/* ================================================================= */}
-        {/* ÜST BAŞLIK VE KONTROLLER                                          */}
+        {/* ÜST BAŞLIK VE MODERN KONTROLLER (Dual P&L, CSV & Sepet Yönetimi) */}
         {/* ================================================================= */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
-              Katılım Portföyüm &amp; Fıkhi Arındırma
-            </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
-                Canlı BIST hisse pozisyonları, kuruş hassasiyetli fıkhi arındırma ve %2,5 hisse zekâtı yönetimi.
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
+                Katılım Portföyüm 2.0
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-bold">
+                Midas &amp; Robinhood Standart
+              </span>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                Canlı BIST fiyatlaması, KAFİF erken uyarı radarı, temettü nakit akışı ve fıkhi arındırma.
               </p>
               {userEmail && (
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
@@ -828,11 +1236,12 @@ function PortfolioManagementContent() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          {/* Aksiyon Araç Çubuğu: CSV İndir/Yükle, Belge, Yeni Hisse */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={tickLivePrices}
-              className="w-9 h-9 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-9 h-9 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition cursor-pointer"
               title="Canlı Fiyatları Yenile"
             >
               <RefreshCw size={14} />
@@ -840,31 +1249,133 @@ function PortfolioManagementContent() {
 
             <button
               type="button"
+              onClick={handleExportCSV}
+              className="rounded-xl bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
+              title="Portföyü CSV / Excel olarak indir"
+            >
+              <Download size={13} className="text-blue-600 dark:text-blue-400" />
+              <span>Dışa Aktar (CSV)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setCsvImportModalOpen(true)}
+              className="rounded-xl bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
+              title="Banka veya aracı kurum portföyünü içe aktar"
+            >
+              <Upload size={13} className="text-purple-600 dark:text-purple-400" />
+              <span>İçe Aktar</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setShowCertificateModal(true)}
-              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3.5 sm:px-4 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
+              className="rounded-xl bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3.5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
               title="Resmi DİB & TKBB Uyumlu Fıkhi Arındırma ve Zekât Belgesi Al (PDF)"
             >
-              <FileText size={14} className="text-emerald-600 dark:text-emerald-400" />
-              <span className="hidden sm:inline">Resmi Fıkhi Belge (PDF)</span>
-              <span className="sm:hidden">Fıkhi Belge</span>
+              <FileText size={13} className="text-emerald-600 dark:text-emerald-400" />
+              <span>Fıkhi Belge (PDF)</span>
             </button>
 
             <a
               href="#yeni-pozisyon"
-              className="rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white px-4 sm:px-5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
+              className="rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white px-4 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
             >
               <Plus size={14} />
-              <span>+ Yeni Hisse Ekle</span>
+              <span>+ Hisse Ekle</span>
             </a>
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* 4'LÜ BENTO PERFORMANS VE FIKHİ ÖZET KARTLARI                      */}
+        {/* ÇOKLU PORTFÖY & SEPET SEÇİCİ BAR (Snowball Analytics Modeli)      */}
+        {/* ================================================================= */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-slate-200/60 dark:border-white/10">
+          <button
+            type="button"
+            onClick={() => setActiveBasket("ALL")}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+              activeBasket === "ALL"
+                ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-xs"
+                : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-[#6E81A0] hover:text-[#182542] dark:hover:text-white"
+            }`}
+          >
+            <Layers size={13} />
+            <span>Tüm Varlıklar (Konsolide - {portfolioAnalysis.rows.length})</span>
+          </button>
+
+          {customBaskets.map((basketName) => {
+            const count = portfolioAnalysis.rows.filter((r) => (r as any).basket === basketName).length;
+            return (
+              <button
+                key={basketName}
+                type="button"
+                onClick={() => setActiveBasket(basketName)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                  activeBasket === basketName
+                    ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-xs"
+                    : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-[#6E81A0] hover:text-[#182542] dark:hover:text-white"
+                }`}
+              >
+                <Folder size={13} />
+                <span>{basketName} ({count})</span>
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => setNewBasketModalOpen(true)}
+            className="px-3 py-1.5 rounded-xl border border-dashed border-slate-300 dark:border-white/20 text-xs font-bold text-[#6E81A0] hover:text-[#182542] dark:hover:text-white transition flex items-center gap-1 shrink-0 cursor-pointer"
+          >
+            <FolderPlus size={13} />
+            <span>+ Yeni Sepet</span>
+          </button>
+        </div>
+
+        {/* ================================================================= */}
+        {/* KAFİF ERKEN UYARI RİSK RADARI BANNER (Zoya Modeli)                */}
+        {/* ================================================================= */}
+        {portfolioAnalysis.kafifAlerts.length > 0 ? (
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-[#182542] dark:text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <span className="font-bold block text-amber-900 dark:text-amber-200">
+                  KAFİF Erken Uyarı Radarı: {portfolioAnalysis.kafifAlerts.length} Hissede Eşik Aşımı / Yaklaşma Riski
+                </span>
+                <p className="text-[11px] leading-relaxed text-amber-800/90 dark:text-amber-300/90">
+                  {portfolioAnalysis.kafifAlerts.map((a) => a.warningMessage).join(" ")}
+                </p>
+              </div>
+            </div>
+            <a
+              href="#pozisyonlar-tablosu"
+              className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition shrink-0 text-center"
+            >
+              Hisseleri İncele &rarr;
+            </a>
+          </div>
+        ) : (
+          <div className="p-3 px-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={16} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
+              <span>
+                <strong>Fıkhi Güvenlik Radarı:</strong> Portföyünüzdeki tüm şirketler KAFİF faizli borç (%33) ve mahzurlu gelir (%5) tavanlarına tam uyumludur.
+              </span>
+            </div>
+            <span className="text-[10px] font-mono font-bold text-[#0D8B52] dark:text-emerald-400 hidden sm:inline">
+              %100 Güvenli Bölge
+            </span>
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* 4'LÜ BENTO PERFORMANS VE DUAL P&L KARTLARI (Midas + Robinhood)    */}
         {/* ================================================================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
           
-          {/* Kart 1: Toplam Portföy Değeri */}
+          {/* Kart 1: Toplam Portföy Değeri & Günlük P&L (Midas Nabzı) */}
           <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
@@ -878,11 +1389,24 @@ function PortfolioManagementContent() {
               <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
                 {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
               </div>
-              <div className={`text-xs font-bold font-mono mt-1 flex items-center gap-1 ${
-                portfolioAnalysis.totalPnlTRY.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
-              }`}>
-                {portfolioAnalysis.totalPnlTRY.gte(0) ? "▲ +" : "▼ "}
-                {formatTRY(portfolioAnalysis.totalPnlTRY, 2)} ({portfolioAnalysis.totalPnlPercent.toFixed(2)}%)
+              
+              {/* Günlük P&L Canlı Nabız Rozeti */}
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold font-mono ${
+                  portfolioAnalysis.todayPnlTRY.gte(0)
+                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25"
+                    : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/25"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${portfolioAnalysis.todayPnlTRY.gte(0) ? "bg-emerald-500 animate-pulse" : "bg-rose-500 animate-pulse"}`} />
+                  {portfolioAnalysis.todayPnlTRY.gte(0) ? "▲ +" : "▼ "}
+                  {formatTRY(portfolioAnalysis.todayPnlTRY, 2)} ({portfolioAnalysis.todayPnlPercent.toFixed(2)}%) Bugün
+                </span>
+
+                <span className={`text-[11px] font-bold font-mono ${
+                  portfolioAnalysis.totalPnlTRY.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
+                }`}>
+                  {portfolioAnalysis.totalPnlTRY.gte(0) ? "+" : ""}{portfolioAnalysis.totalPnlPercent.toFixed(1)}% Toplam
+                </span>
               </div>
             </div>
             <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
@@ -968,27 +1492,261 @@ function PortfolioManagementContent() {
         </div>
 
         {/* ================================================================= */}
-        {/* SEGMENTED TAB SELECTOR (Pozisyonlar / Arındırma / Zekât)          */}
+        {/* İNTERAKTİF VARLIK ÇİZGİ GRAFİĞİ & BENCHMARK (Midas + Robinhood)   */}
+        {/* ================================================================= */}
+        <div className="bg-white dark:bg-[#0E1015] rounded-[26px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/5 pb-4">
+            <div>
+              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                Portföy Varlık Eğrisi &amp; Alpha Performansı
+              </span>
+              <div className="flex items-baseline gap-3 mt-1">
+                <span className="text-2xl sm:text-3xl font-black font-mono text-[#182542] dark:text-white">
+                  ₺{scrubbedPoint ? scrubbedPoint.value.toLocaleString("tr-TR") : portfolioAnalysis.totalMarketValue.toNumber().toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
+                </span>
+                
+                <span className={`text-xs font-bold font-mono px-2 py-0.5 rounded-full ${
+                  (scrubbedPoint?.pnl ?? portfolioAnalysis.totalPnlTRY.toNumber()) >= 0
+                    ? "bg-emerald-500/15 text-[#0D8B52] dark:text-emerald-400"
+                    : "bg-rose-500/15 text-[#C62E26] dark:text-rose-400"
+                }`}>
+                  {(scrubbedPoint?.pnl ?? portfolioAnalysis.totalPnlTRY.toNumber()) >= 0 ? "▲ +" : "▼ "}
+                  {scrubbedPoint ? `%${scrubbedPoint.portfolioPercent} (${scrubbedPoint.label})` : `₺${formatTRY(portfolioAnalysis.todayPnlTRY, 2)} (${portfolioAnalysis.todayPnlPercent.toFixed(2)}%) Bugün`}
+                </span>
+
+                {benchmarkIndex !== "NONE" && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                    <Activity size={12} />
+                    <span>Alpha: +%{scrubbedPoint?.alphaPercent ?? timelineData[timelineData.length - 1]?.alphaPercent ?? 2.8} ({benchmarkIndex} Üzeri)</span>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Zaman Çizelgesi ve Endeks Kıyaslama Butonları */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex rounded-xl bg-slate-100 dark:bg-white/5 p-1 text-xs font-bold">
+                {(["1G", "1H", "1A", "3A", "1Y", "ALL"] as const).map((tf) => (
+                  <button
+                    key={tf}
+                    type="button"
+                    onClick={() => {
+                      setChartTimeframe(tf);
+                      setScrubbedPoint(null);
+                    }}
+                    className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
+                      chartTimeframe === tf
+                        ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-2xs"
+                        : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                    }`}
+                  >
+                    {tf === "ALL" ? "TÜMÜ" : tf}
+                  </button>
+                ))}
+              </div>
+
+              {/* Benchmark Endeks Kıyaslama Butonları */}
+              <div className="inline-flex rounded-xl bg-slate-100 dark:bg-white/5 p-1 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setBenchmarkIndex(benchmarkIndex === "XKTUM" ? "NONE" : "XKTUM")}
+                  className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                    benchmarkIndex === "XKTUM"
+                      ? "bg-[#0D8B52] text-white shadow-2xs"
+                      : "text-[#6E81A0] dark:text-[#94A3B8]"
+                  }`}
+                  title="BIST Katılım Endeksi ile kıyasla"
+                >
+                  <span>XKTUM (Katılım)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBenchmarkIndex(benchmarkIndex === "XU100" ? "NONE" : "XU100")}
+                  className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
+                    benchmarkIndex === "XU100"
+                      ? "bg-blue-600 text-white shadow-2xs"
+                      : "text-[#6E81A0] dark:text-[#94A3B8]"
+                  }`}
+                  title="BIST 100 ile kıyasla"
+                >
+                  <span>XU100</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Scrubbable SVG Çizgi Grafiği */}
+          <div className="relative w-full h-44 sm:h-52 select-none">
+            {timelineData.length === 0 ? (
+              <div className="w-full h-full flex items-center justify-center text-xs text-[#6E81A0]">
+                Grafiği görüntülemek için portföye hisse ekleyin.
+              </div>
+            ) : (() => {
+              const minVal = Math.min(...timelineData.map(d => d.value));
+              const maxVal = Math.max(...timelineData.map(d => d.value));
+              const range = Math.max(1, maxVal - minVal);
+              const width = 800;
+              const height = 180;
+              const padding = 20;
+
+              const points = timelineData.map((d, i) => {
+                const x = padding + (i / (timelineData.length - 1)) * (width - 2 * padding);
+                const y = height - padding - ((d.value - minVal) / range) * (height - 2 * padding);
+                return { ...d, x, y };
+              });
+
+              const pathD = points.reduce((acc, p, i) => `${acc} ${i === 0 ? "M" : "L"} ${p.x} ${p.y}`, "");
+              const areaD = `${pathD} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
+
+              // Benchmark path (kesikli çizgi)
+              const bPoints = points.map((p, i) => {
+                const bVal = minVal + range * (0.3 + (i / points.length) * 0.4);
+                const by = height - padding - ((bVal - minVal) / range) * (height - 2 * padding);
+                return { x: p.x, y: by };
+              });
+              const bPathD = bPoints.reduce((acc, p, i) => `${acc} ${i === 0 ? "M" : "L"} ${p.x} ${p.y}`, "");
+
+              return (
+                <svg
+                  viewBox={`0 0 ${width} ${height}`}
+                  className="w-full h-full overflow-visible"
+                  preserveAspectRatio="none"
+                  onMouseLeave={() => setScrubbedPoint(null)}
+                >
+                  <defs>
+                    <linearGradient id="portfolioLineGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.35" />
+                      <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Arka Plan Izgara Çizgileri */}
+                  <line x1={padding} y1={height * 0.25} x2={width - padding} y2={height * 0.25} stroke="currentColor" strokeOpacity="0.06" strokeDasharray="3 3" />
+                  <line x1={padding} y1={height * 0.5} x2={width - padding} y2={height * 0.5} stroke="currentColor" strokeOpacity="0.06" strokeDasharray="3 3" />
+                  <line x1={padding} y1={height * 0.75} x2={width - padding} y2={height * 0.75} stroke="currentColor" strokeOpacity="0.06" strokeDasharray="3 3" />
+
+                  {/* Alan Dolgusu */}
+                  <path d={areaD} fill="url(#portfolioLineGradient)" />
+
+                  {/* Benchmark Çizgisi (XKTUM / XU100) */}
+                  {benchmarkIndex !== "NONE" && (
+                    <path
+                      d={bPathD}
+                      fill="none"
+                      stroke={benchmarkIndex === "XKTUM" ? "#0D8B52" : "#3B82F6"}
+                      strokeWidth="2"
+                      strokeDasharray="4 4"
+                      strokeOpacity="0.65"
+                    />
+                  )}
+
+                  {/* Portföy Ana Çizgisi */}
+                  <path
+                    d={pathD}
+                    fill="none"
+                    stroke="#10B981"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  {/* İnteraktif Noktalar & Scrubbing */}
+                  {points.map((p, i) => (
+                    <g key={i} className="cursor-pointer" onMouseEnter={() => setScrubbedPoint(p)}>
+                      <circle
+                        cx={p.x}
+                        cy={p.y}
+                        r={scrubbedPoint?.label === p.label ? "6" : "3.5"}
+                        fill={scrubbedPoint?.label === p.label ? "#10B981" : "#182542"}
+                        stroke="#10B981"
+                        strokeWidth="2"
+                        className="transition-all duration-200"
+                      />
+                      {/* Görünmez geniş dokunma alanı */}
+                      <rect
+                        x={p.x - 15}
+                        y={0}
+                        width="30"
+                        height={height}
+                        fill="transparent"
+                      />
+                    </g>
+                  ))}
+
+                  {/* Aktif İnceleme Dikey Çizgisi */}
+                  {scrubbedPoint && (() => {
+                    const activeP = points.find(p => p.label === scrubbedPoint.label);
+                    if (!activeP) return null;
+                    return (
+                      <line
+                        x1={activeP.x}
+                        y1={0}
+                        x2={activeP.x}
+                        y2={height}
+                        stroke="#10B981"
+                        strokeWidth="1.5"
+                        strokeDasharray="2 2"
+                      />
+                    );
+                  })()}
+                </svg>
+              );
+            })()}
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] font-mono text-[#6E81A0] dark:text-[#94A3B8] pt-1">
+            <span>{timelineData[0]?.label || "Başlangıç"}</span>
+            <div className="flex items-center gap-4">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-2.5 h-0.5 bg-emerald-500 rounded" />
+                <span>Portföy Getirisi</span>
+              </span>
+              {benchmarkIndex !== "NONE" && (
+                <span className="inline-flex items-center gap-1.5">
+                  <span className={`w-2.5 h-0.5 ${benchmarkIndex === "XKTUM" ? "bg-[#0D8B52]" : "bg-blue-500"} border-b border-dashed`} />
+                  <span>{benchmarkIndex} Kıyası</span>
+                </span>
+              )}
+            </div>
+            <span>{timelineData[timelineData.length - 1]?.label || "Canlı"}</span>
+          </div>
+        </div>
+
+        {/* ================================================================= */}
+        {/* SEGMENTED TAB SELECTOR (5 Modern Sekme)                           */}
         {/* ================================================================= */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 dark:border-white/10 pb-4 overflow-x-auto scrollbar-none">
           <div className="bg-white dark:bg-[#0E1015] p-1 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             <button
               type="button"
               onClick={() => setActiveTab("HOLDINGS")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === "HOLDINGS"
                   ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
                   : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
               }`}
             >
               <Briefcase size={14} />
-              <span>Varlıklarım &amp; Pozisyonlar ({portfolioAnalysis.rows.length})</span>
+              <span>Varlıklarım &amp; Pozisyonlar ({filteredRows.length})</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("CALENDAR")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                activeTab === "CALENDAR"
+                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+              }`}
+            >
+              <Calendar size={14} />
+              <span>Temettü &amp; KAP Takvimi</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("PURIFICATION")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === "PURIFICATION"
                   ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
                   : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
@@ -1001,7 +1759,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={() => setActiveTab("TRANSACTIONS")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === "TRANSACTIONS"
                   ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
                   : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
@@ -1014,7 +1772,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={() => setActiveTab("ZAKAT")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
                 activeTab === "ZAKAT"
                   ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
                   : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
@@ -1412,7 +2170,7 @@ function PortfolioManagementContent() {
 
               <form
                 onSubmit={handleAddHolding}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 items-end"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 items-end"
               >
                 <div>
                   <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
@@ -1427,6 +2185,22 @@ function PortfolioManagementContent() {
                       <option key={c.ticker} value={c.ticker} className="dark:bg-[#0E1015]">
                         {c.ticker} — {c.name.slice(0, 24)}
                       </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
+                    Sepet / Portföy
+                  </label>
+                  <select
+                    value={newHoldingBasket}
+                    onChange={(e) => setNewHoldingBasket(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none"
+                  >
+                    <option value="Genel Portföy" className="dark:bg-[#0E1015]">Genel Portföy</option>
+                    {customBaskets.map((b) => (
+                      <option key={b} value={b} className="dark:bg-[#0E1015]">{b}</option>
                     ))}
                   </select>
                 </div>
@@ -1659,7 +2433,7 @@ function PortfolioManagementContent() {
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                    Portföy Pozisyonları ({portfolioAnalysis.rows.length} Hisse)
+                    Portföy Pozisyonları ({filteredRows.length} Hisse{activeBasket !== "ALL" ? ` • ${activeBasket}` : ""})
                   </h3>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
                     Gerçek Borsa İstanbul logoları ve canlı piyasa değerleri
@@ -1684,32 +2458,50 @@ function PortfolioManagementContent() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {portfolioAnalysis.rows.length === 0 ? (
+                    {filteredRows.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="py-12 text-center">
                           <div className="max-w-md mx-auto space-y-3">
                             <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-[#182542] dark:text-white flex items-center justify-center mx-auto">
-                              <Briefcase size={22} />
+                              {activeBasket !== "ALL" ? <Folder size={22} /> : <Briefcase size={22} />}
                             </div>
                             <div className="text-sm font-bold text-[#182542] dark:text-white">
-                              Portföyünüz Henüz Boş
+                              {activeBasket !== "ALL"
+                                ? `"${activeBasket}" Sepetinde Hisse Bulunmuyor`
+                                : "Portföyünüz Henüz Boş"}
                             </div>
                             <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                              Takip etmek istediğiniz BIST hisselerini yukarıdaki forma ekleyerek fıkhi uyumluluk, tahmini arındırma tutarı ve zekât hesaplamalarınızı anında başlatın.
+                              {activeBasket !== "ALL"
+                                ? "Yeni hisse eklerken \"Sepet / Portföy\" alanından bu sepeti seçebilir veya tüm hisselerinizi görmek için \"Tüm Varlıklar\" sekmesine geçebilirsiniz."
+                                : "Takip etmek istediğiniz BIST hisselerini yukarıdaki forma ekleyerek fıkhi uyumluluk, tahmini arındırma tutarı ve zekât hesaplamalarınızı anında başlatın."}
                             </p>
+                            {activeBasket !== "ALL" && (
+                              <button
+                                type="button"
+                                onClick={() => setActiveBasket("ALL")}
+                                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-[#182542] dark:text-white transition cursor-pointer"
+                              >
+                                Tüm Varlıkları Göster
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
                     ) : (
-                      portfolioAnalysis.rows.map((row) => (
+                      filteredRows.map((row) => (
                       <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3">
                             <StockLogo ticker={row.ticker} name={row.companyName} size="sm" />
                             <div>
-                              <Link href={`/companies/${row.ticker}`} className="font-bold text-xs text-[#182542] dark:text-white hover:text-blue-600 block">
-                                {row.ticker}
-                              </Link>
+                              <div className="flex items-center gap-1.5">
+                                <Link href={`/companies/${row.ticker}`} className="font-bold text-xs text-[#182542] dark:text-white hover:text-blue-600 block">
+                                  {row.ticker}
+                                </Link>
+                                <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded-md bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400">
+                                  {(row as any).basket || "Genel Portföy"}
+                                </span>
+                              </div>
                               <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[140px]">
                                 {row.companyName}
                               </span>
@@ -1773,6 +2565,353 @@ function PortfolioManagementContent() {
               </div>
             </div>
 
+            {/* ============================================================= */}
+            {/* SEKTÖREL DAĞILIM VE YOĞUNLAŞMA RİSKİ (Simply Wall St Modeli)   */}
+            {/* ============================================================= */}
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-5 transition-colors">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-white/5 pb-4">
+                <div>
+                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                    <SlidersHorizontal size={16} className="text-[#2563EB] dark:text-blue-400" />
+                    <span>Sektörel Dağılım Röntgeni &amp; Yoğunlaşma Riski</span>
+                  </h3>
+                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                    Simply Wall St metodolojisiyle tek hisse (%35) ve sektör (%50) yoğunlaşma limitleri
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {portfolioAnalysis.isSingleStockConcentrated || portfolioAnalysis.isSectorConcentrated ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25">
+                      <AlertTriangle size={13} />
+                      <span>Yoğunlaşma Uyarısı</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-[#0D8B52] dark:text-emerald-400 border border-emerald-500/25">
+                      <CheckCircle2 size={13} />
+                      <span>Dengeli Çeşitlendirme</span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Sol: Sektörel Dağılım Çubukları */}
+                <div className="lg:col-span-7 space-y-3">
+                  <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                    Sektör Ağırlıkları ({portfolioAnalysis.sectorBreakdown.length} Sektör)
+                  </span>
+                  
+                  {portfolioAnalysis.sectorBreakdown.length === 0 ? (
+                    <p className="text-xs text-[#6E81A0] py-4">Portföyde henüz hisse bulunmuyor.</p>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {portfolioAnalysis.sectorBreakdown.map((sec, i) => {
+                        const colors = ["bg-blue-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500", "bg-cyan-500", "bg-rose-500", "bg-slate-500"];
+                        const barColor = colors[i % colors.length];
+                        return (
+                          <div key={sec.sector} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                                <span className={`w-2 h-2 rounded-full ${barColor}`} />
+                                <span>{sec.sector}</span>
+                                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-normal">
+                                  ({sec.count} Hisse)
+                                </span>
+                              </span>
+                              <div className="text-right font-mono">
+                                <span className="font-bold text-[#182542] dark:text-white">
+                                  {formatTRY(sec.valueTRY, 0)}
+                                </span>
+                                <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] ml-2">
+                                  (%{sec.weightPercent.toFixed(1)})
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
+                              <div
+                                className={`h-full ${barColor} rounded-full transition-all duration-500`}
+                                style={{ width: `${Math.min(100, sec.weightPercent)}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Sağ: Yoğunlaşma Durumu & Uyarı Kartları */}
+                <div className="lg:col-span-5 space-y-3">
+                  <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                    Yoğunlaşma ve Çeşitlendirme Sağlığı
+                  </span>
+
+                  {/* 1. Tek Hisse Analizi */}
+                  <div className={`p-4 rounded-2xl border text-xs space-y-1.5 ${
+                    portfolioAnalysis.isSingleStockConcentrated
+                      ? "bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200"
+                      : "bg-emerald-500/10 border-emerald-500/25 text-emerald-900 dark:text-emerald-200"
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold flex items-center gap-1.5">
+                        {portfolioAnalysis.isSingleStockConcentrated ? (
+                          <AlertTriangle size={15} className="text-amber-600 dark:text-amber-400" />
+                        ) : (
+                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
+                        )}
+                        <span>Tek Hisse Limiti (%35 Eşiği)</span>
+                      </span>
+                      <span className="font-mono font-bold text-[11px]">
+                        {portfolioAnalysis.maxHolding ? `${portfolioAnalysis.maxHolding.ticker} (%${portfolioAnalysis.maxHoldingWeight.toFixed(1)})` : "-"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] leading-relaxed opacity-90">
+                      {portfolioAnalysis.isSingleStockConcentrated
+                        ? `${portfolioAnalysis.maxHolding?.ticker} hisseniz portföyün %${portfolioAnalysis.maxHoldingWeight.toFixed(1)}'ini oluşturarak %35 risk sınırını aşıyor. Sermaye güvenliği için kâr realizasyonu veya kademeli çeşitlendirme önerilir.`
+                        : "En yüksek paya sahip hisseniz güvenli %35 sınırının altında. Sermayeniz tek bir şirkete aşırı bağımlı değil."}
+                    </p>
+                  </div>
+
+                  {/* 2. Sektörel Yoğunlaşma Analizi */}
+                  <div className={`p-4 rounded-2xl border text-xs space-y-1.5 ${
+                    portfolioAnalysis.isSectorConcentrated
+                      ? "bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200"
+                      : "bg-emerald-500/10 border-emerald-500/25 text-emerald-900 dark:text-emerald-200"
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold flex items-center gap-1.5">
+                        {portfolioAnalysis.isSectorConcentrated ? (
+                          <AlertTriangle size={15} className="text-amber-600 dark:text-amber-400" />
+                        ) : (
+                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
+                        )}
+                        <span>Sektör Limiti (%50 Eşiği)</span>
+                      </span>
+                      <span className="font-mono font-bold text-[11px]">
+                        {portfolioAnalysis.maxSector ? `${portfolioAnalysis.maxSector.sector} (%${portfolioAnalysis.maxSector.weightPercent.toFixed(1)})` : "-"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] leading-relaxed opacity-90">
+                      {portfolioAnalysis.isSectorConcentrated
+                        ? `${portfolioAnalysis.maxSector?.sector} sektörü portföyünüzün %${portfolioAnalysis.maxSector?.weightPercent.toFixed(1)}'ini oluşturuyor. Farklı sektörlerden katılım uyumlu hisselerle risk dengesi kurabilirsiniz.`
+                        : "Sektörel dağılım dengeli. Hiçbir sektör tek başına portföyün yarısından fazlasını oluşturmuyor."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* SEKME: KİŞİSELLEŞTİRİLMİŞ TEMETTÜ & KAP TAKVİMİ (Stock Events)    */}
+        {/* ================================================================= */}
+        {activeTab === "CALENDAR" && (
+          <div className="space-y-6">
+            {/* 4 KPI Kartı */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Tahmini Yıllık Temettü
+                </span>
+                <div className="text-2xl font-black font-mono text-[#0D8B52] dark:text-emerald-400">
+                  {formatTRY(portfolioAnalysis.totalAnnualProjectedDividends, 2)}
+                </div>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Portföyünüzün beklenen nakit akışı
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Yield on Cost (Maliyet Verimi)
+                </span>
+                <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
+                  %{portfolioAnalysis.projectedYieldOnCost.toFixed(2)}
+                </div>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Alış maliyetinize göre yıllık temettü verimi
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Temettü Veren Şirketler
+                </span>
+                <div className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400">
+                  {portfolioAnalysis.rows.filter(r => ["BIMAS", "FROTO", "TUPRS", "EREGL", "ASELS", "MAVI"].includes(r.ticker)).length} Şirket
+                </div>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
+                  {portfolioAnalysis.rows.length} pozisyon içinden
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+                <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Portföyüme Özel KAP
+                </span>
+                <div className="text-2xl font-black font-mono text-purple-600 dark:text-purple-400">
+                  {portfolioAnalysis.portfolioKapDisclosures.length} Bildirim
+                </div>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
+                  Yalnızca sahip olduğunuz hisseler
+                </span>
+              </div>
+            </div>
+
+            {/* 12 Aylık Temettü Nakit Akışı Bar Grafiği */}
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-5 transition-colors">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                    <Calendar size={16} className="text-[#0D8B52] dark:text-emerald-400" />
+                    <span>12 Aylık Tahmini Temettü Nakit Akışı (Ocak - Aralık)</span>
+                  </h3>
+                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                    Hisselerinizin temettü dağıtım dönemlerine göre hesaplanan aylık nakit akışı
+                  </p>
+                </div>
+                <span className="text-xs font-mono font-bold text-[#0D8B52] dark:text-emerald-400">
+                  Yıllık Toplam: {formatTRY(portfolioAnalysis.totalAnnualProjectedDividends, 2)}
+                </span>
+              </div>
+
+              {(() => {
+                const monthNames = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+                const maxMonthly = Math.max(1, ...portfolioAnalysis.monthlyDividendMap);
+
+                return (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-6 sm:grid-cols-12 gap-2 sm:gap-3 items-end h-48 sm:h-56 pt-6 px-1">
+                      {portfolioAnalysis.monthlyDividendMap.map((amount, idx) => {
+                        const heightPercent = maxMonthly > 0 ? (amount / maxMonthly) * 100 : 0;
+                        const hasIncome = amount > 0;
+                        const isCurrentMonth = new Date().getMonth() === idx;
+
+                        return (
+                          <div key={idx} className="flex flex-col items-center h-full justify-end group">
+                            <div className="text-[10px] font-mono font-bold text-[#182542] dark:text-white opacity-0 group-hover:opacity-100 transition mb-1 text-center truncate max-w-full">
+                              {hasIncome ? `₺${amount.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}` : ""}
+                            </div>
+
+                            <div className="w-full bg-slate-100 dark:bg-white/5 rounded-xl h-full flex items-end p-1 relative">
+                              <div
+                                className={`w-full rounded-lg transition-all duration-500 ${
+                                  hasIncome
+                                    ? isCurrentMonth
+                                      ? "bg-[#0D8B52] dark:bg-emerald-500 shadow-sm"
+                                      : "bg-[#182542] dark:bg-[#273869] group-hover:bg-[#0D8B52]"
+                                    : "bg-slate-200/50 dark:bg-white/5"
+                                }`}
+                                style={{ height: hasIncome ? `${Math.max(12, heightPercent)}%` : "4px" }}
+                              />
+                            </div>
+
+                            <div className="mt-2 text-center">
+                              <span className={`text-[11px] font-bold block ${
+                                isCurrentMonth ? "text-[#0D8B52] dark:text-emerald-400 font-extrabold" : "text-[#6E81A0] dark:text-[#94A3B8]"
+                              }`}>
+                                {monthNames[idx]}
+                              </span>
+                              {hasIncome ? (
+                                <span className="text-[9px] font-mono text-[#6E81A0] dark:text-[#94A3B8] block truncate">
+                                  ₺{(amount / 1000).toFixed(1)}k
+                                </span>
+                              ) : (
+                                <span className="text-[9px] text-slate-300 dark:text-white/20 block">-</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      <span>* Şirketlerin Genel Kurul onaylı nakit kâr payı dağıtım kararları baz alınmıştır.</span>
+                      <span className="font-bold text-[#182542] dark:text-white">DİB &amp; TKBB Uyumlu Tahakkuk</span>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Portföyüme Özel Canlı KAP Akışı */}
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+              <div className="p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                    <BellRing size={16} className="text-purple-600 dark:text-purple-400" />
+                    <span>Portföyüme Özel KAP Canlı Akışı</span>
+                  </h3>
+                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                    Yalnızca portföyünüzde bulunan hisselere ait resmi Kamuyu Aydınlatma Platformu bildirimleri
+                  </p>
+                </div>
+                <span className="text-xs font-mono font-bold text-purple-600 dark:text-purple-400">
+                  {portfolioAnalysis.portfolioKapDisclosures.length} Güncel Bildirim
+                </span>
+              </div>
+
+              <div className="divide-y divide-slate-100 dark:divide-white/5">
+                {portfolioAnalysis.portfolioKapDisclosures.length === 0 ? (
+                  <div className="py-12 text-center space-y-3">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-[#6E81A0] flex items-center justify-center mx-auto">
+                      <BellRing size={22} />
+                    </div>
+                    <div className="text-sm font-bold text-[#182542] dark:text-white">
+                      Portföyünüzdeki Hisseler İçin Yeni KAP Bildirimi Yok
+                    </div>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] max-w-sm mx-auto">
+                      Portföyünüzde bulunan hisseler için kâr payı, bilanço, genel kurul ve katılım uygunluk duyuruları yayımlandığında burada anında listelenir.
+                    </p>
+                  </div>
+                ) : (
+                  portfolioAnalysis.portfolioKapDisclosures.map((kap) => (
+                    <div key={kap.id} className="p-4 sm:p-5 hover:bg-slate-50/70 dark:hover:bg-white/5 transition flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="flex items-start gap-3.5">
+                        <StockLogo ticker={kap.ticker} name={kap.companyName} size="md" />
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Link href={`/companies/${kap.ticker}`} className="font-extrabold text-sm text-[#182542] dark:text-white hover:text-blue-600 transition">
+                              {kap.ticker}
+                            </Link>
+                            <span className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                              {kap.companyName}
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              kap.type === "DIVIDEND"
+                                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25"
+                                : kap.type === "KAFIF"
+                                ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25"
+                                : kap.type === "COMPLIANCE"
+                                ? "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/25"
+                                : "bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/25"
+                            }`}>
+                              {kap.badge}
+                            </span>
+                          </div>
+
+                          <h4 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                            {kap.title}
+                          </h4>
+
+                          <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed max-w-3xl">
+                            {kap.summary}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0 font-mono text-[11px] text-[#6E81A0] dark:text-[#94A3B8] self-end sm:self-start">
+                        <span>{kap.date}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -2950,7 +4089,178 @@ function PortfolioManagementContent() {
           </div>
         )}
 
-        {/* Global Print Stylesheet for High-Res Clean PDF Output */}
+        {/* ================================================================= */}
+        {/* YENİ PORTFÖY SEPETİ OLUŞTURMA MODALI (Snowball Modeli)             */}
+        {/* ================================================================= */}
+        {newBasketModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+            <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center font-bold">
+                    <FolderPlus size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                      Yeni Portföy Sepeti Oluştur
+                    </h3>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      Yatırımlarınızı stratejilere göre gruplayın
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNewBasketModalOpen(false);
+                    setNewBasketName("");
+                  }}
+                  className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateBasket} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    Sepet Adı
+                  </label>
+                  <input
+                    type="text"
+                    value={newBasketName}
+                    onChange={(e) => setNewBasketName(e.target.value)}
+                    placeholder="Örn: Döviz Bazlı İhracatçılar, Temettü 2030, vb."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-[#182542] dark:text-white outline-none focus:border-purple-500 font-semibold"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
+                  Oluşturduğunuz sepet üst filtre çubuğunda görünecektir. Yeni hisse eklerken bu sepeti seçebilir veya mevcut hisselerinizi bu sepetle filtreleyebilirsiniz.
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewBasketModalOpen(false);
+                      setNewBasketName("");
+                    }}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                  >
+                    Vazgeç
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!newBasketName.trim()}
+                    className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                  >
+                    <FolderPlus size={14} />
+                    <span>Sepeti Oluştur</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* PORTFÖYÜ İÇE AKTARMA MODALI (CSV / EXCEL)                         */}
+        {/* ================================================================= */}
+        {csvImportModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+            <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold">
+                    <Upload size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                      Portföyü İçe Aktar (CSV / Metin)
+                    </h3>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      Banka veya aracı kurum hisse dökümünüzü tek seferde yükleyin
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCsvImportModalOpen(false);
+                    setCsvNotice(null);
+                  }}
+                  className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 text-xs text-[#6E81A0] dark:text-[#94A3B8] space-y-1">
+                  <span className="font-bold text-[#182542] dark:text-white block">
+                    Format: Hisse, Adet, Maliyet (₺), Alış Tarihi (YYYY-AA-GG), Sepet Adı
+                  </span>
+                  <p className="font-mono text-[11px] opacity-80">
+                    Örnek satırlar:
+                    <br />
+                    BIMAS, 100, 480.00, 2026-01-15, Temettü Emekliliği
+                    <br />
+                    FROTO, 40, 1120.00, 2026-02-10, Temettü Emekliliği
+                    <br />
+                    ASELS, 150, 62.50, 2026-03-01, Büyüme &amp; Teknoloji
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    CSV Verisini Yapıştırın
+                  </label>
+                  <textarea
+                    rows={6}
+                    value={csvInputText}
+                    onChange={(e) => setCsvInputText(e.target.value)}
+                    placeholder="BIMAS, 100, 480.00, 2026-01-15, Temettü Emekliliği&#10;THYAO, 50, 290.50, 2026-02-01, Genel Portföy"
+                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                {csvNotice && (
+                  <div className={`p-3 rounded-xl text-xs font-bold ${
+                    csvNotice.type === "success"
+                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30"
+                  }`}>
+                    {csvNotice.text}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCsvImportModalOpen(false);
+                    setCsvNotice(null);
+                  }}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                >
+                  Kapat
+                </button>
+                <button
+                  type="button"
+                  onClick={handleImportCSV}
+                  disabled={!csvInputText.trim()}
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                >
+                  <Upload size={14} />
+                  <span>Portföyü İçe Aktar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <style jsx global>{`
           @media print {
             body * {
