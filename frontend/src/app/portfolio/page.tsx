@@ -34,9 +34,13 @@ import {
   Award,
   ExternalLink,
   PieChart,
+  History,
+  Clock,
+  CheckCheck,
 } from "lucide-react";
 import {
   PortfolioHoldingItem,
+  PortfolioTransactionItem,
   ScreeningStandardCode,
   ZakatIntentionType,
 } from "@/types/katilim";
@@ -71,13 +75,15 @@ function PortfolioManagementContent() {
     }
   }, [loading, user, isDemoUser, router]);
 
-  // Aktif Ana Sekme: Pozisyonlar, Fıkhi Arındırma, Hisse Zekâtı
+  // Aktif Ana Sekme: Pozisyonlar, Fıkhi Arındırma, İşlem Geçmişi & İnfak Defteri, Hisse Zekâtı
   const initialTab = searchParams.get("tab");
-  const [activeTab, setActiveTab] = useState<"HOLDINGS" | "PURIFICATION" | "ZAKAT">(
+  const [activeTab, setActiveTab] = useState<"HOLDINGS" | "PURIFICATION" | "TRANSACTIONS" | "ZAKAT">(
     initialTab === "arindirma"
       ? "PURIFICATION"
       : initialTab === "zekat"
       ? "ZAKAT"
+      : initialTab === "islemler" || initialTab === "gecmis"
+      ? "TRANSACTIONS"
       : "HOLDINGS"
   );
 
@@ -85,6 +91,7 @@ function PortfolioManagementContent() {
     const tabParam = searchParams.get("tab");
     if (tabParam === "arindirma") setActiveTab("PURIFICATION");
     else if (tabParam === "zekat") setActiveTab("ZAKAT");
+    else if (tabParam === "islemler" || tabParam === "gecmis") setActiveTab("TRANSACTIONS");
     else if (tabParam === "pozisyonlar") setActiveTab("HOLDINGS");
   }, [searchParams]);
 
@@ -155,15 +162,21 @@ function PortfolioManagementContent() {
   const getStorageKey = (email?: string) => {
     return email ? `mizan_holdings_${email.toLowerCase().trim()}` : "mizan_user_holdings";
   };
+  const getTransactionsStorageKey = (email?: string) => {
+    return email ? `mizan_transactions_${email.toLowerCase().trim()}` : "mizan_user_transactions";
+  };
 
   const DEFAULT_HOLDINGS: PortfolioHoldingItem[] = [];
   const [holdings, setHoldings] = useState<PortfolioHoldingItem[]>([]);
+  const [transactions, setTransactions] = useState<PortfolioTransactionItem[]>([]);
 
   // 1. E-posta veya Kullanıcı değiştiğinde yerelden anında yükle ve bulutla senkronize et
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const activeKey = getStorageKey(userEmail);
+    const activeTxKey = getTransactionsStorageKey(userEmail);
+
     const localSaved =
       localStorage.getItem(activeKey) ||
       localStorage.getItem("mizan_katilim_holdings_v2") ||
@@ -182,29 +195,55 @@ function PortfolioManagementContent() {
       }
     }
 
+    const localTxSaved =
+      localStorage.getItem(activeTxKey) ||
+      localStorage.getItem("mizan_user_transactions");
+
+    let initialTransactions: PortfolioTransactionItem[] = [];
+    if (localTxSaved) {
+      try {
+        const parsedTx = JSON.parse(localTxSaved);
+        if (Array.isArray(parsedTx)) {
+          initialTransactions = parsedTx;
+          setTransactions(parsedTx);
+        }
+      } catch {
+        // fallback
+      }
+    }
+
     if (!userEmail) {
       isInitialLoadDone.current = true;
       return;
     }
 
-    // Buluttan e-postaya bağlı güncel portföyü çek
+    // Buluttan e-postaya bağlı güncel portföyü ve işlemleri çek
     setIsSyncingCloud(true);
     fetch(`/api/portfolio/sync?email=${encodeURIComponent(userEmail)}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && Array.isArray(data.holdings)) {
-          if (data.holdings.length > 0) {
-            setHoldings(data.holdings);
-            localStorage.setItem(activeKey, JSON.stringify(data.holdings));
-            localStorage.setItem("mizan_user_holdings", JSON.stringify(data.holdings));
-          } else if (data.holdings.length === 0 && initialHoldings.length > 0) {
-            // İlk cihazdaki portföyü buluta aktar
-            fetch("/api/portfolio/sync", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: userEmail, holdings: initialHoldings }),
-            }).catch(() => {});
+        if (data.success) {
+          if (Array.isArray(data.holdings)) {
+            if (data.holdings.length > 0) {
+              setHoldings(data.holdings);
+              localStorage.setItem(activeKey, JSON.stringify(data.holdings));
+              localStorage.setItem("mizan_user_holdings", JSON.stringify(data.holdings));
+            } else if (data.holdings.length === 0 && initialHoldings.length > 0) {
+              // İlk cihazdaki portföyü buluta aktar
+              fetch("/api/portfolio/sync", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: userEmail, holdings: initialHoldings, transactions: initialTransactions }),
+              }).catch(() => {});
+            }
           }
+
+          if (Array.isArray(data.transactions) && data.transactions.length > 0) {
+            setTransactions(data.transactions);
+            localStorage.setItem(activeTxKey, JSON.stringify(data.transactions));
+            localStorage.setItem("mizan_user_transactions", JSON.stringify(data.transactions));
+          }
+
           setLastSyncedTime(new Date().toLocaleTimeString("tr-TR"));
         }
       })
@@ -217,20 +256,25 @@ function PortfolioManagementContent() {
       });
   }, [userEmail]);
 
-  // 2. Portföy değiştiğinde yerel hafızaya ve buluta otomatik kaydet
+  // 2. Portföy veya İşlem Geçmişi değiştiğinde yerel hafızaya ve buluta otomatik kaydet
   useEffect(() => {
     if (typeof window === "undefined" || !isInitialLoadDone.current) return;
 
     const activeKey = getStorageKey(userEmail);
+    const activeTxKey = getTransactionsStorageKey(userEmail);
+
     localStorage.setItem(activeKey, JSON.stringify(holdings));
     localStorage.setItem("mizan_katilim_holdings_v2", JSON.stringify(holdings));
     localStorage.setItem("mizan_user_holdings", JSON.stringify(holdings));
+
+    localStorage.setItem(activeTxKey, JSON.stringify(transactions));
+    localStorage.setItem("mizan_user_transactions", JSON.stringify(transactions));
 
     if (userEmail) {
       fetch("/api/portfolio/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail, holdings }),
+        body: JSON.stringify({ email: userEmail, holdings, transactions }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -240,7 +284,7 @@ function PortfolioManagementContent() {
         })
         .catch((e) => console.warn("[PORTFOLIO-SYNC] Cloud save error:", e));
     }
-  }, [holdings, userEmail]);
+  }, [holdings, transactions, userEmail]);
 
   // Resmi Fıkhi İcazet / PDF Sertifika Modalı
   const [showCertificateModal, setShowCertificateModal] = useState<boolean>(false);
@@ -391,6 +435,226 @@ function PortfolioManagementContent() {
     setHoldings((prev) => prev.filter((h) => h.id !== id));
   };
 
+  // =========================================================================
+  // HİSSE SATIŞI (SELL) VE İŞLEM GEÇMİŞİ / İNFAK DEFTERİ YÖNETİMİ
+  // =========================================================================
+  const [sellModalOpen, setSellModalOpen] = useState<boolean>(false);
+  const [selectedHoldingForSell, setSelectedHoldingForSell] = useState<any | null>(null);
+  const [sellLotsInput, setSellLotsInput] = useState<string>("10");
+  const [sellPriceInput, setSellPriceInput] = useState<string>("100.00");
+  const [sellDateInput, setSellDateInput] = useState<string>(() => new Date().toISOString().split("T")[0]);
+  const [sellSuccessNotice, setSellSuccessNotice] = useState<{
+    ticker: string;
+    lots: number;
+    realizedPnl: number;
+    purification: number;
+  } | null>(null);
+
+  // Manuel Geçmiş Satış Ekleme Modalı
+  const [manualTradeModalOpen, setManualTradeModalOpen] = useState<boolean>(false);
+  const [manualTicker, setManualTicker] = useState<string>("BIMAS");
+  const [manualLots, setManualLots] = useState<string>("100");
+  const [manualBuyPrice, setManualBuyPrice] = useState<string>("450.00");
+  const [manualSellPrice, setManualSellPrice] = useState<string>("482.50");
+  const [manualBuyDate, setManualBuyDate] = useState<string>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 180);
+    return d.toISOString().split("T")[0];
+  });
+  const [manualSellDate, setManualSellDate] = useState<string>(() => new Date().toISOString().split("T")[0]);
+  const [manualIsPurified, setManualIsPurified] = useState<boolean>(false);
+
+  const handleOpenSellModal = (row: any) => {
+    setSelectedHoldingForSell(row);
+    setSellLotsInput(String(row.lots));
+    const live = livePrices[row.ticker] || (row.curPriceTRY ? String(row.curPriceTRY) : row.avgCostTRY);
+    setSellPriceInput(live);
+    setSellDateInput(new Date().toISOString().split("T")[0]);
+    setSellModalOpen(true);
+  };
+
+  const handleConfirmSell = () => {
+    if (!selectedHoldingForSell) return;
+
+    const availableLots = parseFloat(selectedHoldingForSell.lots) || 0;
+    const sellLots = Math.min(Math.max(1, parseFloat(sellLotsInput) || 1), availableLots);
+    const sellPrice = Math.max(0, parseFloat(sellPriceInput) || 0);
+    const avgCost = parseFloat(selectedHoldingForSell.avgCostTRY) || 0;
+
+    const grossProceeds = sellLots * sellPrice;
+    const costBasis = sellLots * avgCost;
+    const realizedPnl = grossProceeds - costBasis;
+    const realizedPnlPercent = costBasis > 0 ? (realizedPnl / costBasis) * 100 : 0;
+
+    // Fıkhi Arındırma Hesabı
+    const detail = DETAILED_COMPANIES_DATABASE[selectedHoldingForSell.ticker];
+    const compSummary = getCompanySummary(selectedHoldingForSell.ticker);
+    const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "1000000000";
+    const basePShareQuarter = new Decimal(
+      detail?.purificationMetrics?.purificationPerShareQuarterTRY ||
+        compSummary?.purificationPerShareTRY ||
+        "0"
+    );
+    const grossMultiplier = purificationMode === "KAFIF_GROSS" ? new Decimal("3.85") : new Decimal("1");
+    const effectivePShareQuarter = basePShareQuarter.times(grossMultiplier);
+    const impureIncome = effectivePShareQuarter.times(new Decimal(totalShares)).toFixed(4);
+
+    const { totalDaysHeld } = calculateDaysHeld(selectedHoldingForSell.purchaseDate, sellDateInput);
+
+    const purCalc = calculateHoldingPurificationClient(
+      impureIncome,
+      totalShares,
+      new Decimal(sellLots),
+      totalDaysHeld,
+      90,
+      useCeilingRounding
+    );
+
+    const purificationAmount = purCalc.totalPurificationPayable.toNumber();
+
+    // 1. Yeni Transaction Oluştur
+    const newTx: PortfolioTransactionItem = {
+      id: `tx_${Date.now()}`,
+      ticker: selectedHoldingForSell.ticker,
+      type: "SELL",
+      lots: sellLots,
+      priceTRY: sellPrice,
+      totalAmountTRY: grossProceeds,
+      realizedPnlTRY: realizedPnl,
+      realizedPnlPercent: realizedPnlPercent,
+      purificationAmountTRY: purificationAmount,
+      isPurified: false, // Varsayılan: henüz infak edilmedi (bekliyor)
+      date: sellDateInput,
+      notes: `${sellLots} Lot @ ₺${sellPrice.toFixed(2)} satış gerçekleşti. (${totalDaysHeld} gün elde tutuldu)`,
+    };
+
+    setTransactions((prev) => [newTx, ...prev]);
+
+    // 2. Portföy Pozisyonunu Azalt veya Tamamen Sil
+    const remainingLots = availableLots - sellLots;
+    if (remainingLots <= 0) {
+      setHoldings((prev) => prev.filter((h) => h.id !== selectedHoldingForSell.id));
+    } else {
+      setHoldings((prev) =>
+        prev.map((h) =>
+          h.id === selectedHoldingForSell.id ? { ...h, lots: String(remainingLots) } : h
+        )
+      );
+    }
+
+    // 3. Bildirim & Kapat
+    setSellSuccessNotice({
+      ticker: selectedHoldingForSell.ticker,
+      lots: sellLots,
+      realizedPnl,
+      purification: purificationAmount,
+    });
+    setSellModalOpen(false);
+    setSelectedHoldingForSell(null);
+
+    setTimeout(() => {
+      setSellSuccessNotice(null);
+    }, 8000);
+  };
+
+  const handleTogglePurificationStatus = (txId: string) => {
+    setTransactions((prev) =>
+      prev.map((t) => (t.id === txId ? { ...t, isPurified: !t.isPurified } : t))
+    );
+  };
+
+  const handleDeleteTransaction = (txId: string) => {
+    setTransactions((prev) => prev.filter((t) => t.id !== txId));
+  };
+
+  const handleAddManualTrade = (e: React.FormEvent) => {
+    e.preventDefault();
+    const lots = Math.max(1, parseFloat(manualLots) || 1);
+    const buyPrice = Math.max(0, parseFloat(manualBuyPrice) || 0);
+    const sellPrice = Math.max(0, parseFloat(manualSellPrice) || 0);
+
+    const grossProceeds = lots * sellPrice;
+    const costBasis = lots * buyPrice;
+    const realizedPnl = grossProceeds - costBasis;
+    const realizedPnlPercent = costBasis > 0 ? (realizedPnl / costBasis) * 100 : 0;
+
+    const { totalDaysHeld } = calculateDaysHeld(manualBuyDate, manualSellDate);
+
+    const detail = DETAILED_COMPANIES_DATABASE[manualTicker];
+    const compSummary = getCompanySummary(manualTicker);
+    const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "1000000000";
+    const basePShareQuarter = new Decimal(
+      detail?.purificationMetrics?.purificationPerShareQuarterTRY ||
+        compSummary?.purificationPerShareTRY ||
+        "0"
+    );
+    const grossMultiplier = purificationMode === "KAFIF_GROSS" ? new Decimal("3.85") : new Decimal("1");
+    const effectivePShareQuarter = basePShareQuarter.times(grossMultiplier);
+    const impureIncome = effectivePShareQuarter.times(new Decimal(totalShares)).toFixed(4);
+
+    const purCalc = calculateHoldingPurificationClient(
+      impureIncome,
+      totalShares,
+      new Decimal(lots),
+      totalDaysHeld,
+      90,
+      useCeilingRounding
+    );
+
+    const purificationAmount = purCalc.totalPurificationPayable.toNumber();
+
+    const newTx: PortfolioTransactionItem = {
+      id: `tx_${Date.now()}`,
+      ticker: manualTicker,
+      type: "SELL",
+      lots,
+      priceTRY: sellPrice,
+      totalAmountTRY: grossProceeds,
+      realizedPnlTRY: realizedPnl,
+      realizedPnlPercent,
+      purificationAmountTRY: purificationAmount,
+      isPurified: manualIsPurified,
+      date: manualSellDate,
+      notes: `Manuel satış kaydı: ${lots} Lot @ ₺${sellPrice.toFixed(2)} (${totalDaysHeld} gün)`,
+    };
+
+    setTransactions((prev) => [newTx, ...prev]);
+    setManualTradeModalOpen(false);
+  };
+
+  // İşlem Geçmişi & İnfak Defteri KPI Özeti
+  const transactionSummary = useMemo(() => {
+    let totalSellProceeds = new Decimal(0);
+    let totalRealizedPnl = new Decimal(0);
+    let totalPurificationSum = new Decimal(0);
+    let totalPurifiedSum = new Decimal(0);
+    let totalPendingPurificationSum = new Decimal(0);
+
+    transactions.forEach((tx) => {
+      if (tx.type === "SELL") {
+        totalSellProceeds = totalSellProceeds.plus(tx.totalAmountTRY || 0);
+        if (typeof tx.realizedPnlTRY === "number") {
+          totalRealizedPnl = totalRealizedPnl.plus(tx.realizedPnlTRY);
+        }
+      }
+      const purif = new Decimal(tx.purificationAmountTRY || 0);
+      totalPurificationSum = totalPurificationSum.plus(purif);
+      if (tx.isPurified) {
+        totalPurifiedSum = totalPurifiedSum.plus(purif);
+      } else {
+        totalPendingPurificationSum = totalPendingPurificationSum.plus(purif);
+      }
+    });
+
+    return {
+      totalSellProceeds,
+      totalRealizedPnl,
+      totalPurificationSum,
+      totalPurifiedSum,
+      totalPendingPurificationSum,
+    };
+  }, [transactions]);
+
   // Portföy Analiz Motoru
   const portfolioAnalysis = useMemo(() => {
     let totalMarketValue = new Decimal(0);
@@ -415,12 +679,7 @@ function PortfolioManagementContent() {
       totalMarketValue = totalMarketValue.plus(positionValue);
       totalCostBasis = totalCostBasis.plus(positionCost);
 
-      const customDays = (item as any).customDaysHeld;
-      const calcDateRes = calculateDaysHeld(item.purchaseDate);
-      const totalDaysHeld =
-        typeof customDays === "number" && customDays > 0
-          ? customDays
-          : calcDateRes.totalDaysHeld;
+      const totalDaysHeld = calculateDaysHeld(item.purchaseDate).totalDaysHeld;
       const daysHeldInQuarter = Math.min(totalDaysHeld, 90);
       const detail = DETAILED_COMPANIES_DATABASE[item.ticker];
       const compSummary = getCompanySummary(item.ticker);
@@ -741,6 +1000,19 @@ function PortfolioManagementContent() {
 
             <button
               type="button"
+              onClick={() => setActiveTab("TRANSACTIONS")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
+                activeTab === "TRANSACTIONS"
+                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+              }`}
+            >
+              <History size={14} />
+              <span>İşlem Geçmişi &amp; İnfak Defteri ({transactions.length})</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => setActiveTab("ZAKAT")}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 ${
                 activeTab === "ZAKAT"
@@ -783,6 +1055,37 @@ function PortfolioManagementContent() {
                 >
                   <X size={14} />
                 </button>
+              </div>
+            )}
+
+            {/* Satış İşlemi Başarı Bildirimi */}
+            {sellSuccessNotice && (
+              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-2">
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 size={18} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
+                  <div>
+                    <span className="font-bold block">Satış Başarıyla Gerçekleşti ve Deftere İşlendi!</span>
+                    <span>
+                      <strong>{sellSuccessNotice.ticker}</strong> hissenizden <strong>{sellSuccessNotice.lots} Lot</strong> satıldı. Gerçekleşen K/Z: <strong>{sellSuccessNotice.realizedPnl >= 0 ? "+" : ""}{formatTRY(sellSuccessNotice.realizedPnl, 2)}</strong> | Tahakkuk Eden Arındırma: <strong>{formatTRY(sellSuccessNotice.purification, 2)}</strong>
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("TRANSACTIONS")}
+                    className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-xs"
+                  >
+                    İnfak Defterini Gör &rarr;
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSellSuccessNotice(null)}
+                    className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white p-1"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
               </div>
             )}
 
@@ -1377,7 +1680,7 @@ function PortfolioManagementContent() {
                       <th className="py-3 px-4 text-right">Canlı Değer</th>
                       <th className="py-3 px-4 text-right">Kâr / Zarar</th>
                       <th className="py-3 px-4 text-right text-[#182542] dark:text-blue-400">Arındırma Payı</th>
-                      <th className="py-3 px-4 text-center">İşlem</th>
+                      <th className="py-3 px-4 text-right">İşlem</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -1442,15 +1745,26 @@ function PortfolioManagementContent() {
                           {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
                         </td>
 
-                        <td className="py-3 px-4 text-center">
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveHolding(row.id)}
-                            className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#C62E26] transition p-1"
-                            title="Pozisyonu Sil"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                        <td className="py-3 px-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenSellModal(row)}
+                              className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 dark:hover:bg-rose-900/50 transition flex items-center gap-1 shadow-2xs"
+                              title="Bu hisseden satış yap ve arındırma tutarını gör"
+                            >
+                              <ArrowDownRight size={13} />
+                              <span>Sat</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveHolding(row.id)}
+                              className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#C62E26] transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                              title="Pozisyonu Sil"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     )))}
@@ -1468,83 +1782,15 @@ function PortfolioManagementContent() {
         {activeTab === "PURIFICATION" && (
           <div className="space-y-6">
             
-            {/* Arındırma Açıklama ve Fıkhi Kural Kartı */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center">
-                    <Scale size={20} />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-[#182542] dark:text-white">
-                      Fıkhi Arındırma (Purification) Metodolojisi
-                    </h3>
-                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                      Diyanet İşleri Başkanlığı ve TKBB Merkezi Danışma Kurulu standartları
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="inline-flex rounded-full bg-slate-100 dark:bg-white/10 p-1 text-xs font-bold">
-                    <button
-                      type="button"
-                      onClick={() => setPurificationMode("TKBB_REAL")}
-                      className={`px-3 py-1 rounded-full transition ${
-                        purificationMode === "TKBB_REAL"
-                          ? "bg-[#182542] text-white shadow-2xs"
-                          : "text-[#6E81A0] dark:text-[#94A3B8]"
-                      }`}
-                    >
-                      TKBB Reel (Enflasyon Arındırmalı)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPurificationMode("KAFIF_GROSS")}
-                      className={`px-3 py-1 rounded-full transition ${
-                        purificationMode === "KAFIF_GROSS"
-                          ? "bg-[#0D8B52] text-white shadow-2xs"
-                          : "text-[#6E81A0] dark:text-[#94A3B8]"
-                      }`}
-                    >
-                      KAFİF Brüt (Helal Finans Uyumlu)
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => setUseCeilingRounding(!useCeilingRounding)}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
-                      useCeilingRounding
-                        ? "bg-[#0D8B52] text-white"
-                        : "bg-slate-200 dark:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
-                    }`}
-                  >
-                    <span>Yukarı Yuvarlama: {useCeilingRounding ? "Aktif" : "Pasif"}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-[#182542] dark:text-amber-200 flex items-start gap-3">
-                <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <span className="font-bold block">Fıkhi Hüküm &amp; TKBB Arındırma Standardı (Madde 3.2.1 &amp; 3.6.2)</span>
-                  <p className="leading-relaxed">
-                    Katılım endeksi şirketlerinin kazancına karışan düşük oranlı (azami %5) faiz veya mahzurlu gelirler; <strong>pay başına düşen yıllık/dönemlik mahzurlu gelir</strong> üzerinden ve hissenin portföyde <strong>tutulduğu toplam gün sayısı (365 gün pro-rata)</strong> oranında hesaplanarak sevap beklemeksizin infak edilmelidir. Tablodaki <strong>Tutulan Gün</strong> veya <strong>Alış Tarihi</strong> alanını doğrudan değiştirerek istediğiniz gün sayısı (örn. 30, 180, 365, 730 gün) üzerinden hesaplama yapabilirsiniz.
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Hisse Bazlı Arındırma Dökümü Tablosu */}
             <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                    Hisse Başına Güncel Arındırma Hesabı (365 Gün Yıllık Esaslı)
+                    Hisse Başına Güncel Arındırma Hesabı
                   </h3>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Elde tutulan gün sayısını veya alış tarihini tablodan doğrudan değiştirebilirsiniz
+                    Alış tarihine göre otomatik hesaplanan pro-rata mahzurlu gelir arındırma tutarları
                   </p>
                 </div>
                 <div className="text-right">
@@ -1560,7 +1806,7 @@ function PortfolioManagementContent() {
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[#6E81A0] dark:text-[#94A3B8] font-bold text-[11px]">
                       <th className="py-3 px-4">Hisse Senedi</th>
-                      <th className="py-3 px-4 text-center">Tutulan Gün &amp; Alış Tarihi</th>
+                      <th className="py-3 px-4 text-center">Elde Tutulan Süre</th>
                       <th className="py-3 px-4 text-right">Lot Miktarı</th>
                       <th className="py-3 px-4 text-right">Pay Başı Yıllık Mahzurlu Gelir</th>
                       <th className="py-3 px-4 text-right">Yıllık Gün Oranı (Pro-Rata)</th>
@@ -1592,56 +1838,16 @@ function PortfolioManagementContent() {
                         </td>
 
                         <td className="py-3 px-4 text-center font-mono">
-                          <div className="flex flex-col items-center gap-1.5">
-                            <div className="flex items-center gap-1.5">
-                              <input
-                                type="number"
-                                min="1"
-                                max="36500"
-                                value={row.daysHeld}
-                                onChange={(e) =>
-                                  handleUpdateHoldingDays(row.id, parseInt(e.target.value) || 1)
-                                }
-                                className="w-20 px-2 py-1 rounded-lg bg-[#F8F9FA] dark:bg-white/10 border border-slate-200 dark:border-white/15 text-center font-bold text-[#182542] dark:text-white text-xs outline-none focus:border-emerald-500"
-                              />
-                              <span className="text-[11px] font-bold text-[#182542] dark:text-white">Gün</span>
-                              <input
-                                type="date"
-                                value={row.purchaseDate || ""}
-                                onChange={(e) => handleUpdateHoldingDate(row.id, e.target.value)}
-                                className="px-2 py-1 rounded-lg bg-[#F8F9FA] dark:bg-white/10 border border-slate-200 dark:border-white/15 text-[11px] font-mono text-[#6E81A0] dark:text-slate-300 outline-none focus:border-emerald-500"
-                              />
-                            </div>
-                            <div className="flex items-center gap-1">
-                              {[30, 90, 180, 365].map((presetDays) => (
-                                <button
-                                  key={presetDays}
-                                  type="button"
-                                  onClick={() => handleUpdateHoldingDays(row.id, presetDays)}
-                                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold transition ${
-                                    row.daysHeld === presetDays
-                                      ? "bg-[#0D8B52] text-white"
-                                      : "bg-slate-100 dark:bg-white/5 text-[#6E81A0] hover:bg-slate-200"
-                                  }`}
-                                >
-                                  {presetDays}G
-                                </button>
-                              ))}
-                            </div>
+                          <div className="font-bold text-xs text-[#182542] dark:text-white">
+                            {row.daysHeld} Gün
+                          </div>
+                          <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
+                            Alış: {row.purchaseDate || "Belirtilmedi"}
                           </div>
                         </td>
 
                         <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
-                          <div className="inline-flex items-center gap-1">
-                            <input
-                              type="number"
-                              min="1"
-                              value={row.lots}
-                              onChange={(e) => handleUpdateHoldingLots(row.id, e.target.value)}
-                              className="w-24 px-2 py-1 rounded-lg bg-[#F8F9FA] dark:bg-white/10 border border-slate-200 dark:border-white/15 text-right font-bold text-[#182542] dark:text-white text-xs outline-none focus:border-emerald-500"
-                            />
-                            <span>Lot</span>
-                          </div>
+                          {row.lots} Lot
                         </td>
 
                         <td className="py-3 px-4 text-right font-mono text-[#6E81A0] dark:text-[#94A3B8]">
@@ -1693,7 +1899,231 @@ function PortfolioManagementContent() {
         )}
 
         {/* ================================================================= */}
-        {/* SEKME 3: HİSSE ZEKÂTI (%2,5 & DÖNEN VARLIK ESASI)                 */}
+        {/* SEKME 3: İŞLEM GEÇMİŞİ & İNFAK DEFTERİ                            */}
+        {/* ================================================================= */}
+        {activeTab === "TRANSACTIONS" && (
+          <div className="space-y-6">
+            
+            {/* KPI Özet Kartları */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
+                <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">Toplam Satış Hasılatı</span>
+                <span className="text-base font-black font-mono text-[#182542] dark:text-white mt-1 block">
+                  {formatTRY(transactionSummary.totalSellProceeds, 2)}
+                </span>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] mt-0.5 block">
+                  {transactions.filter(t => t.type === "SELL").length} Satış İşlemi
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
+                <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">Realize Kâr / Zarar</span>
+                <span className={`text-base font-black font-mono mt-1 block ${
+                  transactionSummary.totalRealizedPnl.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
+                }`}>
+                  {transactionSummary.totalRealizedPnl.gte(0) ? "+" : ""}{formatTRY(transactionSummary.totalRealizedPnl, 2)}
+                </span>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] mt-0.5 block">
+                  Satış Kâr/Zararı
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
+                <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">Tahakkuk Eden Arındırma</span>
+                <span className="text-base font-black font-mono text-blue-600 dark:text-blue-400 mt-1 block">
+                  {formatTRY(transactionSummary.totalPurificationSum, 2)}
+                </span>
+                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] mt-0.5 block">
+                  Toplam İnfak Yükümlülüğü
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-2xs">
+                <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 block flex items-center gap-1">
+                  <CheckCheck size={13} className="text-emerald-600" />
+                  İnfak Edilen Arındırma
+                </span>
+                <span className="text-base font-black font-mono text-[#0D8B52] dark:text-emerald-400 mt-1 block">
+                  {formatTRY(transactionSummary.totalPurifiedSum, 2)}
+                </span>
+                <span className="text-[10px] text-emerald-700/70 dark:text-emerald-400/70 mt-0.5 block">
+                  Arındırma Yapıldı Olarak İşaretli
+                </span>
+              </div>
+
+              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 shadow-2xs col-span-2 md:col-span-1">
+                <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 block flex items-center gap-1">
+                  <Clock size={13} className="text-amber-600" />
+                  Kalan İnfak Borcu
+                </span>
+                <span className="text-base font-black font-mono text-amber-600 dark:text-amber-400 mt-1 block">
+                  {formatTRY(transactionSummary.totalPendingPurificationSum, 2)}
+                </span>
+                <span className="text-[10px] text-amber-700/70 dark:text-amber-400/70 mt-0.5 block">
+                  Henüz İnfak Edilmeyen Tutar
+                </span>
+              </div>
+            </div>
+
+            {/* İşlem Listesi Tablosu */}
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+              <div className="p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                    <History size={16} className="text-blue-500" />
+                    <span>Gerçekleşen Satışlar &amp; İnfak Defteri</span>
+                  </h3>
+                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                    Hisse satışlarınızdan tahakkuk eden arındırma tutarlarını takip edin ve infak durumunu işaretleyin.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setManualTradeModalOpen(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-[#182542] dark:text-white transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus size={14} />
+                    <span>+ Geçmiş Satış Ekle</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[#6E81A0] dark:text-[#94A3B8] font-bold text-[11px]">
+                      <th className="py-3 px-4">Tarih</th>
+                      <th className="py-3 px-4">İşlem &amp; Hisse</th>
+                      <th className="py-3 px-4 text-right">Adet &amp; Fiyat</th>
+                      <th className="py-3 px-4 text-right">Satış Tutarı</th>
+                      <th className="py-3 px-4 text-right">Realize K/Z</th>
+                      <th className="py-3 px-4 text-right font-bold text-[#182542] dark:text-white">Tahakkuk Eden Arındırma</th>
+                      <th className="py-3 px-4 text-center">Fıkhi Arındırma Durumu</th>
+                      <th className="py-3 px-4 text-right">İşlem</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                    {transactions.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="py-12 text-center text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                          <div className="max-w-md mx-auto space-y-3">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 mx-auto flex items-center justify-center text-slate-400">
+                              <History size={24} />
+                            </div>
+                            <p className="font-bold text-[#182542] dark:text-white">
+                              Henüz Kayıtlı Satış veya İşlem Bulunmuyor
+                            </p>
+                            <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                              Varlıklarım sekmesindeki hisselerinizin yanındaki <strong>&quot;Sat&quot;</strong> butonuna tıklayarak satış yapabilir veya yukarıdaki <strong>&quot;+ Geçmiş Satış Ekle&quot;</strong> butonundan geçmiş işlemlerinizi kaydedebilirsiniz.
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      transactions.map((tx) => {
+                        const comp = getCompanySummary(tx.ticker);
+                        return (
+                          <tr key={tx.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
+                            <td className="py-3 px-4 font-mono text-[11px] text-[#6E81A0] dark:text-[#94A3B8] whitespace-nowrap">
+                              {tx.date}
+                            </td>
+
+                            <td className="py-3 px-4">
+                              <div className="flex items-center gap-2.5">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                  tx.type === "SELL"
+                                    ? "bg-rose-500/15 text-rose-600 dark:text-rose-400"
+                                    : "bg-blue-500/15 text-blue-600 dark:text-blue-400"
+                                }`}>
+                                  {tx.type === "SELL" ? "SATIŞ" : "ALIŞ"}
+                                </span>
+                                <StockLogo ticker={tx.ticker} name={comp?.name || tx.ticker} size="sm" />
+                                <div>
+                                  <span className="font-bold text-xs text-[#182542] dark:text-white block">
+                                    {tx.ticker}
+                                  </span>
+                                  <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[120px]">
+                                    {comp?.name || tx.ticker}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+
+                            <td className="py-3 px-4 text-right font-mono">
+                              <div className="font-bold text-[#182542] dark:text-white">{tx.lots} Lot</div>
+                              <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">₺{tx.priceTRY.toFixed(2)}</div>
+                            </td>
+
+                            <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
+                              {formatTRY(tx.totalAmountTRY, 2)}
+                            </td>
+
+                            <td className={`py-3 px-4 text-right font-mono font-bold ${
+                              (tx.realizedPnlTRY || 0) >= 0 ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
+                            }`}>
+                              {(tx.realizedPnlTRY || 0) >= 0 ? "+" : ""}{formatTRY(tx.realizedPnlTRY || 0, 2)}
+                              {typeof tx.realizedPnlPercent === "number" && (
+                                <span className="text-[10px] block opacity-80">
+                                  ({tx.realizedPnlPercent.toFixed(1)}%)
+                                </span>
+                              )}
+                            </td>
+
+                            <td className="py-3 px-4 text-right font-mono font-black text-sm text-blue-600 dark:text-blue-400">
+                              {formatTRY(tx.purificationAmountTRY, 2)}
+                            </td>
+
+                            <td className="py-3 px-4 text-center">
+                              <button
+                                type="button"
+                                onClick={() => handleTogglePurificationStatus(tx.id)}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold transition cursor-pointer ${
+                                  tx.isPurified
+                                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
+                                    : "bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
+                                }`}
+                                title={tx.isPurified ? "İnfak edildi olarak işaretli. Tıklayarak bekleyen duruma alabilirsiniz." : "Arındırmayı infak ettiyseniz tıklayarak tamamlandı olarak işaretleyin."}
+                              >
+                                {tx.isPurified ? (
+                                  <>
+                                    <CheckCircle2 size={13} className="text-emerald-600 dark:text-emerald-400" />
+                                    <span>✓ Arındırma Yapıldı</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock size={13} className="text-amber-600 dark:text-amber-400" />
+                                    <span>⏳ Arındırma Yapılmadı (İnfak Et)</span>
+                                  </>
+                                )}
+                              </button>
+                            </td>
+
+                            <td className="py-3 px-4 text-right">
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteTransaction(tx.id)}
+                                className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#C62E26] transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 cursor-pointer"
+                                title="İşlem Kaydını Sil"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* SEKME 4: HİSSE ZEKÂTI (%2,5 & DÖNEN VARLIK ESASI)                 */}
         {/* ================================================================= */}
         {activeTab === "ZAKAT" && (
           <div className="space-y-6">
@@ -2145,6 +2575,377 @@ function PortfolioManagementContent() {
 
               </div>
 
+            </div>
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* HİSSE SATIŞI & ANLIK ARINDIRMA HESAPLAMA MODALI                   */}
+        {/* ================================================================= */}
+        {sellModalOpen && selectedHoldingForSell && (() => {
+          const availableLots = parseFloat(selectedHoldingForSell.lots) || 0;
+          const sellLotsNum = Math.min(Math.max(1, parseFloat(sellLotsInput) || 1), availableLots);
+          const sellPriceNum = Math.max(0, parseFloat(sellPriceInput) || 0);
+          const avgCostNum = parseFloat(selectedHoldingForSell.avgCostTRY) || 0;
+
+          const grossProceeds = sellLotsNum * sellPriceNum;
+          const costBasis = sellLotsNum * avgCostNum;
+          const realizedPnl = grossProceeds - costBasis;
+          const realizedPnlPercent = costBasis > 0 ? (realizedPnl / costBasis) * 100 : 0;
+
+          const { totalDaysHeld } = calculateDaysHeld(selectedHoldingForSell.purchaseDate, sellDateInput);
+
+          const detail = DETAILED_COMPANIES_DATABASE[selectedHoldingForSell.ticker];
+          const compSummary = getCompanySummary(selectedHoldingForSell.ticker);
+          const totalShares = detail?.purificationMetrics?.totalSharesOutstanding || "1000000000";
+          const basePShareQuarter = new Decimal(
+            detail?.purificationMetrics?.purificationPerShareQuarterTRY ||
+              compSummary?.purificationPerShareTRY ||
+              "0"
+          );
+          const grossMultiplier = purificationMode === "KAFIF_GROSS" ? new Decimal("3.85") : new Decimal("1");
+          const effectivePShareQuarter = basePShareQuarter.times(grossMultiplier);
+          const impureIncome = effectivePShareQuarter.times(new Decimal(totalShares)).toFixed(4);
+
+          const purCalc = calculateHoldingPurificationClient(
+            impureIncome,
+            totalShares,
+            new Decimal(sellLotsNum),
+            totalDaysHeld,
+            90,
+            useCeilingRounding
+          );
+          const purificationAmount = purCalc.totalPurificationPayable.toNumber();
+          const netHalalProceeds = Math.max(0, grossProceeds - purificationAmount);
+
+          return (
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+              <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
+                  <div className="flex items-center gap-3">
+                    <StockLogo ticker={selectedHoldingForSell.ticker} name={selectedHoldingForSell.companyName} size="md" />
+                    <div>
+                      <h3 className="font-bold text-base text-[#182542] dark:text-white flex items-center gap-1.5">
+                        <span>{selectedHoldingForSell.ticker} Hisse Satışı</span>
+                      </h3>
+                      <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                        {selectedHoldingForSell.companyName}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSellModalOpen(false);
+                      setSelectedHoldingForSell(null);
+                    }}
+                    className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {/* Pozisyon Özeti */}
+                <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-white/5 p-3 rounded-2xl text-center">
+                  <div>
+                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">Mevcut Adet</span>
+                    <span className="text-xs font-bold font-mono text-[#182542] dark:text-white">{availableLots} Lot</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">Ort. Maliyet</span>
+                    <span className="text-xs font-bold font-mono text-[#182542] dark:text-white">₺{avgCostNum.toFixed(2)}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">Elde Tutulan</span>
+                    <span className="text-xs font-bold font-mono text-blue-600 dark:text-blue-400">{totalDaysHeld} Gün</span>
+                  </div>
+                </div>
+
+                {/* Form Alanları */}
+                <div className="space-y-3.5">
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-bold text-[#182542] dark:text-white">
+                        Satılacak Lot Miktarı
+                      </label>
+                      <div className="flex items-center gap-1">
+                        {[0.25, 0.5, 0.75, 1].map((ratio) => {
+                          const targetLot = Math.max(1, Math.round(availableLots * ratio));
+                          return (
+                            <button
+                              key={ratio}
+                              type="button"
+                              onClick={() => setSellLotsInput(String(targetLot))}
+                              className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-[#182542] dark:text-white transition cursor-pointer"
+                            >
+                              %{ratio * 100}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <input
+                      type="number"
+                      min="1"
+                      max={availableLots}
+                      value={sellLotsInput}
+                      onChange={(e) => setSellLotsInput(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold font-mono text-sm text-[#182542] dark:text-white outline-none focus:border-rose-500"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1.5">
+                        Satış Birim Fiyatı (₺)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={sellPriceInput}
+                        onChange={(e) => setSellPriceInput(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold font-mono text-sm text-[#182542] dark:text-white outline-none focus:border-rose-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1.5">
+                        Satış Tarihi
+                      </label>
+                      <input
+                        type="date"
+                        value={sellDateInput}
+                        onChange={(e) => setSellDateInput(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-rose-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Canlı Hesaplanan Finansal ve Fıkhi Sonuçlar */}
+                <div className="space-y-2 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-200/60 dark:border-white/10">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[#6E81A0] dark:text-[#94A3B8]">Brüt Satış Tutarı:</span>
+                    <span className="font-bold font-mono text-[#182542] dark:text-white">
+                      {formatTRY(grossProceeds, 2)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-[#6E81A0] dark:text-[#94A3B8]">Maliyet Bedeli:</span>
+                    <span className="font-bold font-mono text-[#182542] dark:text-white">
+                      {formatTRY(costBasis, 2)}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/50 dark:border-white/10">
+                    <span className="font-bold text-[#182542] dark:text-white">Gerçekleşen Kâr / Zarar:</span>
+                    <span className={`font-black font-mono ${
+                      realizedPnl >= 0 ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
+                    }`}>
+                      {realizedPnl >= 0 ? "+" : ""}{formatTRY(realizedPnl, 2)} ({realizedPnlPercent.toFixed(1)}%)
+                    </span>
+                  </div>
+
+                  {/* Fıkhi Arındırma Vurgusu */}
+                  <div className="mt-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-500/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Scale size={15} className="text-blue-600 dark:text-blue-400" />
+                        <span className="text-xs font-bold text-blue-900 dark:text-blue-200">
+                          Tahakkuk Eden Fıkhi Arındırma:
+                        </span>
+                      </div>
+                      <span className="text-sm font-black font-mono text-blue-700 dark:text-blue-300">
+                        {formatTRY(purificationAmount, 2)}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-blue-800/80 dark:text-blue-300/80 mt-1 leading-relaxed">
+                      TKBB standartları uyarınca, bu hisseden {totalDaysHeld} gün elde tutma süresi için hesaplanan pro-rata infak borcudur. Satış onaylandığında İşlem Geçmişi &amp; İnfak Defterinize aktarılacaktır.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-2">
+                    <span className="font-bold text-[#182542] dark:text-white">Net Helal Satış Hasılatı:</span>
+                    <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">
+                      {formatTRY(netHalalProceeds, 2)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Aksiyon Butonları */}
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSellModalOpen(false);
+                      setSelectedHoldingForSell(null);
+                    }}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                  >
+                    Vazgeç
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmSell}
+                    className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                  >
+                    <ArrowDownRight size={14} />
+                    <span>Satışı Onayla ve Kaydet</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ================================================================= */}
+        {/* MANUEL GEÇMİŞ SATIŞ / İŞLEM EKLEME MODALI                          */}
+        {/* ================================================================= */}
+        {manualTradeModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+            <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold">
+                    <History size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                      Geçmiş Satış Kaydı Ekle
+                    </h3>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      Önceki hisse satışlarınızı ve arındırma durumunu deftere işleyin
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setManualTradeModalOpen(false)}
+                  className="p-1 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddManualTrade} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    Hisse Kodu (Ticker)
+                  </label>
+                  <select
+                    value={manualTicker}
+                    onChange={(e) => setManualTicker(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                  >
+                    {SAMPLE_COMPANIES_SUMMARY.map((c) => (
+                      <option key={c.ticker} value={c.ticker} className="dark:bg-[#182542]">
+                        {c.ticker} - {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                      Satılan Lot Adedi
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={manualLots}
+                      onChange={(e) => setManualLots(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                      Alış Fiyatı / Maliyet (₺)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={manualBuyPrice}
+                      onChange={(e) => setManualBuyPrice(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                      Satış Fiyatı (₺)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={manualSellPrice}
+                      onChange={(e) => setManualSellPrice(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                      Satış Tarihi
+                    </label>
+                    <input
+                      type="date"
+                      value={manualSellDate}
+                      onChange={(e) => setManualSellDate(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    Alış Tarihi (Elde Tutma Süresi Hesabı İçin)
+                  </label>
+                  <input
+                    type="date"
+                    value={manualBuyDate}
+                    onChange={(e) => setManualBuyDate(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                      Arındırma Tutarı İnfak Edildi mi?
+                    </span>
+                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      İşaretlerseniz arındırma tamamlandı olarak kaydedilir
+                    </span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={manualIsPurified}
+                    onChange={(e) => setManualIsPurified(e.target.checked)}
+                    className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setManualTradeModalOpen(false)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:bg-slate-100 dark:hover:bg-white/5 transition cursor-pointer"
+                  >
+                    Vazgeç
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  >
+                    <Plus size={14} />
+                    <span>Deftere Kaydet</span>
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

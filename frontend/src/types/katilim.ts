@@ -344,6 +344,21 @@ export interface PortfolioHoldingItem {
   zakatIntent: ZakatIntentionType;
 }
 
+export interface PortfolioTransactionItem {
+  id: string;
+  ticker: string;
+  type: "BUY" | "SELL";
+  lots: number;
+  priceTRY: number;
+  totalAmountTRY: number;
+  realizedPnlTRY?: number;
+  realizedPnlPercent?: number;
+  purificationAmountTRY: number;
+  isPurified: boolean; // "Arındırma yapıldı / infak edildi mi?"
+  date: string; // "YYYY-MM-DD"
+  notes?: string;
+}
+
 export interface BreachedMetricItem {
   metricName: string;
   currentValuePercent: string;

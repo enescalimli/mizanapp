@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PortfolioHoldingItem } from "@/types/katilim";
+import { PortfolioHoldingItem, PortfolioTransactionItem } from "@/types/katilim";
 import { supabaseAdmin, isSupabaseConfigured } from "@/lib/supabaseClient";
 import fs from "fs";
 import path from "path";
@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 interface PortfolioStoreEntry {
   email: string;
   holdings: PortfolioHoldingItem[];
+  transactions?: PortfolioTransactionItem[];
   updatedAt: string;
 }
 
@@ -110,9 +111,11 @@ export async function GET(request: Request) {
               }));
 
               // In-memory cache'i güncelle
+              const existingMem = portfolioStore.get(email);
               portfolioStore.set(email, {
                 email,
                 holdings: mappedHoldings,
+                transactions: existingMem?.transactions || [],
                 updatedAt: new Date().toISOString(),
               });
 
@@ -121,6 +124,7 @@ export async function GET(request: Request) {
                 source: "supabase",
                 email,
                 holdings: mappedHoldings,
+                transactions: existingMem?.transactions || [],
                 lastSyncedAt: new Date().toISOString(),
               });
             }
@@ -139,6 +143,7 @@ export async function GET(request: Request) {
         source: "cloud-cache",
         email,
         holdings: entry.holdings,
+        transactions: entry.transactions || [],
         lastSyncedAt: entry.updatedAt,
       });
     }
@@ -149,6 +154,7 @@ export async function GET(request: Request) {
       source: "empty-initial",
       email,
       holdings: [],
+      transactions: [],
       lastSyncedAt: new Date().toISOString(),
     });
   } catch (err: any) {
@@ -186,11 +192,16 @@ export async function POST(request: Request) {
     }
 
     const nowIso = new Date().toISOString();
+    const existingEntry = portfolioStore.get(email);
+    const finalTransactions: PortfolioTransactionItem[] = Array.isArray(body.transactions)
+      ? body.transactions
+      : (existingEntry?.transactions || []);
 
     // 1. Sunucu Belleği & Yerel Önbelleği Güncelle
     portfolioStore.set(email, {
       email,
       holdings,
+      transactions: finalTransactions,
       updatedAt: nowIso,
     });
     saveLocalFileCache();
@@ -287,6 +298,7 @@ export async function POST(request: Request) {
       success: true,
       email,
       count: holdings.length,
+      transactionsCount: finalTransactions.length,
       supabasePersisted,
       lastSyncedAt: nowIso,
     });
