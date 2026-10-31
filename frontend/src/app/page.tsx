@@ -44,14 +44,23 @@ import { InstitutionalLogosSection } from "@/components/landing/InstitutionalLog
 export default function LandingPage() {
   const { isDark, toggleTheme } = useTheme();
 
-  // Sadece Android APK içinden açıldığında doğrudan Dashboard'a yönlendir (Web ziyaretçileri normal ana sayfayı görür)
+  // Sadece Android APK içinden açıldığında uygulama karşılama veya panosuna yönlendir
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (
       navigator.userAgent.includes("MizanAppAndroid") ||
       window.location.search.includes("mode=app")
     ) {
-      window.location.replace("/dashboard");
+      try {
+        const savedAuth = localStorage.getItem("mizanapp_demo_auth");
+        if (savedAuth && JSON.parse(savedAuth)?.email) {
+          window.location.replace("/dashboard");
+          return;
+        }
+      } catch {
+        // ignore
+      }
+      window.location.replace("/mobile");
     }
   }, []);
 

@@ -20,13 +20,8 @@ import {
 } from "@/lib/data/compliantAlternatives";
 import { pruneConversationHistory } from "@/lib/ai/contextPruner";
 
-// Google Gemini Flash API Ayarları (1.445 TL Bakiye Tanımlı Proje Anahtarı)
-const DEFAULT_GEMINI_KEY = Buffer.from(
-  "QVEuQWI4Uk42SzV3MG50R3Zkc1lNWTRjcGJBSzRYanY1QlJCMjM0VkJ0UjYxb3RmT3ItbHc=",
-  "base64"
-).toString("utf-8");
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || DEFAULT_GEMINI_KEY;
+// Google Gemini Flash API Ayarları (Ortam değişkeninden okunur)
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
 // Fıkhi Doktrin ve Kurumsal Sistem Talimatı
 const MIZAN_SYSTEM_PROMPT = `

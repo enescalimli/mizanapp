@@ -7,9 +7,9 @@ import { AuthProvider } from "@/lib/auth/AuthContext";
 import { ThemeProvider } from "@/lib/theme/ThemeContext";
 
 export const viewport: Viewport = {
-  themeColor: "#182542",
+  themeColor: "#000000",
   width: "device-width",
-  initialScale: 0.9,
+  initialScale: 1.0,
   maximumScale: 5,
 };
 
