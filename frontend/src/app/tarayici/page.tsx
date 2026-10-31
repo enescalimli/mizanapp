@@ -190,9 +190,9 @@ export default function TarayiciPage() {
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded-full transition ${
+                className={`p-1.5 rounded-full transition cursor-pointer ${
                   viewMode === "grid"
-                    ? "bg-[#182542] dark:bg-[#273869] text-white"
+                    ? "bg-black dark:bg-white text-white dark:text-black"
                     : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
                 }`}
                 title="Kart Izgarası Görünümü"
@@ -202,9 +202,9 @@ export default function TarayiciPage() {
               <button
                 type="button"
                 onClick={() => setViewMode("table")}
-                className={`p-1.5 rounded-full transition ${
+                className={`p-1.5 rounded-full transition cursor-pointer ${
                   viewMode === "table"
-                    ? "bg-[#182542] dark:bg-[#273869] text-white"
+                    ? "bg-black dark:bg-white text-white dark:text-black"
                     : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
                 }`}
                 title="Detaylı Tablo Görünümü"
@@ -226,8 +226,8 @@ export default function TarayiciPage() {
 
             {/* Portföye Git */}
             <Link
-              href="/portfolio#yeni-pozisyon"
-              className="rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white px-4 sm:px-5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
+              href="/portfolio?action=add"
+              className="rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 px-4 sm:px-5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
             >
               <Plus size={14} />
               <span>Portföye Ekle</span>
@@ -245,9 +245,9 @@ export default function TarayiciPage() {
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "ALL"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                  ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
                   : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-slate-200/60 dark:border-white/10"
               }`}
             >

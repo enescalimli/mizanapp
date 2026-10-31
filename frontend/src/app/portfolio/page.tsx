@@ -104,7 +104,16 @@ function PortfolioManagementContent() {
     else if (tabParam === "islemler" || tabParam === "gecmis") setActiveTab("TRANSACTIONS");
     else if (tabParam === "takvim" || tabParam === "temettu") setActiveTab("CALENDAR");
     else if (tabParam === "pozisyonlar") setActiveTab("HOLDINGS");
+
+    const actionParam = searchParams.get("action");
+    if (actionParam === "add") {
+      setAddHoldingModalOpen(true);
+    }
   }, [searchParams]);
+
+  // Modallar: Yeni Hisse Ekleme ve Fıkhi İkame (Swap)
+  const [addHoldingModalOpen, setAddHoldingModalOpen] = useState<boolean>(false);
+  const [swapModalOpen, setSwapModalOpen] = useState<boolean>(false);
 
   // Fıkhi İhtiyat ve Yuvarlama
   const [useCeilingRounding, setUseCeilingRounding] = useState<boolean>(true);
@@ -343,6 +352,7 @@ function PortfolioManagementContent() {
     });
 
     setHoldings(updated);
+    setSwapModalOpen(false);
 
     setSwapNotification({
       fromTicker,
@@ -472,6 +482,7 @@ function PortfolioManagementContent() {
 
     setHoldings((prev) => [newItem, ...prev]);
     setNewLots("100");
+    setAddHoldingModalOpen(false);
   };
 
   const handleExportCSV = () => {
@@ -1206,43 +1217,34 @@ function PortfolioManagementContent() {
       <div className="space-y-6">
         
         {/* ================================================================= */}
-        {/* ÜST BAŞLIK VE MODERN KONTROLLER (Dual P&L, CSV & Sepet Yönetimi) */}
+        {/* 1. ÜST HERO BAŞLIK & İŞLEM KONTROLLERİ                            */}
         {/* ================================================================= */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
-                Katılım Portföyüm 2.0
-              </h1>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-bold">
-                Midas &amp; Robinhood Standart
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+              Portföyüm
+            </h1>
+            <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 dark:text-zinc-400">
+              <span className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Canlı BIST Seansı
               </span>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                Canlı BIST fiyatlaması, KAFİF erken uyarı radarı, temettü nakit akışı ve fıkhi arındırma.
-              </p>
-              {userEmail && (
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isSyncingCloud ? "bg-amber-400 animate-ping" : "bg-emerald-500"}`} />
-                  <span>
-                    {isSyncingCloud
-                      ? "Bulutla Senkronize Ediliyor..."
-                      : `${userEmail} ile senkronize${lastSyncedTime ? ` (${lastSyncedTime})` : ""}`}
-                  </span>
-                </div>
+              <span>•</span>
+              {userEmail ? (
+                <span>{userEmail} ile senkronize</span>
+              ) : (
+                <span>Yerel Portföy</span>
               )}
             </div>
           </div>
 
-          {/* Aksiyon Araç Çubuğu: CSV İndir/Yükle, Belge, Yeni Hisse */}
+          {/* Aksiyon Butonları (Apple Cupertino Minimalist) */}
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={tickLivePrices}
-              className="w-9 h-9 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition cursor-pointer"
-              title="Canlı Fiyatları Yenile"
+              className="w-9 h-9 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
+              title="Canlı Fiyatları Güncelle"
             >
               <RefreshCw size={14} />
             </button>
@@ -1250,58 +1252,59 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={handleExportCSV}
-              className="rounded-xl bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
-              title="Portföyü CSV / Excel olarak indir"
+              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              title="CSV olarak indir"
             >
-              <Download size={13} className="text-blue-600 dark:text-blue-400" />
-              <span>Dışa Aktar (CSV)</span>
+              <Download size={13} className="text-blue-500" />
+              <span>CSV İndir</span>
             </button>
 
             <button
               type="button"
               onClick={() => setCsvImportModalOpen(true)}
-              className="rounded-xl bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
-              title="Banka veya aracı kurum portföyünü içe aktar"
+              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              title="Portföyü içe aktar"
             >
-              <Upload size={13} className="text-purple-600 dark:text-purple-400" />
+              <Upload size={13} className="text-purple-500" />
               <span>İçe Aktar</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowCertificateModal(true)}
-              className="rounded-xl bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-[#182542] dark:text-white px-3.5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition cursor-pointer"
-              title="Resmi DİB & TKBB Uyumlu Fıkhi Arındırma ve Zekât Belgesi Al (PDF)"
+              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              title="Resmi DİB & TKBB Tevsik Belgesi (PDF)"
             >
-              <FileText size={13} className="text-emerald-600 dark:text-emerald-400" />
-              <span>Fıkhi Belge (PDF)</span>
+              <FileText size={13} className="text-emerald-500" />
+              <span>Fıkhi Belge</span>
             </button>
 
-            <a
-              href="#yeni-pozisyon"
-              className="rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white px-4 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
+            <button
+              type="button"
+              onClick={() => setAddHoldingModalOpen(true)}
+              className="rounded-full bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black px-4 py-2 text-xs font-bold shadow-sm flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
             >
               <Plus size={14} />
               <span>+ Hisse Ekle</span>
-            </a>
+            </button>
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* ÇOKLU PORTFÖY & SEPET SEÇİCİ BAR (Snowball Analytics Modeli)      */}
+        {/* 2. SEPET SEÇİCİ BAR                                               */}
         {/* ================================================================= */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-slate-200/60 dark:border-white/10">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none border-b border-slate-200/60 dark:border-white/10">
           <button
             type="button"
             onClick={() => setActiveBasket("ALL")}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
               activeBasket === "ALL"
-                ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-xs"
-                : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-[#6E81A0] hover:text-[#182542] dark:hover:text-white"
+                ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
-            <Layers size={13} />
-            <span>Tüm Varlıklar (Konsolide - {portfolioAnalysis.rows.length})</span>
+            <Layers size={12} />
+            <span>Tümü ({portfolioAnalysis.rows.length})</span>
           </button>
 
           {customBaskets.map((basketName) => {
@@ -1311,13 +1314,13 @@ function PortfolioManagementContent() {
                 key={basketName}
                 type="button"
                 onClick={() => setActiveBasket(basketName)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
                   activeBasket === basketName
-                    ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-xs"
-                    : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-[#6E81A0] hover:text-[#182542] dark:hover:text-white"
+                    ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                    : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <Folder size={13} />
+                <Folder size={12} />
                 <span>{basketName} ({count})</span>
               </button>
             );
@@ -1326,168 +1329,109 @@ function PortfolioManagementContent() {
           <button
             type="button"
             onClick={() => setNewBasketModalOpen(true)}
-            className="px-3 py-1.5 rounded-xl border border-dashed border-slate-300 dark:border-white/20 text-xs font-bold text-[#6E81A0] hover:text-[#182542] dark:hover:text-white transition flex items-center gap-1 shrink-0 cursor-pointer"
+            className="px-3 py-1.5 rounded-full border border-dashed border-slate-300 dark:border-white/20 text-xs font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition flex items-center gap-1 shrink-0 cursor-pointer"
           >
-            <FolderPlus size={13} />
+            <FolderPlus size={12} />
             <span>+ Yeni Sepet</span>
           </button>
         </div>
 
-        {/* ================================================================= */}
-        {/* KAFİF ERKEN UYARI RİSK RADARI BANNER (Zoya Modeli)                */}
-        {/* ================================================================= */}
-        {portfolioAnalysis.kafifAlerts.length > 0 ? (
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-[#182542] dark:text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in">
-            <div className="flex items-start gap-2.5">
-              <AlertTriangle size={18} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <span className="font-bold block text-amber-900 dark:text-amber-200">
-                  KAFİF Erken Uyarı Radarı: {portfolioAnalysis.kafifAlerts.length} Hissede Eşik Aşımı / Yaklaşma Riski
-                </span>
-                <p className="text-[11px] leading-relaxed text-amber-800/90 dark:text-amber-300/90">
-                  {portfolioAnalysis.kafifAlerts.map((a) => a.warningMessage).join(" ")}
-                </p>
-              </div>
-            </div>
-            <a
-              href="#pozisyonlar-tablosu"
-              className="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs transition shrink-0 text-center"
-            >
-              Hisseleri İncele &rarr;
-            </a>
-          </div>
-        ) : (
-          <div className="p-3 px-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
+        {/* KAFİF Erken Uyarı - Yalnızca kritik risk varsa zarif mini şerit */}
+        {portfolioAnalysis.kafifAlerts.length > 0 && (
+          <div className="p-3 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3 animate-in fade-in">
             <div className="flex items-center gap-2">
-              <ShieldCheck size={16} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
+              <AlertTriangle size={15} className="text-amber-600 dark:text-amber-400 shrink-0" />
               <span>
-                <strong>Fıkhi Güvenlik Radarı:</strong> Portföyünüzdeki tüm şirketler KAFİF faizli borç (%33) ve mahzurlu gelir (%5) tavanlarına tam uyumludur.
+                <strong>KAFİF Erken Uyarı:</strong> {portfolioAnalysis.kafifAlerts.map(a => a.warningMessage).join(" ")}
               </span>
             </div>
-            <span className="text-[10px] font-mono font-bold text-[#0D8B52] dark:text-emerald-400 hidden sm:inline">
-              %100 Güvenli Bölge
-            </span>
+            {nonCompliantHoldings.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setSwapModalOpen(true)}
+                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold shrink-0 transition cursor-pointer"
+              >
+                Muadille Değiştir &rarr;
+              </button>
+            )}
           </div>
         )}
 
         {/* ================================================================= */}
-        {/* 4'LÜ BENTO PERFORMANS VE DUAL P&L KARTLARI (Midas + Robinhood)    */}
+        {/* 3. 4'LÜ COMPACT BENTO METRİK ŞERİDİ                                */}
         {/* ================================================================= */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-          
-          {/* Kart 1: Toplam Portföy Değeri & Günlük P&L (Midas Nabzı) */}
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                Toplam Portföy Değeri
-              </span>
-              <span className="w-7 h-7 rounded-full bg-[#182542]/10 dark:bg-white/10 text-[#182542] dark:text-white flex items-center justify-center text-xs font-bold">
-                ₺
-              </span>
-            </div>
-            <div>
-              <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
-                {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
-              </div>
-              
-              {/* Günlük P&L Canlı Nabız Rozeti */}
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold font-mono ${
-                  portfolioAnalysis.todayPnlTRY.gte(0)
-                    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25"
-                    : "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/25"
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${portfolioAnalysis.todayPnlTRY.gte(0) ? "bg-emerald-500 animate-pulse" : "bg-rose-500 animate-pulse"}`} />
-                  {portfolioAnalysis.todayPnlTRY.gte(0) ? "▲ +" : "▼ "}
-                  {formatTRY(portfolioAnalysis.todayPnlTRY, 2)} ({portfolioAnalysis.todayPnlPercent.toFixed(2)}%) Bugün
-                </span>
-
-                <span className={`text-[11px] font-bold font-mono ${
-                  portfolioAnalysis.totalPnlTRY.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
-                }`}>
-                  {portfolioAnalysis.totalPnlTRY.gte(0) ? "+" : ""}{portfolioAnalysis.totalPnlPercent.toFixed(1)}% Toplam
-                </span>
-              </div>
-            </div>
-            <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-mono">
-              Maliyet: {formatTRY(portfolioAnalysis.totalCostBasis, 2)}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* 1. Portföy Değeri */}
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
+              Toplam Değer
             </span>
+            <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
+              {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                portfolioAnalysis.todayPnlTRY.gte(0)
+                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+              }`}>
+                {portfolioAnalysis.todayPnlTRY.gte(0) ? "▲ +" : "▼ "}
+                {formatTRY(portfolioAnalysis.todayPnlTRY, 2)} ({portfolioAnalysis.todayPnlPercent.toFixed(1)}%) Bugün
+              </span>
+            </div>
           </div>
 
-          {/* Kart 2: Katılım Uyum Oranı */}
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-colors">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                Katılım Uyum Ağırlığı
-              </span>
-              <span className="w-7 h-7 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 flex items-center justify-center text-xs font-bold">
-                ✓
-              </span>
+          {/* 2. Katılım Uyum Oranı */}
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
+              Katılım Uyumu
+            </span>
+            <div className="text-xl sm:text-2xl font-black font-mono text-emerald-600 dark:text-emerald-400 tracking-tight">
+              %{portfolioAnalysis.halalWeightPercent.toFixed(1)}
             </div>
-            <div>
-              <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
-                %{portfolioAnalysis.halalWeightPercent.toFixed(1)}
-              </div>
-              <div className="text-xs font-bold text-[#0D8B52] dark:text-emerald-400 mt-1">
-                DİB &amp; BIST Katılım Standartlı
-              </div>
-            </div>
-            <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
+            <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">
               {portfolioAnalysis.rows.filter(r => r.isCompliant).length} / {portfolioAnalysis.rows.length} Hisse Tam Uyumlu
-            </span>
+            </div>
           </div>
 
-          {/* Kart 3: Fıkhi Arındırma Yükümlülüğü */}
+          {/* 3. Fıkhi Arındırma */}
           <div
             onClick={() => setActiveTab("PURIFICATION")}
-            className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-all cursor-pointer hover:border-[#182542]/30 dark:hover:border-white/20 group"
+            className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                Fıkhi Arındırma Tutarı
+              <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
+                Fıkhi Arındırma
               </span>
-              <span className="w-7 h-7 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs font-bold group-hover:scale-110 transition">
-                <Scale size={13} />
-              </span>
+              <Scale size={13} className="text-blue-500 opacity-60 group-hover:opacity-100 transition" />
             </div>
-            <div>
-              <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
-                {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
-              </div>
-              <div className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1">
-                <span>Arındırma Sekmesine Git &rarr;</span>
-              </div>
+            <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
+              {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
             </div>
-            <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
-              Pro-Rata Günlük &amp; Çeyreklik İnfak
-            </span>
+            <div className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+              <span>İnfak Dökümü &rarr;</span>
+            </div>
           </div>
 
-          {/* Kart 4: Yıllık Hisse Zekâtı */}
+          {/* 4. Yıllık Hisse Zekâtı */}
           <div
             onClick={() => setActiveTab("ZAKAT")}
-            className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between space-y-3 transition-all cursor-pointer hover:border-[#182542]/30 dark:hover:border-white/20 group"
+            className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                Yıllık Hisse Zekâtı (%2,5)
+              <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
+                Hisse Zekâtı (%2,5)
               </span>
-              <span className="w-7 h-7 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs font-bold group-hover:scale-110 transition">
-                <Coins size={13} />
-              </span>
+              <Coins size={13} className="text-amber-500 opacity-60 group-hover:opacity-100 transition" />
             </div>
-            <div>
-              <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
-                {formatTRY(portfolioAnalysis.totalZakatPayable, 2)}
-              </div>
-              <div className="text-xs font-bold text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1">
-                <span>Zekât Sekmesine Git &rarr;</span>
-              </div>
+            <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
+              {formatTRY(portfolioAnalysis.totalZakatPayable, 2)}
             </div>
-            <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
-              Dönen Varlık Matrahı: {formatTRY(portfolioAnalysis.totalZakatBase, 2)}
-            </span>
+            <div className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
+              <span>Zekât Hesabı &rarr;</span>
+            </div>
           </div>
+        </div>
 
         </div>
 
@@ -1715,101 +1659,101 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {/* SEGMENTED TAB SELECTOR (5 Modern Sekme)                           */}
         {/* ================================================================= */}
-        <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 dark:border-white/10 pb-4 overflow-x-auto scrollbar-none">
-          <div className="bg-white dark:bg-[#0E1015] p-1 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-200/70 dark:border-white/10 pb-3 overflow-x-auto scrollbar-none">
+          <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-full flex items-center gap-1 shrink-0">
             <button
               type="button"
               onClick={() => setActiveTab("HOLDINGS")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "HOLDINGS"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
-              <Briefcase size={14} />
-              <span>Varlıklarım &amp; Pozisyonlar ({filteredRows.length})</span>
+              <Briefcase size={13} />
+              <span>Varlıklarım ({filteredRows.length})</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("CALENDAR")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "CALENDAR"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
-              <Calendar size={14} />
-              <span>Temettü &amp; KAP Takvimi</span>
+              <Calendar size={13} />
+              <span>Temettü &amp; KAP</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("PURIFICATION")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "PURIFICATION"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
-              <Scale size={14} />
-              <span>Fıkhi Arındırma Hesaplayıcı</span>
+              <Scale size={13} />
+              <span>Arındırma</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("TRANSACTIONS")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "TRANSACTIONS"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
-              <History size={14} />
-              <span>İşlem Geçmişi &amp; İnfak Defteri ({transactions.length})</span>
+              <History size={13} />
+              <span>İşlem Defteri ({transactions.length})</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("ZAKAT")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "ZAKAT"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                  : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
-              <Coins size={14} />
-              <span>Hisse Zekâtı (%2,5 &amp; Dönen Varlık)</span>
+              <Coins size={13} />
+              <span>Hisse Zekâtı</span>
             </button>
           </div>
 
-          <div className="text-[11px] font-mono text-[#6E81A0] dark:text-[#94A3B8] hidden md:block">
-            Son Güncelleme: {lastTickTime}
+          <div className="text-[11px] font-mono text-slate-400 dark:text-zinc-500 hidden md:block">
+            Son Fiyat: {lastTickTime}
           </div>
         </div>
 
         {/* ================================================================= */}
-        {/* SEKME 1: PORTFÖY POZİSYONLARI & YENİ HİSSE EKLEME                 */}
+        {/* SEKME 1: PORTFÖY POZİSYONLARI                                     */}
         {/* ================================================================= */}
         {activeTab === "HOLDINGS" && (
           <div className="space-y-6">
             
             {/* Fıkhi İkame Başarı Bildirimi */}
             {swapNotification && (
-              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-2">
+              <div className="p-3.5 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-2">
                 <div className="flex items-center gap-2.5">
-                  <CheckCircle2 size={18} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
+                  <CheckCircle2 size={16} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
                   <div>
-                    <span className="font-bold block">Fıkhi İkame Başarıyla Tamamlandı!</span>
+                    <span className="font-bold">Fıkhi İkame Başarıyla Tamamlandı: </span>
                     <span>
-                      <strong>{swapNotification.fromTicker}</strong> pozisyonunuz <strong>{swapNotification.lots} Lot {swapNotification.toTicker} ({swapNotification.toName})</strong> ile ikame edildi. Portföyünüz artık %100 Katılım Uyumlu!
+                      {swapNotification.fromTicker} pozisyonunuz {swapNotification.lots} Lot {swapNotification.toTicker} ile ikame edildi.
                     </span>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSwapNotification(null)}
-                  className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white p-1"
+                  className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white p-1 cursor-pointer"
                 >
                   <X size={14} />
                 </button>
@@ -1818,13 +1762,13 @@ function PortfolioManagementContent() {
 
             {/* Satış İşlemi Başarı Bildirimi */}
             {sellSuccessNotice && (
-              <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-2">
+              <div className="p-3.5 px-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-500/30 text-xs text-emerald-900 dark:text-emerald-200 flex items-center justify-between shadow-xs animate-in fade-in slide-in-from-top-2">
                 <div className="flex items-center gap-2.5">
-                  <CheckCircle2 size={18} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
+                  <CheckCircle2 size={16} className="text-[#0D8B52] dark:text-emerald-400 shrink-0" />
                   <div>
-                    <span className="font-bold block">Satış Başarıyla Gerçekleşti ve Deftere İşlendi!</span>
+                    <span className="font-bold">Satış İşlendi: </span>
                     <span>
-                      <strong>{sellSuccessNotice.ticker}</strong> hissenizden <strong>{sellSuccessNotice.lots} Lot</strong> satıldı. Gerçekleşen K/Z: <strong>{sellSuccessNotice.realizedPnl >= 0 ? "+" : ""}{formatTRY(sellSuccessNotice.realizedPnl, 2)}</strong> | Tahakkuk Eden Arındırma: <strong>{formatTRY(sellSuccessNotice.purification, 2)}</strong>
+                      {sellSuccessNotice.ticker} hissenizden {sellSuccessNotice.lots} Lot satıldı. Realize K/Z: {sellSuccessNotice.realizedPnl >= 0 ? "+" : ""}{formatTRY(sellSuccessNotice.realizedPnl, 2)} • Arındırma: {formatTRY(sellSuccessNotice.purification, 2)}
                     </span>
                   </div>
                 </div>
@@ -1832,14 +1776,14 @@ function PortfolioManagementContent() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("TRANSACTIONS")}
-                    className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-xs"
+                    className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-xs cursor-pointer"
                   >
-                    İnfak Defterini Gör &rarr;
+                    Deftere Git &rarr;
                   </button>
                   <button
                     type="button"
                     onClick={() => setSellSuccessNotice(null)}
-                    className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white p-1"
+                    className="text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-white p-1 cursor-pointer"
                   >
                     <X size={14} />
                   </button>
@@ -1847,32 +1791,200 @@ function PortfolioManagementContent() {
               </div>
             )}
 
+            {/* Katılım Dışı Varlık Uyarısı (Zarif 1-Satır Banner) */}
+            {nonCompliantHoldings.length > 0 && (
+              <div className="p-3.5 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs animate-in fade-in">
+                <div className="flex items-center gap-2.5">
+                  <AlertTriangle size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span className="text-amber-900 dark:text-amber-200">
+                    <strong>Katılım Dışı Varlık:</strong> Portföyünüzde {nonCompliantHoldings.length} hisse ({nonCompliantHoldings.map(h => h.ticker).join(", ")}) katılım kriteri kapsamı dışındadır.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSwapModalOpen(true)}
+                  className="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shrink-0 transition shadow-xs cursor-pointer"
+                >
+                  Muadillerle Değiştir &rarr;
+                </button>
+              </div>
+            )}
+
             {/* ============================================================= */}
-            {/* PORTFÖY GÖRSEL ANALİZ & GRAFİKLER                              */}
+            {/* PORTFÖY POZİSYONLARI TABLOSU (BAŞ TACI)                         */}
             {/* ============================================================= */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
-              
-              {/* GRAFİK 1: VARLIK AĞIRLIK DAĞILIMI (DONUT) */}
-              <div className="lg:col-span-6 bg-white/75 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[26px] p-5 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-xs overflow-hidden transition-colors">
+              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                    Portföy Pozisyonları ({filteredRows.length} Hisse{activeBasket !== "ALL" ? ` • ${activeBasket}` : ""})
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    Borsa İstanbul canlı fiyatları ve kuruşu kuruşuna fıkhi arındırma
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">
+                    Toplam: {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setAddHoldingModalOpen(true)}
+                    className="px-3 py-1.5 rounded-full bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black text-xs font-bold transition flex items-center gap-1 shadow-2xs cursor-pointer active:scale-95"
+                  >
+                    <Plus size={13} />
+                    <span>Hisse Ekle</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-100 dark:border-white/10 bg-slate-50/70 dark:bg-white/5 text-slate-500 dark:text-zinc-400 font-bold text-[11px]">
+                      <th className="py-3 px-4">Hisse Senedi</th>
+                      <th className="py-3 px-4 text-center">Fıkhi Durum</th>
+                      <th className="py-3 px-4 text-right">Lot &amp; Maliyet</th>
+                      <th className="py-3 px-4 text-right">Canlı Değer</th>
+                      <th className="py-3 px-4 text-right">Kâr / Zarar</th>
+                      <th className="py-3 px-4 text-right">Arındırma Payı</th>
+                      <th className="py-3 px-4 text-right">İşlem</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
+                    {filteredRows.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center">
+                          <div className="max-w-md mx-auto space-y-3">
+                            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400 flex items-center justify-center mx-auto">
+                              {activeBasket !== "ALL" ? <Folder size={22} /> : <Briefcase size={22} />}
+                            </div>
+                            <div className="text-sm font-bold text-slate-900 dark:text-white">
+                              {activeBasket !== "ALL"
+                                ? `"${activeBasket}" Sepetinde Hisse Bulunmuyor`
+                                : "Portföyünüz Henüz Boş"}
+                            </div>
+                            <p className="text-xs text-slate-500 dark:text-zinc-400">
+                              {activeBasket !== "ALL"
+                                ? "Yeni hisse eklerken bu sepeti seçebilir veya tüm hisselerinizi görmek için \"Tümü\" sekmesine dönebilirsiniz."
+                                : "BIST hisselerinizi ekleyerek katılım uyumu, günlük kâr/zarar ve fıkhi arındırma hesaplarınızı anında başlatın."}
+                            </p>
+                            <div className="pt-1">
+                              <button
+                                type="button"
+                                onClick={() => setAddHoldingModalOpen(true)}
+                                className="px-4 py-2 rounded-full bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black text-xs font-bold transition shadow-xs cursor-pointer active:scale-95"
+                              >
+                                + İlk Hissenizi Ekleyin
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredRows.map((row) => (
+                      <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <StockLogo ticker={row.ticker} name={row.companyName} size="sm" />
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <Link href={`/companies/${row.ticker}`} className="font-bold text-xs text-slate-900 dark:text-white hover:text-blue-600 block">
+                                  {row.ticker}
+                                </Link>
+                                <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded-md bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-zinc-400">
+                                  {(row as any).basket || "Genel Portföy"}
+                                </span>
+                              </div>
+                              <span className="text-[10px] text-slate-500 dark:text-zinc-400 block truncate max-w-[140px]">
+                                {row.companyName}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="py-3 px-4 text-center">
+                          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            row.isCompliant ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                          }`}>
+                            {row.isCompliant ? "✓ Uygun" : "✕ Kapsam Dışı"}
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4 text-right font-mono">
+                          <div className="font-bold text-slate-900 dark:text-white">{row.lots} Lot</div>
+                          <div className="text-[10px] text-slate-500 dark:text-zinc-400">₺{row.avgCostTRY}</div>
+                        </td>
+
+                        <td className="py-3 px-4 text-right font-mono">
+                          <div className="font-bold text-slate-900 dark:text-white">{formatTRY(row.positionValueTRY, 2)}</div>
+                          <div className="text-[10px] text-slate-500 dark:text-zinc-400">₺{row.curPriceTRY.toFixed(2)}</div>
+                        </td>
+
+                        <td className={`py-3 px-4 text-right font-mono font-bold ${
+                          row.positionPnlTRY.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
+                        }`}>
+                          {row.positionPnlTRY.gte(0) ? "+" : ""}{formatTRY(row.positionPnlTRY, 2)} ({row.positionPnlPercent.toFixed(1)}%)
+                        </td>
+
+                        <td className="py-3 px-4 text-right font-mono font-bold text-blue-600 dark:text-blue-400">
+                          {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
+                        </td>
+
+                        <td className="py-3 px-4 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenSellModal(row)}
+                              className="px-2.5 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-500/20 transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                              title="Bu hisseden satış yap ve arındırma tutarını gör"
+                            >
+                              <ArrowDownRight size={13} />
+                              <span>Sat</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveHolding(row.id)}
+                              className="text-slate-400 hover:text-rose-600 transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 cursor-pointer"
+                              title="Pozisyonu Sil"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* ============================================================= */}
+            {/* PORTFÖY DAĞILIMI & RİSK RÖNTGENİ                               */}
+            {/* ============================================================= */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+              {/* Kolon 1: Varlık Ağırlık Dağılımı (Donut & Maliyet) */}
+              <div className="lg:col-span-6 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
                       <PieChart size={15} className="text-[#0D8B52] dark:text-emerald-400" />
-                      <span>Varlık Ağırlık Dağılımı</span>
+                      <span>Varlık Dağılımı</span>
                     </h3>
-                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                      Portföydeki hisselerin toplam piyasa değerine oranları
+                    <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                      Hisselerin portföy büyüklüğüne oranları
                     </p>
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#182542] dark:text-white">
+                  <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">
                     {holdingsChartData.length} Varlık
                   </span>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-6 py-2">
+                <div className="flex flex-col sm:flex-row items-center gap-5 py-1">
                   {/* SVG Donut */}
-                  <div className="relative w-32 h-32 shrink-0 flex items-center justify-center">
-                    <svg className="w-32 h-32 -rotate-90" viewBox="0 0 100 100">
+                  <div className="relative w-28 h-28 shrink-0 flex items-center justify-center">
+                    <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
                       <circle
                         cx="50"
                         cy="50"
@@ -1880,7 +1992,7 @@ function PortfolioManagementContent() {
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="11"
-                        className="text-slate-200/70 dark:text-white/10"
+                        className="text-slate-100 dark:text-white/10"
                       />
 
                       {holdingsChartData.length === 0 ? (
@@ -1923,179 +2035,149 @@ function PortfolioManagementContent() {
                     </svg>
 
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span className="text-xs font-mono font-black text-[#182542] dark:text-white leading-none">
+                      <span className="text-xs font-mono font-black text-slate-900 dark:text-white leading-none">
                         {holdingsChartData.length === 0 ? "0" : holdingsChartData.length}
                       </span>
-                      <span className="text-[9px] uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8] font-bold">
-                        Pozisyon
+                      <span className="text-[9px] uppercase tracking-wider text-slate-500 dark:text-zinc-400 font-bold">
+                        Hisse
                       </span>
                     </div>
                   </div>
 
                   {/* Lejant */}
-                  <div className="flex-1 w-full space-y-1.5">
+                  <div className="flex-1 w-full space-y-1">
                     {holdingsChartData.length === 0 ? (
-                      <div className="text-center py-4 text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                        Portföye hisse eklediğinizde ağırlık dağılımı burada görselleştirilir.
+                      <div className="text-center py-4 text-xs text-slate-500 dark:text-zinc-400">
+                        Hisse eklediğinizde dağılım burada listelenir.
                       </div>
                     ) : (
-                      holdingsChartData.map((h) => (
+                      holdingsChartData.slice(0, 5).map((h) => (
                         <div key={h.ticker} className="flex items-center justify-between text-xs py-0.5">
                           <div className="flex items-center gap-2 truncate">
-                            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: h.color }} />
-                            <span className="font-bold text-[#182542] dark:text-white">{h.ticker}</span>
-                            <span className="text-[10px] text-slate-400 truncate max-w-[100px]">{h.name}</span>
+                            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: h.color }} />
+                            <span className="font-bold text-slate-900 dark:text-white">{h.ticker}</span>
+                            <span className="text-[10px] text-slate-400 truncate max-w-[90px]">{h.name}</span>
                           </div>
-                          <div className="text-right shrink-0 font-mono">
-                            <span className="font-bold text-[#182542] dark:text-white">
-                              ₺{h.valueTRY.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
-                            </span>
-                            <span className="text-[10px] text-slate-400 ml-1.5 font-semibold">
-                              (%{h.weightPercent.toFixed(1)})
-                            </span>
-                          </div>
+                          <span className="font-mono font-bold text-slate-900 dark:text-white text-[11px]">
+                            %{h.weightPercent.toFixed(1)}
+                          </span>
                         </div>
                       ))
                     )}
                   </div>
                 </div>
+
+                {/* Katılım Uyumluluk Barı */}
+                <div className="pt-2 border-t border-slate-100 dark:border-white/5 space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-500 dark:text-zinc-400">Katılım Uyum Dengesi</span>
+                    <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                      %{portfolioAnalysis.halalWeightPercent.toFixed(1)} Helal
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden flex">
+                    <div
+                      className="h-full bg-emerald-500 transition-all duration-500"
+                      style={{ width: `${portfolioAnalysis.halalWeightPercent.toNumber()}%` }}
+                    />
+                    <div
+                      className="h-full bg-rose-500 transition-all duration-500"
+                      style={{ width: `${100 - portfolioAnalysis.halalWeightPercent.toNumber()}%` }}
+                    />
+                  </div>
+                </div>
               </div>
 
-              {/* GRAFİK 2: MALİYET VS PİYASA DEĞERİ & FIKHİ RÖNTGEN */}
-              <div className="lg:col-span-6 bg-white/75 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[26px] p-5 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4">
+              {/* Kolon 2: Sektörel Dağılım & Yoğunlaşma (Simply Wall St) */}
+              <div className="lg:col-span-6 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                      <TrendingUp size={15} className="text-[#2563EB] dark:text-blue-400" />
-                      <span>Maliyet &amp; Fıkhi Röntgen</span>
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <SlidersHorizontal size={15} className="text-blue-500" />
+                      <span>Sektörel Dağılım &amp; Yoğunlaşma</span>
                     </h3>
-                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                      Sermaye büyümesi ve helal varlık uyum dengesi
+                    <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                      Sektör ağırlıkları ve yoğunlaşma sınırları
                     </p>
                   </div>
-                  <span className={`text-xs font-bold font-mono px-2 py-0.5 rounded-full ${
-                    portfolioAnalysis.totalPnlTRY.gte(0)
-                      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"
-                      : "bg-rose-500/15 text-rose-700 dark:text-rose-400"
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    portfolioAnalysis.isSingleStockConcentrated || portfolioAnalysis.isSectorConcentrated
+                      ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                      : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
                   }`}>
-                    {portfolioAnalysis.totalPnlTRY.gte(0) ? "▲ +" : "▼ "}
-                    %{portfolioAnalysis.totalPnlPercent.toFixed(1)}
+                    {portfolioAnalysis.isSingleStockConcentrated || portfolioAnalysis.isSectorConcentrated ? "⚠️ Yoğunlaşma Var" : "✓ Dengeli"}
                   </span>
                 </div>
 
-                <div className="space-y-4 py-1">
-                  {/* Maliyet vs Piyasa Değeri Barları */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Piyasa Değeri / Maliyet Karşılaştırması</span>
-                      <span className="font-mono font-bold text-[#182542] dark:text-white">
-                        {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
-                      </span>
-                    </div>
+                <div className="space-y-2.5">
+                  {portfolioAnalysis.sectorBreakdown.slice(0, 4).map((sec, i) => {
+                    const colors = ["bg-blue-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500"];
+                    const barColor = colors[i % colors.length];
+                    return (
+                      <div key={sec.sector} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5">
+                            <span className={`w-2 h-2 rounded-full ${barColor}`} />
+                            <span>{sec.sector}</span>
+                          </span>
+                          <span className="font-mono text-slate-600 dark:text-zinc-400 text-[11px]">
+                            %{sec.weightPercent.toFixed(1)}
+                          </span>
+                        </div>
+                        <div className="w-full h-1.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
+                          <div
+                            className={`h-full ${barColor} rounded-full`}
+                            style={{ width: `${Math.min(100, sec.weightPercent)}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
-                    <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden flex">
-                      <div
-                        className="h-full bg-[#182542] dark:bg-[#273869] transition-all duration-500"
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            portfolioAnalysis.totalCostBasis.gt(0) && portfolioAnalysis.totalMarketValue.gt(0)
-                              ? (portfolioAnalysis.totalCostBasis.toNumber() /
-                                  Math.max(
-                                    portfolioAnalysis.totalMarketValue.toNumber(),
-                                    portfolioAnalysis.totalCostBasis.toNumber()
-                                  )) *
-                                  100
-                              : 0
-                          )}%`,
-                        }}
-                        title={`Maliyet: ${formatTRY(portfolioAnalysis.totalCostBasis, 2)}`}
-                      />
-                      <div
-                        className={`h-full transition-all duration-500 ${
-                          portfolioAnalysis.totalPnlTRY.gte(0) ? "bg-emerald-500" : "bg-rose-500"
-                        }`}
-                        style={{
-                          width: `${Math.min(
-                            100,
-                            portfolioAnalysis.totalCostBasis.gt(0) && portfolioAnalysis.totalMarketValue.gt(0)
-                              ? (Math.abs(portfolioAnalysis.totalPnlTRY.toNumber()) /
-                                  Math.max(
-                                    portfolioAnalysis.totalMarketValue.toNumber(),
-                                    portfolioAnalysis.totalCostBasis.toNumber()
-                                  )) *
-                                  100
-                              : 0
-                          )}%`,
-                        }}
-                        title={`Net Getiri: ${formatTRY(portfolioAnalysis.totalPnlTRY, 2)}`}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                      <span>Maliyet: {formatTRY(portfolioAnalysis.totalCostBasis, 2)}</span>
-                      <span>Net: {formatTRY(portfolioAnalysis.totalPnlTRY, 2)}</span>
-                    </div>
-                  </div>
-
-                  {/* Katılım Uyumluluk Barı */}
-                  <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-[#6E81A0] dark:text-[#94A3B8]">Katılım Kriteri Uyumluluk Oranı</span>
-                      <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                        %{portfolioAnalysis.halalWeightPercent.toFixed(1)} Helal
-                      </span>
-                    </div>
-
-                    <div className="w-full h-2.5 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden flex">
-                      <div
-                        className="h-full bg-emerald-500 transition-all duration-500"
-                        style={{ width: `${portfolioAnalysis.halalWeightPercent.toNumber()}%` }}
-                      />
-                      <div
-                        className="h-full bg-rose-500 transition-all duration-500"
-                        style={{ width: `${100 - portfolioAnalysis.halalWeightPercent.toNumber()}%` }}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                      <span>DİB / TKBB Katılım Uyumlu</span>
-                      <span>Arındırma: {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}</span>
-                    </div>
-                  </div>
+                {/* Yoğunlaşma Durumu Açıklaması */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 text-[11px] text-slate-500 dark:text-zinc-400">
+                  {portfolioAnalysis.isSingleStockConcentrated ? (
+                    <span><strong>{portfolioAnalysis.maxHolding?.ticker}</strong> hisseniz portföyün %{portfolioAnalysis.maxHoldingWeight.toFixed(1)}&apos;ini oluşturarak %35 risk limitini aşıyor.</span>
+                  ) : portfolioAnalysis.isSectorConcentrated ? (
+                    <span><strong>{portfolioAnalysis.maxSector?.sector}</strong> sektörü portföyün %{portfolioAnalysis.maxSector?.weightPercent.toFixed(1)}&apos;ini oluşturarak %50 limitini aşıyor.</span>
+                  ) : (
+                    <span>Portföyünüz dengeli çeşitlendirilmiştir. Tek hisse (%35) veya tek sektör (%50) eşik aşımı bulunmuyor.</span>
+                  )}
                 </div>
               </div>
-
             </div>
 
-            {/* Fıkhi Güvenlik ve Kurallar Kontrolü */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
+            {/* ============================================================= */}
+            {/* FIKHİ PORTFÖY GÜVENLİK VE OTOMASYON KURALLARI                   */}
+            {/* ============================================================= */}
+            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                    Fıkhi Portföy Güvenlik Kontrolleri
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                    Fıkhi Güvenlik ve Otomasyon Kuralları
                   </h3>
-                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    DİB ve TKBB standartlarına göre aktif otomatik kurallar
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    DİB ve TKBB standartlarına göre otomatik portföy koruma kuralları
                   </p>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400 text-[10px] font-bold">
-                  4 Kural Aktif
+                <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
+                  Aktif Kurallar
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
                 {/* 1. Otomatik Arındırma */}
-                <div className="p-3.5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">Otomatik Arındırma</span>
-                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Temettü tahakkukunda</span>
+                    <span className="text-xs font-bold text-slate-900 dark:text-white block">Otomatik Arındırma</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-400">Temettü tahakkukunda</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setAutoPurification(!autoPurification)}
-                    className={`w-10 h-5 rounded-full p-0.5 transition-colors flex items-center ${
-                      autoPurification ? "bg-[#0D8B52] justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
+                    className={`w-9 h-5 rounded-full p-0.5 transition-colors flex items-center cursor-pointer ${
+                      autoPurification ? "bg-emerald-600 justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
                     }`}
                   >
                     <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
@@ -2103,16 +2185,16 @@ function PortfolioManagementContent() {
                 </div>
 
                 {/* 2. Anlık KAP Alarmları */}
-                <div className="p-3.5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">Anlık KAP Alarmları</span>
-                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Kapsam dışı kalırsa uyar</span>
+                    <span className="text-xs font-bold text-slate-900 dark:text-white block">Anlık KAP Alarmları</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-400">Kapsam dışı kalırsa</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setRealtimeAlerts(!realtimeAlerts)}
-                    className={`w-10 h-5 rounded-full p-0.5 transition-colors flex items-center ${
-                      realtimeAlerts ? "bg-[#0D8B52] justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
+                    className={`w-9 h-5 rounded-full p-0.5 transition-colors flex items-center cursor-pointer ${
+                      realtimeAlerts ? "bg-emerald-600 justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
                     }`}
                   >
                     <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
@@ -2120,585 +2202,37 @@ function PortfolioManagementContent() {
                 </div>
 
                 {/* 3. Yıllık Zekât Takibi */}
-                <div className="p-3.5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">Yıllık Zekât Takibi</span>
-                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Dönen varlık matrahı</span>
+                    <span className="text-xs font-bold text-slate-900 dark:text-white block">Yıllık Zekât Takibi</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-400">Dönen varlık esası</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setAnnualZakatAlert(!annualZakatAlert)}
-                    className={`w-10 h-5 rounded-full p-0.5 transition-colors flex items-center ${
-                      annualZakatAlert ? "bg-[#0D8B52] justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
+                    className={`w-9 h-5 rounded-full p-0.5 transition-colors flex items-center cursor-pointer ${
+                      annualZakatAlert ? "bg-emerald-600 justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
                     }`}
                   >
                     <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
                   </button>
                 </div>
 
-                {/* 4. Yabancı Hisse Filtresi */}
-                <div className="p-3.5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
+                {/* 4. Yabancı Varlık Koruması */}
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">Yabancı Varlık Koruması</span>
-                    <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Yurt dışı fıkhi filtre</span>
+                    <span className="text-xs font-bold text-slate-900 dark:text-white block">Yabancı Varlık Filtresi</span>
+                    <span className="text-[10px] text-slate-500 dark:text-zinc-400">Yurt dışı fıkhi filtre</span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setForeignFilter(!foreignFilter)}
-                    className={`w-10 h-5 rounded-full p-0.5 transition-colors flex items-center ${
-                      foreignFilter ? "bg-[#0D8B52] justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
+                    className={`w-9 h-5 rounded-full p-0.5 transition-colors flex items-center cursor-pointer ${
+                      foreignFilter ? "bg-emerald-600 justify-end" : "bg-slate-300 dark:bg-white/10 justify-start"
                     }`}
                   >
                     <span className="w-4 h-4 rounded-full bg-white shadow-xs" />
                   </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Yeni Pozisyon Ekleme Formu */}
-            <div id="yeni-pozisyon" className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
-              <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3">
-                <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                    Portföye Yeni Hisse Ekle
-                  </h3>
-                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    BIST hisseleri arasından seçim yapın
-                  </p>
-                </div>
-              </div>
-
-              <form
-                onSubmit={handleAddHolding}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3 items-end"
-              >
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Hisse Kodu
-                  </label>
-                  <select
-                    value={newTicker}
-                    onChange={(e) => handleSelectNewTicker(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none"
-                  >
-                    {(BIST_COMPREHENSIVE_UNIVERSE.length > 0 ? BIST_COMPREHENSIVE_UNIVERSE : SAMPLE_COMPANIES_SUMMARY).map((c) => (
-                      <option key={c.ticker} value={c.ticker} className="dark:bg-[#0E1015]">
-                        {c.ticker} — {c.name.slice(0, 24)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Sepet / Portföy
-                  </label>
-                  <select
-                    value={newHoldingBasket}
-                    onChange={(e) => setNewHoldingBasket(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none"
-                  >
-                    <option value="Genel Portföy" className="dark:bg-[#0E1015]">Genel Portföy</option>
-                    {customBaskets.map((b) => (
-                      <option key={b} value={b} className="dark:bg-[#0E1015]">{b}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Lot Adedi
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={newLots}
-                    onChange={(e) => setNewLots(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Ort. Maliyet (₺)
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    value={newAvgCost}
-                    onChange={(e) => setNewAvgCost(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Alış Tarihi / Gün ({newDaysHeldInput} Gün)
-                  </label>
-                  <div className="flex items-center gap-1.5">
-                    <input
-                      type="number"
-                      min="1"
-                      max="36500"
-                      value={newDaysHeldInput}
-                      onChange={(e) => handleNewDaysChange(e.target.value)}
-                      title="Elde Tutulan Gün Sayısı"
-                      placeholder="Gün"
-                      className="w-20 px-2.5 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
-                    />
-                    <input
-                      type="date"
-                      value={newPurchaseDate}
-                      onChange={(e) => handleNewDateChange(e.target.value)}
-                      className="w-full px-2.5 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-[#182542] dark:text-white outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block mb-1">
-                    Zekât Niyeti
-                  </label>
-                  <select
-                    value={newZakatIntent}
-                    onChange={(e) => setNewZakatIntent(e.target.value as ZakatIntentionType)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none"
-                  >
-                    <option value="LONG_TERM_DIVIDEND" className="dark:bg-[#0E1015]">Uzun Vade (Temettü)</option>
-                    <option value="TRADING_SHORT_TERM" className="dark:bg-[#0E1015]">Kısa Vade (Al-Sat)</option>
-                  </select>
-                </div>
-
-                <div>
-                  <button
-                    type="submit"
-                    className="w-full py-2.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold shadow-xs transition"
-                  >
-                    + Portföye Ekle
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            {/* =============================================================== */}
-            {/* KATILIM DIŞI PORTFÖY UYARISI & AKILLI SEKTÖREL İKAME MOTORU    */}
-            {/* =============================================================== */}
-            {nonCompliantHoldings.length > 0 && (
-              <div className="bg-gradient-to-br from-amber-500/10 via-rose-500/10 to-transparent dark:from-amber-950/30 dark:via-rose-950/20 dark:to-transparent rounded-[24px] p-5 sm:p-6 border-2 border-amber-500/30 dark:border-amber-500/20 shadow-md space-y-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-amber-500/20 dark:border-amber-500/10 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0">
-                      <AlertTriangle size={20} className="animate-pulse" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base font-extrabold text-[#182542] dark:text-white">
-                          Katılım Dışı Varlık Uyarısı: Fıkhi Kapsam Dışı Hisse Tespit Edildi
-                        </h3>
-                        <span className="px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-700 dark:text-rose-400 text-[10px] font-bold">
-                          {nonCompliantHoldings.length} Hisse İhlalde
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                        DİB Din İşleri Yüksek Kurulu ve BIST Katılım Standartlarına göre portföyünüzün fıkhi uyum oranı şu an <strong className="text-amber-700 dark:text-amber-400">%{portfolioAnalysis.halalWeightPercent.toFixed(1)}</strong> seviyesindedir.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8]">
-                      Hedef Uyum:
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-mono font-black">
-                      %100,0 Tam Uyum
-                    </span>
-                  </div>
-                </div>
-
-                {/* Her İhlal Eden Hisse İçin İkame Kartı */}
-                <div className="space-y-4">
-                  {nonCompliantHoldings.map((badRow) => {
-                    const alternatives = getCompliantAlternativesForTicker(badRow.ticker, badRow.sector);
-                    return (
-                      <div
-                        key={`bad-${badRow.id}`}
-                        className="bg-white/90 dark:bg-[#0E1015]/90 backdrop-blur-sm rounded-2xl p-4 sm:p-5 border border-amber-500/20 dark:border-white/10 space-y-4 shadow-xs"
-                      >
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-3">
-                          <div className="flex items-center gap-3">
-                            <StockLogo ticker={badRow.ticker} name={badRow.companyName} size="md" />
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="font-extrabold text-sm text-[#182542] dark:text-white">
-                                  {badRow.ticker} — {badRow.companyName}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 text-[10px] font-bold">
-                                  ✕ Katılım Dışı
-                                </span>
-                              </div>
-                              <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] block">
-                                Sektör: {badRow.sector} • Pozisyon Değeri: <strong className="font-mono text-[#182542] dark:text-white">{formatTRY(badRow.positionValueTRY, 2)}</strong> ({badRow.lots} Lot)
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="bg-rose-50 dark:bg-rose-950/30 px-3 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/40 text-[11px] text-rose-800 dark:text-rose-300">
-                            <strong>İhlal Nedeni:</strong> {badRow.ticker === "THYAO" ? "Faizli Kredi ve Borç Eşiği %44.2 > %33.0 yasal tavanı" : "Katılım Endeksi Finansal Rasyo / Faaliyet Eşik Aşımı"}
-                          </div>
-                        </div>
-
-                        {/* Önerilen Katılım Uyumlu Muadiller */}
-                        <div>
-                          <div className="flex items-center justify-between mb-2.5">
-                            <div className="flex items-center gap-1.5 text-xs font-bold text-[#182542] dark:text-white">
-                              <ArrowLeftRight size={13} className="text-emerald-600 dark:text-emerald-400" />
-                              <span>Önerilen Katılım Uyumlu Sektörel Muadiller (1 Tıkla İkame Et)</span>
-                            </div>
-                            <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                              BIST Katılım Tam Onaylı
-                            </span>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {alternatives.map((alt) => {
-                              const altPrice = parseFloat(livePrices[alt.ticker] || alt.priceTRY?.replace("₺", "").trim() || "50.00");
-                              const equivalentLots = Math.max(1, Math.round(badRow.positionValueTRY.toNumber() / altPrice));
-                              return (
-                                <div
-                                  key={alt.ticker}
-                                  className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 hover:border-emerald-500/40 transition flex flex-col justify-between space-y-3"
-                                >
-                                  <div className="flex items-start justify-between gap-2">
-                                    <div className="flex items-center gap-2">
-                                      <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
-                                      <div>
-                                        <span className="font-bold text-xs text-[#182542] dark:text-white block">
-                                          {alt.ticker}
-                                        </span>
-                                        <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[130px]">
-                                          {alt.name}
-                                        </span>
-                                      </div>
-                                    </div>
-                                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-[#0D8B52] dark:text-emerald-400 text-[9px] font-bold">
-                                      ✓ Katılım
-                                    </span>
-                                  </div>
-
-                                  <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] space-y-1">
-                                    <div className="flex justify-between">
-                                      <span>Canlı Fiyat:</span>
-                                      <span className="font-mono font-bold text-[#182542] dark:text-white">₺{altPrice.toFixed(2)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                      <span>Borç Rasyosu:</span>
-                                      <span className="font-mono font-bold text-[#0D8B52] dark:text-emerald-400">{alt.debtRatio || "%14.2"} (Güvenli)</span>
-                                    </div>
-                                    <p className="text-[10px] leading-tight text-slate-500 dark:text-slate-400 pt-0.5">
-                                      {alt.reason}
-                                    </p>
-                                  </div>
-
-                                  <button
-                                    type="button"
-                                    onClick={() => handleSwapHolding(badRow.id, badRow.ticker, alt.ticker, alt.name)}
-                                    className="w-full py-2 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs"
-                                  >
-                                    <ArrowRight size={13} />
-                                    <span>{alt.ticker} ile İkame Et (~{equivalentLots} Lot)</span>
-                                  </button>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-
-                        <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] flex items-center justify-between pt-1 border-t border-slate-100 dark:border-white/5">
-                          <span>
-                            Bu takas işlemiyle <strong>{formatTRY(badRow.positionValueTRY, 2)}</strong> büyüklüğündeki sermayeniz fıkhen helal ve caiz sektörel muadile aktarılır.
-                          </span>
-                          <span className="text-[#0D8B52] dark:text-emerald-400 font-bold shrink-0">
-                            Portföy Uyum Artışı: +%{((badRow.positionValueTRY.toNumber() / portfolioAnalysis.totalMarketValue.toNumber()) * 100).toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Portföy Pozisyonları Tablosu */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
-              <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white">
-                    Portföy Pozisyonları ({filteredRows.length} Hisse{activeBasket !== "ALL" ? ` • ${activeBasket}` : ""})
-                  </h3>
-                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Gerçek Borsa İstanbul logoları ve canlı piyasa değerleri
-                  </p>
-                </div>
-                <span className="text-xs font-mono font-bold text-[#0D8B52] dark:text-emerald-400">
-                  Toplam Değer: {formatTRY(portfolioAnalysis.totalMarketValue, 2)}
-                </span>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-xs">
-                  <thead>
-                    <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[#6E81A0] dark:text-[#94A3B8] font-bold text-[11px]">
-                      <th className="py-3 px-4">Hisse Senedi</th>
-                      <th className="py-3 px-4 text-center">Fıkhi Durum</th>
-                      <th className="py-3 px-4 text-right">Lot &amp; Maliyet</th>
-                      <th className="py-3 px-4 text-right">Canlı Değer</th>
-                      <th className="py-3 px-4 text-right">Kâr / Zarar</th>
-                      <th className="py-3 px-4 text-right text-[#182542] dark:text-blue-400">Arındırma Payı</th>
-                      <th className="py-3 px-4 text-right">İşlem</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {filteredRows.length === 0 ? (
-                      <tr>
-                        <td colSpan={7} className="py-12 text-center">
-                          <div className="max-w-md mx-auto space-y-3">
-                            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-[#182542] dark:text-white flex items-center justify-center mx-auto">
-                              {activeBasket !== "ALL" ? <Folder size={22} /> : <Briefcase size={22} />}
-                            </div>
-                            <div className="text-sm font-bold text-[#182542] dark:text-white">
-                              {activeBasket !== "ALL"
-                                ? `"${activeBasket}" Sepetinde Hisse Bulunmuyor`
-                                : "Portföyünüz Henüz Boş"}
-                            </div>
-                            <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
-                              {activeBasket !== "ALL"
-                                ? "Yeni hisse eklerken \"Sepet / Portföy\" alanından bu sepeti seçebilir veya tüm hisselerinizi görmek için \"Tüm Varlıklar\" sekmesine geçebilirsiniz."
-                                : "Takip etmek istediğiniz BIST hisselerini yukarıdaki forma ekleyerek fıkhi uyumluluk, tahmini arındırma tutarı ve zekât hesaplamalarınızı anında başlatın."}
-                            </p>
-                            {activeBasket !== "ALL" && (
-                              <button
-                                type="button"
-                                onClick={() => setActiveBasket("ALL")}
-                                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-[#182542] dark:text-white transition cursor-pointer"
-                              >
-                                Tüm Varlıkları Göster
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredRows.map((row) => (
-                      <tr key={row.id} className="hover:bg-slate-50/70 dark:hover:bg-white/5 transition">
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            <StockLogo ticker={row.ticker} name={row.companyName} size="sm" />
-                            <div>
-                              <div className="flex items-center gap-1.5">
-                                <Link href={`/companies/${row.ticker}`} className="font-bold text-xs text-[#182542] dark:text-white hover:text-blue-600 block">
-                                  {row.ticker}
-                                </Link>
-                                <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded-md bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400">
-                                  {(row as any).basket || "Genel Portföy"}
-                                </span>
-                              </div>
-                              <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[140px]">
-                                {row.companyName}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-
-                        <td className="py-3 px-4 text-center">
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            row.isCompliant ? "bg-emerald-50 dark:bg-emerald-950/40 text-[#0D8B52] dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-950/40 text-[#C62E26] dark:text-rose-400"
-                          }`}>
-                            {row.isCompliant ? "✓ Uygun" : "✕ Kapsam Dışı"}
-                          </span>
-                        </td>
-
-                        <td className="py-3 px-4 text-right font-mono">
-                          <div className="font-bold text-[#182542] dark:text-white">{row.lots} Lot</div>
-                          <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">₺{row.avgCostTRY}</div>
-                        </td>
-
-                        <td className="py-3 px-4 text-right font-mono">
-                          <div className="font-bold text-[#182542] dark:text-white">{formatTRY(row.positionValueTRY, 2)}</div>
-                          <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">₺{row.curPriceTRY.toFixed(2)}</div>
-                        </td>
-
-                        <td className={`py-3 px-4 text-right font-mono font-bold ${
-                          row.positionPnlTRY.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
-                        }`}>
-                          {row.positionPnlTRY.gte(0) ? "+" : ""}{formatTRY(row.positionPnlTRY, 2)} ({row.positionPnlPercent.toFixed(1)}%)
-                        </td>
-
-                        <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-blue-400">
-                          {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
-                        </td>
-
-                        <td className="py-3 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => handleOpenSellModal(row)}
-                              className="px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/30 text-rose-600 dark:text-rose-400 font-bold text-xs hover:bg-rose-100 dark:hover:bg-rose-900/50 transition flex items-center gap-1 shadow-2xs"
-                              title="Bu hisseden satış yap ve arındırma tutarını gör"
-                            >
-                              <ArrowDownRight size={13} />
-                              <span>Sat</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveHolding(row.id)}
-                              className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#C62E26] transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
-                              title="Pozisyonu Sil"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* ============================================================= */}
-            {/* SEKTÖREL DAĞILIM VE YOĞUNLAŞMA RİSKİ (Simply Wall St Modeli)   */}
-            {/* ============================================================= */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-5 transition-colors">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-white/5 pb-4">
-                <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                    <SlidersHorizontal size={16} className="text-[#2563EB] dark:text-blue-400" />
-                    <span>Sektörel Dağılım Röntgeni &amp; Yoğunlaşma Riski</span>
-                  </h3>
-                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Simply Wall St metodolojisiyle tek hisse (%35) ve sektör (%50) yoğunlaşma limitleri
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {portfolioAnalysis.isSingleStockConcentrated || portfolioAnalysis.isSectorConcentrated ? (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25">
-                      <AlertTriangle size={13} />
-                      <span>Yoğunlaşma Uyarısı</span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-[#0D8B52] dark:text-emerald-400 border border-emerald-500/25">
-                      <CheckCircle2 size={13} />
-                      <span>Dengeli Çeşitlendirme</span>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                {/* Sol: Sektörel Dağılım Çubukları */}
-                <div className="lg:col-span-7 space-y-3">
-                  <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
-                    Sektör Ağırlıkları ({portfolioAnalysis.sectorBreakdown.length} Sektör)
-                  </span>
-                  
-                  {portfolioAnalysis.sectorBreakdown.length === 0 ? (
-                    <p className="text-xs text-[#6E81A0] py-4">Portföyde henüz hisse bulunmuyor.</p>
-                  ) : (
-                    <div className="space-y-2.5">
-                      {portfolioAnalysis.sectorBreakdown.map((sec, i) => {
-                        const colors = ["bg-blue-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500", "bg-cyan-500", "bg-rose-500", "bg-slate-500"];
-                        const barColor = colors[i % colors.length];
-                        return (
-                          <div key={sec.sector} className="space-y-1">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                                <span className={`w-2 h-2 rounded-full ${barColor}`} />
-                                <span>{sec.sector}</span>
-                                <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-normal">
-                                  ({sec.count} Hisse)
-                                </span>
-                              </span>
-                              <div className="text-right font-mono">
-                                <span className="font-bold text-[#182542] dark:text-white">
-                                  {formatTRY(sec.valueTRY, 0)}
-                                </span>
-                                <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] ml-2">
-                                  (%{sec.weightPercent.toFixed(1)})
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-white/10 overflow-hidden">
-                              <div
-                                className={`h-full ${barColor} rounded-full transition-all duration-500`}
-                                style={{ width: `${Math.min(100, sec.weightPercent)}%` }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* Sağ: Yoğunlaşma Durumu & Uyarı Kartları */}
-                <div className="lg:col-span-5 space-y-3">
-                  <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
-                    Yoğunlaşma ve Çeşitlendirme Sağlığı
-                  </span>
-
-                  {/* 1. Tek Hisse Analizi */}
-                  <div className={`p-4 rounded-2xl border text-xs space-y-1.5 ${
-                    portfolioAnalysis.isSingleStockConcentrated
-                      ? "bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200"
-                      : "bg-emerald-500/10 border-emerald-500/25 text-emerald-900 dark:text-emerald-200"
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold flex items-center gap-1.5">
-                        {portfolioAnalysis.isSingleStockConcentrated ? (
-                          <AlertTriangle size={15} className="text-amber-600 dark:text-amber-400" />
-                        ) : (
-                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
-                        )}
-                        <span>Tek Hisse Limiti (%35 Eşiği)</span>
-                      </span>
-                      <span className="font-mono font-bold text-[11px]">
-                        {portfolioAnalysis.maxHolding ? `${portfolioAnalysis.maxHolding.ticker} (%${portfolioAnalysis.maxHoldingWeight.toFixed(1)})` : "-"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] leading-relaxed opacity-90">
-                      {portfolioAnalysis.isSingleStockConcentrated
-                        ? `${portfolioAnalysis.maxHolding?.ticker} hisseniz portföyün %${portfolioAnalysis.maxHoldingWeight.toFixed(1)}'ini oluşturarak %35 risk sınırını aşıyor. Sermaye güvenliği için kâr realizasyonu veya kademeli çeşitlendirme önerilir.`
-                        : "En yüksek paya sahip hisseniz güvenli %35 sınırının altında. Sermayeniz tek bir şirkete aşırı bağımlı değil."}
-                    </p>
-                  </div>
-
-                  {/* 2. Sektörel Yoğunlaşma Analizi */}
-                  <div className={`p-4 rounded-2xl border text-xs space-y-1.5 ${
-                    portfolioAnalysis.isSectorConcentrated
-                      ? "bg-amber-500/10 border-amber-500/30 text-amber-900 dark:text-amber-200"
-                      : "bg-emerald-500/10 border-emerald-500/25 text-emerald-900 dark:text-emerald-200"
-                  }`}>
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold flex items-center gap-1.5">
-                        {portfolioAnalysis.isSectorConcentrated ? (
-                          <AlertTriangle size={15} className="text-amber-600 dark:text-amber-400" />
-                        ) : (
-                          <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
-                        )}
-                        <span>Sektör Limiti (%50 Eşiği)</span>
-                      </span>
-                      <span className="font-mono font-bold text-[11px]">
-                        {portfolioAnalysis.maxSector ? `${portfolioAnalysis.maxSector.sector} (%${portfolioAnalysis.maxSector.weightPercent.toFixed(1)})` : "-"}
-                      </span>
-                    </div>
-                    <p className="text-[11px] leading-relaxed opacity-90">
-                      {portfolioAnalysis.isSectorConcentrated
-                        ? `${portfolioAnalysis.maxSector?.sector} sektörü portföyünüzün %${portfolioAnalysis.maxSector?.weightPercent.toFixed(1)}'ini oluşturuyor. Farklı sektörlerden katılım uyumlu hisselerle risk dengesi kurabilirsiniz.`
-                        : "Sektörel dağılım dengeli. Hiçbir sektör tek başına portföyün yarısından fazlasını oluşturmuyor."}
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -4261,6 +3795,293 @@ function PortfolioManagementContent() {
             </div>
           </div>
         )}
+
+        {/* ================================================================= */}
+        {/* YENİ POZİSYON EKLE MODALI (Apple Minimalist Modal)                 */}
+        {/* ================================================================= */}
+        {addHoldingModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+            <div className="bg-white dark:bg-[#0E1015] border border-black/10 dark:border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 text-[#182542] dark:text-white">
+              <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-black/5 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
+                    <Plus size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                      Hisse Ekle
+                    </h3>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      Portföyünüze yeni bir varlık kaydedin
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setAddHoldingModalOpen(false)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleAddHolding} className="space-y-4">
+                {/* Hisse Kodu Seçici */}
+                <div>
+                  <label className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] block mb-1.5">
+                    Hisse Sembolü
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={newTicker}
+                      onChange={(e) => handleSelectNewTicker(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-bold text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                    >
+                      {SAMPLE_COMPANIES_SUMMARY.map((comp) => (
+                        <option key={comp.ticker} value={comp.ticker} className="dark:bg-[#14171F]">
+                          {comp.ticker} - {comp.name} {comp.bistStatus === "COMPLIANT" ? "(Katılım Onaylı)" : "(Kapsam Dışı)"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Sepet Seçimi */}
+                <div>
+                  <label className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] block mb-1.5">
+                    Portföy Sepeti
+                  </label>
+                  <select
+                    value={newHoldingBasket}
+                    onChange={(e) => setNewHoldingBasket(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-medium text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                  >
+                    <option value="Genel Portföy" className="dark:bg-[#14171F]">Genel Portföy</option>
+                    {customBaskets.map((b) => (
+                      <option key={b} value={b} className="dark:bg-[#14171F]">
+                        {b}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Lot ve Ortalama Maliyet */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] block mb-1.5">
+                      Lot Adedi
+                    </label>
+                    <input
+                      type="number"
+                      step="any"
+                      min="1"
+                      required
+                      value={newLots}
+                      onChange={(e) => setNewLots(e.target.value)}
+                      placeholder="100"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono font-bold text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] block mb-1.5">
+                      Ort. Maliyet (₺)
+                    </label>
+                    <input
+                      type="number"
+                      step="any"
+                      min="0.01"
+                      required
+                      value={newAvgCost}
+                      onChange={(e) => setNewAvgCost(e.target.value)}
+                      placeholder="100.00"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono font-bold text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Alış Tarihi */}
+                <div>
+                  <label className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] block mb-1.5">
+                    Alış Tarihi (Arındırma &amp; Zekât Hesaplaması İçin)
+                  </label>
+                  <input
+                    type="date"
+                    value={newPurchaseDate}
+                    onChange={(e) => handleNewDateChange(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                  />
+                </div>
+
+                {/* Zekât Niyeti */}
+                <div>
+                  <label className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] block mb-1.5">
+                    Yatırım Amacı (Zekât Metodolojisi)
+                  </label>
+                  <select
+                    value={newZakatIntent}
+                    onChange={(e) => setNewZakatIntent(e.target.value as ZakatIntentionType)}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-medium text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                  >
+                    <option value="LONG_TERM_DIVIDEND" className="dark:bg-[#14171F]">
+                      Uzun Vadeli / Temettü (Dönen Varlıklar Üzerinden)
+                    </option>
+                    <option value="TRADE_AL_SAT" className="dark:bg-[#14171F]">
+                      Kısa Vadeli / Al-Sat Ticareti (Piyasa Değeri Üzerinden %2.5)
+                    </option>
+                  </select>
+                </div>
+
+                {/* Aksiyon Butonları */}
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-black/5 dark:border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setAddHoldingModalOpen(false)}
+                    className="px-4 py-2.5 rounded-xl text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:bg-black/5 dark:hover:bg-white/5 transition cursor-pointer"
+                  >
+                    Vazgeç
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <Plus size={15} />
+                    <span>Hisse Ekle</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* MUADİLLERLE DEĞİŞTİR / İKAME MOTORU MODALI                        */}
+        {/* ================================================================= */}
+        {swapModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
+            <div className="bg-white dark:bg-[#0E1015] border border-black/10 dark:border-white/10 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6 text-[#182542] dark:text-white">
+              <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
+                    <ArrowLeftRight size={20} />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                      Katılım Dışı Varlık İkame Motoru
+                    </h3>
+                    <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                      Kapsam dışı varlıklarınızı aynı sektördeki onaylı muadilleriyle tek tıkla takas edin
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSwapModalOpen(false)}
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition cursor-pointer"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {nonCompliantHoldings.length === 0 ? (
+                <div className="py-8 text-center space-y-2">
+                  <BadgeCheck size={36} className="text-emerald-500 mx-auto" />
+                  <h4 className="font-bold text-sm text-[#182542] dark:text-white">
+                    Tebrikler! Portföyünüz %100 Katılım Uyumlu
+                  </h4>
+                  <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                    Portföyünüzde ikame edilmesi gereken katılım dışı hisse bulunmuyor.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-1">
+                  {nonCompliantHoldings.map((holding) => {
+                    const alternatives = getCompliantAlternativesForTicker(holding.ticker);
+                    return (
+                      <div
+                        key={holding.id}
+                        className="p-4 rounded-2xl bg-black/[0.02] dark:bg-white/[0.03] border border-black/5 dark:border-white/10 space-y-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <StockLogo ticker={holding.ticker} name={holding.companyName} size="md" />
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-sm text-[#182542] dark:text-white">
+                                  {holding.ticker}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                  Katılım Dışı
+                                </span>
+                              </div>
+                              <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                                {holding.lots} Lot • {formatTRY(holding.positionValueTRY)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Muadiller */}
+                        <div className="space-y-2 pt-2">
+                          <span className="text-[11px] font-semibold text-[#6E81A0] dark:text-[#94A3B8] uppercase tracking-wider block">
+                            Önerilen Katılım Uyumlu Muadiller:
+                          </span>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                            {alternatives.map((alt) => (
+                              <div
+                                key={alt.ticker}
+                                className="p-3 rounded-xl bg-white dark:bg-[#12141A] border border-black/10 dark:border-white/10 hover:border-black/30 dark:hover:border-white/30 transition flex flex-col justify-between gap-2"
+                              >
+                                <div>
+                                  <div className="flex items-center justify-between mb-1">
+                                    <span className="font-bold text-xs text-[#182542] dark:text-white">
+                                      {alt.ticker}
+                                    </span>
+                                    {alt.debtRatio && (
+                                      <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+                                        Borç {alt.debtRatio}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] line-clamp-1">
+                                    {alt.name}
+                                  </p>
+                                  {alt.reason && (
+                                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-2 leading-relaxed">
+                                      {alt.reason}
+                                    </p>
+                                  )}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => handleSwapHolding(holding.id, holding.ticker, alt.ticker, alt.name)}
+                                  className="w-full mt-1 py-1.5 px-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-[11px] font-semibold transition flex items-center justify-center gap-1 cursor-pointer"
+                                >
+                                  <ArrowLeftRight size={12} />
+                                  <span>Değiştir</span>
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="flex justify-end pt-2 border-t border-black/5 dark:border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setSwapModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-black/5 dark:bg-white/10 text-xs font-semibold text-[#182542] dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition cursor-pointer"
+                >
+                  Kapat
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <style jsx global>{`
           @media print {
             body * {
@@ -4286,7 +4107,6 @@ function PortfolioManagementContent() {
           }
         `}</style>
 
-      </div>
     </PaynoShell>
   );
 }

@@ -203,7 +203,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/tarayici"
-              className="w-full sm:w-auto px-4 py-2 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs active:scale-95"
+              className="w-full sm:w-auto px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold transition flex items-center justify-center gap-2 shadow-xs active:scale-95"
             >
               <Search size={14} />
               <span>BIST Hisse Tara</span>
@@ -401,8 +401,8 @@ export default function DashboardPage() {
             {/* Aksiyon Butonları */}
             <div className="grid grid-cols-2 gap-2 pt-1">
               <Link
-                href="/portfolio#yeni-pozisyon"
-                className="rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white py-2 px-3 text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 transition text-center"
+                href="/portfolio?action=add"
+                className="rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 py-2 px-3 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition text-center"
               >
                 <Plus size={13} />
                 <span>Hisse Ekle</span>
@@ -410,7 +410,7 @@ export default function DashboardPage() {
 
               <Link
                 href="/portfolio?tab=arindirma"
-                className="rounded-full bg-[#F4F5F7] dark:bg-white/10 hover:bg-[#EAECEF] dark:hover:bg-white/15 text-[#182542] dark:text-white py-2 px-3 text-xs font-bold flex items-center justify-center gap-1.5 transition text-center"
+                className="rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-[#182542] dark:text-white py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition text-center"
               >
                 <Scale size={13} />
                 <span>Arındır</span>
@@ -555,8 +555,8 @@ export default function DashboardPage() {
                   Portföyünüzde henüz hisse bulunmuyor. Katılım standartlarına uygun hisseleri ekleyerek kuruşu kuruşuna arındırma hesabınızı başlatın.
                 </p>
                 <Link
-                  href="/portfolio#yeni-pozisyon"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#182542] dark:bg-[#273869] text-white text-xs font-bold hover:scale-105 transition"
+                  href="/portfolio?action=add"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold hover:scale-105 transition"
                 >
                   <Plus size={13} />
                   <span>İlk Hissenizi Ekleyin</span>
