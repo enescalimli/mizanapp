@@ -27,17 +27,28 @@ export const MizanSnowflakeRadar: React.FC<MizanSnowflakeRadarProps> = ({
   const center = size / 2;
   const radius = size * 0.38;
 
+  const safeScores = useMemo(() => {
+    return {
+      faizsizlik: Number(scores?.faizsizlik) || 75,
+      hasilatHelalligi: Number(scores?.hasilatHelalligi) || 80,
+      temettu: Number(scores?.temettu) || 70,
+      bilancoSagligi: Number(scores?.bilancoSagligi) || 75,
+      degerleme: Number(scores?.degerleme) || 70,
+      buyume: Number(scores?.buyume) || 75,
+    };
+  }, [scores]);
+
   // 6 Eksen ve Açıları (Dönüş: -90 dereceden başlar = Saat 12 yönü)
   const axes = useMemo(
     () => [
-      { key: "faizsizlik", label: "Faizsizlik", angle: -90, score: scores.faizsizlik },
-      { key: "hasilatHelalligi", label: "Hasılat Helalliği", angle: -30, score: scores.hasilatHelalligi },
-      { key: "temettu", label: "Temettü", angle: 30, score: scores.temettu },
-      { key: "bilancoSagligi", label: "Bilanço Sağlığı", angle: 90, score: scores.bilancoSagligi },
-      { key: "degerleme", label: "Değerleme", angle: 150, score: scores.degerleme },
-      { key: "buyume", label: "Büyüme & Kâr", angle: 210, score: scores.buyume },
+      { key: "faizsizlik", label: "Faizsizlik", angle: -90, score: safeScores.faizsizlik },
+      { key: "hasilatHelalligi", label: "Hasılat Helalliği", angle: -30, score: safeScores.hasilatHelalligi },
+      { key: "temettu", label: "Temettü", angle: 30, score: safeScores.temettu },
+      { key: "bilancoSagligi", label: "Bilanço Sağlığı", angle: 90, score: safeScores.bilancoSagligi },
+      { key: "degerleme", label: "Değerleme", angle: 150, score: safeScores.degerleme },
+      { key: "buyume", label: "Büyüme & Kâr", angle: 210, score: safeScores.buyume },
     ],
-    [scores]
+    [safeScores]
   );
 
   // Grid Halka Yarıçapları (%25, %50, %75, %100)
@@ -69,12 +80,12 @@ export const MizanSnowflakeRadar: React.FC<MizanSnowflakeRadarProps> = ({
 
   // Ortalama Skor (0-100)
   const averageScore = Math.round(
-    (scores.faizsizlik +
-      scores.hasilatHelalligi +
-      scores.temettu +
-      scores.bilancoSagligi +
-      scores.degerleme +
-      scores.buyume) /
+    (safeScores.faizsizlik +
+      safeScores.hasilatHelalligi +
+      safeScores.temettu +
+      safeScores.bilancoSagligi +
+      safeScores.degerleme +
+      safeScores.buyume) /
       6
   );
 

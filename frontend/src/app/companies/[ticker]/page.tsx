@@ -123,6 +123,29 @@ export default function CompanyDetailPage() {
     loadData();
   }, [ticker, standard]);
 
+  const snowflakeScores: SnowflakeScores = useMemo(() => {
+    if (!data) {
+      return { faizsizlik: 80, hasilatHelalligi: 85, temettu: 70, bilancoSagligi: 75, degerleme: 70, buyume: 80 };
+    }
+    const debtStr = data.ratios?.interestDebt?.ratioPercentage || "15%";
+    const impureStr = data.ratios?.impureIncome?.ratioPercentage || "1%";
+    const debt = parseFloat(debtStr.replace(/[^0-9.]/g, "")) || 15;
+    const impure = parseFloat(impureStr.replace(/[^0-9.]/g, "")) || 1;
+    const div = parseFloat(String(data.detailedRatios?.valuation?.dividendYield || data.dividendHistory?.[0]?.dividendYieldPercent || "4.5"));
+    const cr = parseFloat(String(data.detailedRatios?.liquidity?.currentRatio || "1.6"));
+    const pe = parseFloat(String(data.financials?.peRatio || data.detailedRatios?.valuation?.pe || "8.5"));
+    const roe = parseFloat(String(data.financials?.roePercent || data.detailedRatios?.profitability?.roe || "28"));
+
+    const faizsizlik = Math.max(15, Math.min(100, Math.round(100 - (debt / 33) * 80)));
+    const hasilatHelalligi = Math.max(15, Math.min(100, Math.round(100 - (impure / 5) * 80)));
+    const temettu = Math.max(20, Math.min(100, Math.round(div * 14)));
+    const bilancoSagligi = Math.max(20, Math.min(100, Math.round((cr / 2.0) * 85)));
+    const degerleme = Math.max(20, Math.min(100, pe > 0 ? Math.round(Math.max(20, 100 - pe * 3)) : 50));
+    const buyume = Math.max(20, Math.min(100, Math.round((roe / 35) * 90)));
+
+    return { faizsizlik, hasilatHelalligi, temettu, bilancoSagligi, degerleme, buyume };
+  }, [data]);
+
   const handleShare = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
@@ -222,29 +245,6 @@ export default function CompanyDetailPage() {
   const dupont = data.dupont;
   const divHist = data.dividendHistory;
   const peers = data.peers;
-
-  const snowflakeScores: SnowflakeScores = useMemo(() => {
-    if (!data) {
-      return { faizsizlik: 80, hasilatHelalligi: 85, temettu: 70, bilancoSagligi: 75, degerleme: 70, buyume: 80 };
-    }
-    const debtStr = data.ratios?.interestDebt?.ratioPercentage || "15%";
-    const impureStr = data.ratios?.impureIncome?.ratioPercentage || "1%";
-    const debt = parseFloat(debtStr.replace(/[^0-9.]/g, "")) || 15;
-    const impure = parseFloat(impureStr.replace(/[^0-9.]/g, "")) || 1;
-    const div = parseFloat(String(data.detailedRatios?.valuation?.dividendYield || data.dividendHistory?.[0]?.dividendYieldPercent || "4.5"));
-    const cr = parseFloat(String(data.detailedRatios?.liquidity?.currentRatio || "1.6"));
-    const pe = parseFloat(String(data.financials?.peRatio || data.detailedRatios?.valuation?.pe || "8.5"));
-    const roe = parseFloat(String(data.financials?.roePercent || data.detailedRatios?.profitability?.roe || "28"));
-
-    const faizsizlik = Math.max(15, Math.min(100, Math.round(100 - (debt / 33) * 80)));
-    const hasilatHelalligi = Math.max(15, Math.min(100, Math.round(100 - (impure / 5) * 80)));
-    const temettu = Math.max(20, Math.min(100, Math.round(div * 14)));
-    const bilancoSagligi = Math.max(20, Math.min(100, Math.round((cr / 2.0) * 85)));
-    const degerleme = Math.max(20, Math.min(100, pe > 0 ? Math.round(Math.max(20, 100 - pe * 3)) : 50));
-    const buyume = Math.max(20, Math.min(100, Math.round((roe / 35) * 90)));
-
-    return { faizsizlik, hasilatHelalligi, temettu, bilancoSagligi, degerleme, buyume };
-  }, [data]);
 
   return (
     <PaynoShell badge={ticker}>
@@ -505,7 +505,7 @@ export default function CompanyDetailPage() {
                     </span>
                   </div>
                   <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Payda: <strong className="text-[#182542] dark:text-white font-mono">{formatTRY(data.ratios.denominatorValueTRY, 0)}</strong>
+                    Payda: <strong className="text-[#182542] dark:text-white font-mono">{formatTRY(data.ratios?.denominatorValueTRY || 0, 0)}</strong>
                   </div>
                 </div>
 
@@ -514,7 +514,7 @@ export default function CompanyDetailPage() {
                   {[
                     {
                       name: "Faizli Borç Oranı",
-                      detail: data.ratios.interestDebt,
+                      detail: data.ratios?.interestDebt,
                       limit: "%33.00",
                       limitNum: 33,
                       maxScale: isBist ? 45 : 40,
@@ -522,7 +522,7 @@ export default function CompanyDetailPage() {
                     },
                     {
                       name: "Faizli Varlık Oranı",
-                      detail: data.ratios.interestCash,
+                      detail: data.ratios?.interestCash,
                       limit: "%33.00",
                       limitNum: 33,
                       maxScale: isBist ? 45 : 40,
@@ -530,16 +530,16 @@ export default function CompanyDetailPage() {
                     },
                     {
                       name: "Uygunsuz Gelir Oranı",
-                      detail: data.ratios.impureIncome,
+                      detail: data.ratios?.impureIncome,
                       limit: "%5.00",
                       limitNum: 5,
                       maxScale: 8,
                       formula: "Faiz Geliri / Hasılat",
                     },
                   ].map((item) => {
-                    const currentVal = parseFloat(item.detail.ratioDecimal) * 100;
-                    const isOk = item.detail.isCompliant;
-                    const isTolerance = item.detail.isInToleranceBand;
+                    const currentVal = parseFloat(item.detail?.ratioDecimal || "0") * 100;
+                    const isOk = item.detail?.isCompliant ?? false;
+                    const isTolerance = item.detail?.isInToleranceBand ?? false;
                     const pctOnBar = Math.min(Math.max((currentVal / item.maxScale) * 100, 0), 100);
                     const thresholdPos = (item.limitNum / item.maxScale) * 100;
 
@@ -561,7 +561,7 @@ export default function CompanyDetailPage() {
                                 : "bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300"
                             }`}
                           >
-                            {item.detail.ratioPercentage}
+                            {item.detail?.ratioPercentage || "%0.00"}
                           </span>
                         </div>
 
@@ -606,7 +606,7 @@ export default function CompanyDetailPage() {
                 sourceCompanyName={data.companyName}
                 sourceSector={data.sector}
                 sourceDebtRatioPercent={
-                  parseFloat(data.ratios.interestDebt.ratioPercentage.replace("%", "")) || 35
+                  parseFloat(data.ratios?.interestDebt?.ratioPercentage?.replace("%", "") || "35") || 35
                 }
                 sourceMarketValueTRY="100000.00"
                 alternatives={getSmartAlternativesForTicker(ticker, standard)}
@@ -620,7 +620,7 @@ export default function CompanyDetailPage() {
                   Piyasa Değeri
                 </span>
                 <span className="font-mono tabular-nums font-bold text-[#182542] dark:text-white text-sm">
-                  {formatTRY(data.ratios.spotMarketCapTRY, 0)}
+                  {formatTRY(data.ratios?.spotMarketCapTRY || 0, 0)}
                 </span>
               </div>
               <div>
@@ -628,7 +628,7 @@ export default function CompanyDetailPage() {
                   Hisse Başı Çeyreklik Arındırma
                 </span>
                 <span className="font-mono tabular-nums font-bold text-emerald-700 dark:text-emerald-400 text-sm">
-                  ₺{data.purificationMetrics.purificationPerShareQuarterTRY}
+                  ₺{data.purificationMetrics?.purificationPerShareQuarterTRY || "0.00"}
                 </span>
               </div>
               <div>
@@ -636,7 +636,7 @@ export default function CompanyDetailPage() {
                   Temettü Arındırma Oranı
                 </span>
                 <span className="font-mono tabular-nums font-bold text-amber-700 dark:text-amber-400 text-sm">
-                  %{(parseFloat(data.purificationMetrics.dividendPurificationRatio) * 100).toFixed(2)}
+                  %{((parseFloat(data.purificationMetrics?.dividendPurificationRatio || "0") || 0) * 100).toFixed(2)}
                 </span>
               </div>
               <div>
@@ -644,7 +644,7 @@ export default function CompanyDetailPage() {
                   Hisse Başı Zekât Matrahı
                 </span>
                 <span className="font-mono tabular-nums font-bold text-[#182542] dark:text-white text-sm">
-                  ₺{data.purificationMetrics.zatableNetCurrentAssetsPerShareTRY}
+                  ₺{data.purificationMetrics?.zatableNetCurrentAssetsPerShareTRY || "0.00"}
                 </span>
               </div>
             </div>
