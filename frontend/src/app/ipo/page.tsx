@@ -271,10 +271,10 @@ export default function IpoCalendarPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                      : "bg-white dark:bg-[#0E1015] text-[#6E81A0] dark:text-[#94A3B8] border border-slate-200/60 dark:border-white/10 hover:text-[#182542] dark:hover:text-white"
+                      ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                      : "bg-white dark:bg-[#0E1015] text-[#6E81A0] dark:text-[#94A3B8] border border-slate-200/60 dark:border-white/10 hover:text-black dark:hover:text-white"
                   }`}
                 >
                   {tab.label}
@@ -284,14 +284,14 @@ export default function IpoCalendarPage() {
 
             <div className="flex items-center gap-3">
               {/* View Mode Toggle: Cards vs Table */}
-              <div className="inline-flex items-center bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 rounded-2xl p-1 shadow-xs">
+              <div className="inline-flex items-center bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 rounded-full p-1 shadow-xs">
                 <button
                   type="button"
                   onClick={() => setViewMode("cards")}
-                  className={`p-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
+                  className={`p-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                     viewMode === "cards"
-                      ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                      : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                      ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                      : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-black dark:hover:text-white"
                   }`}
                   title="Kart Görünümü"
                 >
@@ -301,10 +301,10 @@ export default function IpoCalendarPage() {
                 <button
                   type="button"
                   onClick={() => setViewMode("table")}
-                  className={`p-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
+                  className={`p-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                     viewMode === "table"
-                      ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                      : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                      ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                      : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-black dark:hover:text-white"
                   }`}
                   title="Tablo Görünümü"
                 >

@@ -407,10 +407,10 @@ export default function CompanyDetailPage() {
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as CompanyDetailTab)}
-                  className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition shrink-0 ${
+                  className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer ${
                     isActive
-                      ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                      : "text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-white/5"
+                      ? "bg-black dark:bg-white text-white dark:text-black font-bold shadow-xs"
+                      : "text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
                   }`}
                 >
                   <Icon size={13} />

@@ -246,7 +246,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleSaveSettings}
-              className="px-4 py-2 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold flex items-center gap-2 shadow-xs transition active:scale-95 shrink-0"
+              className="px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold flex items-center gap-2 shadow-xs transition active:scale-95 shrink-0 cursor-pointer"
             >
               <Save size={14} />
               <span>Değişiklikleri Kaydet</span>
@@ -278,10 +278,10 @@ export default function SettingsPage() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id as SettingsTab)}
-                className={`px-4 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-2 transition shrink-0 ${
+                className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 transition shrink-0 cursor-pointer ${
                   isActive
-                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                    : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10 shadow-2xs"
+                    ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                    : "bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
                 }`}
               >
                 <Icon size={14} />

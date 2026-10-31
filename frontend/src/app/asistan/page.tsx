@@ -197,7 +197,7 @@ function AsistanContent() {
               <div
                 className={`max-w-[92%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 space-y-3 ${
                   msg.role === "user"
-                    ? "bg-[#182542] text-white rounded-br-xs shadow-xs"
+                    ? "bg-black text-white dark:bg-white dark:text-black rounded-br-xs shadow-xs"
                     : "bg-white dark:bg-[#0E1015] text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/70 dark:border-white/10 shadow-sm"
                 }`}
               >
@@ -261,9 +261,9 @@ function AsistanContent() {
 
                     <Link
                       href={`/companies/${msg.stockData.ticker}`}
-                      className="w-full py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-center text-xs font-bold block transition"
+                      className="w-full py-2 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-center text-xs font-semibold block transition"
                     >
-                      24 Kriterli Şirket Karnesi 2.0 Detayını Aç &rarr;
+                      24 Kriterli Şirket Karnesi Detayını Aç &rarr;
                     </Link>
                   </div>
                 )}

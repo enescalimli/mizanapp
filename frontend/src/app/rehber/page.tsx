@@ -594,10 +594,10 @@ export default function RehberPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setActiveTab("CEVAZLAR")}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === "CEVAZLAR"
-                ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                ? "bg-black dark:bg-white text-white dark:text-black font-bold shadow-xs scale-100"
+                : "bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-black/5 dark:border-white/10"
             }`}
           >
             <ShieldCheck size={14} />
@@ -605,10 +605,10 @@ export default function RehberPage() {
           </button>
           <button
             onClick={() => setActiveTab("TERIMLER")}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === "TERIMLER"
-                ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                ? "bg-black dark:bg-white text-white dark:text-black font-bold shadow-xs scale-100"
+                : "bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-black/5 dark:border-white/10"
             }`}
           >
             <BookOpen size={14} />
@@ -616,10 +616,10 @@ export default function RehberPage() {
           </button>
           <button
             onClick={() => setActiveTab("SSS")}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === "SSS"
-                ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                ? "bg-black dark:bg-white text-white dark:text-black font-bold shadow-xs scale-100"
+                : "bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-black/5 dark:border-white/10"
             }`}
           >
             <HelpCircle size={14} />
@@ -627,10 +627,10 @@ export default function RehberPage() {
           </button>
           <button
             onClick={() => setActiveTab("RASYO")}
-            className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 shadow-2xs ${
+            className={`px-4 py-2 rounded-full text-xs font-semibold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === "RASYO"
-                ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/20 scale-100"
-                : "bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-white/90 dark:border-white/10"
+                ? "bg-black dark:bg-white text-white dark:text-black font-bold shadow-xs scale-100"
+                : "bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-black/5 dark:border-white/10"
             }`}
           >
             <Calculator size={14} />
@@ -876,10 +876,10 @@ export default function RehberPage() {
                   <button
                     key={tag}
                     onClick={() => setGlossaryCategory(tag)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
                       glossaryCategory === tag
-                        ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                        : "bg-slate-100 dark:bg-white/10 hover:bg-slate-200/80 dark:hover:bg-white/15 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                        ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                        : "bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
                     }`}
                   >
                     {tag === "TÜMÜ" ? "Tüm Terimler" : tag}
@@ -947,10 +947,10 @@ export default function RehberPage() {
                   <button
                     key={cat}
                     onClick={() => setFaqCategory(cat)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap cursor-pointer ${
                       faqCategory === cat
-                        ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                        : "bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                        ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                        : "bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white"
                     }`}
                   >
                     {cat === "TÜMÜ" ? "Tüm Sorular" : cat}
