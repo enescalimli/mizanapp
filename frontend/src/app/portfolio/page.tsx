@@ -70,6 +70,7 @@ import {
   calculateZakatForPositionClient,
 } from "@/lib/decimal/decimal";
 import { getCompliantAlternativesForTicker } from "@/lib/data/compliantAlternatives";
+import { KafifRiskRadarWidget } from "@/components/KafifRiskRadarWidget";
 
 function PortfolioManagementContent() {
   const router = useRouter();
@@ -525,6 +526,23 @@ function PortfolioManagementContent() {
     document.body.removeChild(link);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        setCsvInputText(content);
+        setCsvNotice({
+          type: "success",
+          text: `"${file.name}" dosyası başarıyla yüklendi ve ayrıştırıldı.`,
+        });
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const handleImportCSV = (e: React.FormEvent) => {
     e.preventDefault();
     if (!csvInputText.trim()) return;
@@ -534,14 +552,74 @@ function PortfolioManagementContent() {
       const importedHoldings: PortfolioHoldingItem[] = [];
 
       for (const line of lines) {
-        const parts = line.split(/[;,,\t]/).map((p) => p.trim().replace(/^["']|["']$/g, ""));
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        let parts = trimmed
+          .split(/[;,\t|]/)
+          .map((p) => p.trim().replace(/^["']|["']$/g, ""))
+          .filter(Boolean);
+
+        // Eğer tek parça kaldıysa boşlukla bölmeyi dene (ör: "BIMAS 100 480" veya "THYAO 50 Lot @ 290")
+        if (parts.length < 2) {
+          const words = trimmed.replace(/[@#]/g, " ").split(/\s+/).filter(Boolean);
+          if (words.length >= 2) {
+            parts = words;
+          }
+        }
+
         if (parts.length >= 2) {
-          const rawTicker = parts[0].toUpperCase();
-          if (rawTicker === "HISSE" || rawTicker === "TICKER") continue;
-          const lotsNum = parseFloat(parts[1]) || 1;
-          const avgCostNum = parseFloat(parts[2]) || parseFloat(livePrices[rawTicker] || "50.00");
-          const purchaseDateStr = parts[3] && parts[3].includes("-") ? parts[3] : new Date().toISOString().split("T")[0];
-          const basketStr = parts[4] || "Genel Portföy";
+          const rawTicker = parts[0].toUpperCase().replace(/[^A-Z0-9]/g, "");
+          if (
+            !rawTicker ||
+            rawTicker === "HISSE" ||
+            rawTicker === "TICKER" ||
+            rawTicker === "KOD" ||
+            rawTicker === "SEMBOL"
+          ) {
+            continue;
+          }
+
+          // Lot sayısını bul
+          let lotsNum = parseFloat(parts[1].replace(/[^0-9.]/g, "")) || 0;
+          if (lotsNum <= 0 && parts[2]) {
+            lotsNum = parseFloat(parts[2].replace(/[^0-9.]/g, "")) || 1;
+          }
+          if (lotsNum <= 0) lotsNum = 1;
+
+          // Maliyet bul
+          let avgCostNum = 0;
+          if (parts[2]) {
+            avgCostNum = parseFloat(parts[2].replace(/[^0-9.]/g, "")) || 0;
+          }
+          if (avgCostNum <= 0 && parts[3]) {
+            avgCostNum = parseFloat(parts[3].replace(/[^0-9.]/g, "")) || 0;
+          }
+          if (avgCostNum <= 0) {
+            avgCostNum = parseFloat(livePrices[rawTicker] || "50.00");
+          }
+
+          // Tarih
+          let purchaseDateStr = new Date().toISOString().split("T")[0];
+          const datePart = parts.find((p) =>
+            /\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4}/.test(p)
+          );
+          if (datePart) {
+            if (datePart.includes(".")) {
+              const [d, m, y] = datePart.split(".");
+              purchaseDateStr = `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+            } else {
+              purchaseDateStr = datePart;
+            }
+          }
+
+          const basketStr =
+            parts.find(
+              (p) =>
+                p.toLowerCase().includes("sepet") ||
+                p.toLowerCase().includes("portföy") ||
+                p.toLowerCase().includes("saklama")
+            ) || "Genel Portföy";
 
           importedHoldings.push({
             id: `h-import-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
@@ -570,7 +648,7 @@ function PortfolioManagementContent() {
       } else {
         setCsvNotice({
           type: "error",
-          text: "Geçerli format bulunamadı. Örnek: BIMAS, 100, 480.00, 2026-01-15",
+          text: "Geçerli format bulunamadı. Lütfen CSV, Kuveyt Türk, Midas veya MKK formatında girin.",
         });
       }
     } catch (err: any) {
@@ -1655,6 +1733,12 @@ function PortfolioManagementContent() {
             <span>{timelineData[timelineData.length - 1]?.label || "Canlı"}</span>
           </div>
         </div>
+
+        {/* KAFİF Erken Uyarı Risk Radarı Bildirimi */}
+        <KafifRiskRadarWidget
+          portfolioTickers={holdings.map((h) => h.ticker)}
+          mode="banner"
+        />
 
         {/* ================================================================= */}
         {/* SEGMENTED TAB SELECTOR (5 Modern Sekme)                           */}
@@ -3731,32 +3815,103 @@ function PortfolioManagementContent() {
                 </button>
               </div>
 
-              <div className="space-y-3">
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 text-xs text-[#6E81A0] dark:text-[#94A3B8] space-y-1">
-                  <span className="font-bold text-[#182542] dark:text-white block">
-                    Format: Hisse, Adet, Maliyet (₺), Alış Tarihi (YYYY-AA-GG), Sepet Adı
+              <div className="space-y-3.5">
+                {/* Otomatik Aracı Kurum / MKK Şablonları */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block">
+                    Otomatik Aracı Kurum &amp; MKK Şablonları (Tek Tıkla Doldur):
                   </span>
-                  <p className="font-mono text-[11px] opacity-80">
-                    Örnek satırlar:
-                    <br />
-                    BIMAS, 100, 480.00, 2026-01-15, Temettü Emekliliği
-                    <br />
-                    FROTO, 40, 1120.00, 2026-02-10, Temettü Emekliliği
-                    <br />
-                    ASELS, 150, 62.50, 2026-03-01, Büyüme &amp; Teknoloji
-                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCsvInputText(
+                          "BIMAS, 150, 485.50, 2026-01-10, Temettü Portföyü\nASELS, 200, 62.80, 2026-02-05, Büyüme\nTHYAO, 60, 285.00, 2026-02-20, Ulaştırma"
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-[11px] font-bold text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                    >
+                      Kuveyt Türk
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCsvInputText(
+                          "TUPRS 80 Lot @ 148.50 TRY 2026-01-15\nMAVI 120 Lot @ 94.20 TRY 2026-02-12\nFROTO 25 Lot @ 1115.00 TRY 2026-03-01"
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-[11px] font-bold text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                    >
+                      Midas
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCsvInputText(
+                          "KRDMD;300;26.40;2026-01-20\nBERA;180;18.90;2026-02-14\nALARK;90;98.50;2026-02-28"
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-[11px] font-bold text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                    >
+                      Ziraat Katılım
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setCsvInputText(
+                          "MIATK | 250 | 38.60 | 2026-01-18 | MKK Saklama\nTTRAK | 45 | 780.00 | 2026-02-10 | MKK Saklama"
+                        )
+                      }
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-[11px] font-bold text-slate-700 dark:text-slate-300 transition cursor-pointer"
+                    >
+                      MKK Dökümü
+                    </button>
+                  </div>
+                </div>
+
+                {/* Dosya Yükleme Alanı */}
+                <div className="p-3.5 rounded-2xl border-2 border-dashed border-slate-200 dark:border-white/10 hover:border-emerald-500/50 bg-slate-50/50 dark:bg-white/5 transition flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                      <FileSpreadsheet size={16} />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-slate-800 dark:text-white block">
+                        Ekstre Dosyası Yükleyin (.csv, .txt)
+                      </span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                        Metin veya CSV dosyanızı seçin, otomatik okunsun
+                      </span>
+                    </div>
+                  </div>
+                  <label className="px-3 py-1.5 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black text-xs font-bold transition hover:opacity-90 cursor-pointer shrink-0">
+                    <span>Dosya Seç</span>
+                    <input
+                      type="file"
+                      accept=".csv,.txt"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                  </label>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
-                    CSV Verisini Yapıştırın
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-bold text-[#182542] dark:text-white">
+                      Metin veya Ekstre Verisini Yapıştırın
+                    </label>
+                    {csvInputText.trim() && (
+                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">
+                        {csvInputText.trim().split("\n").filter(Boolean).length} Satır Algılandı
+                      </span>
+                    )}
+                  </div>
                   <textarea
-                    rows={6}
+                    rows={5}
                     value={csvInputText}
                     onChange={(e) => setCsvInputText(e.target.value)}
-                    placeholder="BIMAS, 100, 480.00, 2026-01-15, Temettü Emekliliği&#10;THYAO, 50, 290.50, 2026-02-01, Genel Portföy"
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    placeholder="BIMAS, 100, 480.00, 2026-01-15, Temettü Emekliliği&#10;THYAO, 50, 290.50, 2026-02-01, Genel Portföy&#10;veya Midas/Kuveyt Türk ekstre metni..."
+                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono text-[#182542] dark:text-white outline-none focus:border-emerald-500"
                   />
                 </div>
 

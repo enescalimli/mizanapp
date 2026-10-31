@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ComplianceBadge } from "@/components/ComplianceBadge";
@@ -12,6 +12,7 @@ import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
 import { FinancialReportsTab } from "@/components/FinancialReportsTab";
 import { MidasStockChart } from "@/components/MidasStockChart";
+import { MizanSnowflakeRadar, SnowflakeScores } from "@/components/MizanSnowflakeRadar";
 import { useAuth } from "@/lib/auth/AuthContext";
 import {
   ArrowLeft,
@@ -221,6 +222,29 @@ export default function CompanyDetailPage() {
   const dupont = data.dupont;
   const divHist = data.dividendHistory;
   const peers = data.peers;
+
+  const snowflakeScores: SnowflakeScores = useMemo(() => {
+    if (!data) {
+      return { faizsizlik: 80, hasilatHelalligi: 85, temettu: 70, bilancoSagligi: 75, degerleme: 70, buyume: 80 };
+    }
+    const debtStr = data.ratios?.interestDebt?.ratioPercentage || "15%";
+    const impureStr = data.ratios?.impureIncome?.ratioPercentage || "1%";
+    const debt = parseFloat(debtStr.replace(/[^0-9.]/g, "")) || 15;
+    const impure = parseFloat(impureStr.replace(/[^0-9.]/g, "")) || 1;
+    const div = parseFloat(String(data.detailedRatios?.valuation?.dividendYield || data.dividendHistory?.[0]?.dividendYieldPercent || "4.5"));
+    const cr = parseFloat(String(data.detailedRatios?.liquidity?.currentRatio || "1.6"));
+    const pe = parseFloat(String(data.financials?.peRatio || data.detailedRatios?.valuation?.pe || "8.5"));
+    const roe = parseFloat(String(data.financials?.roePercent || data.detailedRatios?.profitability?.roe || "28"));
+
+    const faizsizlik = Math.max(15, Math.min(100, Math.round(100 - (debt / 33) * 80)));
+    const hasilatHelalligi = Math.max(15, Math.min(100, Math.round(100 - (impure / 5) * 80)));
+    const temettu = Math.max(20, Math.min(100, Math.round(div * 14)));
+    const bilancoSagligi = Math.max(20, Math.min(100, Math.round((cr / 2.0) * 85)));
+    const degerleme = Math.max(20, Math.min(100, pe > 0 ? Math.round(Math.max(20, 100 - pe * 3)) : 50));
+    const buyume = Math.max(20, Math.min(100, Math.round((roe / 35) * 90)));
+
+    return { faizsizlik, hasilatHelalligi, temettu, bilancoSagligi, degerleme, buyume };
+  }, [data]);
 
   return (
     <PaynoShell badge={ticker}>
@@ -434,112 +458,144 @@ export default function CompanyDetailPage() {
         {activeTab === "FIKIH" && (
           <div className="space-y-6">
             {/* =============================================================== */}
-            {/* KOMPAKT DİB / TKBB FIKHİ ORAN EŞİKLERİ                           */}
+            {/* BENTO: 6-EKSENLİ KAR TANESİ RADAR & DİB/TKBB FIKHİ RASYOLAR      */}
             {/* =============================================================== */}
-            <div className="rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3.5 transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
-                    <Scale size={13} />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+              {/* Sol Bento: Kar Tanesi Radarı */}
+              <div className="lg:col-span-5 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between transition-colors">
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-white/5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <Sparkles size={13} />
+                    </div>
+                    <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                      6-Eksenli Kar Tanesi
+                    </h3>
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
-                    DİB / TKBB Fıkhi Oran Eşikleri
-                  </h3>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
-                    3 Temel Kriter
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                    Mizan Radarı
                   </span>
                 </div>
-                <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                  Payda Değeri: <strong className="text-[#182542] dark:text-white font-mono">{formatTRY(data.ratios.denominatorValueTRY, 0)}</strong>
+
+                <div className="w-full flex items-center justify-center py-3">
+                  <MizanSnowflakeRadar
+                    scores={snowflakeScores}
+                    isCompliant={data.overallStatus === "COMPLIANT"}
+                    size={280}
+                  />
                 </div>
+
+                <p className="text-[11px] text-center text-slate-500 dark:text-slate-400">
+                  Faizsizlik, hasılat helalliği, temettü, bilanço sıhhati, değerleme ve büyüme gücünün 6 boyutlu sentezi.
+                </p>
               </div>
 
-              {/* 3 Compact Ratio Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {[
-                  {
-                    name: "Faizli Borç Oranı",
-                    detail: data.ratios.interestDebt,
-                    limit: "%33.00",
-                    limitNum: 33,
-                    maxScale: isBist ? 45 : 40,
-                    formula: "Faizli Borç / Payda",
-                  },
-                  {
-                    name: "Faizli Varlık Oranı",
-                    detail: data.ratios.interestCash,
-                    limit: "%33.00",
-                    limitNum: 33,
-                    maxScale: isBist ? 45 : 40,
-                    formula: "Faizli Nakit / Payda",
-                  },
-                  {
-                    name: "Uygunsuz Gelir Oranı",
-                    detail: data.ratios.impureIncome,
-                    limit: "%5.00",
-                    limitNum: 5,
-                    maxScale: 8,
-                    formula: "Faiz Geliri / Hasılat",
-                  },
-                ].map((item) => {
-                  const currentVal = parseFloat(item.detail.ratioDecimal) * 100;
-                  const isOk = item.detail.isCompliant;
-                  const isTolerance = item.detail.isInToleranceBand;
-                  const pctOnBar = Math.min(Math.max((currentVal / item.maxScale) * 100, 0), 100);
-                  const thresholdPos = (item.limitNum / item.maxScale) * 100;
-
-                  return (
-                    <div
-                      key={item.name}
-                      className="rounded-xl p-3 bg-slate-50/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-2"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                          {item.name}
-                        </span>
-                        <span
-                          className={`text-xs font-black font-mono tabular-nums px-2 py-0.5 rounded-md ${
-                            isOk
-                              ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300"
-                              : isTolerance
-                              ? "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300"
-                              : "bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300"
-                          }`}
-                        >
-                          {item.detail.ratioPercentage}
-                        </span>
-                      </div>
-
-                      {/* Slim Progress Bar with Threshold Marker */}
-                      <div className="relative w-full h-2 rounded-full bg-slate-200/80 dark:bg-white/10 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-300 ${
-                            isOk
-                              ? "bg-emerald-500"
-                              : isTolerance
-                              ? "bg-amber-500"
-                              : "bg-rose-500"
-                          }`}
-                          style={{ width: `${pctOnBar}%` }}
-                        />
-                        {/* Threshold vertical tick line */}
-                        <div
-                          className="absolute top-0 bottom-0 w-0.5 bg-slate-400 dark:bg-slate-300 z-10 opacity-70"
-                          style={{ left: `${thresholdPos}%` }}
-                          title={`Azami Limit: ${item.limit}`}
-                        />
-                      </div>
-
-                      {/* Bottom row: Formula and Threshold */}
-                      <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-400 font-mono">
-                        <span className="truncate">{item.formula}</span>
-                        <span className="font-semibold text-slate-600 dark:text-slate-300 shrink-0">
-                          Azami {item.limit}
-                        </span>
-                      </div>
+              {/* Sağ Bento: Kompakt DİB / TKBB Fıkhi Oran Eşikleri */}
+              <div className="lg:col-span-7 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-3.5 transition-colors">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                      <Scale size={13} />
                     </div>
-                  );
-                })}
+                    <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                      DİB / TKBB Fıkhi Oran Eşikleri
+                    </h3>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
+                      3 Temel Kriter
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                    Payda: <strong className="text-[#182542] dark:text-white font-mono">{formatTRY(data.ratios.denominatorValueTRY, 0)}</strong>
+                  </div>
+                </div>
+
+                {/* 3 Compact Ratio Cards Grid */}
+                <div className="grid grid-cols-1 gap-2.5">
+                  {[
+                    {
+                      name: "Faizli Borç Oranı",
+                      detail: data.ratios.interestDebt,
+                      limit: "%33.00",
+                      limitNum: 33,
+                      maxScale: isBist ? 45 : 40,
+                      formula: "Faizli Borç / Payda",
+                    },
+                    {
+                      name: "Faizli Varlık Oranı",
+                      detail: data.ratios.interestCash,
+                      limit: "%33.00",
+                      limitNum: 33,
+                      maxScale: isBist ? 45 : 40,
+                      formula: "Faizli Nakit / Payda",
+                    },
+                    {
+                      name: "Uygunsuz Gelir Oranı",
+                      detail: data.ratios.impureIncome,
+                      limit: "%5.00",
+                      limitNum: 5,
+                      maxScale: 8,
+                      formula: "Faiz Geliri / Hasılat",
+                    },
+                  ].map((item) => {
+                    const currentVal = parseFloat(item.detail.ratioDecimal) * 100;
+                    const isOk = item.detail.isCompliant;
+                    const isTolerance = item.detail.isInToleranceBand;
+                    const pctOnBar = Math.min(Math.max((currentVal / item.maxScale) * 100, 0), 100);
+                    const thresholdPos = (item.limitNum / item.maxScale) * 100;
+
+                    return (
+                      <div
+                        key={item.name}
+                        className="rounded-xl p-3 bg-slate-50/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 space-y-1.5"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                            {item.name}
+                          </span>
+                          <span
+                            className={`text-xs font-black font-mono tabular-nums px-2 py-0.5 rounded-md ${
+                              isOk
+                                ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300"
+                                : isTolerance
+                                ? "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300"
+                                : "bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300"
+                            }`}
+                          >
+                            {item.detail.ratioPercentage}
+                          </span>
+                        </div>
+
+                        {/* Slim Progress Bar with Threshold Marker */}
+                        <div className="relative w-full h-2 rounded-full bg-slate-200/80 dark:bg-white/10 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-300 ${
+                              isOk
+                                ? "bg-emerald-500"
+                                : isTolerance
+                                ? "bg-amber-500"
+                                : "bg-rose-500"
+                            }`}
+                            style={{ width: `${pctOnBar}%` }}
+                          />
+                          {/* Threshold vertical tick line */}
+                          <div
+                            className="absolute top-0 bottom-0 w-0.5 bg-slate-400 dark:bg-slate-300 z-10 opacity-70"
+                            style={{ left: `${thresholdPos}%` }}
+                            title={`Azami Limit: ${item.limit}`}
+                          />
+                        </div>
+
+                        {/* Bottom row: Formula and Threshold */}
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-400 font-mono">
+                          <span className="truncate">{item.formula}</span>
+                          <span className="font-semibold text-slate-600 dark:text-slate-300 shrink-0">
+                            Azami {item.limit}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 

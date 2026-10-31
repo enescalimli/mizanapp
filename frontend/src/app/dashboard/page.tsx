@@ -30,6 +30,7 @@ import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { KafifRiskRadarWidget } from "@/components/KafifRiskRadarWidget";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -243,6 +244,12 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
+
+        {/* KAFİF Erken Uyarı Risk Radarı Bildirimi */}
+        <KafifRiskRadarWidget
+          portfolioTickers={userHoldings.length > 0 ? userHoldings.map((h) => h.ticker) : undefined}
+          mode="banner"
+        />
 
         {/* =================================================================== */}
         {/* 2. ANA METRİKLER (Row 1): PORTFÖY DEĞERİ & DAİRE GRAFİK + 2x2 BENTO   */}

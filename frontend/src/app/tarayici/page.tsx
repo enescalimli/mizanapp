@@ -25,6 +25,8 @@ import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { CompanySummary } from "@/types/katilim";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
+import { KafifRiskRadarWidget } from "@/components/KafifRiskRadarWidget";
+import { AlertTriangle } from "lucide-react";
 
 type SortField =
   | "ticker"
@@ -48,7 +50,7 @@ export default function TarayiciPage() {
   } = useLiveMarketData(30000);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT" | "FAV">("ALL");
+  const [activeTab, setActiveTab] = useState<"ALL" | "COMPLIANT" | "NON_COMPLIANT" | "FAV" | "RADAR">("ALL");
   const [sectorFilter, setSectorFilter] = useState("TÜMÜ");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [visibleLimit, setVisibleLimit] = useState(60);
@@ -296,7 +298,7 @@ export default function TarayiciPage() {
             <button
               type="button"
               onClick={() => setActiveTab("FAV")}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "FAV"
                   ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
                   : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
@@ -307,6 +309,24 @@ export default function TarayiciPage() {
                 activeTab === "FAV" ? "bg-white/20 text-white" : "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
               }`}>
                 {favorites.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("RADAR")}
+              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+                activeTab === "RADAR"
+                  ? "bg-amber-500 text-slate-950 shadow-xs"
+                  : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
+              }`}
+            >
+              <AlertTriangle size={12} className={activeTab === "RADAR" ? "text-slate-950" : "text-amber-500"} />
+              <span>KAFİF Risk Radarı</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
+                activeTab === "RADAR" ? "bg-black/20 text-slate-950 font-bold" : "bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 font-bold"
+              }`}>
+                Erken Uyarı
               </span>
             </button>
           </div>
@@ -339,9 +359,17 @@ export default function TarayiciPage() {
 
         </div>
 
-        {/* ================================================================= */}
-        {/* GÖRÜNÜM 1: BENTO KART IZGARASI (Gerçek Logolarla!)                */}
-        {/* ================================================================= */}
+        {/* RADAR MODU: KAFİF Erken Uyarı Risk Radarı */}
+        {activeTab === "RADAR" ? (
+          <KafifRiskRadarWidget mode="full" />
+        ) : (
+          <>
+            {/* Diğer sekmelerde kompakt erken uyarı bandı */}
+            <KafifRiskRadarWidget mode="banner" />
+
+            {/* ================================================================= */}
+            {/* GÖRÜNÜM 1: BENTO KART IZGARASI (Gerçek Logolarla!)                */}
+            {/* ================================================================= */}
         {viewMode === "grid" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {displayedCompanies.map((comp) => {
@@ -539,6 +567,8 @@ export default function TarayiciPage() {
               Daha Fazla Göster (+60 / Toplam: {sortedCompanies.length})
             </button>
           </div>
+        )}
+          </>
         )}
 
       </div>

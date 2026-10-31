@@ -15,6 +15,7 @@ import {
   HelpCircle,
   LogOut,
   Sparkles,
+  Layers,
 } from "lucide-react";
 import { useTheme } from "@/lib/theme/ThemeContext";
 import { useAuth } from "@/lib/auth/AuthContext";
@@ -63,6 +64,12 @@ export const LeftDockSidebar: React.FC = () => {
       href: "/ipo",
       icon: Calendar,
       isActive: pathname.startsWith("/ipo"),
+    },
+    {
+      label: "TEFAS Fon Röntgeni",
+      href: "/tefas",
+      icon: Layers,
+      isActive: pathname.startsWith("/tefas"),
     },
     {
       label: "Mizan AI Asistan",

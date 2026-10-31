@@ -59,6 +59,12 @@ export const FooterLegal: React.FC = () => {
               </Link>
             </li>
             <li>
+              <Link href="/tefas" className="hover:text-[#182542] transition flex items-center gap-1.5">
+                <span>TEFAS Fon Röntgeni</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.2 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-md">Yeni</span>
+              </Link>
+            </li>
+            <li>
               <Link href="/portfolio" className="hover:text-[#182542] transition">
                 Katılım Portföy Takibi &amp; Maskeleme
               </Link>

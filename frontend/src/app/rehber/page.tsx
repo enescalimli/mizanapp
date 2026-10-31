@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { PaynoShell } from "@/components/PaynoShell";
 import {
@@ -543,6 +543,33 @@ export default function RehberPage() {
   const [glossaryCategory, setGlossaryCategory] = useState<string>("TÜMÜ");
   const [glossarySearch, setGlossarySearch] = useState("");
 
+  const [globalSearch, setGlobalSearch] = useState("");
+  const [openSearchResultId, setOpenSearchResultId] = useState<string | null>(null);
+
+  const globalFaqResults = useMemo(() => {
+    if (!globalSearch.trim()) return [];
+    const q = globalSearch.toLowerCase().trim();
+    return FAQS.filter(
+      (f) =>
+        f.question.toLowerCase().includes(q) ||
+        f.answer.toLowerCase().includes(q) ||
+        f.reference.toLowerCase().includes(q)
+    );
+  }, [globalSearch]);
+
+  const globalGlossaryResults = useMemo(() => {
+    if (!globalSearch.trim()) return [];
+    const q = globalSearch.toLowerCase().trim();
+    return GLOSSARY.filter(
+      (g) =>
+        g.term.toLowerCase().includes(q) ||
+        g.shortDesc.toLowerCase().includes(q) ||
+        g.fullDesc.toLowerCase().includes(q)
+    );
+  }, [globalSearch]);
+
+  const totalResultsCount = globalFaqResults.length + globalGlossaryResults.length;
+
   const filteredFaqs = FAQS.filter((faq) => {
     const matchesCat = faqCategory === "TÜMÜ" || faq.category === faqCategory;
     const matchesSearch =
@@ -588,9 +615,142 @@ export default function RehberPage() {
               33 kapsamlı terimden oluşan faizsiz finans sözlüğü ve yatırımcıların en çok merak ettiği 24 soru-cevap.
             </p>
           </div>
+
+          {/* Anlık Akıllı Fıkhi Arama Çubuğu */}
+          <div className="relative w-full max-w-2xl pt-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 dark:text-emerald-400" size={17} />
+            <input
+              type="text"
+              placeholder="Fıkhi soru, hisse, terim veya fetva ara (örn: arındırma, temettü, açığa satış, kripto, zekat)..."
+              value={globalSearch}
+              onChange={(e) => setGlobalSearch(e.target.value)}
+              className="w-full pl-11 pr-10 py-3 rounded-2xl border border-slate-200/80 dark:border-white/10 text-xs sm:text-sm text-[#182542] dark:text-white bg-slate-50/80 dark:bg-white/5 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-xs transition"
+            />
+            {globalSearch && (
+              <button
+                type="button"
+                onClick={() => setGlobalSearch("")}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-white px-2 py-1 rounded-full bg-slate-200/50 dark:bg-white/10 cursor-pointer"
+              >
+                ✕ Temizle
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Navigation Tabs */}
+        {/* EĞER ARAMA METNİ VARSA: ANLIK AKORDİYON SONUÇLARINI GÖSTER */}
+        {globalSearch.trim() ? (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                <Sparkles size={14} className="text-emerald-500" />
+                <span>&quot;{globalSearch}&quot; için Arama Sonuçları ({totalResultsCount} Eşleşme)</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setGlobalSearch("")}
+                className="text-xs text-slate-500 hover:underline"
+              >
+                Tüm Rehbere Dön
+              </button>
+            </div>
+
+            {totalResultsCount === 0 ? (
+              <div className="p-12 text-center text-xs text-slate-500 dark:text-slate-400 rounded-3xl bg-white/60 dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10">
+                Aradığınız kavramla eşleşen fıkhi fetva veya terim bulunamadı. Lütfen farklı anahtar kelimeler deneyin (örn: arındırma, temettü, zekat, faiz).
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {/* 1. Soru-Cevap Eşleşmeleri */}
+                {globalFaqResults.map((faq) => {
+                  const isOpen = openSearchResultId === faq.id;
+                  return (
+                    <div
+                      key={faq.id}
+                      className="bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl rounded-[24px] border border-emerald-500/30 dark:border-emerald-500/20 overflow-hidden shadow-2xs transition-all"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setOpenSearchResultId(isOpen ? null : faq.id)}
+                        className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-white/5 transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                            Fıkhi Soru &amp; Fetva
+                          </span>
+                          <span className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                            {faq.question}
+                          </span>
+                        </div>
+                        {isOpen ? (
+                          <ChevronUp size={18} className="text-[#182542] dark:text-white shrink-0" />
+                        ) : (
+                          <ChevronDown size={18} className="text-slate-400 shrink-0" />
+                        )}
+                      </button>
+
+                      {isOpen && (
+                        <div className="px-5 pb-5 pt-1 border-t border-slate-100 dark:border-white/10 text-xs space-y-3 text-slate-600 dark:text-[#94A3B8] leading-relaxed font-normal">
+                          <p>{faq.answer}</p>
+                          <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 font-mono text-[11px] text-[#6E81A0] dark:text-[#94A3B8] flex items-center gap-1.5">
+                            <Scale size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <span>Referans: {faq.reference}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* 2. Terim Eşleşmeleri */}
+                {globalGlossaryResults.map((item) => {
+                  const resultId = `term-${item.term}`;
+                  const isOpen = openSearchResultId === resultId;
+                  return (
+                    <div
+                      key={resultId}
+                      className="bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl rounded-[24px] border border-blue-500/30 dark:border-blue-500/20 overflow-hidden shadow-2xs transition-all"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setOpenSearchResultId(isOpen ? null : resultId)}
+                        className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-white/5 transition cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+                            {item.tag}
+                          </span>
+                          <span className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                            {item.term}
+                          </span>
+                          <span className="text-xs text-slate-400 hidden sm:inline">
+                            — {item.shortDesc}
+                          </span>
+                        </div>
+                        {isOpen ? (
+                          <ChevronUp size={18} className="text-[#182542] dark:text-white shrink-0" />
+                        ) : (
+                          <ChevronDown size={18} className="text-slate-400 shrink-0" />
+                        )}
+                      </button>
+
+                      {isOpen && (
+                        <div className="px-5 pb-5 pt-1 border-t border-slate-100 dark:border-white/10 text-xs space-y-2 text-slate-600 dark:text-[#94A3B8] leading-relaxed">
+                          <p className="font-semibold text-slate-800 dark:text-slate-200">
+                            {item.shortDesc}
+                          </p>
+                          <p>{item.fullDesc}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Navigation Tabs */}
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setActiveTab("CEVAZLAR")}
@@ -1110,6 +1270,8 @@ export default function RehberPage() {
               </Link>
             </div>
           </div>
+        )}
+          </>
         )}
       </div>
     </PaynoShell>
