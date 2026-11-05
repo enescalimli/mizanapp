@@ -31,6 +31,10 @@ import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { KafifRiskRadarWidget } from "@/components/KafifRiskRadarWidget";
+import { useLiveDisclosures } from "@/lib/hooks/useLiveDisclosures";
+import { DisclosureDetailModal } from "@/components/DisclosureDetailModal";
+import { DisclosureItem } from "@/types/disclosure";
+import { Radio, Newspaper, ExternalLink } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -39,6 +43,23 @@ export default function DashboardPage() {
 
   const [balanceVisible, setBalanceVisible] = useState<boolean>(true);
   const [currency, setCurrency] = useState<"TRY" | "USD">("TRY");
+
+  // Canlı KAP & SPK Akışı (Piyasa Haberleri & Fıkhi Analiz)
+  const {
+    disclosures,
+    loading: disclosuresLoading,
+    isRefreshing: disclosuresRefreshing,
+    refresh: refreshDisclosures,
+  } = useLiveDisclosures(30000);
+  const [selectedDisclosure, setSelectedDisclosure] = useState<DisclosureItem | null>(null);
+  const [disclosureFilter, setDisclosureFilter] = useState<"ALL" | "KAP" | "SPK" | "COMPLIANT">("ALL");
+
+  const filteredDisclosures = useMemo(() => {
+    if (disclosureFilter === "KAP") return disclosures.filter((d) => d.source === "KAP");
+    if (disclosureFilter === "SPK") return disclosures.filter((d) => d.source === "SPK");
+    if (disclosureFilter === "COMPLIANT") return disclosures.filter((d) => d.isCompliant === true);
+    return disclosures;
+  }, [disclosures, disclosureFilter]);
 
   // Kullanıcı Portföyü & E-posta Senkronizasyonu
   const userEmail = user?.email?.toLowerCase().trim() || "";
@@ -717,7 +738,163 @@ export default function DashboardPage() {
 
         </div>
 
+        {/* =================================================================== */}
+        {/* 4. ÜÇÜNCÜ SATIR: CANLI KAP & SPK AKIŞI (PİYASA HABERLERİ)           */}
+        {/* =================================================================== */}
+        <div className="bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
+          
+          {/* Başlık ve Canlı Durum */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm sm:text-base font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                  <Radio size={16} className="text-emerald-500 animate-pulse shrink-0" />
+                  <span>Canlı KAP &amp; SPK Akışı (Piyasa Haberleri)</span>
+                </h3>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  <span>Canlı</span>
+                </span>
+              </div>
+              <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">
+                Kamuyu Aydınlatma Platformu ve SPK resmi kararları anlık fıkhi filtreleme ile taranmaktadır.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => refreshDisclosures()}
+                disabled={disclosuresRefreshing}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition disabled:opacity-50"
+                title="Akışı Yenile"
+              >
+                <RefreshCw size={12} className={disclosuresRefreshing ? "animate-spin" : ""} />
+                <span>{disclosuresRefreshing ? "Güncelleniyor..." : "Yenile"}</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Filtre Butonları */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold">
+            {[
+              { id: "ALL", label: `Tümü (${disclosures.length})` },
+              { id: "KAP", label: "KAP Açıklamaları" },
+              { id: "SPK", label: "SPK Bültenleri" },
+              { id: "COMPLIANT", label: "✅ Katılım Uyumlu" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setDisclosureFilter(tab.id as any)}
+                className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all ${
+                  disclosureFilter === tab.id
+                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                    : "bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Bildirim / Haber Akışı Listesi */}
+          {disclosuresLoading && disclosures.length === 0 ? (
+            <div className="py-12 text-center space-y-2">
+              <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">KAP ve SPK canlı veri akışı bağlanıyor...</p>
+            </div>
+          ) : filteredDisclosures.length === 0 ? (
+            <div className="py-10 text-center text-xs text-slate-400 dark:text-slate-500">
+              Bu filtrede görüntülenecek resmi bildirim bulunamadı.
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100 dark:divide-white/5">
+              {filteredDisclosures.slice(0, 8).map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedDisclosure(item)}
+                  className="py-3 px-3 sm:px-4 rounded-2xl hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition flex items-start justify-between gap-3 cursor-pointer group"
+                >
+                  <div className="flex items-start gap-3 min-w-0">
+                    {/* Logo veya İkon */}
+                    <div className="shrink-0 mt-0.5">
+                      {item.ticker ? (
+                        <StockLogo ticker={item.ticker} name={item.companyName || item.ticker} size="sm" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-xs">
+                          SPK
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Metin ve Etiketler */}
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {item.ticker && (
+                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#182542] dark:bg-[#273869] text-white">
+                            {item.ticker}
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/50">
+                          {item.category}
+                        </span>
+                        {item.isCompliant === true && (
+                          <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                            Katılım Uyumlu
+                          </span>
+                        )}
+                        {item.isCompliant === false && (
+                          <span className="px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-rose-500/15 text-rose-700 dark:text-rose-400">
+                            Katılım Dışı
+                          </span>
+                        )}
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                          {item.timeAgo}
+                        </span>
+                      </div>
+
+                      <h4 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition truncate">
+                        {item.title}
+                      </h4>
+
+                      <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] line-clamp-1 leading-snug">
+                        {item.summary}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Sağ İncele Aksiyonu */}
+                  <div className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-[#273869] dark:text-blue-400 group-hover:translate-x-0.5 transition">
+                    <span className="hidden sm:inline">İncele</span>
+                    <ChevronRight size={14} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Akış Altı Bilgi & Hızlı Link */}
+          <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+            <span>Kamuyu Aydınlatma Platformu (KAP) &amp; SPK 2026 Veritabanı</span>
+            <Link
+              href="/tarayici"
+              className="font-bold text-[#182542] dark:text-white hover:underline flex items-center gap-1"
+            >
+              <span>Tüm Katılım Hisselerini Tara</span>
+              <ChevronRight size={12} />
+            </Link>
+          </div>
+
+        </div>
+
       </div>
+
+      {/* Tıklanan Bildirimin Detay Modalı */}
+      <DisclosureDetailModal
+        disclosure={selectedDisclosure}
+        onClose={() => setSelectedDisclosure(null)}
+      />
     </PaynoShell>
   );
 }

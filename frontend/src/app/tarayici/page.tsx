@@ -58,11 +58,34 @@ export default function TarayiciPage() {
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [favorites, setFavorites] = useState<string[]>(["BIMAS", "THYAO", "ASELS", "TUPRS", "FROTO"]);
 
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem("mizan_favorite_tickers");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setFavorites(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const toggleFavorite = (ticker: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setFavorites((prev) =>
-      prev.includes(ticker) ? prev.filter((t) => t !== ticker) : [...prev, ticker]
-    );
+    setFavorites((prev) => {
+      const next = prev.includes(ticker) ? prev.filter((t) => t !== ticker) : [...prev, ticker];
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("mizan_favorite_tickers", JSON.stringify(next));
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
   };
 
   // Unique sector list
