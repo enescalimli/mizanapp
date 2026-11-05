@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { DisclosureItem, DisclosuresApiResponse } from "@/types/disclosure";
 
-export function useLiveDisclosures(pollIntervalMs = 25000) {
+export function useLiveDisclosures(pollIntervalMs = 25000, ticker?: string) {
   const [disclosures, setDisclosures] = useState<DisclosureItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
@@ -14,7 +14,8 @@ export function useLiveDisclosures(pollIntervalMs = 25000) {
   const fetchDisclosures = useCallback(async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/disclosures?_t=${Date.now()}`, { cache: "no-store" });
+      const tickerParam = ticker ? `&ticker=${encodeURIComponent(ticker.toUpperCase().trim())}` : "";
+      const res = await fetch(`/api/disclosures?_t=${Date.now()}${tickerParam}`, { cache: "no-store" });
       if (!res.ok) throw new Error("HTTP error " + res.status);
       const data: DisclosuresApiResponse = await res.json();
 
@@ -39,7 +40,7 @@ export function useLiveDisclosures(pollIntervalMs = 25000) {
       setLoading(false);
       if (isManual) setIsRefreshing(false);
     }
-  }, []);
+  }, [ticker]);
 
   useEffect(() => {
     fetchDisclosures(false);

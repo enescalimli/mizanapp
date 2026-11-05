@@ -35,7 +35,7 @@ interface ChatMessage {
 const STARTER_PROMPTS = [
   "THYAO neden katılım endeksi dışı kaldı?",
   "BIMAS için bu çeyrek arındırma infakı ne kadar?",
-  "Halka arz tavan serisi bozulunca satmak helal mi?",
+  "📰 Bir KAP bildirimi veya SPK kararını fıkhen analiz et",
   "Hisse zekâtında fabrika ve duran varlıklar düşülür mü?",
 ];
 
@@ -62,14 +62,34 @@ function AsistanContent() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  // URL'den gelen başlangıç sorusu varsa çalıştır
+  // URL'den veya sessionStorage'dan gelen başlangıç sorusu / haber analizi varsa çalıştır
   useEffect(() => {
-    if (initialPrompt && initialPrompt.trim().length > 0) {
-      handleSend(initialPrompt);
+    if (typeof window === "undefined") return;
+
+    let promptToUse = initialPrompt;
+    let contextObj: any = null;
+
+    try {
+      const savedPrompt = sessionStorage.getItem("mizan_pending_asistan_prompt");
+      const savedContext = sessionStorage.getItem("mizan_pending_disclosure_context");
+      if (savedPrompt) {
+        promptToUse = savedPrompt;
+        sessionStorage.removeItem("mizan_pending_asistan_prompt");
+      }
+      if (savedContext) {
+        contextObj = { disclosure: JSON.parse(savedContext) };
+        sessionStorage.removeItem("mizan_pending_disclosure_context");
+      }
+    } catch {
+      // ignore
+    }
+
+    if (promptToUse && promptToUse.trim().length > 0) {
+      handleSend(promptToUse, contextObj);
     }
   }, [initialPrompt]);
 
-  const handleSend = async (textToSend?: string) => {
+  const handleSend = async (textToSend?: string, contextOverride?: any) => {
     const text = (textToSend || input).trim();
     if (!text || loading) return;
 
@@ -93,6 +113,7 @@ function AsistanContent() {
             role: m.role,
             content: m.content,
           })),
+          context: contextOverride || undefined,
         }),
       });
 

@@ -64,7 +64,7 @@ export default function CompanyDetailPage() {
 
   const [activeTab, setActiveTab] = useState<CompanyDetailTab>("FIKIH");
   const [selectedDisclosure, setSelectedDisclosure] = useState<DisclosureItem | null>(null);
-  const { disclosures, loading: disclosuresLoading, refresh: refreshDisclosures } = useLiveDisclosures();
+  const { disclosures, loading: disclosuresLoading, refresh: refreshDisclosures } = useLiveDisclosures(30000, ticker);
   const [standard, setStandard] = useState<ScreeningStandardCode>("BIST_KATILIM_DIB");
   const [data, setData] = useState<CompanyDetailScreening | null>(null);
   const [loading, setLoading] = useState(true);

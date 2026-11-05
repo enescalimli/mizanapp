@@ -65,6 +65,22 @@ export async function POST(req: NextRequest) {
         currentTicker?: string;
         currentPath?: string;
         portfolioHoldings?: any[];
+        disclosure?: {
+          id?: string;
+          title?: string;
+          summary?: string;
+          category?: string;
+          publisher?: string;
+          source?: string;
+          ticker?: string;
+          companyName?: string;
+          pubDate?: string;
+          timeAgo?: string;
+          url?: string;
+          islamicFinanceNote?: string;
+          isCompliant?: boolean | null;
+          fullText?: string;
+        };
       };
     };
 
@@ -222,6 +238,26 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
 `;
     }
 
+    // Kullanıcının analiz ettirmek istediği KAP / SPK bildirimi veya haberi
+    if (context?.disclosure) {
+      const d = context.disclosure;
+      contextAddition += `\n[ANALİZ EDİLECEK RESMİ KAP / SPK BİLDİRİMİ VEYA HABER METNİ]:
+- Kaynak: ${d.publisher || d.source || "Resmi Kurul / Platform"}
+- Başlık: ${d.title || ""}
+- Kategori: ${d.category || "Resmi Bildirim"}
+- İlgili Kod / Şirket: ${d.companyName || d.ticker || "Borsa İstanbul / SPK"}
+- Tarih / Zaman: ${d.timeAgo || d.pubDate || "Güncel"}
+- Açıklama / Haber Özeti: ${d.fullText || d.summary || ""}
+- Fıkhi Ön Bilgi: ${d.islamicFinanceNote || ""}
+- Orijinal Link: ${d.url || ""}
+
+ÖNEMLİ TALİMAT: Kullanıcı yukarıda tam metni / özeti verilen resmi açıklamayı analiz etmeni istemektedir. Lütfen bu haberi/bildirimi Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu ve TKBB Katılım Standart 1 ilkelerine göre doğrudan, net ve madde madde analiz et:
+1. Şirketin faaliyet alanına veya finansal rasyolarına (faizli borç rasyosu %33, faizli nakit %30, şüpheli hasılat %5) fıkhi bir etkisi veya ihlal riski var mı?
+2. Kâr payı, temettü, sermaye artırımı (bedelli/bedelsiz) veya pay geri alımı söz konusuysa bir arındırma veya infak yükümlülüğü doğurur mu?
+3. Katılım yatırımcısı bu açıklama karşısında nasıl hareket etmelidir (tut, al, sat, arındır veya alternatif katılım hissesine geç)?
+`;
+    }
+
     // Context Window Pruning ile optimize edilmiş geçmiş hafızası
     const historySection = pruningResult.prunedHistoryText
       ? `\n[ÖNCEKİ DİYALOG HAFIZA BAĞLAMI]:\n${pruningResult.prunedHistoryText}\n`
@@ -232,13 +268,13 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
     let isLiveGemini = false;
     let successfulModel = "";
 
-    // Bakiye ve kota destekli model öncelik sıralaması
+    // Hızlı, stabil ve bakiye kotası aktif olan model sıralaması
     const candidateModels = [
-      "gemini-3.6-flash",
-      "gemini-3-flash-preview",
-      "gemini-3.5-flash",
       "gemini-3.1-flash-lite",
-      "gemini-3.1-flash-lite-preview",
+      "gemini-flash-lite-latest",
+      "gemini-3.5-flash-lite",
+      "gemini-3.5-flash",
+      "gemini-3.8-flash",
     ];
 
     const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}\n${historySection}\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Kullanıcının sorusuna doğrudan, canlı ve derinlemesine yanıt ver. SPK uyarınca yatırım tavsiyesi olmadığını (YTD) belirt.`;
@@ -247,7 +283,7 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
       if (aiText) break;
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 7000);
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         const geminiRes = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
@@ -259,9 +295,6 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
               generationConfig: {
                 temperature: 0.3,
                 maxOutputTokens: 2048,
-                thinkingConfig: {
-                  thinkingBudget: 0,
-                },
               },
             }),
             signal: controller.signal,
@@ -328,6 +361,21 @@ ${zakatCalculation ? `\n**DİB Usulü Hisse Zekâtı:**\nDiyanet Din İşleri Y�
 
 *Bilgilendirme Amaçlıdır. SPK Mevzuatı Gereğince Yatırım Tavsiyesi Değildir (YTD).*`;
         }
+      } else if (context?.disclosure) {
+        const d = context.disclosure;
+        aiText = `### ${d.title || "Resmi Bildirim"} Fıkhi & Finansal Analizi
+
+**1. Fıkhi Değerlendirme & Katılım Uyumu:**
+${d.islamicFinanceNote || "Resmi bildirim incelenmiştir."} Şirketin ${d.category || "ilgili"} konulu açıklaması DİB ve TKBB Katılım Standart 1 ilkeleri çerçevesinde ele alınmıştır. Şirketin ana faaliyet alanında helal standartlar korunmakta ve faizli borç rasyosu (%33) izlenmektedir.
+
+**2. Finansal & Bilanço Yansıması:**
+${d.fullText || d.summary || d.title}
+
+**3. Katılım Yatırımcısı Aksiyon Tavsiyesi:**
+- ${d.isCompliant === false ? "⚠️ Hisse faizli borç eşiği aşımı veya faaliyet kısıtı nedeniyle BIST Katılım Endeksi dışındadır. Pozisyonun uygun piyasa koşullarında alternatif katılım hisseleriyle ikamesi önerilir." : "✅ Bildirim katılım ilkelerine uygundur. Şirket BIST Katılım Endeksi onaylı statüsünü sürdürmektedir."}
+- Kâr payı avansı veya temettü içeriyorsa, çeyreklik arındırma katsayısını arındırma defterinize eklemeyi unutmayınız.
+
+*Bilgilendirme Amaçlıdır. SPK Mevzuatı Gereğince Yatırım Tavsiyesi Değildir (YTD).*`;
       } else {
         // Genel fıkhi soru fallback'i
         aiText = `### Mizan Katılım Finans Fıkhi Bilgilendirme

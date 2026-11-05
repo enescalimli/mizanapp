@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   X,
   ExternalLink,
@@ -14,6 +15,11 @@ import {
   XCircle,
   FileText,
   Radio,
+  FileCode,
+  RotateCcw,
+  Send,
+  MessageSquare,
+  Scale,
 } from "lucide-react";
 import { DisclosureItem } from "@/types/disclosure";
 import { StockLogo } from "./StockLogo";
@@ -24,6 +30,23 @@ interface DisclosureDetailModalProps {
 }
 
 export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailModalProps) {
+  const router = useRouter();
+  const [inlineAnalysis, setInlineAnalysis] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [showPasteBox, setShowPasteBox] = useState(false);
+  const [customText, setCustomText] = useState("");
+
+  // Modal kapandığında state'i sıfırla
+  useEffect(() => {
+    setInlineAnalysis(null);
+    setIsAnalyzing(false);
+    setAnalysisError(null);
+    setShowPasteBox(false);
+    setCustomText("");
+  }, [disclosure]);
+
+  // ESC tuşu ile kapatma & body scroll lock
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -43,9 +66,83 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
   if (!disclosure) return null;
 
   const isKAP = disclosure.source === "KAP";
-  const aiQueryPrompt = disclosure.ticker
-    ? `${disclosure.ticker} şirketinin ${disclosure.category} konulu "${disclosure.title}" bildirimini fıkhi ve finansal açıdan analiz et. Katılım yatırımcısı için bir sakınca veya arındırma yükümlülüğü doğurur mu?`
-    : `SPK'nın "${disclosure.title}" duyurusunu fıkhi ve piyasa perspektifinden analiz et. Katılım yatırımcıları neye dikkat etmeli?`;
+
+  // Modal içinde doğrudan Mizan AI Analizi çalıştırma
+  const handleRunInlineAnalysis = async () => {
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+
+    const fullPayloadText = customText.trim()
+      ? `${disclosure.summary}\n\n[Kullanıcı Tarafından Sağlanan Ek Metin / PDF İçeriği]:\n${customText.trim()}`
+      : disclosure.summary;
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "user",
+              content: `Aşağıdaki resmi ${disclosure.source} bildirimini DİB ve TKBB katılım ilkelerine göre analiz et. Şirketin katılım durumuna etkisi nedir? Kâr payı arındırması veya yatırımcı aksiyonu gerekir mi?`,
+            },
+          ],
+          context: {
+            currentTicker: disclosure.ticker,
+            disclosure: {
+              ...disclosure,
+              fullText: fullPayloadText,
+            },
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("AI yanıt servisi geçici olarak meşgul");
+      }
+
+      const data = await res.json();
+      if (data.text) {
+        setInlineAnalysis(data.text);
+      } else {
+        throw new Error("Boş analiz yanıtı alındı");
+      }
+    } catch (err: any) {
+      console.error("Inline AI analysis error:", err);
+      setAnalysisError(err.message || "Fıkhi analiz oluşturulurken bir aksaklık oluştu.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  // Asistan Sayfasına Metni Eksiksiz Aktararak Yönlendirme
+  const handleOpenInAssistant = () => {
+    const fullPayloadText = customText.trim()
+      ? `${disclosure.summary}\n\n[Ek Metin]:\n${customText.trim()}`
+      : disclosure.summary;
+
+    const richPrompt = `[RESMİ ${disclosure.source} BİLDİRİMİ ANALİZİ]
+Şirket / Kurum: ${disclosure.companyName || disclosure.ticker || "Borsa İstanbul"}
+Başlık: ${disclosure.title}
+Kategori: ${disclosure.category}
+Tarih: ${disclosure.pubDate || disclosure.timeAgo}
+Bildirim Metni / Özeti:
+${fullPayloadText}
+
+Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kurulu ve TKBB Katılım Standart 1 ilkelerine göre analiz et. Katılım endeksi statüsünü bozar mı? Bir fıkhi arındırma veya yatırımcı aksiyonu gerektirir mi?`;
+
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem("mizan_pending_asistan_prompt", richPrompt);
+        sessionStorage.setItem("mizan_pending_disclosure_context", JSON.stringify(disclosure));
+      } catch {
+        // ignore
+      }
+    }
+
+    onClose();
+    router.push("/asistan");
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5">
@@ -56,7 +153,7 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0E1015] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-5 animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0E1015] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-4 sm:space-y-5 animate-in zoom-in-95 fade-in duration-200">
         
         {/* Top bar: Source badge + Live indicator + Close button */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">
@@ -181,30 +278,122 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-3">
-          {/* Mizan AI Shortcut */}
-          <Link
-            href={`/asistan?q=${encodeURIComponent(aiQueryPrompt)}`}
-            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition group"
+        {/* İsteğe Bağlı: PDF veya Detaylı Metin Ekleme Akordiyonu */}
+        <div className="space-y-2">
+          <button
+            type="button"
+            onClick={() => setShowPasteBox(!showPasteBox)}
+            className="text-xs font-bold text-[#273869] dark:text-blue-400 hover:underline flex items-center gap-1.5"
           >
-            <Sparkles size={14} className="group-hover:rotate-12 transition transform" />
-            <span>Mizan AI ile Analiz Et</span>
-          </Link>
+            <FileCode size={13} />
+            <span>{showPasteBox ? "Metin Girişini Gizle" : "PDF İçeriği veya Detaylı Metin Ekleyerek Analiz Et (Opsiyonel)"}</span>
+          </button>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            {/* External Official Source Link */}
+          {showPasteBox && (
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-2 animate-in fade-in duration-150">
+              <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">
+                KAP bildiriminin tam metnini veya SPK bülten maddesini buraya yapıştırabilirsiniz:
+              </label>
+              <textarea
+                value={customText}
+                onChange={(e) => setCustomText(e.target.value)}
+                placeholder="Örn: 'Şirketimiz Yönetim Kurulu 2026 konsolide net dönem kârından pay başına brüt ₺2,40 kâr payı dağıtılmasına karar vermiştir...'"
+                rows={3}
+                className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Canlı Inline AI Analiz Çıktısı (Modal İçinde Doğrudan) */}
+        {isAnalyzing && (
+          <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/30 text-center space-y-2.5 animate-pulse">
+            <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-xs font-bold text-[#182542] dark:text-white">
+              Mizan AI Metni DİB ve TKBB Standartlarına Göre İnceliyor...
+            </p>
+            <span className="text-[11px] text-slate-500 block">
+              Faizli borç eşiği, arındırma yükümlülüğü ve fıkhi riskler taranıyor
+            </span>
+          </div>
+        )}
+
+        {analysisError && (
+          <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/40 text-xs text-rose-700 dark:text-rose-300 flex items-center justify-between">
+            <span>{analysisError}</span>
+            <button
+              type="button"
+              onClick={handleRunInlineAnalysis}
+              className="font-bold underline ml-2"
+            >
+              Tekrar Dene
+            </button>
+          </div>
+        )}
+
+        {inlineAnalysis && !isAnalyzing && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-blue-50/60 to-emerald-50/40 dark:from-blue-950/30 dark:to-emerald-950/20 border border-blue-200/80 dark:border-blue-800/40 space-y-3 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-blue-200/50 dark:border-blue-800/30 pb-2">
+              <span className="text-xs font-extrabold text-[#182542] dark:text-white flex items-center gap-1.5">
+                <Sparkles size={14} className="text-emerald-500" />
+                <span>Mizan AI Canlı Fıkhi &amp; Finansal Analizi</span>
+              </span>
+              <button
+                type="button"
+                onClick={handleRunInlineAnalysis}
+                className="text-[10px] font-bold text-slate-500 hover:text-black dark:hover:text-white flex items-center gap-1"
+                title="Yeniden Analiz Et"
+              >
+                <RotateCcw size={11} />
+                <span>Yenile</span>
+              </button>
+            </div>
+
+            <div className="text-xs leading-relaxed text-slate-800 dark:text-slate-200 space-y-2 whitespace-pre-line font-normal">
+              {inlineAnalysis}
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="pt-2 border-t border-slate-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-2.5">
+          <div className="flex items-center gap-2 flex-wrap flex-1">
+            {/* 1. Modal İçinde Anında AI Analizi */}
+            <button
+              type="button"
+              onClick={handleRunInlineAnalysis}
+              disabled={isAnalyzing}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition disabled:opacity-50"
+            >
+              <Sparkles size={14} />
+              <span>{inlineAnalysis ? "Yeniden Analiz Et" : "Mizan AI ile Bu Haberi Analiz Et"}</span>
+            </button>
+
+            {/* 2. Asistanda Devam Et */}
+            <button
+              type="button"
+              onClick={handleOpenInAssistant}
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition"
+              title="Metni Mizan AI Asistanına Taşı"
+            >
+              <MessageSquare size={13} />
+              <span>Asistanda Sohbet Et</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Orijinal Resmi Bağlantı */}
             {disclosure.url && (
               <a
                 href={disclosure.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition"
               >
                 <span>
                   {disclosure.source === "SPK"
                     ? "Resmi SPK Bülteni (PDF)"
-                    : "KAP Resmi Sisteminde Gör"}
+                    : "KAP Resmi Sayfasında Gör"}
                 </span>
                 <ExternalLink size={13} />
               </a>
