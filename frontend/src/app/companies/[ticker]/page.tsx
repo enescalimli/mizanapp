@@ -417,7 +417,12 @@ export default function CompanyDetailPage() {
           <div className="bg-white dark:bg-[#0E1015] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             {[
               { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
-              { id: "AKIS", label: "Akış (KAP & SPK)", icon: Radio, badge: "Canlı" },
+              {
+                id: "AKIS",
+                label: "Akış (KAP & SPK)",
+                icon: Radio,
+                badge: disclosures.length > 0 ? `${disclosures.length} Bildirim` : "Canlı",
+              },
               { id: "KARNE", label: "Şirket Karnesi", icon: Award, badge: scorecard ? `${scorecard.totalScore}/24` : undefined },
               { id: "RASYOLAR", label: "Detaylı Rasyolar", icon: BarChart3 },
               { id: "FINANSALLAR", label: "Finansal Raporlar & Tablolar", icon: FileSpreadsheet },
@@ -648,6 +653,56 @@ export default function CompanyDetailPage() {
                 </span>
               </div>
             </div>
+
+            {/* Canlı KAP Bildirimleri Önizleme Kartı (Fıkhi Tab İçinde Görünür) */}
+            {disclosures.length > 0 && (
+              <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-[22px] border border-white/85 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3">
+                <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-white/5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    <span className="text-xs font-bold text-[#182542] dark:text-white flex items-center gap-1.5">
+                      <Radio size={13} className="text-emerald-500" />
+                      <span>{ticker} • Son Canlı KAP &amp; SPK Bildirimi</span>
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("AKIS")}
+                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>Tüm Akışı İncele ({disclosures.length})</span>
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                        {disclosures[0].category}
+                      </span>
+                      <span className="text-[11px] font-mono text-slate-400">
+                        {disclosures[0].timeAgo}
+                      </span>
+                    </div>
+                    <h4 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white truncate">
+                      {disclosures[0].title}
+                    </h4>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDisclosure(disclosures[0])}
+                      className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                    >
+                      <Sparkles size={13} />
+                      <span>Mizan AI ile Analiz Et</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1670,12 +1725,7 @@ export default function CompanyDetailPage() {
 
             {/* Hisseye Özel Bildirim Listesi */}
             {(() => {
-              const tickerDisclosures = disclosures.filter(
-                (d) =>
-                  d.ticker === ticker ||
-                  (d.rawTitle && d.rawTitle.includes(`*** ${ticker} ***`)) ||
-                  (d.title && d.title.toUpperCase().includes(ticker))
-              );
+              const tickerDisclosures = disclosures;
 
               return (
                 <div className="space-y-3">

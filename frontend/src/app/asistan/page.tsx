@@ -105,15 +105,29 @@ function AsistanContent() {
     setLoading(true);
 
     try {
+      const savedUserKey =
+        typeof window !== "undefined"
+          ? localStorage.getItem("mizan_user_gemini_api_key") || ""
+          : "";
+
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (savedUserKey.trim()) {
+        headers["x-gemini-api-key"] = savedUserKey.trim();
+      }
+
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           messages: [...messages, userMsg].map((m) => ({
             role: m.role,
             content: m.content,
           })),
-          context: contextOverride || undefined,
+          userApiKey: savedUserKey.trim() || undefined,
+          context: {
+            ...(contextOverride || {}),
+            userApiKey: savedUserKey.trim() || undefined,
+          },
         }),
       });
 

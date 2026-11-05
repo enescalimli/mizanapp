@@ -31,7 +31,7 @@ import { PaynoShell } from "@/components/PaynoShell";
 import { ChurnSurveyModal } from "@/components/ChurnSurveyModal";
 import { useAuth } from "@/lib/auth/AuthContext";
 
-type SettingsTab = "PROFIL" | "BILDIRIM" | "GIZLILIK";
+type SettingsTab = "PROFIL" | "API_AI" | "BILDIRIM" | "GIZLILIK";
 
 interface UserSettingsState {
   fullName: string;
@@ -99,9 +99,19 @@ export default function SettingsPage() {
   const [showPortalDetails, setShowPortalDetails] = useState(false);
   const [planToast, setPlanToast] = useState<string | null>(null);
 
+  // Kişisel Google Gemini API Anahtarı State'leri (Kullanıcının Ücretli Bakiyesi)
+  const [userGeminiApiKey, setUserGeminiApiKey] = useState("");
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [apiKeyTesting, setApiKeyTesting] = useState(false);
+  const [apiKeyTestResult, setApiKeyTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [apiKeySavedNotice, setApiKeySavedNotice] = useState(false);
+
   // Load settings on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const savedKey = localStorage.getItem("mizan_user_gemini_api_key") || "";
+      setUserGeminiApiKey(savedKey);
+
       const saved = localStorage.getItem("mizan_user_settings");
       if (saved) {
         try {
@@ -152,6 +162,68 @@ export default function SettingsPage() {
     }
     setIsSavedToast(true);
     setTimeout(() => setIsSavedToast(false), 3000);
+  };
+
+  const handleTestApiKey = async () => {
+    if (!userGeminiApiKey.trim()) {
+      setApiKeyTestResult({ success: false, message: "Lütfen bir Google Gemini API anahtarı girin." });
+      return;
+    }
+    setApiKeyTesting(true);
+    setApiKeyTestResult(null);
+    try {
+      const t0 = performance.now();
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-gemini-api-key": userGeminiApiKey.trim(),
+        },
+        body: JSON.stringify({
+          messages: [{ role: "user", content: "ping" }],
+          userApiKey: userGeminiApiKey.trim(),
+        }),
+      });
+      const elapsed = Math.round(performance.now() - t0);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data.modelUsed?.includes("Google Gemini")) {
+        setApiKeyTestResult({
+          success: true,
+          message: `Bağlantı Başarılı! (${data.modelUsed} • ${elapsed}ms gecikme)`,
+        });
+      } else {
+        setApiKeyTestResult({
+          success: false,
+          message: `Model doğrulaması yapılamadı. Hesabınızın API erişimini ve bakiye tanımlarını kontrol edin.`,
+        });
+      }
+    } catch (err: any) {
+      setApiKeyTestResult({
+        success: false,
+        message: `Bağlantı testi başarısız: ${err.message || "Bilinmeyen hata"}`,
+      });
+    } finally {
+      setApiKeyTesting(false);
+    }
+  };
+
+  const handleSaveApiKey = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("mizan_user_gemini_api_key", userGeminiApiKey.trim());
+      setApiKeySavedNotice(true);
+      setTimeout(() => setApiKeySavedNotice(false), 3000);
+    }
+  };
+
+  const handleClearApiKey = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("mizan_user_gemini_api_key");
+      setUserGeminiApiKey("");
+      setApiKeyTestResult(null);
+      setApiKeySavedNotice(true);
+      setTimeout(() => setApiKeySavedNotice(false), 3000);
+    }
   };
 
   const handleExportPortfolioData = () => {
@@ -263,11 +335,12 @@ export default function SettingsPage() {
         </div>
 
         {/* =================================================================== */}
-        {/* SETTINGS NAVIGATION TABS (Sadece Profil, Bildirim, Gizlilik)         */}
+        {/* SETTINGS NAVIGATION TABS                                            */}
         {/* =================================================================== */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
           {[
             { id: "PROFIL", label: "Profil & Üyelik", icon: User },
+            { id: "API_AI", label: "Mizan AI & Kişisel API", icon: Sparkles, badge: userGeminiApiKey ? "Özel Anahtar" : undefined },
             { id: "BILDIRIM", label: "Bildirimler & Alarmlar", icon: Bell },
             { id: "GIZLILIK", label: "Gizlilik & Dışa Aktarma", icon: Lock },
           ].map((tab) => {
@@ -286,6 +359,11 @@ export default function SettingsPage() {
               >
                 <Icon size={14} />
                 <span>{tab.label}</span>
+                {tab.badge && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300">
+                    {tab.badge}
+                  </span>
+                )}
               </button>
             );
           })}
@@ -656,7 +734,166 @@ export default function SettingsPage() {
         )}
 
         {/* =================================================================== */}
-        {/* TAB 4: BİLDİRİMLER & ALARMLAR                                       */}
+        {/* TAB 2: MİZAN AI & KİŞİSEL GOOGLE GEMINI API YÖNETİMİ                */}
+        {/* =================================================================== */}
+        {activeTab === "API_AI" && (
+          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EDF1F7] dark:border-white/10 pb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                  <Sparkles size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#182542] dark:text-white">
+                    Google Gemini API Anahtarı &amp; Kişisel Bakiye Yönetimi
+                  </h3>
+                  <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
+                    Google AI Studio veya Google Cloud hesabınızdaki ücretli bakiyenizi Mizan ile entegre edin.
+                  </p>
+                </div>
+              </div>
+
+              {/* Durum Rozeti */}
+              <div>
+                {userGeminiApiKey.trim() ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Kişisel Ücretli Hesap Devrede</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span>Mizan Kurumsal Sunucu Devrede</span>
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Bilgilendirme Kartı */}
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 text-xs space-y-2">
+              <p className="font-semibold text-slate-800 dark:text-slate-200 leading-relaxed">
+                Mizan AI Asistanı ve KAP/SPK haber analizleri varsayılan olarak yüksek hızlı kurumsal sunucularımız üzerinden çalışmaktadır.
+              </p>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Eğer Google AI Studio veya GCP üzerinde bakiyeniz/krediniz varsa, buraya kendi API anahtarınızı tanımlayabilirsiniz. Böylece asistan sorularınız ve KAP bülteni analizleriniz doğrudan kendi ücretli hesabınız üzerinden faturalandırılır ve hiçbir kota sınırına takılmaz.
+              </p>
+            </div>
+
+            {/* API Anahtarı Giriş Formu */}
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] uppercase tracking-wider block">
+                  Google Gemini API Anahtarı (AIzaSy...)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showApiKey ? "text" : "password"}
+                    value={userGeminiApiKey}
+                    onChange={(e) => setUserGeminiApiKey(e.target.value)}
+                    placeholder="AIzaSy..."
+                    className="w-full px-4 py-2.5 pr-10 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-mono font-semibold text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowApiKey(!showApiKey)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                  >
+                    {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                  Anahtarınız yalnızca tarayıcınızın yerel belleğinde (localStorage) saklanır ve doğrudan Gemini API isteklerinde kullanılır.
+                </p>
+              </div>
+
+              {/* Butonlar */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  type="button"
+                  onClick={handleSaveApiKey}
+                  className="px-4 py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold transition flex items-center gap-2 shadow-xs cursor-pointer"
+                >
+                  <Save size={13} />
+                  <span>Anahtarı Kaydet</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleTestApiKey}
+                  disabled={apiKeyTesting || !userGeminiApiKey.trim()}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                >
+                  <RefreshCw size={13} className={apiKeyTesting ? "animate-spin" : ""} />
+                  <span>{apiKeyTesting ? "Test Ediliyor..." : "Bağlantıyı Test Et"}</span>
+                </button>
+
+                {userGeminiApiKey.trim() && (
+                  <button
+                    type="button"
+                    onClick={handleClearApiKey}
+                    className="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-300 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Trash2 size={13} />
+                    <span>Anahtarı Kaldır (Varsayılana Dön)</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Kaydedildi Bildirimi */}
+              {apiKeySavedNotice && (
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center gap-2 animate-in fade-in duration-200">
+                  <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>API anahtarı ayarı başarıyla güncellendi.</span>
+                </div>
+              )}
+
+              {/* Test Sonucu Bildirimi */}
+              {apiKeyTestResult && (
+                <div
+                  className={`p-3.5 rounded-xl border text-xs font-semibold flex items-center gap-2.5 animate-in fade-in duration-200 ${
+                    apiKeyTestResult.success
+                      ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300"
+                      : "bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/40 text-rose-800 dark:text-rose-300"
+                  }`}
+                >
+                  {apiKeyTestResult.success ? (
+                    <CheckCircle2 size={16} className="text-emerald-600 shrink-0" />
+                  ) : (
+                    <Lock size={16} className="text-rose-600 shrink-0" />
+                  )}
+                  <span>{apiKeyTestResult.message}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Rehber: Google AI Studio Anahtarı Alma Adımları */}
+            <div className="pt-4 border-t border-[#EDF1F7] dark:border-white/10 space-y-2">
+              <h4 className="text-xs font-bold text-[#182542] dark:text-white uppercase tracking-wider">
+                Google AI Studio API Anahtarı Nasıl Alınır?
+              </h4>
+              <ol className="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 list-decimal list-inside leading-relaxed">
+                <li>
+                  <a
+                    href="https://aistudio.google.com/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 dark:text-blue-400 font-bold underline inline-flex items-center gap-1"
+                  >
+                    <span>aistudio.google.com/apikey</span>
+                    <ArrowRight size={11} />
+                  </a>{" "}
+                  bağlantısına Google hesabınızla giriş yapın.
+                </li>
+                <li>Mavi renkli <strong>&quot;Create API Key&quot;</strong> butonuna tıklayın ve projenizi seçin.</li>
+                <li>Oluşturulan <code className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 font-mono text-[11px]">AIzaSy...</code> ile başlayan anahtarı kopyalayın.</li>
+                <li>Yukarıdaki alana yapıştırıp <strong>&quot;Anahtarı Kaydet&quot;</strong> butonuna tıklayın.</li>
+              </ol>
+            </div>
+          </div>
+        )}
+
+        {/* =================================================================== */}
+        {/* TAB 3: BİLDİRİMLER & ALARMLAR                                       */}
         {/* =================================================================== */}
         {activeTab === "BILDIRIM" && (
           <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">

@@ -20,8 +20,17 @@ import {
 } from "@/lib/data/compliantAlternatives";
 import { pruneConversationHistory } from "@/lib/ai/contextPruner";
 
-// Google Gemini Flash API Ayarları (Ortam değişkeninden okunur)
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+// Google Gemini Flash API Ayarları
+// 1. Kullanıcı kişisel ücretli hesabı (Google AI Studio / GCP) - Ayarlar veya istek başlığından
+// 2. Ortam değişkenlerinden okunan kurumsal anahtarlar (GEMINI_API_KEY, GOOGLE_AI_KEY, GOOGLE_API_KEY)
+const ENV_GEMINI_KEYS: string[] = [
+  process.env.GEMINI_API_KEY,
+  process.env.GOOGLE_AI_KEY,
+  process.env.GOOGLE_API_KEY,
+  process.env.NEXT_PUBLIC_GEMINI_API_KEY,
+]
+  .map((k) => k?.trim())
+  .filter((k): k is string => Boolean(k && k.length > 10));
 
 // Fıkhi Doktrin ve Kurumsal Sistem Talimatı
 const MIZAN_SYSTEM_PROMPT = `
@@ -59,9 +68,11 @@ interface ChatRequestMessage {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { messages, context } = body as {
+    const { messages, context, userApiKey: directUserApiKey } = body as {
       messages: ChatRequestMessage[];
+      userApiKey?: string;
       context?: {
+        userApiKey?: string;
         currentTicker?: string;
         currentPath?: string;
         portfolioHoldings?: any[];
@@ -90,6 +101,13 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // 0. Kişisel API Anahtarı Tespiti (Kullanıcı kendi ücretli hesabını girdiyse)
+    const userApiKey =
+      req.headers.get("x-gemini-api-key")?.trim() ||
+      (body as any)?.userApiKey?.trim() ||
+      context?.userApiKey?.trim() ||
+      "";
 
     const lastUserMessage = messages[messages.length - 1]?.content || "";
     const lowerText = lastUserMessage.toLowerCase();
@@ -263,12 +281,28 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
       ? `\n[ÖNCEKİ DİYALOG HAFIZA BAĞLAMI]:\n${pruningResult.prunedHistoryText}\n`
       : "";
 
-    // 4. Gemini Flash Canlı API Çağrısı (Model Kademeli Çağrı)
+    // 4. Gemini Flash Canlı API Çağrısı (Çok Katmanlı Anahtar & Model Zinciri)
     let aiText = "";
     let isLiveGemini = false;
     let successfulModel = "";
+    let activeKeySource: "USER_PROVIDED" | "ENV" = "ENV";
 
-    // Hızlı, stabil ve bakiye kotası aktif olan model sıralaması
+    // Güvenilir API Anahtarı Öncelik Sırası:
+    // 1. Kullanıcı Kişisel Anahtarı (Google AI Studio ücretli hesabı / Ayarlar)
+    // 2. Ortam Değişkenleri (process.env.GEMINI_API_KEY, GOOGLE_AI_KEY vb.)
+    const keysToTry: { key: string; source: "USER_PROVIDED" | "ENV" }[] = [];
+
+    if (userApiKey && userApiKey.length > 10) {
+      keysToTry.push({ key: userApiKey, source: "USER_PROVIDED" });
+    }
+
+    for (const k of ENV_GEMINI_KEYS) {
+      if (!keysToTry.some((existing) => existing.key === k)) {
+        keysToTry.push({ key: k, source: "ENV" });
+      }
+    }
+
+    // Hızlı, stabil ve güncel model kademesi
     const candidateModels = [
       "gemini-3.1-flash-lite",
       "gemini-flash-lite-latest",
@@ -279,45 +313,49 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
 
     const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}\n${historySection}\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Kullanıcının sorusuna doğrudan, canlı ve derinlemesine yanıt ver. SPK uyarınca yatırım tavsiyesi olmadığını (YTD) belirt.`;
 
-    for (const modelName of candidateModels) {
+    for (const keyItem of keysToTry) {
       if (aiText) break;
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 6000);
+      for (const modelName of candidateModels) {
+        if (aiText) break;
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 7000);
 
-        const geminiRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: geminiPrompt }] }],
-              generationConfig: {
-                temperature: 0.3,
-                maxOutputTokens: 2048,
-              },
-            }),
-            signal: controller.signal,
-          }
-        );
-        clearTimeout(timeoutId);
+          const geminiRes = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${keyItem.key}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: geminiPrompt }] }],
+                generationConfig: {
+                  temperature: 0.3,
+                  maxOutputTokens: 2048,
+                },
+              }),
+              signal: controller.signal,
+            }
+          );
+          clearTimeout(timeoutId);
 
-        if (geminiRes.ok) {
-          const geminiData = await geminiRes.json();
-          const generated =
-            geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (generated && generated.trim().length > 0) {
-            aiText = generated.trim();
-            isLiveGemini = true;
-            successfulModel = modelName;
-            break;
+          if (geminiRes.ok) {
+            const geminiData = await geminiRes.json();
+            const generated =
+              geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (generated && generated.trim().length > 0) {
+              aiText = generated.trim();
+              isLiveGemini = true;
+              successfulModel = modelName;
+              activeKeySource = keyItem.source;
+              break;
+            }
+          } else {
+            const errStatus = geminiRes.status;
+            console.warn(`Key [${keyItem.source}] with model ${modelName} returned HTTP ${errStatus}`);
           }
-        } else {
-          const errStatus = geminiRes.status;
-          console.warn(`Model ${modelName} returned HTTP ${errStatus}`);
+        } catch (e) {
+          console.warn(`Key [${keyItem.source}] with model ${modelName} call failed, trying next...`, e);
         }
-      } catch (e) {
-        console.warn(`Model ${modelName} call failed, trying next...`, e);
       }
     }
 
@@ -420,8 +458,13 @@ Detaylı analiz için hisse kodu belirtebilirsiniz (Örn: *“THYAO neden katıl
     return NextResponse.json({
       text: aiText,
       modelUsed: isLiveGemini
-        ? `Google Gemini Flash (${successfulModel}) • Canlı`
-        : "Mizan Kural Motoru (Gemini kotası dolduğu için devrede)",
+        ? `Google Gemini Flash (${successfulModel}) • ${
+            activeKeySource === "USER_PROVIDED"
+              ? "Kişisel Hesabınız"
+              : "Canlı Çıkarım"
+          }`
+        : "Mizan Fıkhi Kural Motoru (Çevrimdışı Güvence Devrede)",
+      keySourceUsed: isLiveGemini ? activeKeySource : null,
       stockData,
       compliantAlternatives,
       purificationCalculation,

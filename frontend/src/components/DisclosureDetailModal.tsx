@@ -32,6 +32,7 @@ interface DisclosureDetailModalProps {
 export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailModalProps) {
   const router = useRouter();
   const [inlineAnalysis, setInlineAnalysis] = useState<string | null>(null);
+  const [analysisModel, setAnalysisModel] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [showPasteBox, setShowPasteBox] = useState(false);
@@ -40,6 +41,7 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
   // Modal kapandığında state'i sıfırla
   useEffect(() => {
     setInlineAnalysis(null);
+    setAnalysisModel(null);
     setIsAnalyzing(false);
     setAnalysisError(null);
     setShowPasteBox(false);
@@ -76,10 +78,20 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
       ? `${disclosure.summary}\n\n[Kullanıcı Tarafından Sağlanan Ek Metin / PDF İçeriği]:\n${customText.trim()}`
       : disclosure.summary;
 
+    const savedUserKey =
+      typeof window !== "undefined"
+        ? localStorage.getItem("mizan_user_gemini_api_key") || ""
+        : "";
+
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (savedUserKey.trim()) {
+        headers["x-gemini-api-key"] = savedUserKey.trim();
+      }
+
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           messages: [
             {
@@ -87,8 +99,10 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
               content: `Aşağıdaki resmi ${disclosure.source} bildirimini DİB ve TKBB katılım ilkelerine göre analiz et. Şirketin katılım durumuna etkisi nedir? Kâr payı arındırması veya yatırımcı aksiyonu gerekir mi?`,
             },
           ],
+          userApiKey: savedUserKey.trim() || undefined,
           context: {
             currentTicker: disclosure.ticker,
+            userApiKey: savedUserKey.trim() || undefined,
             disclosure: {
               ...disclosure,
               fullText: fullPayloadText,
@@ -104,6 +118,7 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
       const data = await res.json();
       if (data.text) {
         setInlineAnalysis(data.text);
+        setAnalysisModel(data.modelUsed || "Google Gemini Flash • Canlı");
       } else {
         throw new Error("Boş analiz yanıtı alındı");
       }
@@ -334,10 +349,18 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
         {inlineAnalysis && !isAnalyzing && (
           <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-blue-50/60 to-emerald-50/40 dark:from-blue-950/30 dark:to-emerald-950/20 border border-blue-200/80 dark:border-blue-800/40 space-y-3 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-blue-200/50 dark:border-blue-800/30 pb-2">
-              <span className="text-xs font-extrabold text-[#182542] dark:text-white flex items-center gap-1.5">
-                <Sparkles size={14} className="text-emerald-500" />
-                <span>Mizan AI Canlı Fıkhi &amp; Finansal Analizi</span>
-              </span>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-extrabold text-[#182542] dark:text-white flex items-center gap-1.5">
+                  <Sparkles size={14} className="text-emerald-500" />
+                  <span>Mizan AI Fıkhi &amp; Finansal Analizi</span>
+                </span>
+                {analysisModel && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>{analysisModel}</span>
+                  </span>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={handleRunInlineAnalysis}
