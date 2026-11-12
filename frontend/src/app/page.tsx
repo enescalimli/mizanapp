@@ -35,14 +35,14 @@ import {
   Bot,
   Bell,
 } from "lucide-react";
-import { useTheme, MIZAN_PALETTES } from "@/lib/theme/ThemeContext";
+import { useTheme } from "@/lib/theme/ThemeContext";
 import { StockLogo } from "@/components/StockLogo";
 import { AnimatedMizanLogo } from "@/components/AnimatedMizanLogo";
 import { ScrollBackgroundMizanLogo } from "@/components/landing/ScrollBackgroundMizanLogo";
 import { InstitutionalLogosSection } from "@/components/landing/InstitutionalLogosSection";
 
 export default function LandingPage() {
-  const { isDark, toggleTheme, palette, setPalette } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
 
   // Sadece Android APK içinden açıldığında uygulama karşılama veya panosuna yönlendir
   useEffect(() => {
@@ -117,16 +117,16 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-[#F8FAFC] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200">
+    <div className="relative min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#08080C] dark:text-white selection:bg-[#C6F432] selection:text-[#08080C] transition-colors duration-200">
       {/* =================================================================== */}
       {/* 0. SCROLL-DRIVEN 3D BACKGROUND MIZAN LOGO CANVAS                    */}
       {/* =================================================================== */}
       <ScrollBackgroundMizanLogo />
 
       {/* =================================================================== */}
-      {/* 1. MIDAS-STYLE FROSTED NAVBAR                                       */}
+      {/* 1. NORTHLINE 60-30-10 FROSTED NAVBAR                                */}
       {/* =================================================================== */}
-      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 dark:bg-[#000000]/85 border-b border-slate-200/70 dark:border-white/10 transition-colors">
+      <header className="sticky top-0 z-50 backdrop-blur-2xl bg-white/80 dark:bg-[#08080C]/85 border-b border-black/[0.06] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 sm:h-20 flex items-center justify-between gap-4">
           
           {/* Logo & Marka */}
@@ -140,7 +140,7 @@ export default function LandingPage() {
               />
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-[#182542] dark:text-white">
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-[#08080C] dark:text-white">
                 mizan
               </span>
               <span className="text-xs font-bold text-[#273869] dark:text-slate-300">
@@ -174,46 +174,21 @@ export default function LandingPage() {
           </nav>
 
           {/* Sağ Aksiyonlar */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-            {/* 60-30-10 Canlı Palet Seçici */}
-            <div
-              className="hidden sm:flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-white/80 dark:bg-[#0E1015]/80 border border-slate-200/70 dark:border-white/10 shadow-xs"
-              title="60-30-10 İmza Renk Paleti Seç"
-            >
-              {MIZAN_PALETTES.map((p) => {
-                const isSelected = palette === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setPalette(p.id)}
-                    title={`${p.name} (${p.subtitle})`}
-                    aria-label={p.name}
-                    className={`w-3.5 h-3.5 rounded-full transition-all cursor-pointer ${
-                      isSelected
-                        ? "ring-2 ring-offset-1 ring-slate-900 dark:ring-white dark:ring-offset-[#0E1015] scale-110"
-                        : "opacity-60 hover:opacity-100 hover:scale-105"
-                    }`}
-                    style={{ backgroundColor: p.colors.accent10 }}
-                  />
-                );
-              })}
-            </div>
-
+          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
             {/* Dark Mode Butonu */}
             <button
               onClick={toggleTheme}
-              className="p-2 sm:p-2.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white transition cursor-pointer"
+              className="p-2 sm:p-2.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#08080C] dark:text-white transition cursor-pointer"
               title={isDark ? "Açık Moda Geç" : "Koyu Moda Geç"}
               aria-label="Tema Değiştir"
             >
-              {isDark ? <Sun size={17} className="text-amber-400" /> : <Moon size={17} />}
+              {isDark ? <Sun size={17} className="text-[#C6F432]" /> : <Moon size={17} />}
             </button>
 
             {/* Giriş Yap */}
             <Link
               href="/auth/login"
-              className="hidden sm:inline-flex px-4 py-2 text-xs sm:text-sm font-bold text-[#182542] dark:text-white hover:opacity-80 transition"
+              className="hidden sm:inline-flex px-4 py-2 text-xs sm:text-sm font-bold text-[#08080C] dark:text-white hover:opacity-80 transition"
             >
               Giriş Yap
             </Link>
@@ -270,10 +245,10 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Bold Editorial Headline (Sans-Serif + Newsreader İtalik Serif %10 Vurgu) */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#182542] dark:text-white leading-[1.12]">
+            {/* Bold Editorial Headline (Northline: Sans-Serif + İtalik Serif %10 Lime Vurgu) */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#08080C] dark:text-white leading-[1.12]">
               Borsa İstanbul’da{" "}
-              <span className="font-orbix-serif italic font-semibold mizan-accent-text">
+              <span className="font-orbix-serif italic font-semibold text-[#10B981] dark:text-[#C6F432]">
                 Helal Yatırımın
               </span>{" "}
               Dijital Zekâsı.
@@ -330,11 +305,11 @@ export default function LandingPage() {
           {/* =================================================================== */}
           <div className="mt-12 sm:mt-16 max-w-5xl mx-auto relative">
             
-            {/* Background Halo (Lacivert Vurgulu) */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#182542]/15 via-[#273869]/10 to-blue-500/10 rounded-[36px] blur-2xl -z-10" />
+            {/* Background Halo (Northline %10 Lime Glow) */}
+            <div className="absolute inset-0 bg-emerald-500/10 dark:bg-[#C6F432]/15 rounded-[36px] blur-3xl -z-10" />
 
-            {/* Main Mockup Bento Container (Şeffaf Buzlu Cam - Arka Plandaki 3B Logo Görünür) */}
-            <div className="bg-white/40 dark:bg-[#0A0B0E]/50 backdrop-blur-xl rounded-[32px] sm:rounded-[36px] border border-white/75 dark:border-white/10 shadow-[0_30px_90px_rgba(24,37,66,0.10)] dark:shadow-[0_30px_90px_rgba(0,0,0,0.75)] p-4 sm:p-8 space-y-6">
+            {/* Main Mockup Bento Container (Koyu Cam / Buzlu Cam) */}
+            <div className="bg-white/60 dark:bg-[#0D0E14]/85 backdrop-blur-xl rounded-[32px] sm:rounded-[36px] border border-black/[0.07] dark:border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.08)] dark:shadow-[0_30px_90px_rgba(0,0,0,0.85)] p-4 sm:p-8 space-y-6">
               
               {/* Mockup Header Bar */}
               <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-4">

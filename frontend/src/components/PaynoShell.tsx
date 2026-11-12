@@ -12,7 +12,6 @@ import { MizanChatWidget } from "./MizanChatWidget";
 import { AnimatedMizanLogo } from "./AnimatedMizanLogo";
 import { ScrollBackgroundMizanLogo } from "./landing/ScrollBackgroundMizanLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { useTheme, MIZAN_PALETTES } from "@/lib/theme/ThemeContext";
 
 interface PaynoShellProps {
   children: React.ReactNode;
@@ -28,7 +27,6 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const { user, profile, isDemoUser } = useAuth();
-  const { palette, setPalette } = useTheme();
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
   const userDisplayName = useMemo(() => {
@@ -85,10 +83,10 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
               />
             </div>
             <div className="flex items-baseline gap-1.5">
-              <span className="text-base sm:text-lg font-black tracking-tight text-[#182542] dark:text-white">
+              <span className="text-base sm:text-lg font-black tracking-tight text-[#08080C] dark:text-white">
                 mizan
               </span>
-              <span className="text-[11px] font-bold text-[#273869] dark:text-slate-300 hidden sm:inline">
+              <span className="text-[11px] font-bold text-[#10B981] dark:text-[#C6F432] hidden sm:inline">
                 {badge}
               </span>
             </div>
@@ -96,31 +94,6 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 
           {/* Sağ Eylem İkonları ve Kullanıcı Profili */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-
-            {/* 60-30-10 İmza Palet Seçici */}
-            <div
-              className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/80 dark:bg-[#0E1015]/80 border border-slate-200/60 dark:border-white/10 shadow-xs"
-              title="60-30-10 Renk Paleti Seç"
-            >
-              {MIZAN_PALETTES.map((p) => {
-                const isSelected = palette === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => setPalette(p.id)}
-                    title={`${p.name} (${p.subtitle})`}
-                    aria-label={p.name}
-                    className={`w-4 h-4 rounded-full transition-all cursor-pointer flex items-center justify-center ${
-                      isSelected
-                        ? "ring-2 ring-offset-1 ring-slate-900 dark:ring-white dark:ring-offset-[#0E1015] scale-110"
-                        : "opacity-65 hover:opacity-100 hover:scale-105"
-                    }`}
-                    style={{ backgroundColor: p.colors.accent10 }}
-                  />
-                );
-              })}
-            </div>
             
             {/* Arama Butonu */}
             <button
@@ -152,17 +125,17 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
                 className="bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
                 title="Hesap ve Ayarlar"
               >
-                {/* Avatar (Lacivert gradient) */}
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center text-[11px] font-bold font-mono shrink-0 shadow-xs">
+                {/* Avatar (Northline %10 Lime Vurgulu) */}
+                <div className="w-7 h-7 rounded-full bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] flex items-center justify-center text-[11px] font-black font-mono shrink-0 shadow-xs">
                   {userInitials}
                 </div>
 
                 {/* Kullanıcı Bilgisi */}
                 <div className="hidden sm:flex flex-col text-left leading-none max-w-[110px]">
-                  <span className="text-xs font-bold text-[#182542] dark:text-white truncate group-hover:text-[#273869] dark:group-hover:text-blue-400 transition">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white truncate transition">
                     {userDisplayName}
                   </span>
-                  <span className="text-[10px] text-[#6E81A0] dark:text-[#8C9BB0] truncate mt-0.5">
+                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 truncate mt-0.5">
                     {userEmail}
                   </span>
                 </div>

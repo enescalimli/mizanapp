@@ -9,85 +9,38 @@
    ============================================================================ */
 
 @layer base {
-  :root,
-  html[data-palette="obsidian-mint"] {
-    /* 01 Color — 60-30-10 Token Architecture (Default: Obsidian & Signal Mint) */
-    --mizan-bg-60: #EEF0F4;
-    --mizan-surface-30: rgba(255, 255, 255, 0.82);
+  :root {
+    /* 60-30-10 Northline Signature System (Light Mode) */
+    --mizan-bg-60: #F4F5F7;
+    --mizan-surface-30: rgba(255, 255, 255, 0.90);
     --mizan-ink-30: #08080C;
-    --mizan-muted-30: #64748B;
+    --mizan-muted-30: #6B7280;
     --mizan-accent-10: #10B981;
     --mizan-accent-10-hover: #059669;
     --mizan-accent-10-fg: #FFFFFF;
     --mizan-accent-rgb: 16, 185, 129;
 
-    --navy-900: #273869;  /* Dominant Primary Navy */
-    --navy-800: #405881;  /* Secondary Navy / Meta */
-    --navy-950: #182542;  /* Deep Ink */
-    --gray-50: #edf1f4;   /* Light gray tone */
-    --canvas: #f4f6fa;    /* Product canvas */
-    --accent-green: #12b76a; /* Positive trend strictly */
-    --accent-red: #f04438;   /* Negative trend strictly */
-    --slate-muted: #6e81a0;  /* Hierarchy through weight, not rainbow color */
-    --border-hairline: rgba(39, 56, 105, 0.08);
+    --navy-900: #08080C;
+    --navy-800: #1F2937;
+    --navy-950: #08080C;
+    --gray-50: #F4F5F7;
+    --canvas: #F4F5F7;
+    --accent-green: #10B981;
+    --accent-red: #F43F5E;
+    --slate-muted: #6B7280;
+    --border-hairline: rgba(8, 8, 12, 0.08);
   }
 
-  html.dark,
-  html.dark[data-palette="obsidian-mint"] {
+  html.dark {
+    /* 60-30-10 Northline Signature System (Dark Mode: #08080C + #FFFFFF + #C6F432) */
     --mizan-bg-60: #08080C;
-    --mizan-surface-30: rgba(16, 18, 24, 0.88);
-    --mizan-ink-30: #F4F4F5;
-    --mizan-muted-30: #94A3B8;
-    --mizan-accent-10: #34D399;
-    --mizan-accent-10-hover: #10B981;
-    --mizan-accent-10-fg: #042F1E;
-    --mizan-accent-rgb: 52, 211, 153;
-  }
-
-  /* Palette 2: Deep Navy & Warm Gold */
-  html[data-palette="navy-gold"] {
-    --mizan-bg-60: #F5F2EB;
-    --mizan-surface-30: rgba(255, 255, 255, 0.86);
-    --mizan-ink-30: #14213D;
-    --mizan-muted-30: #5C677D;
-    --mizan-accent-10: #D97706;
-    --mizan-accent-10-hover: #B45309;
-    --mizan-accent-10-fg: #FFFFFF;
-    --mizan-accent-rgb: 217, 119, 6;
-  }
-
-  html.dark[data-palette="navy-gold"] {
-    --mizan-bg-60: #0B1324;
-    --mizan-surface-30: rgba(20, 33, 61, 0.72);
-    --mizan-ink-30: #F5F2EB;
-    --mizan-muted-30: #94A3B8;
-    --mizan-accent-10: #F59E0B;
-    --mizan-accent-10-hover: #D97706;
-    --mizan-accent-10-fg: #14213D;
-    --mizan-accent-rgb: 245, 158, 11;
-  }
-
-  /* Palette 3: Gunmetal & Molten Copper */
-  html[data-palette="gunmetal-copper"] {
-    --mizan-bg-60: #E4E6EB;
-    --mizan-surface-30: rgba(255, 255, 255, 0.88);
-    --mizan-ink-30: #0D0E12;
-    --mizan-muted-30: #525866;
-    --mizan-accent-10: #FF5A1F;
-    --mizan-accent-10-hover: #E04812;
-    --mizan-accent-10-fg: #FFFFFF;
-    --mizan-accent-rgb: 255, 90, 31;
-  }
-
-  html.dark[data-palette="gunmetal-copper"] {
-    --mizan-bg-60: #0D0E12;
-    --mizan-surface-30: rgba(22, 24, 30, 0.88);
-    --mizan-ink-30: #E4E6EB;
+    --mizan-surface-30: rgba(15, 16, 22, 0.88);
+    --mizan-ink-30: #FFFFFF;
     --mizan-muted-30: #9CA3AF;
-    --mizan-accent-10: #FF5A1F;
-    --mizan-accent-10-hover: #FF7340;
-    --mizan-accent-10-fg: #FFFFFF;
-    --mizan-accent-rgb: 255, 90, 31;
+    --mizan-accent-10: #C6F432;
+    --mizan-accent-10-hover: #D4FA52;
+    --mizan-accent-10-fg: #08080C;
+    --mizan-accent-rgb: 198, 244, 50;
   }
 
   html {

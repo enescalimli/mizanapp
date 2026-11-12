@@ -94,8 +94,8 @@ export const LeftDockSidebar: React.FC = () => {
           onClick={() => setTheme("light")}
           className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
             !isDark
-              ? "bg-[#182542] text-white shadow-xs"
-              : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+              ? "bg-[#08080C] text-[#C6F432] shadow-xs"
+              : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
           }`}
           title="Açık Tema"
         >
@@ -106,8 +106,8 @@ export const LeftDockSidebar: React.FC = () => {
           onClick={() => setTheme("dark")}
           className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
             isDark
-              ? "bg-white text-[#182542] shadow-xs"
-              : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+              ? "bg-[#C6F432] text-[#08080C] shadow-xs"
+              : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
           }`}
           title="Karanlık Tema"
         >
@@ -125,15 +125,15 @@ export const LeftDockSidebar: React.FC = () => {
                 href={item.href}
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-150 ${
                   item.isActive
-                    ? "bg-[#182542] text-white dark:bg-white dark:text-[#182542] shadow-sm scale-105"
-                    : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-sm scale-105"
+                    : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
                 }`}
               >
                 <Icon size={16} strokeWidth={item.isActive ? 2.4 : 1.9} />
               </Link>
 
               {/* Hover Tooltip */}
-              <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#182542] dark:bg-[#0A0B0E] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
+              <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#08080C] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
                 {item.label}
               </span>
             </div>
@@ -148,14 +148,14 @@ export const LeftDockSidebar: React.FC = () => {
             href="/rehber"
             className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
               pathname.startsWith("/rehber")
-                ? "bg-[#182542] dark:bg-[#182542] text-white shadow-xs border border-white/15"
-                : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
+                ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
+                : "text-[#8C93A3] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
             }`}
             title="Fıkhi Standart & Rehber"
           >
             <HelpCircle size={15} strokeWidth={2} />
           </Link>
-          <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#182542] dark:bg-[#0A0B0E] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
+          <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#08080C] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
             Fıkhi Standart &amp; SSS
           </span>
         </div>

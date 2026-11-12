@@ -217,8 +217,8 @@ export default function TarayiciPage() {
                 onClick={() => setViewMode("grid")}
                 className={`p-1.5 rounded-full transition cursor-pointer ${
                   viewMode === "grid"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C]"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
                 title="Kart Izgarası Görünümü"
               >
@@ -229,8 +229,8 @@ export default function TarayiciPage() {
                 onClick={() => setViewMode("table")}
                 className={`p-1.5 rounded-full transition cursor-pointer ${
                   viewMode === "table"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C]"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
                 title="Detaylı Tablo Görünümü"
               >
@@ -252,7 +252,7 @@ export default function TarayiciPage() {
             {/* Portföye Git */}
             <Link
               href="/portfolio?action=add"
-              className="rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 px-4 sm:px-5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition"
+              className="mizan-accent-btn rounded-full hover:opacity-95 px-4 sm:px-5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5 transition"
             >
               <Plus size={14} />
               <span>Portföye Ekle</span>
@@ -272,13 +272,13 @@ export default function TarayiciPage() {
               onClick={() => setActiveTab("ALL")}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "ALL"
-                  ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
-                  : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-slate-200/60 dark:border-white/10"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
+                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>Tüm Hisseler</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === "ALL" ? "bg-white/20 text-white" : "bg-slate-100 dark:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
+                activeTab === "ALL" ? "bg-white/15 dark:bg-[#08080C]/15 text-current" : "bg-slate-100 dark:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
               }`}>
                 {stats.total}
               </span>
@@ -323,13 +323,13 @@ export default function TarayiciPage() {
               onClick={() => setActiveTab("FAV")}
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "FAV"
-                  ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                  : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
+                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>Favorilerim</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                activeTab === "FAV" ? "bg-white/20 text-white" : "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
+                activeTab === "FAV" ? "bg-white/15 dark:bg-[#08080C]/15 text-current" : "bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400"
               }`}>
                 {favorites.length}
               </span>
@@ -375,7 +375,7 @@ export default function TarayiciPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="BIST Hisse Ara (örn: BIMAS, THYAO)..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-xs text-[#182542] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 shadow-xs"
+                className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs text-[#08080C] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] shadow-xs"
               />
             </div>
           </div>
@@ -585,7 +585,7 @@ export default function TarayiciPage() {
             <button
               type="button"
               onClick={() => setVisibleLimit((v) => v + 60)}
-              className="px-6 py-2 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold shadow-xs transition"
+              className="mizan-accent-btn px-6 py-2 rounded-full text-xs font-bold shadow-xs transition hover:opacity-95"
             >
               Daha Fazla Göster (+60 / Toplam: {sortedCompanies.length})
             </button>

@@ -438,7 +438,7 @@ export default function CompanyDetailPage() {
                   onClick={() => setActiveTab(tab.id as CompanyDetailTab)}
                   className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition shrink-0 cursor-pointer ${
                     isActive
-                      ? "bg-black dark:bg-white text-white dark:text-black font-bold shadow-xs"
+                      ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] font-bold shadow-xs"
                       : "text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5"
                   }`}
                 >

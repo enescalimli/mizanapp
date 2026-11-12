@@ -235,16 +235,16 @@ export default function DashboardPage() {
 
         {/* Misafir Kullanıcı Giriş & Senkronizasyon Çağrısı */}
         {!user && !isDemoUser && (
-          <div className="bg-gradient-to-r from-[#182542] via-[#273869] to-[#182542] text-white p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md border border-white/10">
+          <div className="bg-[#08080C] dark:bg-[#111218] text-white p-3.5 sm:p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md border border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                <Sparkles size={18} className="text-emerald-400" />
+              <div className="w-9 h-9 rounded-xl bg-[#C6F432]/15 flex items-center justify-center shrink-0 border border-[#C6F432]/25">
+                <Sparkles size={18} className="text-[#C6F432]" />
               </div>
               <div>
                 <span className="text-xs sm:text-sm font-bold block">
                   Katılım Portföyünüzü ve Cihazlar Arası Senkronizasyonu Başlatın
                 </span>
-                <span className="text-[11px] text-slate-300">
+                <span className="text-[11px] text-zinc-400">
                   Giriş yaparak hisse pozisyonlarınızı, kuruşu kuruşuna arındırma hesabınızı ve bulut yedeğinizi koruyun.
                 </span>
               </div>
@@ -252,7 +252,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 href="/auth/login"
-                className="px-4 py-2 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-xs"
+                className="px-4 py-2 rounded-full mizan-accent-btn text-xs font-extrabold"
               >
                 Giriş Yap
               </Link>
@@ -789,7 +789,7 @@ export default function DashboardPage() {
                 onClick={() => setDisclosureFilter(tab.id as any)}
                 className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all ${
                   disclosureFilter === tab.id
-                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                     : "bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
                 }`}
               >
