@@ -73,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" suppressHydrationWarning>
+    <html lang="tr" className="dark" suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#08080C] dark:text-white selection:bg-[#C6F432] selection:text-[#08080C] transition-colors duration-200">
         <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
         <ThemeProvider>

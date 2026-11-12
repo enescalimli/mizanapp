@@ -95,7 +95,7 @@ export default function LogoAnimationStudioPage() {
     <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#14151A] dark:text-[#F1F3F7] py-6 px-4 sm:px-6 lg:px-10 transition-colors duration-200">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* TOP HEADER */}
-        <header className="flex flex-wrap items-center justify-between gap-4 bg-white/80 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 px-5 py-4 shadow-sm">
+        <header className="flex flex-wrap items-center justify-between gap-4 bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 px-5 py-4 shadow-sm">
           <div className="flex items-center gap-3">
             <Link
               href="/"
@@ -162,7 +162,7 @@ export default function LogoAnimationStudioPage() {
         {/* MAIN GRID: CONTROLS + INTERACTIVE STAGE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* LEFT PANEL: MOTION & ICON CONTROLS */}
-          <div className="lg:col-span-4 space-y-5 bg-white/85 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 shadow-sm">
+          <div className="lg:col-span-4 space-y-5 bg-white/85 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 shadow-sm">
             {/* 1. Motion Weighting Selector */}
             <div className="space-y-2.5">
               <label className="text-xs font-extrabold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8] flex items-center gap-1.5">
@@ -549,7 +549,7 @@ export default function LogoAnimationStudioPage() {
             </div>
 
             {/* SIDE-BY-SIDE COMPARISON STRIP (ALL 4 MASTER SVG ICONS) */}
-            <div className="bg-white/85 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 sm:p-6 space-y-4 shadow-sm">
+            <div className="bg-white/85 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 sm:p-6 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-sm font-extrabold text-[#08080C] dark:text-white">

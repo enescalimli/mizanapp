@@ -28,7 +28,7 @@ export default function ErrorPage({
 
       {/* Central Bento 500 Error Card */}
       <main className="relative z-10 max-w-lg mx-auto w-full my-auto py-10 space-y-6 text-center">
-        <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-10 shadow-2xl space-y-6">
+        <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-10 shadow-2xl space-y-6">
           <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
             <AlertOctagon size={24} />
           </div>

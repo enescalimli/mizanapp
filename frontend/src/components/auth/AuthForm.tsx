@@ -411,7 +411,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="p-7 sm:p-9 border border-white/85 dark:border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 dark:bg-[#0D0E14]/95 backdrop-blur-2xl space-y-6">
+      <div className="p-7 sm:p-9 border border-white/85 dark:border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl space-y-6">
         
         {/* Header / Brand */}
         <div className="text-center">
@@ -509,7 +509,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             <div className="w-full border-t border-slate-200 dark:border-white/10" />
           </div>
           <div className="relative flex justify-center text-[10px] uppercase font-semibold">
-            <span className="bg-white dark:bg-[#0D0E14] px-3 text-slate-400 dark:text-[#94A3B8]">veya e-posta ile</span>
+            <span className="bg-white dark:bg-[#101118] px-3 text-slate-400 dark:text-[#94A3B8]">veya e-posta ile</span>
           </div>
         </div>
 
@@ -691,7 +691,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       {/* ===================================================================== */}
       {isOtpModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-white dark:bg-[#0D0E14] rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-white/10 space-y-6 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#101118] rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-white/10 space-y-6 animate-in zoom-in-95 duration-150">
             
             {/* Modal Close Button */}
             <button

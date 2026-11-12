@@ -168,7 +168,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0D0E14] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-4 sm:space-y-5 animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#101118] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-4 sm:space-y-5 animate-in zoom-in-95 fade-in duration-200">
         
         {/* Top bar: Source badge + Live indicator + Close button */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">
@@ -314,7 +314,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
                 onChange={(e) => setCustomText(e.target.value)}
                 placeholder="Örn: 'Şirketimiz Yönetim Kurulu 2026 konsolide net dönem kârından pay başına brüt ₺2,40 kâr payı dağıtılmasına karar vermiştir...'"
                 rows={3}
-                className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
+                className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
               />
             </div>
           )}

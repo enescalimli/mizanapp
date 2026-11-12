@@ -19,7 +19,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     try {
-      const savedTheme = localStorage.getItem("mizan_theme") as Theme | null;
+      const savedTheme = localStorage.getItem("mizan_theme_v2") as Theme | null;
       if (savedTheme === "dark" || savedTheme === "light") {
         setThemeState(savedTheme);
         applyTheme(savedTheme);
@@ -47,7 +47,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setThemeState(newTheme);
     applyTheme(newTheme);
     try {
-      localStorage.setItem("mizan_theme", newTheme);
+      localStorage.setItem("mizan_theme_v2", newTheme);
     } catch {
       // ignore
     }

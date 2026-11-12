@@ -276,7 +276,7 @@ export default function CompanyDetailPage() {
 
             <button
               onClick={handleShare}
-              className="px-3 py-1.5 rounded-full bg-white/80 dark:bg-[#0D0E14] hover:bg-white dark:hover:bg-[#151720] text-[#08080C] dark:text-white border border-white/90 dark:border-white/10 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs backdrop-blur-md"
+              className="px-3 py-1.5 rounded-full bg-white/80 dark:bg-[#101118] hover:bg-white dark:hover:bg-[#151720] text-[#08080C] dark:text-white border border-white/90 dark:border-white/10 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs backdrop-blur-md"
             >
               <Share2 size={12} />
               <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
@@ -287,7 +287,7 @@ export default function CompanyDetailPage() {
         {/* =================================================================== */}
         {/* FINTABLES-GRADE COMPANY HERO BANNER                                 */}
         {/* =================================================================== */}
-        <div className="bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5 transition-colors">
+        <div className="bg-white/80 dark:bg-[#101118] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5 transition-colors">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             
             {/* Ticker & Info */}
@@ -414,7 +414,7 @@ export default function CompanyDetailPage() {
         {/* 6 INTERACTIVE NAVIGATION TABS (V14 Pill Container)                  */}
         {/* =================================================================== */}
         <div className="flex items-center justify-start sm:justify-center overflow-x-auto py-1 scrollbar-none">
-          <div className="bg-white dark:bg-[#0D0E14] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
+          <div className="bg-white dark:bg-[#101118] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             {[
               { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
               {
@@ -467,7 +467,7 @@ export default function CompanyDetailPage() {
             {/* =============================================================== */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
               {/* Sol Bento: Kar Tanesi Radarı */}
-              <div className="lg:col-span-5 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between transition-colors">
+              <div className="lg:col-span-5 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#101118] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between transition-colors">
                 <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-white/5">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
@@ -496,7 +496,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Sağ Bento: Kompakt DİB / TKBB Fıkhi Oran Eşikleri */}
-              <div className="lg:col-span-7 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-3.5 transition-colors">
+              <div className="lg:col-span-7 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#101118] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-3.5 transition-colors">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-2.5">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
@@ -619,7 +619,7 @@ export default function CompanyDetailPage() {
             )}
 
             {/* Purification & Zakat Fast Metrics */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs text-xs transition-colors">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-[28px] bg-white/80 dark:bg-[#101118] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs text-xs transition-colors">
               <div>
                 <span className="text-[10px] uppercase font-semibold text-[#6E81A0] dark:text-[#94A3B8] tracking-wider block mb-1">
                   Piyasa Değeri
@@ -656,7 +656,7 @@ export default function CompanyDetailPage() {
 
             {/* Canlı KAP Bildirimleri Önizleme Kartı (Fıkhi Tab İçinde Görünür) */}
             {disclosures.length > 0 && (
-              <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-[22px] border border-white/85 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3">
+              <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl rounded-[22px] border border-white/85 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-white/5">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
@@ -712,7 +712,7 @@ export default function CompanyDetailPage() {
         {activeTab === "KARNE" && scorecard && (
           <div className="space-y-6">
             {/* Header Score Banner */}
-            <div className="bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+            <div className="bg-white/80 dark:bg-[#101118] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8]">
@@ -800,7 +800,7 @@ export default function CompanyDetailPage() {
             {/* 4 Scorecard Pillars Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Pillar 1: Kârlılık */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#101118] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
                   <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
                     <Activity size={14} className="text-blue-600 dark:text-[#C6F432]" />
@@ -844,7 +844,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Pillar 2: Büyüme */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#101118] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
                   <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
                     <TrendingUp size={14} className="text-emerald-600 dark:text-emerald-400" />
@@ -888,7 +888,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Pillar 3: Borçluluk */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#101118] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
                   <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
                     <ShieldCheck size={14} className="text-indigo-600 dark:text-[#C6F432]" />
@@ -932,7 +932,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Pillar 4: Fıkhi Katılım */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#101118] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
                   <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
                     <Scale size={14} className="text-emerald-600 dark:text-emerald-400" />
@@ -985,7 +985,7 @@ export default function CompanyDetailPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Category 1: Değerleme Çarpanları */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#101118] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   1. Değerleme Çarpanları
                 </h4>
@@ -1018,7 +1018,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Category 2: Kârlılık Oranları */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#101118] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   2. Kârlılık Marjları
                 </h4>
@@ -1051,7 +1051,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Category 3: Likidite & Çalışma Sermayesi */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#101118] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   3. Likidite ve Çalışma Sermayesi
                 </h4>
@@ -1076,7 +1076,7 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Category 4: Borçluluk & Finansal Yapı */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#101118] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   4. Borçluluk ve Kaldıraç
                 </h4>
@@ -1121,7 +1121,7 @@ export default function CompanyDetailPage() {
         {activeTab === "TEMETTU_RAKIP" && (
           <div className="space-y-6">
             {/* Temettü Geçmişi & Fıkhi Arındırma Tablosu */}
-            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
               <div className="flex items-center justify-between border-b border-[#EDF1F7] dark:border-white/10 pb-3">
                 <div className="space-y-0.5">
                   <h3 className="text-base font-bold text-[#08080C] dark:text-white flex items-center gap-2">
@@ -1165,7 +1165,7 @@ export default function CompanyDetailPage() {
             </div>
 
             {/* Sektörel Rakip Kıyaslama Tablosu */}
-            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
               <div className="flex items-center justify-between border-b border-[#EDF1F7] dark:border-white/10 pb-3">
                 <div className="space-y-0.5">
                   <h3 className="text-base font-bold text-[#08080C] dark:text-white flex items-center gap-2">
@@ -1255,7 +1255,7 @@ export default function CompanyDetailPage() {
           <div className="space-y-6">
             
             {/* AI Header Card */}
-            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
+            <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-[#08080C] text-white flex items-center justify-center shadow-xs">
@@ -1470,7 +1470,7 @@ export default function CompanyDetailPage() {
                         <Link
                           key={alt.ticker}
                           href={`/companies/${alt.ticker}`}
-                          className="p-4 rounded-2xl bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 hover:border-emerald-500 transition shadow-xs group block"
+                          className="p-4 rounded-2xl bg-white dark:bg-[#101118] border border-slate-200/80 dark:border-white/10 hover:border-emerald-500 transition shadow-xs group block"
                         >
                           <div className="flex items-center justify-between mb-1.5">
                             <span className="font-extrabold text-sm text-[#08080C] dark:text-white group-hover:text-emerald-600 transition">
@@ -1503,7 +1503,7 @@ export default function CompanyDetailPage() {
                 {/* 6 In-Depth Analysis Bento Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Section 1: Financial Health */}
-                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                       <Activity size={14} className="text-indigo-600 dark:text-[#C6F432]" />
                       <span>1. Finansal Büyüme &amp; Kârlılık Röntgeni</span>
@@ -1514,7 +1514,7 @@ export default function CompanyDetailPage() {
                   </div>
 
                   {/* Section 2: Purification Note */}
-                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                       <Coins size={14} className="text-emerald-600 dark:text-emerald-400" />
                       <span>2. Fıkhi Arındırma &amp; Zekât Yükü</span>
@@ -1526,7 +1526,7 @@ export default function CompanyDetailPage() {
 
                   {/* Section 3: DuPont & ROE Quality */}
                   {ai.dupontAiSynthesis && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <Split size={14} className="text-purple-600 dark:text-purple-400" />
                         <span>3. DuPont Model &amp; ROE Kalitesi Sentezi</span>
@@ -1539,7 +1539,7 @@ export default function CompanyDetailPage() {
 
                   {/* Section 4: Valuation & Peer Benchmarking */}
                   {ai.valuationInsight && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <BarChart3 size={14} className="text-amber-600 dark:text-amber-400" />
                         <span>4. Sektörel Değerleme &amp; Çarpan Kıyaslaması</span>
@@ -1552,7 +1552,7 @@ export default function CompanyDetailPage() {
 
                   {/* Section 5: Target Investor Profile */}
                   {ai.targetInvestorProfile && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <Target size={14} className="text-rose-600 dark:text-rose-400" />
                         <span>5. Hedef Yatırımcı Profili &amp; Uygunluk</span>
@@ -1565,7 +1565,7 @@ export default function CompanyDetailPage() {
 
                   {/* Section 6: Action Plan */}
                   {ai.shariahActionPlan && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
                       <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <Scale size={14} className="text-emerald-600 dark:text-emerald-400" />
                         <span>6. Mizan Fıkhi Aksiyon Rehberi</span>
@@ -1616,7 +1616,7 @@ export default function CompanyDetailPage() {
               /* LOCKED PAYWALL FOR OTHER STOCKS WHEN ON FREE TIER */
               <div className="relative rounded-[28px] overflow-hidden border border-white/90 dark:border-white/10 shadow-lg">
                 {/* Blurred Background Preview */}
-                <div className="p-8 space-y-4 filter blur-xs select-none pointer-events-none opacity-40 bg-white dark:bg-[#0D0E14]">
+                <div className="p-8 space-y-4 filter blur-xs select-none pointer-events-none opacity-40 bg-white dark:bg-[#101118]">
                   <h4 className="text-sm font-bold dark:text-white">1. Finansal Büyüme &amp; Kârlılık Röntgeni</h4>
                   <p className="text-xs leading-relaxed dark:text-slate-300">
                     Şirketin 2026 yılı 3. çeyrek finansal tablolarında esas faaliyet kârlılığı güçlü bir ivme sergilemiş olup, faizli borç rasyolarındaki hareketlilik izlenmektedir...
@@ -1676,7 +1676,7 @@ export default function CompanyDetailPage() {
         {activeTab === "AKIS" && (
           <div className="space-y-5">
             {/* Akış Başlık Kartı */}
-            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#08080C] to-[#2563EB] text-white flex items-center justify-center shadow-xs">
@@ -1730,7 +1730,7 @@ export default function CompanyDetailPage() {
               return (
                 <div className="space-y-3">
                   {disclosuresLoading && tickerDisclosures.length === 0 ? (
-                    <div className="p-8 text-center bg-white/70 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-2xl border border-white/80 dark:border-white/10">
+                    <div className="p-8 text-center bg-white/70 dark:bg-[#101118]/95 backdrop-blur-xl rounded-2xl border border-white/80 dark:border-white/10">
                       <RefreshCw size={20} className="animate-spin text-slate-400 mx-auto mb-2" />
                       <p className="text-xs text-[#6E81A0]">KAP ve SPK resmi akışı kontrol ediliyor...</p>
                     </div>
@@ -1738,7 +1738,7 @@ export default function CompanyDetailPage() {
                     tickerDisclosures.map((item) => (
                       <div
                         key={item.id}
-                        className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-[22px] border border-white/80 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3 transition hover:border-[#08080C]/30 dark:hover:border-white/20"
+                        className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl rounded-[22px] border border-white/80 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3 transition hover:border-[#08080C]/30 dark:hover:border-white/20"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
@@ -1798,7 +1798,7 @@ export default function CompanyDetailPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="p-8 text-center bg-white/70 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-[26px] border border-white/80 dark:border-white/10 space-y-3">
+                    <div className="p-8 text-center bg-white/70 dark:bg-[#101118]/95 backdrop-blur-xl rounded-[26px] border border-white/80 dark:border-white/10 space-y-3">
                       <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-500 flex items-center justify-center mx-auto">
                         <FileText size={18} />
                       </div>
@@ -1836,7 +1836,7 @@ export default function CompanyDetailPage() {
                         <div
                           key={d.id}
                           onClick={() => setSelectedDisclosure(d)}
-                          className="p-3.5 rounded-2xl bg-white/70 dark:bg-[#0D0E14]/70 backdrop-blur-md border border-white/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 transition cursor-pointer space-y-1.5"
+                          className="p-3.5 rounded-2xl bg-white/70 dark:bg-[#101118]/90 backdrop-blur-md border border-white/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 transition cursor-pointer space-y-1.5"
                         >
                           <div className="flex items-center justify-between text-[10px]">
                             <span className="font-bold text-blue-600 dark:text-[#C6F432]">{d.category}</span>

@@ -89,13 +89,13 @@ export default function TefasKatilimPage() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
+            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">Toplam Katılım Fon Büyüklüğü</span>
               <span className="font-mono text-base font-black text-emerald-600 dark:text-emerald-400">
                 {formatTRY(totalAum, 0)}
               </span>
             </div>
-            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
+            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">Toplam Yatırımcı</span>
               <span className="font-mono text-base font-black text-[#08080C] dark:text-white">
                 {totalInvestors.toLocaleString("tr-TR")}
@@ -118,7 +118,7 @@ export default function TefasKatilimPage() {
                 className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
                     ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
-                    : "bg-white dark:bg-[#0D0E14] text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
+                    : "bg-white dark:bg-[#101118] text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
                 }`}
               >
                 {cat}
@@ -134,7 +134,7 @@ export default function TefasKatilimPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Fon Kodu veya Kurucu Ara (KHA, ZPF)..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-xs"
+              className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-xs"
             />
           </div>
         </div>
@@ -164,8 +164,8 @@ export default function TefasKatilimPage() {
                     onClick={() => setActiveFund(fund)}
                     className={`rounded-2xl p-4 transition-all cursor-pointer border ${
                       isSelected
-                        ? "bg-white dark:bg-[#0D0E14] border-emerald-500 shadow-md ring-1 ring-emerald-500/20"
-                        : "bg-white/60 dark:bg-[#0D0E14]/60 hover:bg-white dark:hover:bg-[#0D0E14] border-slate-200/60 dark:border-white/10 shadow-xs"
+                        ? "bg-white dark:bg-[#101118] border-emerald-500 shadow-md ring-1 ring-emerald-500/20"
+                        : "bg-white/60 dark:bg-[#101118]/60 hover:bg-white dark:hover:bg-[#0D0E14] border-slate-200/60 dark:border-white/10 shadow-xs"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -221,7 +221,7 @@ export default function TefasKatilimPage() {
           {/* SAĞ: SEÇİLİ FONUN LOOK-THROUGH RÖNTGENİ (lg:col-span-7) */}
           <div className="lg:col-span-7 sticky top-6">
             {activeFund ? (
-              <div className="rounded-[28px] p-5 sm:p-6 bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-lg space-y-5 transition-colors">
+              <div className="rounded-[28px] p-5 sm:p-6 bg-white dark:bg-[#101118] border border-slate-200/80 dark:border-white/10 shadow-lg space-y-5 transition-colors">
                 
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 dark:border-white/5 pb-4">

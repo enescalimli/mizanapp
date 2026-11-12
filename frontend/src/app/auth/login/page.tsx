@@ -87,7 +87,7 @@ export default function LoginPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
             
             {/* 1. Canlı KAP & SPK Bildirim Akışı */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#101118] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                 <Radio size={16} className="animate-pulse" />
               </div>
@@ -100,7 +100,7 @@ export default function LoginPage() {
             </div>
 
             {/* 2. Mizan AI Fıkhi & Finansal Asistan */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#101118] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-[#08080C]/10 dark:bg-white/10 text-[#08080C] dark:text-white flex items-center justify-center">
                 <Sparkles size={16} />
               </div>
@@ -113,7 +113,7 @@ export default function LoginPage() {
             </div>
 
             {/* 3. BIST Katılım Taraması */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#101118] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-[#C6F432]/15 text-blue-600 dark:text-[#C6F432] flex items-center justify-center">
                 <Scale size={16} />
               </div>
@@ -126,7 +126,7 @@ export default function LoginPage() {
             </div>
 
             {/* 4. Arındırma & Zekât Motoru */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#101118] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                 <Coins size={16} />
               </div>

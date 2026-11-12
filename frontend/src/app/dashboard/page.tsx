@@ -207,7 +207,7 @@ export default function DashboardPage() {
         {/* =================================================================== */}
         {/* 1. ÜST KARŞILAMA VE HIZLI AKSİYON BARI                               */}
         {/* =================================================================== */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8]">
@@ -278,7 +278,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* KOLON 1: TOPLAM PORTFÖY BAKİYESİ VE DAİRE GRAFİK (lg:col-span-5) */}
-          <div className="lg:col-span-5 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4 transition-colors">
+          <div className="lg:col-span-5 bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4 transition-colors">
             
             {/* Üst Satır: Başlık & Döviz Seçimi */}
             <div>
@@ -451,7 +451,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-7 grid grid-cols-2 gap-3 sm:gap-4">
             
             {/* KART 1: PORTFÖY GETİRİSİ */}
-            <div className="relative overflow-hidden bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="relative overflow-hidden bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Portföy Getirisi
@@ -477,7 +477,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 2: ARINDIRMA YÜKÜ (Terazi) */}
-            <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Fıkhi Arındırma
@@ -503,7 +503,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 3: YILLIK TEMETTÜ GELİRİ */}
-            <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Temettü Beklentisi
@@ -524,7 +524,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 4: KATILIM STANDARTLARI UYUMU */}
-            <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Katılım Standartları
@@ -554,7 +554,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* SOL: PORTFÖY POZİSYONLARI TABLOSU (lg:col-span-7) */}
-          <div className="lg:col-span-7 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-7 bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
             
             <div className="flex items-center justify-between">
               <div>
@@ -641,7 +641,7 @@ export default function DashboardPage() {
           </div>
 
           {/* SAĞ: HIZLI İŞLEMLER & PLATFORM KISAYOLLARI (lg:col-span-5) */}
-          <div className="lg:col-span-5 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-5 bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
             
             <div>
               <h3 className="text-sm font-bold text-[#08080C] dark:text-white">
@@ -741,7 +741,7 @@ export default function DashboardPage() {
         {/* =================================================================== */}
         {/* 4. ÜÇÜNCÜ SATIR: CANLI KAP & SPK AKIŞI (PİYASA HABERLERİ)           */}
         {/* =================================================================== */}
-        <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
+        <div className="bg-white/45 dark:bg-[#101118] backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
           
           {/* Başlık ve Canlı Durum */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

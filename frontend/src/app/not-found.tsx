@@ -39,7 +39,7 @@ export default function NotFoundPage() {
 
       {/* Central Bento 404 Card */}
       <main className="relative z-10 max-w-xl mx-auto w-full my-auto py-10 space-y-6 text-center">
-        <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-12 shadow-2xl space-y-6">
+        <div className="bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-12 shadow-2xl space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold">
             <span>404 &bull; Sayfa Bulunamadı</span>
           </div>

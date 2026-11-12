@@ -170,7 +170,7 @@ export function KafifRiskRadarWidget({
 
   // Full & Compact Modu (Kapsamlı Bento Kartı)
   return (
-    <div className={`rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors ${className}`}>
+    <div className={`rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#101118] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors ${className}`}>
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-3">
         <div className="flex items-center gap-2.5">

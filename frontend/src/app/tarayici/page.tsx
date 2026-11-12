@@ -211,7 +211,7 @@ export default function TarayiciPage() {
 
           <div className="flex items-center gap-2.5">
             {/* Görünüm Seçici: Kart Izgarası vs Tablo */}
-            <div className="bg-white dark:bg-[#0D0E14] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1">
+            <div className="bg-white dark:bg-[#101118] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
@@ -243,7 +243,7 @@ export default function TarayiciPage() {
               type="button"
               onClick={() => refreshNow()}
               disabled={isRefreshing}
-              className="w-8 h-8 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white flex items-center justify-center transition"
               title="KAP Bilanço Verilerini Yenile"
             >
               <RefreshCw size={14} className={isRefreshing ? "animate-spin text-[#0D8B52]" : ""} />
@@ -273,7 +273,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "ALL"
                   ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
-                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#101118] text-[#646A78] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>Tüm Hisseler</span>
@@ -290,7 +290,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "COMPLIANT"
                   ? "bg-[#0D8B52] text-white shadow-xs"
-                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-[#0D8B52] border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#101118] text-[#646A78] dark:text-[#94A3B8] hover:text-[#0D8B52] border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>✓ Katılıma Uygun</span>
@@ -307,7 +307,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "NON_COMPLIANT"
                   ? "bg-[#C62E26] text-white shadow-xs"
-                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-[#C62E26] border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#101118] text-[#646A78] dark:text-[#94A3B8] hover:text-[#C62E26] border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>✕ Katılım Dışı</span>
@@ -324,7 +324,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "FAV"
                   ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
-                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#101118] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>Favorilerim</span>
@@ -341,7 +341,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "RADAR"
                   ? "bg-amber-500 text-slate-950 shadow-xs"
-                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#101118] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <AlertTriangle size={12} className={activeTab === "RADAR" ? "text-slate-950" : "text-amber-500"} />
@@ -359,7 +359,7 @@ export default function TarayiciPage() {
             <select
               value={sectorFilter}
               onChange={(e) => setSectorFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#08080C] dark:text-white outline-none shadow-xs max-w-[160px] sm:max-w-[220px] truncate cursor-pointer"
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#08080C] dark:text-white outline-none shadow-xs max-w-[160px] sm:max-w-[220px] truncate cursor-pointer"
             >
               {sectorList.map((sec) => (
                 <option key={sec} value={sec}>
@@ -375,7 +375,7 @@ export default function TarayiciPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="BIST Hisse Ara (örn: BIMAS, THYAO)..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs text-[#08080C] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] shadow-xs"
+                className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 text-xs text-[#08080C] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] shadow-xs"
               />
             </div>
           </div>
@@ -403,7 +403,7 @@ export default function TarayiciPage() {
                 <div
                   key={comp.ticker}
                   onClick={() => router.push(`/companies/${comp.ticker}`)}
-                  className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between space-y-3.5 group cursor-pointer relative"
+                  className="bg-white dark:bg-[#101118] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between space-y-3.5 group cursor-pointer relative"
                 >
                   {/* Üst: Favori Yıldızı */}
                   <div className="flex justify-end">
@@ -481,7 +481,7 @@ export default function TarayiciPage() {
         {/* GÖRÜNÜM 2: DETAYLI TABLO GÖRÜNÜMÜ                                 */}
         {/* ================================================================= */}
         {viewMode === "table" && (
-          <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+          <div className="bg-white dark:bg-[#101118] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>

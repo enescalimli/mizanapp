@@ -117,7 +117,7 @@ export const FloatingBottomBar: React.FC = () => {
           />
 
           {/* Quick Action Modal (Karanlık Mod & Şeffaf Cam Tasarımı) */}
-          <div className="relative w-full max-w-md bg-white/95 dark:bg-[#0D0E14]/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200/80 dark:border-white/10 space-y-4 animate-in fade-in zoom-in-95 duration-200 z-10 mb-20 sm:mb-0">
+          <div className="relative w-full max-w-md bg-white/95 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200/80 dark:border-white/10 space-y-4 animate-in fade-in zoom-in-95 duration-200 z-10 mb-20 sm:mb-0">
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3">
               <div className="flex items-center gap-2.5">
@@ -146,7 +146,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 border border-slate-200/60 dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
                     <Search size={18} />
                   </div>
                   <div>
@@ -167,7 +167,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0D0E14] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#101118] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
                     <Calendar size={18} />
                   </div>
                   <div>
@@ -188,7 +188,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0D0E14] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#101118] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
                     <Calculator size={18} />
                   </div>
                   <div>
@@ -209,7 +209,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0D0E14] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#101118] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
                     <Briefcase size={18} />
                   </div>
                   <div>
@@ -230,7 +230,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-[#F8FAFC] dark:bg-white/5 hover:bg-[#F0F4FA] dark:hover:bg-white/10 border border-[#E2E8F0] dark:border-white/10 transition group text-left"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#0D0E14] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#101118] border border-[#E2E8F0] dark:border-white/10 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shadow-xs">
                     <BookOpen size={18} />
                   </div>
                   <div>
@@ -304,7 +304,7 @@ export const FloatingBottomBar: React.FC = () => {
       {/* V14 FLOATING MOBILE BAR                                             */}
       {/* =================================================================== */}
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 select-none md:hidden w-[94%] max-w-sm">
-        <div className="flex items-center justify-between bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-full px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-300">
+        <div className="flex items-center justify-between bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl border border-white/80 dark:border-white/10 rounded-full px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.8)] transition-all duration-300">
           
           {/* 1. Ana Sayfa */}
           <Link

@@ -186,7 +186,7 @@ export const MizanChatWidget: React.FC = () => {
 
       {/* 2. AÇILIR MINI ASİSTAN MODAL PENCERESİ */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white/85 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white/85 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {/* Üst Bar */}
           <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#08080C] via-[#20345e] to-[#0D8B52] dark:from-[#0D0E14]/95 dark:via-[#08080C]/95 dark:to-[#0D8B52]/90 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10 shrink-0">
@@ -270,7 +270,7 @@ export const MizanChatWidget: React.FC = () => {
 
                   {/* GENERATIVE UI 1: Hisse Durum Özeti Kartı */}
                   {msg.stockData && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-white space-y-2 shadow-xs">
+                    <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-[#101118] border border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-white space-y-2 shadow-xs">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <StockLogo ticker={msg.stockData.ticker} name={msg.stockData.name} size="sm" />
@@ -324,7 +324,7 @@ export const MizanChatWidget: React.FC = () => {
                         {msg.compliantAlternatives.map((alt: any) => (
                           <div
                             key={alt.ticker}
-                            className="p-2 rounded-lg bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 flex items-center justify-between text-[11px]"
+                            className="p-2 rounded-lg bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 flex items-center justify-between text-[11px]"
                           >
                             <div className="flex items-center gap-2">
                               <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
@@ -404,7 +404,7 @@ export const MizanChatWidget: React.FC = () => {
                         key={idx}
                         type="button"
                         onClick={() => handleSendMessage(q)}
-                        className="px-2.5 py-1 rounded-full bg-white/70 dark:bg-[#0D0E14]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm"
+                        className="px-2.5 py-1 rounded-full bg-white/70 dark:bg-[#101118]/95 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm"
                       >
                         {q}
                       </button>
@@ -427,7 +427,7 @@ export const MizanChatWidget: React.FC = () => {
           </div>
 
           {/* Mesaj Giriş Alanı */}
-          <div className="p-3 bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 shrink-0">
+          <div className="p-3 bg-white/80 dark:bg-[#101118]/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 shrink-0">
             <form
               onSubmit={(e) => {
                 e.preventDefault();

@@ -183,7 +183,7 @@ export const InstitutionalLogosSection: React.FC = () => {
           {institutions.map((inst) => (
             <div
               key={inst.id}
-              className={`rounded-3xl p-6 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 ${inst.borderColor} transition-all duration-200 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:-translate-y-1 group`}
+              className={`rounded-3xl p-6 bg-white/45 dark:bg-[#101118] backdrop-blur-xl border border-white/80 dark:border-white/10 ${inst.borderColor} transition-all duration-200 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:-translate-y-1 group`}
             >
               {/* Card Top: Logo & Status Badge */}
               <div className="space-y-4">
@@ -244,7 +244,7 @@ export const InstitutionalLogosSection: React.FC = () => {
         </div>
 
         {/* Unified Data Pipeline Flow Banner */}
-        <div className="rounded-2xl p-4 sm:p-5 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-2xs">
+        <div className="rounded-2xl p-4 sm:p-5 bg-white/45 dark:bg-[#101118] backdrop-blur-xl border border-white/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-2xs">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <Database size={20} />
