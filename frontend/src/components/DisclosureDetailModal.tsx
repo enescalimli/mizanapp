@@ -386,7 +386,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
               type="button"
               onClick={handleRunInlineAnalysis}
               disabled={isAnalyzing}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold shadow-md shadow-blue-500/20 transition disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl mizan-accent-btn text-xs font-bold disabled:opacity-50 cursor-pointer"
             >
               <Sparkles size={14} />
               <span>{inlineAnalysis ? "Yeniden Analiz Et" : "Mizan AI ile Bu Haberi Analiz Et"}</span>

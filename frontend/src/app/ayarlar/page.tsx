@@ -26,10 +26,14 @@ import {
   RefreshCw,
   CreditCard,
   Building2,
+  Palette,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { PaynoShell } from "@/components/PaynoShell";
 import { ChurnSurveyModal } from "@/components/ChurnSurveyModal";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { useTheme, MIZAN_PALETTES } from "@/lib/theme/ThemeContext";
 
 type SettingsTab = "PROFIL" | "API_AI" | "BILDIRIM" | "GIZLILIK";
 
@@ -82,6 +86,7 @@ const DEFAULT_SETTINGS: UserSettingsState = {
 export default function SettingsPage() {
   const router = useRouter();
   const { user, profile, loading, isDemoUser } = useAuth();
+  const { theme, toggleTheme, palette, setPalette } = useTheme();
 
   useEffect(() => {
     if (!loading && !user && !isDemoUser) {
@@ -729,6 +734,99 @@ export default function SettingsPage() {
                 </div>
               )}
 
+            </div>
+
+            {/* 60-30-10 İmza Renk Sistemi & Tema Seçici */}
+            <div className="pt-6 border-t border-[#EDF1F7] dark:border-white/10 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl mizan-accent-soft border flex items-center justify-center">
+                    <Palette size={17} />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#182542] dark:text-white">
+                      60-30-10 İmza Renk Sistemi &amp; Atmosfer
+                    </h4>
+                    <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
+                      %60 zemin, %30 buzlu cam yüzey ve %10 tek baskın vurgu disiplini.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Aydınlık / Karanlık Mod Anahtarı */}
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="px-3.5 py-2 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-xs font-bold text-[#182542] dark:text-white flex items-center gap-2 transition self-start sm:self-auto cursor-pointer"
+                >
+                  {theme === "dark" ? <Sun size={14} className="text-amber-400" /> : <Moon size={14} />}
+                  <span>{theme === "dark" ? "Aydınlık Moda Geç" : "Karanlık Moda Geç"}</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                {MIZAN_PALETTES.map((p) => {
+                  const isActive = palette === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => setPalette(p.id)}
+                      className={`text-left rounded-2xl p-4 border transition-all cursor-pointer space-y-3 ${
+                        isActive
+                          ? "bg-white dark:bg-white/[0.06] border-slate-900 dark:border-white shadow-md scale-[1.01]"
+                          : "bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/70 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/25"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="text-xs font-extrabold text-[#182542] dark:text-white">
+                            {p.name}
+                          </div>
+                          <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
+                            {p.subtitle}
+                          </div>
+                        </div>
+                        {isActive && (
+                          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full mizan-accent-btn">
+                            Aktif
+                          </span>
+                        )}
+                      </div>
+
+                      {/* 60% / 30% / 10% Görsel Oran Barı */}
+                      <div className="h-9 rounded-xl overflow-hidden flex border border-black/10 dark:border-white/10 shadow-inner">
+                        <div
+                          className="w-[60%] flex items-center justify-between px-2 text-[9px] font-mono font-bold text-white"
+                          style={{ backgroundColor: p.colors.dominant60 }}
+                        >
+                          <span>60%</span>
+                        </div>
+                        <div
+                          className="w-[30%] flex items-center justify-center text-[9px] font-mono font-bold text-slate-800"
+                          style={{ backgroundColor: p.colors.secondary30 }}
+                        >
+                          30%
+                        </div>
+                        <div
+                          className="w-[10%] flex items-center justify-center text-[8px] font-mono font-bold text-white"
+                          style={{ backgroundColor: p.colors.accent10 }}
+                        >
+                          10
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[9px] font-mono text-[#6E81A0] dark:text-[#94A3B8]">
+                        <span>{p.colors.dominant60}</span>
+                        <span>{p.colors.secondary30}</span>
+                        <span className="font-bold" style={{ color: p.colors.accent10 }}>
+                          {p.colors.accent10}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

@@ -35,14 +35,14 @@ import {
   Bot,
   Bell,
 } from "lucide-react";
-import { useTheme } from "@/lib/theme/ThemeContext";
+import { useTheme, MIZAN_PALETTES } from "@/lib/theme/ThemeContext";
 import { StockLogo } from "@/components/StockLogo";
 import { AnimatedMizanLogo } from "@/components/AnimatedMizanLogo";
 import { ScrollBackgroundMizanLogo } from "@/components/landing/ScrollBackgroundMizanLogo";
 import { InstitutionalLogosSection } from "@/components/landing/InstitutionalLogosSection";
 
 export default function LandingPage() {
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark, toggleTheme, palette, setPalette } = useTheme();
 
   // Sadece Android APK içinden açıldığında uygulama karşılama veya panosuna yönlendir
   useEffect(() => {
@@ -174,11 +174,36 @@ export default function LandingPage() {
           </nav>
 
           {/* Sağ Aksiyonlar */}
-          <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            {/* 60-30-10 Canlı Palet Seçici */}
+            <div
+              className="hidden sm:flex items-center gap-1.5 px-2 py-1.5 rounded-full bg-white/80 dark:bg-[#0E1015]/80 border border-slate-200/70 dark:border-white/10 shadow-xs"
+              title="60-30-10 İmza Renk Paleti Seç"
+            >
+              {MIZAN_PALETTES.map((p) => {
+                const isSelected = palette === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setPalette(p.id)}
+                    title={`${p.name} (${p.subtitle})`}
+                    aria-label={p.name}
+                    className={`w-3.5 h-3.5 rounded-full transition-all cursor-pointer ${
+                      isSelected
+                        ? "ring-2 ring-offset-1 ring-slate-900 dark:ring-white dark:ring-offset-[#0E1015] scale-110"
+                        : "opacity-60 hover:opacity-100 hover:scale-105"
+                    }`}
+                    style={{ backgroundColor: p.colors.accent10 }}
+                  />
+                );
+              })}
+            </div>
+
             {/* Dark Mode Butonu */}
             <button
               onClick={toggleTheme}
-              className="p-2 sm:p-2.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white transition"
+              className="p-2 sm:p-2.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white transition cursor-pointer"
               title={isDark ? "Açık Moda Geç" : "Koyu Moda Geç"}
               aria-label="Tema Değiştir"
             >
@@ -188,15 +213,15 @@ export default function LandingPage() {
             {/* Giriş Yap */}
             <Link
               href="/auth/login"
-              className="hidden sm:inline-flex px-4 py-2 text-xs sm:text-sm font-bold text-[#182542] dark:text-white hover:text-[#273869] dark:hover:text-slate-300 transition"
+              className="hidden sm:inline-flex px-4 py-2 text-xs sm:text-sm font-bold text-[#182542] dark:text-white hover:opacity-80 transition"
             >
               Giriş Yap
             </Link>
 
-            {/* Midas-Style High-Contrast CTA */}
+            {/* 60-30-10 Single Dominant Accent CTA */}
             <Link
               href="/auth/login"
-              className="px-4 sm:px-5 py-2.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#182542] text-xs sm:text-sm font-extrabold flex items-center gap-1.5 shadow-md shadow-[#182542]/20 dark:shadow-white/10 active:scale-95 transition-all"
+              className="px-4 sm:px-5 py-2.5 rounded-full mizan-accent-btn text-xs sm:text-sm font-extrabold flex items-center gap-1.5"
             >
               <span>Uygulamaya Git</span>
               <ArrowRight size={14} strokeWidth={2.5} />
@@ -210,8 +235,8 @@ export default function LandingPage() {
       {/* =================================================================== */}
       <section className="relative overflow-hidden pt-12 sm:pt-20 pb-16 sm:pb-28">
         
-        {/* Subtle Ambient Radial Glows (Kurumsal Lacivert) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-gradient-to-b from-[#182542]/12 via-[#273869]/6 to-transparent rounded-full blur-3xl pointer-events-none -z-10 dark:from-blue-950/20 dark:via-transparent" />
+        {/* 60-30-10 Atmosferik Arka Plan Işığı (%10 İmza Vurgudan) */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[560px] mizan-glow-bg rounded-full blur-2xl pointer-events-none -z-10" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
@@ -232,19 +257,26 @@ export default function LandingPage() {
               {/* Top Pill Eyebrow with Beacon */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/65 dark:bg-[#0E1015]/70 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm text-xs font-bold text-[#182542] dark:text-white">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                  <span
+                    className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                    style={{ backgroundColor: "var(--mizan-accent-10)" }}
+                  />
+                  <span
+                    className="relative inline-flex rounded-full h-2 w-2"
+                    style={{ backgroundColor: "var(--mizan-accent-10)" }}
+                  />
                 </span>
                 <span>Canlı KAP &amp; SPK Bildirimleri &bull; Mizan AI &bull; BIST Katılım Taraması</span>
               </div>
             </div>
 
-            {/* Bold Punchy Headline (Prestijli Lacivert / Beyaz Paleti — Orijinal Boyut) */}
+            {/* Bold Editorial Headline (Sans-Serif + Newsreader İtalik Serif %10 Vurgu) */}
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-[#182542] dark:text-white leading-[1.12]">
-              Borsa İstanbul’da Helal Yatırımın{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#182542] via-[#273869] to-[#3a5298] dark:from-white dark:via-slate-200 dark:to-blue-300">
-                Dijital Zekâsı.
-              </span>
+              Borsa İstanbul’da{" "}
+              <span className="font-orbix-serif italic font-semibold mizan-accent-text">
+                Helal Yatırımın
+              </span>{" "}
+              Dijital Zekâsı.
             </h1>
 
             {/* Subtitle (Orijinal Boyut — Yapraklar bu metnin sağ ve sol boşluğuna hizalanır) */}
@@ -261,7 +293,7 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row items-center gap-3.5 w-full sm:w-auto pt-2">
               <Link
                 href="/auth/login"
-                className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#182542] text-base font-extrabold flex items-center justify-center gap-2 shadow-xl shadow-[#182542]/25 dark:shadow-white/10 active:scale-95 transition-all"
+                className="w-full sm:w-auto px-8 py-4 rounded-full mizan-accent-btn text-base font-extrabold flex items-center justify-center gap-2"
               >
                 <span>Ücretsiz Başla</span>
                 <ArrowRight size={18} strokeWidth={2.4} />

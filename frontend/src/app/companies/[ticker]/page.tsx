@@ -694,7 +694,7 @@ export default function CompanyDetailPage() {
                     <button
                       type="button"
                       onClick={() => setSelectedDisclosure(disclosures[0])}
-                      className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-xl mizan-accent-btn text-xs font-bold flex items-center gap-1.5 cursor-pointer"
                     >
                       <Sparkles size={13} />
                       <span>Mizan AI ile Analiz Et</span>

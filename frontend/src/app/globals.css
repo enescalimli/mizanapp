@@ -9,8 +9,18 @@
    ============================================================================ */
 
 @layer base {
-  :root {
-    /* 01 Color — One navy. Two accents. That's it. */
+  :root,
+  html[data-palette="obsidian-mint"] {
+    /* 01 Color — 60-30-10 Token Architecture (Default: Obsidian & Signal Mint) */
+    --mizan-bg-60: #EEF0F4;
+    --mizan-surface-30: rgba(255, 255, 255, 0.82);
+    --mizan-ink-30: #08080C;
+    --mizan-muted-30: #64748B;
+    --mizan-accent-10: #10B981;
+    --mizan-accent-10-hover: #059669;
+    --mizan-accent-10-fg: #FFFFFF;
+    --mizan-accent-rgb: 16, 185, 129;
+
     --navy-900: #273869;  /* Dominant Primary Navy */
     --navy-800: #405881;  /* Secondary Navy / Meta */
     --navy-950: #182542;  /* Deep Ink */
@@ -22,9 +32,67 @@
     --border-hairline: rgba(39, 56, 105, 0.08);
   }
 
+  html.dark,
+  html.dark[data-palette="obsidian-mint"] {
+    --mizan-bg-60: #08080C;
+    --mizan-surface-30: rgba(16, 18, 24, 0.88);
+    --mizan-ink-30: #F4F4F5;
+    --mizan-muted-30: #94A3B8;
+    --mizan-accent-10: #34D399;
+    --mizan-accent-10-hover: #10B981;
+    --mizan-accent-10-fg: #042F1E;
+    --mizan-accent-rgb: 52, 211, 153;
+  }
+
+  /* Palette 2: Deep Navy & Warm Gold */
+  html[data-palette="navy-gold"] {
+    --mizan-bg-60: #F5F2EB;
+    --mizan-surface-30: rgba(255, 255, 255, 0.86);
+    --mizan-ink-30: #14213D;
+    --mizan-muted-30: #5C677D;
+    --mizan-accent-10: #D97706;
+    --mizan-accent-10-hover: #B45309;
+    --mizan-accent-10-fg: #FFFFFF;
+    --mizan-accent-rgb: 217, 119, 6;
+  }
+
+  html.dark[data-palette="navy-gold"] {
+    --mizan-bg-60: #0B1324;
+    --mizan-surface-30: rgba(20, 33, 61, 0.72);
+    --mizan-ink-30: #F5F2EB;
+    --mizan-muted-30: #94A3B8;
+    --mizan-accent-10: #F59E0B;
+    --mizan-accent-10-hover: #D97706;
+    --mizan-accent-10-fg: #14213D;
+    --mizan-accent-rgb: 245, 158, 11;
+  }
+
+  /* Palette 3: Gunmetal & Molten Copper */
+  html[data-palette="gunmetal-copper"] {
+    --mizan-bg-60: #E4E6EB;
+    --mizan-surface-30: rgba(255, 255, 255, 0.88);
+    --mizan-ink-30: #0D0E12;
+    --mizan-muted-30: #525866;
+    --mizan-accent-10: #FF5A1F;
+    --mizan-accent-10-hover: #E04812;
+    --mizan-accent-10-fg: #FFFFFF;
+    --mizan-accent-rgb: 255, 90, 31;
+  }
+
+  html.dark[data-palette="gunmetal-copper"] {
+    --mizan-bg-60: #0D0E12;
+    --mizan-surface-30: rgba(22, 24, 30, 0.88);
+    --mizan-ink-30: #E4E6EB;
+    --mizan-muted-30: #9CA3AF;
+    --mizan-accent-10: #FF5A1F;
+    --mizan-accent-10-hover: #FF7340;
+    --mizan-accent-10-fg: #FFFFFF;
+    --mizan-accent-rgb: 255, 90, 31;
+  }
+
   html {
-    background-color: #EEF0F4;
-    color: #14151A;
+    background-color: var(--mizan-bg-60);
+    color: var(--mizan-ink-30);
     font-family: "Plus Jakarta Sans", "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
     -webkit-font-smoothing: antialiased;
     scroll-behavior: smooth;
@@ -39,21 +107,22 @@
   }
 
   html.dark {
-    background-color: #000000;
-    color: #F1F3F7;
+    background-color: var(--mizan-bg-60);
+    color: var(--mizan-ink-30);
   }
 
   body {
-    /* Vertix Dashboard V14 Soft Neutral Gray Matte Canvas */
-    background-color: #EEF0F4;
-    color: #14151A;
+    /* 60% Dominant Canvas */
+    background-color: var(--mizan-bg-60);
+    color: var(--mizan-ink-30);
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   html.dark body {
-    background-color: #000000;
-    color: #F1F3F7;
+    background-color: var(--mizan-bg-60);
+    color: var(--mizan-ink-30);
   }
 }
 
@@ -572,5 +641,55 @@ html.dark .apple-segmented-item.active {
     opacity: 1 !important;
   }
 }
+
+/* ============================================================================
+   60-30-10 RULE UTILITY CLASSES (MIZAN SIGNATURE PALETTE SYSTEM)
+   ============================================================================ */
+.mizan-bg-60 {
+  background-color: var(--mizan-bg-60);
+  color: var(--mizan-ink-30);
+}
+
+.mizan-surface-30 {
+  background-color: var(--mizan-surface-30);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.mizan-accent-btn {
+  background-color: var(--mizan-accent-10);
+  color: var(--mizan-accent-10-fg);
+  box-shadow: 0 8px 24px -6px rgba(var(--mizan-accent-rgb), 0.42);
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.mizan-accent-btn:hover {
+  background-color: var(--mizan-accent-10-hover);
+  box-shadow: 0 12px 28px -6px rgba(var(--mizan-accent-rgb), 0.55);
+}
+
+.mizan-accent-btn:active {
+  transform: scale(0.98);
+}
+
+.mizan-accent-text {
+  color: var(--mizan-accent-10);
+}
+
+.mizan-accent-soft {
+  background-color: rgba(var(--mizan-accent-rgb), 0.12);
+  color: var(--mizan-accent-10);
+  border-color: rgba(var(--mizan-accent-rgb), 0.26);
+}
+
+.mizan-glow-bg {
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 0%,
+    rgba(var(--mizan-accent-rgb), 0.16) 0%,
+    rgba(var(--mizan-accent-rgb), 0.04) 45%,
+    transparent 75%
+  );
+}
+
 
 

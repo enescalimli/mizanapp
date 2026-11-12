@@ -12,6 +12,7 @@ import { MizanChatWidget } from "./MizanChatWidget";
 import { AnimatedMizanLogo } from "./AnimatedMizanLogo";
 import { ScrollBackgroundMizanLogo } from "./landing/ScrollBackgroundMizanLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { useTheme, MIZAN_PALETTES } from "@/lib/theme/ThemeContext";
 
 interface PaynoShellProps {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const { user, profile, isDemoUser } = useAuth();
+  const { palette, setPalette } = useTheme();
   const [showInfoModal, setShowInfoModal] = useState<boolean>(false);
 
   const userDisplayName = useMemo(() => {
@@ -54,7 +56,10 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative antialiased py-2.5 sm:py-6 px-2 sm:px-4 lg:px-6 transition-colors duration-200">
+    <div className="min-h-screen mizan-bg-60 selection:bg-[#E6F8EF] selection:text-[#0D8B52] relative antialiased py-2.5 sm:py-6 px-2 sm:px-4 lg:px-6 transition-colors duration-200">
+      {/* 60-30-10 Atmosferik Arka Plan Işığı (%10 İmza Vurgu Renginden) */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-[440px] mizan-glow-bg z-0" />
+
       {/* Scroll-Driven 3D Background Mizan Emblem (Black in Light Mode, White in Dark Mode) */}
       <ScrollBackgroundMizanLogo />
 
@@ -91,6 +96,31 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 
           {/* Sağ Eylem İkonları ve Kullanıcı Profili */}
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+
+            {/* 60-30-10 İmza Palet Seçici */}
+            <div
+              className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/80 dark:bg-[#0E1015]/80 border border-slate-200/60 dark:border-white/10 shadow-xs"
+              title="60-30-10 Renk Paleti Seç"
+            >
+              {MIZAN_PALETTES.map((p) => {
+                const isSelected = palette === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setPalette(p.id)}
+                    title={`${p.name} (${p.subtitle})`}
+                    aria-label={p.name}
+                    className={`w-4 h-4 rounded-full transition-all cursor-pointer flex items-center justify-center ${
+                      isSelected
+                        ? "ring-2 ring-offset-1 ring-slate-900 dark:ring-white dark:ring-offset-[#0E1015] scale-110"
+                        : "opacity-65 hover:opacity-100 hover:scale-105"
+                    }`}
+                    style={{ backgroundColor: p.colors.accent10 }}
+                  />
+                );
+              })}
+            </div>
             
             {/* Arama Butonu */}
             <button
@@ -142,7 +172,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             ) : (
               <Link
                 href="/auth/login"
-                className="px-3.5 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-1.5 rounded-full mizan-accent-btn text-xs font-bold flex items-center gap-1.5"
               >
                 <span>Giriş Yap</span>
               </Link>
