@@ -13,27 +13,27 @@ export default function RefundPolicyPage() {
     <PaynoShell badge="iade">
       <div className="space-y-6 max-w-4xl mx-auto pb-12">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-[#6E81A0]">
-          <Link href="/" className="hover:text-[#08080C] flex items-center gap-1 transition">
+        <div className="flex items-center gap-2 text-xs text-[#6E81A0] dark:text-zinc-400">
+          <Link href="/" className="hover:text-[#08080C] dark:text-white flex items-center gap-1 transition">
             <ArrowLeft size={13} />
             <span>Ana Sayfa</span>
           </Link>
           <span>/</span>
-          <span className="text-[#08080C] font-semibold">İptal ve İade Politikası</span>
+          <span className="text-[#08080C] dark:text-white font-semibold">İptal ve İade Politikası</span>
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+        <div className="bg-white/80 dark:bg-[#101118]/90 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold">
             <RotateCcw size={14} />
             <span>6502 Sayılı Tüketici Hakları &bull; Mizan Güvencesi</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             Abonelik İptali ve <span className="font-serif italic text-[#405881]">İade Politikası</span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#6E81A0] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-zinc-400 leading-relaxed">
             Mizan olarak kullanıcı memnuniyetini en üst düzeyde tutmayı taahhüt ediyoruz. Dijital abonelikleriniz ve Mizan PRO paketlerinizle ilgili tüm iptal ve iade süreçleri bu metinde şeffafça açıklanmıştır.
           </p>
         </div>
@@ -45,7 +45,7 @@ export default function RefundPolicyPage() {
               <Clock size={15} className="text-emerald-600" />
               <span>İlk 7 Gün Koşulsuz İade Güvencesi</span>
             </div>
-            <p className="text-xs text-slate-700 leading-relaxed">
+            <p className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed">
               Mizan PRO aboneliğinizi satın aldıktan sonraki ilk 7 takvim günü içerisinde platformdan memnun kalmazsanız, hiçbir gerekçe göstermeksizin tam ücret iadesi talep edebilirsiniz.
             </p>
           </div>
@@ -58,9 +58,9 @@ export default function RefundPolicyPage() {
         </div>
 
         {/* Detailed Sections */}
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6 text-xs text-slate-700 leading-relaxed">
+        <div className="bg-white/80 dark:bg-[#101118]/90 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6 text-xs text-slate-700 dark:text-zinc-300 leading-relaxed">
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#08080C]">1. Yasal Dayanak ve Cayma Hakkı İstisnası</h2>
+            <h2 className="text-sm font-bold text-[#08080C] dark:text-white">1. Yasal Dayanak ve Cayma Hakkı İstisnası</h2>
             <p>
               6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği&apos;nin 15. maddesinin (ğ) bendi uyarınca; <em>&ldquo;Elektronik ortamda anında ifa edilen hizmetler veya tüketiciye anında teslim edilen gayrimaddi mallara ilişkin sözleşmelerde tüketici cayma hakkını kullanamaz.&rdquo;</em>
             </p>
@@ -70,11 +70,11 @@ export default function RefundPolicyPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#08080C]">2. Abonelik İptali Nasıl Yapılır?</h2>
+            <h2 className="text-sm font-bold text-[#08080C] dark:text-white">2. Abonelik İptali Nasıl Yapılır?</h2>
             <p>
               Aboneliğinizi dilediğiniz an tek tıkla iptal edebilirsiniz:
             </p>
-            <ol className="list-decimal pl-5 space-y-1 text-slate-600">
+            <ol className="list-decimal pl-5 space-y-1 text-slate-600 dark:text-zinc-400">
               <li>Mizan hesabınızla giriş yapın ve <strong>Ayarlar &gt; Profil &amp; Üyelik</strong> sekmesine gidin.</li>
               <li><strong>&ldquo;Aboneliği Yönet&rdquo;</strong> butonuna tıklayarak Stripe / Ödeme Portaline geçin veya doğrudan Mizan iptal anketini doldurun.</li>
               <li>İptal işlemi tamamlandığında, fatura kesim tarihine kadar mevcut PRO özelliklerinizi kullanmaya devam edersiniz; bir sonraki dönem kartınızdan hiçbir ücret tahsil edilmez.</li>
@@ -82,16 +82,16 @@ export default function RefundPolicyPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#08080C]">3. İade Süreci ve Para Aktarımı</h2>
+            <h2 className="text-sm font-bold text-[#08080C] dark:text-white">3. İade Süreci ve Para Aktarımı</h2>
             <p>
               İlk 7 gün içerisinde onaylanan iadeler, ödemenin yapıldığı kredi kartına / banka hesabına 3 ila 10 iş günü içerisinde yansıtılır. Bu süre bankanızın takas prosedürlerine bağlı olarak değişebilmektedir.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#08080C]">4. İletişim</h2>
+            <h2 className="text-sm font-bold text-[#08080C] dark:text-white">4. İletişim</h2>
             <p>
-              Her türlü soru ve iade talebiniz için destek ekibimize <a href="mailto:destek@mizanapp.tr" className="font-bold underline text-[#08080C]">destek@mizanapp.tr</a> üzerinden 7/24 ulaşabilirsiniz.
+              Her türlü soru ve iade talebiniz için destek ekibimize <a href="mailto:destek@mizanapp.tr" className="font-bold underline text-[#08080C] dark:text-white">destek@mizanapp.tr</a> üzerinden 7/24 ulaşabilirsiniz.
             </p>
           </section>
         </div>

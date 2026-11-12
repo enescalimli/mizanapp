@@ -44,22 +44,22 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg h-full bg-white border-l border-slate-200 shadow-2xl flex flex-col justify-between overflow-hidden">
+      <div className="relative w-full max-w-lg h-full bg-white dark:bg-[#101118] border-l border-slate-200 dark:border-white/[0.09] shadow-2xl flex flex-col justify-between overflow-hidden">
         {/* Drawer Header */}
-        <div className="p-6 border-b border-slate-100 bg-slate-50">
+        <div className="p-6 border-b border-slate-100 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.04]">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-700">
                 <BellRing size={16} />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                   <span>Katılım Alarm Merkezi</span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200 font-mono">
                     {totalAlertsCount} Bildirim
                   </span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5 font-normal">
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 font-normal">
                   Katılımdan çıkan veya çıkma riski taşıyan hisseleriniz
                 </p>
               </div>
@@ -68,21 +68,21 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+              className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:bg-white/[0.06] transition"
             >
               <X size={18} />
             </button>
           </div>
 
           {/* Apple Segmented Control */}
-          <div className="grid grid-cols-2 gap-2 mt-5 p-1 rounded-xl bg-slate-100 border border-slate-200">
+          <div className="grid grid-cols-2 gap-2 mt-5 p-1 rounded-xl bg-slate-100 dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.09]">
             <button
               type="button"
               onClick={() => setActiveTab("BREACHED")}
               className={`py-2 px-3 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
                 activeTab === "BREACHED"
-                  ? "bg-white text-rose-800 border border-rose-200 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-white dark:bg-[#101118] text-rose-800 border border-rose-200 shadow-sm"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:text-white"
               }`}
             >
               <AlertOctagon size={13} />
@@ -94,8 +94,8 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
               onClick={() => setActiveTab("AT_RISK")}
               className={`py-2 px-3 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 ${
                 activeTab === "AT_RISK"
-                  ? "bg-white text-amber-800 border border-amber-200 shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-white dark:bg-[#101118] text-amber-800 border border-amber-200 shadow-sm"
+                  : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:text-white"
               }`}
             >
               <AlertTriangle size={13} />
@@ -109,9 +109,9 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
           {activeTab === "BREACHED" && (
             <div className="space-y-4">
               {breachedAlerts.length === 0 ? (
-                <div className="text-center py-12 text-xs text-slate-500 space-y-2">
+                <div className="text-center py-12 text-xs text-slate-500 dark:text-zinc-400 space-y-2">
                   <CheckCircle2 size={32} className="mx-auto text-emerald-600" />
-                  <p className="font-bold text-slate-800">
+                  <p className="font-bold text-slate-800 dark:text-zinc-100">
                     Portföyünüzde katılımdan çıkan hisse bulunmuyor.
                   </p>
                   <p className="text-[11px] text-slate-400 font-normal">
@@ -127,23 +127,23 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-base font-bold text-slate-900 font-mono">
+                          <span className="text-base font-bold text-slate-900 dark:text-white font-mono">
                             {b.ticker}
                           </span>
                           <span className="badge-apple-rose">
                             KATILIMDAN ÇIKTI
                           </span>
                         </div>
-                        <span className="text-xs text-slate-500 font-normal">
+                        <span className="text-xs text-slate-500 dark:text-zinc-400 font-normal">
                           {b.companyName} &bull; {b.sector}
                         </span>
                       </div>
-                      <div className="text-right font-mono text-xs text-slate-700 font-semibold tabular-nums">
+                      <div className="text-right font-mono text-xs text-slate-700 dark:text-zinc-300 font-semibold tabular-nums">
                         Pozisyon: {formatTRY(b.positionMarketValueTRY, 0)}
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 bg-white p-2.5 rounded-xl border border-rose-100 leading-relaxed font-normal shadow-2xs">
+                    <p className="text-xs text-slate-600 dark:text-zinc-400 bg-white dark:bg-[#101118] p-2.5 rounded-xl border border-rose-100 leading-relaxed font-normal shadow-2xs">
                       {b.reasonText}
                     </p>
 
@@ -181,9 +181,9 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
           {activeTab === "AT_RISK" && (
             <div className="space-y-4">
               {atRiskAlerts.length === 0 ? (
-                <div className="text-center py-12 text-xs text-slate-500 space-y-2">
+                <div className="text-center py-12 text-xs text-slate-500 dark:text-zinc-400 space-y-2">
                   <ShieldCheck size={32} className="mx-auto text-emerald-600" />
-                  <p className="font-bold text-slate-800">
+                  <p className="font-bold text-slate-800 dark:text-zinc-100">
                     Sınırda veya çıkma riski taşıyan hisseniz yok.
                   </p>
                   <p className="text-[11px] text-slate-400 font-normal">
@@ -199,26 +199,26 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-base font-bold text-slate-900 font-mono">
+                          <span className="text-base font-bold text-slate-900 dark:text-white font-mono">
                             {r.ticker}
                           </span>
                           <span className="badge-apple-amber">
                             ÇIKMA İHTİMALİ
                           </span>
                         </div>
-                        <span className="text-xs text-slate-500 font-normal">
+                        <span className="text-xs text-slate-500 dark:text-zinc-400 font-normal">
                           Eşiğe Kalan Marj:{" "}
                           <strong className="text-amber-800 font-mono tabular-nums">
                             %{r.debtMarginPercent.toFixed(1)}
                           </strong>
                         </span>
                       </div>
-                      <span className="text-xs font-mono font-bold text-slate-800 tabular-nums">
+                      <span className="text-xs font-mono font-bold text-slate-800 dark:text-zinc-100 tabular-nums">
                         Borç: %{r.debtRatioPercent.toFixed(1)}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-600 bg-white p-2.5 rounded-xl border border-amber-100 leading-relaxed font-normal shadow-2xs">
+                    <p className="text-xs text-slate-600 dark:text-zinc-400 bg-white dark:bg-[#101118] p-2.5 rounded-xl border border-amber-100 leading-relaxed font-normal shadow-2xs">
                       {r.explanation}
                     </p>
 
@@ -227,7 +227,7 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
                     </div>
 
                     <div className="pt-2 border-t border-amber-200/80 flex items-center justify-between text-xs">
-                      <span className="text-slate-500 text-[11px]">
+                      <span className="text-slate-500 dark:text-zinc-400 text-[11px]">
                         Limit: &lt;%{r.debtThresholdPercent}
                       </span>
                       <Link
@@ -247,7 +247,7 @@ export const AlarmNotificationDrawer: React.FC<AlarmNotificationDrawerProps> = (
         </div>
 
         {/* Drawer Footer */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50 text-xs text-center text-slate-500 font-mono">
+        <div className="p-4 border-t border-slate-100 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.04] text-xs text-center text-slate-500 dark:text-zinc-400 font-mono">
           TKBB &amp; DİB Otomatik Bilanço Takip Sistemi
         </div>
       </div>

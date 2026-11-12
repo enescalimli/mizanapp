@@ -13,27 +13,27 @@ export default function TermsOfServicePage() {
     <PaynoShell badge="hukuk">
       <div className="space-y-6 max-w-4xl mx-auto pb-12">
         {/* Header Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-[#6E81A0]">
-          <Link href="/" className="hover:text-[#08080C] flex items-center gap-1 transition">
+        <div className="flex items-center gap-2 text-xs text-[#6E81A0] dark:text-zinc-400">
+          <Link href="/" className="hover:text-[#08080C] dark:text-white flex items-center gap-1 transition">
             <ArrowLeft size={13} />
             <span>Ana Sayfa</span>
           </Link>
           <span>/</span>
-          <span className="text-[#08080C] font-semibold">Kullanım Koşulları &amp; Yasal Uyarı</span>
+          <span className="text-[#08080C] dark:text-white font-semibold">Kullanım Koşulları &amp; Yasal Uyarı</span>
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+        <div className="bg-white/80 dark:bg-[#101118]/90 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] text-xs font-bold">
             <FileText size={14} />
             <span>Yasal Sözleşme &bull; Son Güncelleme: 2026-10-20</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             Kullanım Koşulları ve <span className="font-serif italic text-[#405881]">Hizmet Şartları</span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#6E81A0] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-zinc-400 leading-relaxed">
             Lütfen Mizan Katılım platformunu (mizanapp.tr) kullanmadan önce bu kullanım koşullarını dikkatle okuyunuz. Sitemizi ziyaret ederek, üye olarak veya hizmetlerimizden yararlanarak bu koşulları kayıtsız şartsız kabul etmiş sayılırsınız.
           </p>
         </div>
@@ -79,9 +79,9 @@ export default function TermsOfServicePage() {
         </div>
 
         {/* Detailed Sections */}
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6 text-xs text-slate-700 leading-relaxed">
+        <div className="bg-white/80 dark:bg-[#101118]/90 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6 text-xs text-slate-700 dark:text-zinc-300 leading-relaxed">
           <section className="space-y-2">
-            <h3 className="text-sm font-bold text-[#08080C] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#08080C] text-white inline-flex items-center justify-center text-[10px]">1</span>
               Hizmet Kapsamı ve Abonelik Modelleri
             </h3>
@@ -91,17 +91,17 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-sm font-bold text-[#08080C] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#08080C] text-white inline-flex items-center justify-center text-[10px]">2</span>
               Kullanıcı Hesabı ve Güvenlik
             </h3>
             <p>
-              Kullanıcılar, oturum açarken sağladıkları e-posta ve doğrulama kodlarının (OTP) gizliliğinden bizzat sorumludur. Hesabınızın yetkisiz kişilerce kullanıldığını fark ettiğiniz anda durumu <a href="mailto:destek@mizanapp.tr" className="font-bold underline text-[#08080C]">destek@mizanapp.tr</a> adresine bildirmelisiniz. Şifresiz güvenli oturum (Stateless HMAC OTP) altyapımız parola sızıntılarını önlemek için tasarlanmıştır.
+              Kullanıcılar, oturum açarken sağladıkları e-posta ve doğrulama kodlarının (OTP) gizliliğinden bizzat sorumludur. Hesabınızın yetkisiz kişilerce kullanıldığını fark ettiğiniz anda durumu <a href="mailto:destek@mizanapp.tr" className="font-bold underline text-[#08080C] dark:text-white">destek@mizanapp.tr</a> adresine bildirmelisiniz. Şifresiz güvenli oturum (Stateless HMAC OTP) altyapımız parola sızıntılarını önlemek için tasarlanmıştır.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-sm font-bold text-[#08080C] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#08080C] text-white inline-flex items-center justify-center text-[10px]">3</span>
               Fikri Mülkiyet Hakları ve Tersine Mühendislik Yasağı
             </h3>
@@ -111,7 +111,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-sm font-bold text-[#08080C] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#08080C] text-white inline-flex items-center justify-center text-[10px]">4</span>
               Sorumluluğun Sınırlandırılması
             </h3>
@@ -121,7 +121,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-sm font-bold text-[#08080C] flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-[#08080C] text-white inline-flex items-center justify-center text-[10px]">5</span>
               Yürürlük ve Yetkili Mahkeme
             </h3>

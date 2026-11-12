@@ -39,7 +39,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl border border-white/90 shadow-2xl max-w-lg w-full p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-200">
+      <div className="bg-white dark:bg-[#101118] rounded-3xl border border-white/90 shadow-2xl max-w-lg w-full p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex items-start justify-between gap-4">
@@ -47,17 +47,17 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full inline-block">
               Abonelik İptal Adımı
             </span>
-            <h3 className="text-lg font-extrabold text-[#08080C] tracking-tight">
+            <h3 className="text-lg font-extrabold text-[#08080C] dark:text-white tracking-tight">
               Ayrılmadan Önce Bize Geri Bildirim Verin
             </h3>
-            <p className="text-xs text-[#6E81A0]">
+            <p className="text-xs text-[#6E81A0] dark:text-zinc-400">
               Mizan PRO deneyiminizi sonlandırmadan önce eksik gördüklerinizi paylaşırsanız platformu geliştirmemize yardımcı olabilirsiniz.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-slate-100 text-[#6E81A0] flex items-center justify-center transition"
+            className="w-8 h-8 rounded-full hover:bg-slate-100 dark:bg-white/[0.06] text-[#6E81A0] dark:text-zinc-400 flex items-center justify-center transition"
           >
             <X size={16} />
           </button>
@@ -65,7 +65,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
 
         {/* Survey Reasons */}
         <div className="space-y-2">
-          <label className="text-[11px] font-bold text-[#08080C] block">
+          <label className="text-[11px] font-bold text-[#08080C] dark:text-white block">
             Ayrılma Sebebiniz Nedir?
           </label>
           {[
@@ -79,8 +79,8 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
               onClick={() => handleReasonSelect(item.id)}
               className={`flex items-center justify-between p-3 rounded-2xl border text-xs cursor-pointer transition ${
                 selectedReason === item.id
-                  ? "bg-[#08080C]/5 border-[#08080C] font-bold text-[#08080C]"
-                  : "bg-slate-50/70 hover:bg-white border-slate-200 text-slate-700"
+                  ? "bg-[#08080C]/5 border-[#08080C] font-bold text-[#08080C] dark:text-white"
+                  : "bg-slate-50/70 hover:bg-white dark:bg-[#101118] border-slate-200 dark:border-white/[0.09] text-slate-700 dark:text-zinc-300"
               }`}
             >
               <span>{item.text}</span>
@@ -129,7 +129,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
             <button
               type="button"
               onClick={() => onApplyRetentionOffer("PAUSE_2_MONTHS")}
-              className="w-full py-2.5 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 rounded-xl mizan-accent-btn text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5"
             >
               <span>Aboneliği 60 Gün Dondur</span>
               <ArrowRight size={14} />
@@ -139,7 +139,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
 
         {/* Freeform Feedback */}
         <div className="space-y-1">
-          <label className="text-[11px] font-bold text-[#6E81A0] block">
+          <label className="text-[11px] font-bold text-[#6E81A0] dark:text-zinc-400 block">
             Eklemek İstediğiniz Not (Opsiyonel)
           </label>
           <textarea
@@ -147,16 +147,16 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
             onChange={(e) => setFeedback(e.target.value)}
             rows={2}
             placeholder="Hangi özelliği ekleseydik Mizan'da kalmayı tercih ederdiniz?"
-            className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-[#08080C] focus:border-[#08080C] outline-none transition resize-none"
+            className="w-full p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09] text-xs font-medium text-[#08080C] dark:text-white focus:border-[#08080C] outline-none transition resize-none"
           />
         </div>
 
         {/* Action Buttons */}
-        <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-3">
+        <div className="pt-2 border-t border-slate-100 dark:border-white/[0.07] flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[#08080C] text-xs font-bold transition"
+            className="px-4 py-2.5 rounded-2xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 text-[#08080C] dark:text-white text-xs font-bold transition"
           >
             Vazgeç, Aboneliği Koru
           </button>

@@ -109,42 +109,42 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl rounded-3xl bg-white border border-slate-200 shadow-2xl p-6 sm:p-8 space-y-6 overflow-hidden">
+      <div className="relative w-full max-w-xl rounded-3xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/[0.09] shadow-2xl p-6 sm:p-8 space-y-6 overflow-hidden">
         {/* Subtle Ambient Radial Lighting */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50/60 rounded-full blur-3xl pointer-events-none" />
 
         {/* Modal Header */}
-        <div className="flex items-start justify-between gap-4 border-b border-slate-100 pb-4">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-white/[0.07] pb-4">
           <div>
             <div className="flex items-center gap-2.5">
               <span className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700">
                 <Calculator size={16} />
               </span>
-              <h3 className="text-lg font-bold text-slate-900 tracking-tight">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                 Satış Anı Arındırma Hesaplayıcısı
               </h3>
             </div>
-            <p className="text-xs text-slate-500 mt-1 font-normal">
-              <strong className="text-slate-900 font-mono">{holding.ticker}</strong> — {holding.companyName} pozisyonunuzu satarken infak edilecek net şüpheli kazanç.
+            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 font-normal">
+              <strong className="text-slate-900 dark:text-white font-mono">{holding.ticker}</strong> — {holding.companyName} pozisyonunuzu satarken infak edilecek net şüpheli kazanç.
             </p>
           </div>
 
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:bg-white/[0.06] transition"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Date & Day Calculation */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09] text-xs">
           <div>
             <span className="text-[10px] uppercase font-semibold text-slate-400 block mb-0.5 tracking-wider">
               Alış Tarihi
             </span>
-            <span className="font-semibold text-slate-800 font-mono flex items-center gap-1.5 tabular-nums">
+            <span className="font-semibold text-slate-800 dark:text-zinc-100 font-mono flex items-center gap-1.5 tabular-nums">
               <Calendar size={12} className="text-emerald-600" />
               {formattedPurchaseDate}
             </span>
@@ -161,7 +161,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
             <span className="text-[10px] uppercase font-semibold text-slate-400 block mb-0.5 tracking-wider">
               Canlı Piyasa Fiyatı
             </span>
-            <span className="font-mono font-bold text-slate-900 tabular-nums">
+            <span className="font-mono font-bold text-slate-900 dark:text-white tabular-nums">
               {formatTRY(holding.currentPriceTRY, 2)}
             </span>
           </div>
@@ -170,7 +170,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
         {/* Lot Selection Slider & Apple Presets */}
         <div className="space-y-3">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700">
+            <span className="font-semibold text-slate-700 dark:text-zinc-300">
               Satılacak Pay (Lot) Miktarı
             </span>
             <span className="font-mono font-bold text-emerald-700 text-sm tabular-nums">
@@ -201,7 +201,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
                 className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition ${
                   selectedLots === Math.round(totalLotsNumber * p.val)
                     ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-                    : "bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300"
+                    : "bg-slate-50 dark:bg-white/[0.04] text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-white/[0.09] hover:border-slate-300"
                 }`}
               >
                 {p.label}
@@ -211,15 +211,15 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
         </div>
 
         {/* Live Calculation Receipt Breakdown */}
-        <div className="rounded-2xl bg-slate-50 border border-slate-200 p-5 space-y-3">
-          <div className="flex items-center justify-between text-xs text-slate-600">
+        <div className="rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09] p-5 space-y-3">
+          <div className="flex items-center justify-between text-xs text-slate-600 dark:text-zinc-400">
             <span>Brüt Satış Tutarı (Hasılat):</span>
-            <span className="font-mono font-bold text-slate-900 tabular-nums">
+            <span className="font-mono font-bold text-slate-900 dark:text-white tabular-nums">
               {formatTRY(simulation.grossProceeds, 2)}
             </span>
           </div>
 
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
             <span>Alış Maliyeti ({holding.avgCostTRY} ₺/pay):</span>
             <span className="font-mono tabular-nums">
               {formatTRY(simulation.costBasis, 2)}
@@ -227,7 +227,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
           </div>
 
           <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="text-slate-700">Gerçekleşen Kâr / Zarar:</span>
+            <span className="text-slate-700 dark:text-zinc-300">Gerçekleşen Kâr / Zarar:</span>
             <span
               className={`font-mono tabular-nums ${
                 simulation.realizedPnl.gte(0)
@@ -240,12 +240,12 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
             </span>
           </div>
 
-          <div className="border-t border-slate-200 pt-3 flex items-center justify-between">
+          <div className="border-t border-slate-200 dark:border-white/[0.09] pt-3 flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-amber-700 block">
                 Ödenecek Arındırma Borcu (Düşülecek)
               </span>
-              <span className="text-[10px] text-slate-500 font-mono">
+              <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-mono">
                 {totalDaysHeld} günlük oransal pay ({formatPercent(simulation.purifDeductionPercent, 2)})
               </span>
             </div>
@@ -270,7 +270,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
         </div>
 
         {/* Shariah Guidance Box */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs text-slate-500 leading-relaxed font-normal">
+        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09] flex items-start gap-2.5 text-xs text-slate-500 dark:text-zinc-400 leading-relaxed font-normal">
           <Coins size={15} className="text-amber-600 shrink-0 mt-0.5" />
           <span>
             <strong>Fıkhi Hatırlatma:</strong> Satış hasılatından ayrılan{" "}

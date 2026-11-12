@@ -28,8 +28,8 @@ export default function LogoutPage() {
   }, [signOut, router]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#F4F5F7] dark:bg-[#08080C] text-[#08080C] dark:text-white">
-      <div className="flex items-center gap-3 p-6 rounded-2xl bg-white/80 dark:bg-[#101118]/95 border border-slate-200 dark:border-white/10 shadow-lg">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#F4F5F7] dark:bg-[#08080C] dark:bg-[#08080C] text-[#08080C] dark:text-white dark:text-white">
+      <div className="flex items-center gap-3 p-6 rounded-2xl bg-white/80 dark:bg-[#101118]/90 dark:bg-[#101118]/95 border border-slate-200 dark:border-white/[0.09] dark:border-white/10 shadow-lg">
         <RefreshCw size={18} className="animate-spin text-emerald-600 dark:text-emerald-400" />
         <span className="text-sm font-semibold">Oturumunuz kapatılıyor, lütfen bekleyiniz...</span>
       </div>

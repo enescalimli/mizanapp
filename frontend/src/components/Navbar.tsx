@@ -64,7 +64,7 @@ export const Navbar: React.FC = () => {
                 href={link.href}
                 className={`px-4 py-2 rounded-full text-xs transition-all duration-200 flex items-center gap-1.5 ${
                   isActive
-                    ? "bg-white text-[#10B981] font-bold shadow-orbix-sm"
+                    ? "bg-white dark:bg-[#101118] text-[#10B981] font-bold shadow-orbix-sm"
                     : "text-[#405881] hover:text-[#10B981] font-medium hover:bg-white/50"
                 }`}
               >
@@ -93,7 +93,7 @@ export const Navbar: React.FC = () => {
                 {user.email ? user.email.charAt(0).toUpperCase() : "M"}
               </div>
               <div className="flex flex-col pr-1">
-                <span className="text-xs font-bold text-[#08080C] max-w-[120px] truncate leading-tight">
+                <span className="text-xs font-bold text-[#08080C] dark:text-white max-w-[120px] truncate leading-tight">
                   {profile?.full_name || user.email?.split("@")[0]}
                 </span>
                 <span className="text-[10px] text-emerald-600 font-semibold leading-tight flex items-center gap-1">
@@ -104,7 +104,7 @@ export const Navbar: React.FC = () => {
               <button
                 onClick={() => signOut()}
                 title="Çıkış Yap"
-                className="w-8 h-8 rounded-full bg-white hover:bg-rose-50 text-[#405881] hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs"
+                className="w-8 h-8 rounded-full bg-white dark:bg-[#101118] hover:bg-rose-50 text-[#405881] hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs"
               >
                 <LogOut size={14} />
               </button>
@@ -132,7 +132,7 @@ export const Navbar: React.FC = () => {
         <div className="flex lg:hidden items-center gap-2">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-white text-[#08080C] flex items-center justify-center shadow-sm"
+            className="w-10 h-10 rounded-full bg-white/80 dark:bg-[#101118]/90 backdrop-blur-md border border-white dark:border-white/[0.09] text-[#08080C] dark:text-white flex items-center justify-center shadow-sm"
             aria-label="Menü"
           >
             {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -142,7 +142,7 @@ export const Navbar: React.FC = () => {
 
       {/* Mobil Açılır Menü */}
       {mobileMenuOpen && (
-        <div className="lg:hidden mt-3 max-w-7xl mx-auto rounded-[28px] bg-white/95 backdrop-blur-xl border border-white p-4 shadow-xl space-y-3">
+        <div className="lg:hidden mt-3 max-w-7xl mx-auto rounded-[28px] bg-white/95 dark:bg-[#101118]/95 backdrop-blur-xl border border-white dark:border-white/[0.09] p-4 shadow-xl space-y-3">
           <nav className="flex flex-col space-y-1">
             {navLinks.map((link) => {
               const IconComponent = link.icon;
@@ -157,7 +157,7 @@ export const Navbar: React.FC = () => {
                   className={`flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold ${
                     isActive
                       ? "bg-[#08080C] text-white font-bold"
-                      : "text-[#08080C] hover:bg-[#EEF3F9]"
+                      : "text-[#08080C] dark:text-white hover:bg-[#EEF3F9]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
@@ -169,7 +169,7 @@ export const Navbar: React.FC = () => {
                       className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
                         isActive
                           ? "bg-white/20 text-white"
-                          : "bg-[#EEF3F9] text-[#08080C]"
+                          : "bg-[#EEF3F9] text-[#08080C] dark:text-white"
                       }`}
                     >
                       {link.count}
@@ -180,10 +180,10 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-100 dark:border-white/[0.07] flex flex-col gap-2">
             {user ? (
               <div className="flex items-center justify-between px-3 py-2 bg-[#F3F6FB] rounded-2xl text-xs">
-                <span className="font-semibold text-[#08080C]">{user.email}</span>
+                <span className="font-semibold text-[#08080C] dark:text-white">{user.email}</span>
                 <button
                   onClick={() => {
                     signOut();
@@ -199,7 +199,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   href="/auth/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-full border border-[#DCE5F2] text-xs font-bold text-[#08080C] bg-white"
+                  className="w-full text-center py-2.5 rounded-full border border-[#DCE5F2] text-xs font-bold text-[#08080C] dark:text-white bg-white dark:bg-[#101118]"
                 >
                   Giriş Yap
                 </Link>

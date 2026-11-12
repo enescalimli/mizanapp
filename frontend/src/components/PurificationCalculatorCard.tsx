@@ -124,17 +124,17 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
   };
 
   return (
-    <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+    <div className="bg-white dark:bg-[#101118] rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-white/[0.09] shadow-sm space-y-6">
       {/* Title & Mode Switcher */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/[0.07] pb-4">
         <div>
           <div className="flex items-center gap-2">
             <Calculator className="text-emerald-600" size={18} />
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
               Kuruşu Kuruşuna Arındırma (Purification) Hesaplayıcı
             </h3>
           </div>
-          <p className="text-xs text-slate-500 mt-1 font-normal">
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 font-normal">
             Yatırımcının {ticker} hissesindeki payı ve elde tuttuğu gün sayısına göre arındırılması gereken şüpheli gelir tutarı.
           </p>
         </div>
@@ -166,7 +166,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
           {/* Left: Input controls */}
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] uppercase font-semibold text-slate-500 tracking-wider mb-1.5">
+              <label className="block text-[10px] uppercase font-semibold text-slate-500 dark:text-zinc-400 tracking-wider mb-1.5">
                 Sahip Olunan Lot / Pay Adedi
               </label>
               <div className="relative">
@@ -176,7 +176,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
                   value={lotCount}
                   onChange={(e) => setLotCount(e.target.value)}
                   placeholder="Örn: 1000"
-                  className="w-full bg-white border border-slate-200 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-slate-900 font-mono text-sm tabular-nums outline-none transition-colors"
+                  className="w-full bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/[0.09] focus:border-emerald-500 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-mono text-sm tabular-nums outline-none transition-colors"
                 />
                 <span className="absolute right-3.5 top-2.5 text-xs font-semibold text-slate-400">
                   LOT
@@ -188,7 +188,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
                   <button
                     key={preset}
                     onClick={() => setLotCount(String(preset))}
-                    className="px-2.5 py-1 text-[11px] font-mono bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors border border-slate-200"
+                    className="px-2.5 py-1 text-[11px] font-mono bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 text-slate-700 dark:text-zinc-300 rounded-lg transition-colors border border-slate-200 dark:border-white/[0.09]"
                   >
                     {preset} lot
                   </button>
@@ -204,7 +204,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
 
             {/* Days Held Slider (up to 365 days across full year) */}
             <div>
-              <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-1.5">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5">
                 <span>Elde Tutulan Gün Sayısı (Yıllık 365 Gün Bazlı)</span>
                 <span className="text-emerald-700 font-mono tabular-nums font-bold">
                   {daysHeld} / 365 Gün (%
@@ -228,14 +228,14 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
             </div>
 
             {/* Prudence Switch */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09]">
               <div className="flex items-center gap-2">
                 <Sparkles size={15} className="text-emerald-600" />
                 <div>
-                  <span className="text-xs font-semibold text-slate-800 block">
+                  <span className="text-xs font-semibold text-slate-800 dark:text-zinc-100 block">
                     İhtiyatlı Yukarı Yuvarlama (ROUND_CEIL)
                   </span>
-                  <span className="text-[11px] text-slate-500 block font-normal">
+                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 block font-normal">
                     Şüpheli kazançtan tam arınmak için kuruşu bir üste tamamlar.
                   </span>
                 </div>
@@ -252,7 +252,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
           {/* Right: Output result card */}
           <div className="bg-emerald-50/50 border border-emerald-200 rounded-2xl p-5 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 mb-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
                   HESAPLANAN ARINDIRMA TUTARI
                 </span>
@@ -263,27 +263,27 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
               <div className="text-3xl font-extrabold text-emerald-800 tracking-tight my-2 font-mono tabular-nums">
                 {formatTRY(calculation.payablePurification)}
               </div>
-              <p className="text-xs text-slate-600 font-normal">
+              <p className="text-xs text-slate-600 dark:text-zinc-400 font-normal">
                 Bu tutar, yatırımcının kârından veya sermayesinden hayır/bağış amacıyla arındırılmalıdır.
               </p>
             </div>
 
-            <div className="border-t border-emerald-200/80 pt-3 mt-4 space-y-2 text-xs text-slate-600 font-normal">
+            <div className="border-t border-emerald-200/80 pt-3 mt-4 space-y-2 text-xs text-slate-600 dark:text-zinc-400 font-normal">
               <div className="flex items-center justify-between">
                 <span>Hisse Başı Yıllık Uygunsuz Gelir:</span>
-                <span className="font-mono tabular-nums text-slate-800 font-semibold">
+                <span className="font-mono tabular-nums text-slate-800 dark:text-zinc-100 font-semibold">
                   {formatTRY(calculation.pShare.times(4), 4)} / pay
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Elde Tutma Oranı (Yıllık Pro-Rata):</span>
-                <span className="font-mono tabular-nums text-slate-800 font-semibold">
+                <span className="font-mono tabular-nums text-slate-800 dark:text-zinc-100 font-semibold">
                   %{((daysHeld / 365) * 100).toFixed(2)} ({daysHeld}/365 gün)
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Ham Hesaplama:</span>
-                <span className="font-mono tabular-nums text-slate-500">
+                <span className="font-mono tabular-nums text-slate-500 dark:text-zinc-400">
                   {calculation.rawPurification.toFixed(4)} TL
                 </span>
               </div>
@@ -295,7 +295,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <label className="block text-[10px] uppercase font-semibold text-slate-500 tracking-wider mb-1.5">
+              <label className="block text-[10px] uppercase font-semibold text-slate-500 dark:text-zinc-400 tracking-wider mb-1.5">
                 Hesaba Yatan Brüt/Net Nakit Temettü Tutarı
               </label>
               <div className="relative">
@@ -305,7 +305,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
                   value={dividendAmountTRY}
                   onChange={(e) => setDividendAmountTRY(e.target.value)}
                   placeholder="Örn: 10000"
-                  className="w-full bg-white border border-slate-200 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-slate-900 font-mono text-sm tabular-nums outline-none transition-colors"
+                  className="w-full bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/[0.09] focus:border-emerald-500 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-mono text-sm tabular-nums outline-none transition-colors"
                 />
                 <span className="absolute right-3.5 top-2.5 text-xs font-semibold text-slate-400 font-mono">
                   TL
@@ -316,7 +316,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
                   <button
                     key={preset}
                     onClick={() => setDividendAmountTRY(String(preset))}
-                    className="px-2.5 py-1 text-[11px] font-mono bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors border border-slate-200"
+                    className="px-2.5 py-1 text-[11px] font-mono bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 text-slate-700 dark:text-zinc-300 rounded-lg transition-colors border border-slate-200 dark:border-white/[0.09]"
                   >
                     {formatTRY(preset, 0)}
                   </button>
@@ -324,8 +324,8 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1.5">
-              <span className="font-semibold text-slate-800 block">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09] text-xs text-slate-600 dark:text-zinc-400 space-y-1.5">
+              <span className="font-semibold text-slate-800 dark:text-zinc-100 block">
                 Temettü Arındırma Oranı
               </span>
               <p className="font-normal">
@@ -339,7 +339,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
 
           <div className="bg-emerald-50/50 border border-emerald-200 rounded-2xl p-5 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 mb-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
                   TEMETTÜDEN ARINDIRILACAK TUTAR
                 </span>
@@ -350,15 +350,15 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
               <div className="text-3xl font-extrabold text-emerald-800 tracking-tight my-2 font-mono tabular-nums">
                 {formatTRY(calculation.payablePurification)}
               </div>
-              <p className="text-xs text-slate-600 font-normal">
+              <p className="text-xs text-slate-600 dark:text-zinc-400 font-normal">
                 Alınan {formatTRY(dividendAmountTRY || 0)} temettü üzerinden hesaplanmıştır.
               </p>
             </div>
 
-            <div className="border-t border-emerald-200/80 pt-3 mt-4 space-y-2 text-xs text-slate-600 font-normal">
+            <div className="border-t border-emerald-200/80 pt-3 mt-4 space-y-2 text-xs text-slate-600 dark:text-zinc-400 font-normal">
               <div className="flex items-center justify-between">
                 <span>Temettü Arındırma Oranı:</span>
-                <span className="font-mono tabular-nums text-slate-800 font-semibold">
+                <span className="font-mono tabular-nums text-slate-800 dark:text-zinc-100 font-semibold">
                   {dividendPurificationRatio}
                 </span>
               </div>
@@ -374,7 +374,7 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
       )}
 
       {/* Zakat Toggle & Preview */}
-      <div className="border-t border-slate-100 pt-4">
+      <div className="border-t border-slate-100 dark:border-white/[0.07] pt-4">
         <button
           onClick={() => setShowZakat(!showZakat)}
           className="flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-800 transition-colors"
@@ -388,22 +388,22 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
         </button>
 
         {showZakat && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09]">
             {/* Trading intent */}
-            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-              <span className="text-xs font-bold text-slate-900 block">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/[0.09] shadow-2xs">
+              <span className="text-xs font-bold text-slate-900 dark:text-white block">
                 Niyet 1: Al-Sat (Ticari Emtia)
               </span>
-              <span className="text-[11px] text-slate-500 block mb-2 font-normal">
+              <span className="text-[11px] text-slate-500 dark:text-zinc-400 block mb-2 font-normal">
                 Tam Piyasa Değeri üzerinden %2.5
               </span>
               <div className="flex items-baseline justify-between text-xs">
-                <span className="text-slate-500">Piyasa Değeri:</span>
-                <span className="font-mono tabular-nums text-slate-800 font-semibold">
+                <span className="text-slate-500 dark:text-zinc-400">Piyasa Değeri:</span>
+                <span className="font-mono tabular-nums text-slate-800 dark:text-zinc-100 font-semibold">
                   {formatTRY(zakat.tradingMarketValue)}
                 </span>
               </div>
-              <div className="flex items-baseline justify-between mt-1 pt-1 border-t border-slate-100">
+              <div className="flex items-baseline justify-between mt-1 pt-1 border-t border-slate-100 dark:border-white/[0.07]">
                 <span className="text-xs font-semibold text-emerald-700">Zekat (%2.5):</span>
                 <span className="font-mono tabular-nums text-sm font-bold text-emerald-700">
                   {formatTRY(zakat.tradingZakat)}
@@ -412,20 +412,20 @@ export const PurificationCalculatorCard: React.FC<PurificationCalculatorCardProp
             </div>
 
             {/* Long term intent */}
-            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
-              <span className="text-xs font-bold text-slate-900 block">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/[0.09] shadow-2xs">
+              <span className="text-xs font-bold text-slate-900 dark:text-white block">
                 Niyet 2: Uzun Vadeli Temettü Yatırımı
               </span>
-              <span className="text-[11px] text-slate-500 block mb-2 font-normal">
+              <span className="text-[11px] text-slate-500 dark:text-zinc-400 block mb-2 font-normal">
                 Net Dönen Varlıklar üzerinden %2.5 (İslam Fıkıh Akademisi)
               </span>
               <div className="flex items-baseline justify-between text-xs">
-                <span className="text-slate-500">Zekata Tabi Matrah:</span>
-                <span className="font-mono tabular-nums text-slate-800 font-semibold">
+                <span className="text-slate-500 dark:text-zinc-400">Zekata Tabi Matrah:</span>
+                <span className="font-mono tabular-nums text-slate-800 dark:text-zinc-100 font-semibold">
                   {formatTRY(zakat.longTermBase)}
                 </span>
               </div>
-              <div className="flex items-baseline justify-between mt-1 pt-1 border-t border-slate-100">
+              <div className="flex items-baseline justify-between mt-1 pt-1 border-t border-slate-100 dark:border-white/[0.07]">
                 <span className="text-xs font-semibold text-emerald-700">Zekat (%2.5):</span>
                 <span className="font-mono tabular-nums text-sm font-bold text-emerald-700">
                   {formatTRY(zakat.longTermZakat)}

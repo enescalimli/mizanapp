@@ -52,42 +52,42 @@ export default function CookiePolicyPage() {
     <PaynoShell badge="çerezler">
       <div className="space-y-6 max-w-4xl mx-auto pb-12">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-[#6E81A0]">
-          <Link href="/" className="hover:text-[#08080C] flex items-center gap-1 transition">
+        <div className="flex items-center gap-2 text-xs text-[#6E81A0] dark:text-zinc-400">
+          <Link href="/" className="hover:text-[#08080C] dark:text-white flex items-center gap-1 transition">
             <ArrowLeft size={13} />
             <span>Ana Sayfa</span>
           </Link>
           <span>/</span>
-          <span className="text-[#08080C] font-semibold">Çerez Politikası &amp; İzin Yönetimi</span>
+          <span className="text-[#08080C] dark:text-white font-semibold">Çerez Politikası &amp; İzin Yönetimi</span>
         </div>
 
         {/* Hero Card */}
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+        <div className="bg-white/80 dark:bg-[#101118]/90 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-900 text-xs font-bold">
             <Cookie size={14} className="text-amber-600" />
             <span>GDPR Consent Mode v2 &bull; Granüler İzin Yönetimi</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             Çerez Politikası ve <span className="font-serif italic text-[#405881]">İzin Tercihleri</span>
           </h1>
 
-          <p className="text-xs sm:text-sm text-[#6E81A0] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-zinc-400 leading-relaxed">
             Mizan olarak kullanıcı deneyiminizi geliştirmek, sitemizin teknik güvenliğini sağlamak ve fıkhi arındırma tercihlerinizi hatırlayabilmek amacıyla çerezler (cookies) kullanmaktayız. Tercihlerinizi aşağıdan dilediğiniz gibi özelleştirebilirsiniz.
           </p>
         </div>
 
         {/* Interactive Consent Management Panel */}
-        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
+        <div className="bg-white/80 dark:bg-[#101118]/90 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
           <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-4">
             <div>
-              <h2 className="text-sm font-bold text-[#08080C]">Çerez İzinlerinizi Özelleştirin</h2>
-              <p className="text-xs text-[#6E81A0]">Değişiklikler anında tarayıcınıza kaydedilir.</p>
+              <h2 className="text-sm font-bold text-[#08080C] dark:text-white">Çerez İzinlerinizi Özelleştirin</h2>
+              <p className="text-xs text-[#6E81A0] dark:text-zinc-400">Değişiklikler anında tarayıcınıza kaydedilir.</p>
             </div>
             <button
               type="button"
               onClick={handleSavePreferences}
-              className="px-4 py-2 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold shadow-xs transition"
+              className="px-4 py-2 rounded-xl mizan-accent-btn text-xs font-bold shadow-xs transition"
             >
               Tercihleri Kaydet
             </button>
@@ -103,15 +103,15 @@ export default function CookiePolicyPage() {
           {/* Cookie Types */}
           <div className="space-y-4">
             {/* Essential Cookies */}
-            <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 flex items-start justify-between gap-4">
+            <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 dark:border-white/[0.09] flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#08080C]">1. Zorunlu ve Güvenlik Çerezleri</span>
-                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white">1. Zorunlu ve Güvenlik Çerezleri</span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 dark:text-zinc-300">
                     Her Zaman Aktif
                   </span>
                 </div>
-                <p className="text-[11px] text-[#6E81A0] leading-relaxed">
+                <p className="text-[11px] text-[#6E81A0] dark:text-zinc-400 leading-relaxed">
                   Platformun temel işlevlerini yerine getirebilmesi, oturumun güvenliği ve CSRF saldırılarına karşı korunma için teknik olarak zorunludur. Devre dışı bırakılamaz.
                 </p>
               </div>
@@ -119,20 +119,20 @@ export default function CookiePolicyPage() {
                 type="checkbox"
                 checked={true}
                 disabled
-                className="w-4 h-4 text-[#08080C] accent-[#08080C] cursor-not-allowed mt-1"
+                className="w-4 h-4 text-[#08080C] dark:text-white accent-[#08080C] cursor-not-allowed mt-1"
               />
             </div>
 
             {/* Functional Cookies */}
-            <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] flex items-start justify-between gap-4">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#101118] border border-[#EDF1F7] flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#08080C]">2. İşlevsel &amp; Tercih Çerezleri</span>
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white">2. İşlevsel &amp; Tercih Çerezleri</span>
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
                     Önerilen
                   </span>
                 </div>
-                <p className="text-[11px] text-[#6E81A0] leading-relaxed">
+                <p className="text-[11px] text-[#6E81A0] dark:text-zinc-400 leading-relaxed">
                   Seçtiğiniz fıkhi tercihler (DİB / BIST Katılım), portföy gizleme durumu ve arındırma hesaplama tercihlerinizi bir sonraki ziyaretinizde anımsamak için kullanılır.
                 </p>
               </div>
@@ -140,20 +140,20 @@ export default function CookiePolicyPage() {
                 type="checkbox"
                 checked={preferences.functional}
                 onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
-                className="w-4 h-4 text-[#08080C] accent-[#08080C] cursor-pointer mt-1"
+                className="w-4 h-4 text-[#08080C] dark:text-white accent-[#08080C] cursor-pointer mt-1"
               />
             </div>
 
             {/* Analytics Cookies */}
-            <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] flex items-start justify-between gap-4">
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#101118] border border-[#EDF1F7] flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#08080C]">3. Performans ve Analitik Çerezleri</span>
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white">3. Performans ve Analitik Çerezleri</span>
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                     İsteğe Bağlı
                   </span>
                 </div>
-                <p className="text-[11px] text-[#6E81A0] leading-relaxed">
+                <p className="text-[11px] text-[#6E81A0] dark:text-zinc-400 leading-relaxed">
                   Hangi hisselerin daha sık incelendiğini, platform hızını ve teknik hata noktalarını tespit ederek sistemi optimize etmemize yardımcı olur. Kişisel veriler anonimleştirilir.
                 </p>
               </div>
@@ -161,7 +161,7 @@ export default function CookiePolicyPage() {
                 type="checkbox"
                 checked={preferences.analytics}
                 onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
-                className="w-4 h-4 text-[#08080C] accent-[#08080C] cursor-pointer mt-1"
+                className="w-4 h-4 text-[#08080C] dark:text-white accent-[#08080C] cursor-pointer mt-1"
               />
             </div>
           </div>

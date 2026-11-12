@@ -35,7 +35,7 @@ export const PortfolioAllocationBar: React.FC<PortfolioAllocationBarProps> = ({
       </div>
 
       {/* Segmented Proportional Stream Bar */}
-      <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden flex gap-0.5 p-0.5 border border-slate-200">
+      <div className="w-full h-2.5 rounded-full bg-slate-100 dark:bg-white/[0.06] overflow-hidden flex gap-0.5 p-0.5 border border-slate-200 dark:border-white/[0.09]">
         {items.map((item) => {
           const colorClass =
             item.status === "COMPLIANT"
@@ -59,11 +59,11 @@ export const PortfolioAllocationBar: React.FC<PortfolioAllocationBarProps> = ({
       </div>
 
       {/* Ticker Weight Pills */}
-      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-mono text-slate-500">
+      <div className="flex flex-wrap items-center gap-2 pt-1 text-[11px] font-mono text-slate-500 dark:text-zinc-400">
         {items.map((item) => (
           <div
             key={item.id}
-            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-slate-50 border border-slate-200"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-slate-50 dark:bg-white/[0.04] border border-slate-200 dark:border-white/[0.09]"
           >
             <span
               className={`w-1.5 h-1.5 rounded-full ${
@@ -74,8 +74,8 @@ export const PortfolioAllocationBar: React.FC<PortfolioAllocationBarProps> = ({
                   : "bg-rose-500"
               }`}
             />
-            <span className="font-semibold text-slate-900">{item.ticker}</span>
-            <span className="text-slate-500 tabular-nums">
+            <span className="font-semibold text-slate-900 dark:text-white">{item.ticker}</span>
+            <span className="text-slate-500 dark:text-zinc-400 tabular-nums">
               %{item.weightPercent.toFixed(1)}
             </span>
           </div>

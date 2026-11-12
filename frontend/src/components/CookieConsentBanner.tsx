@@ -58,7 +58,7 @@ export const CookieConsentBanner: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-8 md:right-8 lg:left-auto lg:right-8 lg:max-w-lg z-50 animate-in fade-in slide-in-from-bottom-5 duration-300">
-      <div className="bg-white/95 backdrop-blur-2xl rounded-3xl border border-white/90 p-5 sm:p-6 shadow-[0_20px_50px_rgba(24,37,66,0.15)] space-y-4">
+      <div className="bg-white/95 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-3xl border border-white/90 p-5 sm:p-6 shadow-[0_20px_50px_rgba(24,37,66,0.15)] space-y-4">
         
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
@@ -67,10 +67,10 @@ export const CookieConsentBanner: React.FC = () => {
               <Cookie size={17} />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-[#08080C]">
+              <h3 className="text-xs font-bold text-[#08080C] dark:text-white">
                 Çerez Tercihleriniz ve Gizlilik
               </h3>
-              <p className="text-[10px] text-[#6E81A0] font-medium">
+              <p className="text-[10px] text-[#6E81A0] dark:text-zinc-400 font-medium">
                 KVKK &amp; GDPR Çerez İzin Yönetimi
               </p>
             </div>
@@ -79,7 +79,7 @@ export const CookieConsentBanner: React.FC = () => {
           <button
             type="button"
             onClick={handleRejectNonEssential}
-            className="w-6 h-6 rounded-full hover:bg-slate-100 text-[#6E81A0] hover:text-[#08080C] flex items-center justify-center transition shrink-0"
+            className="w-6 h-6 rounded-full hover:bg-slate-100 dark:bg-white/[0.06] text-[#6E81A0] dark:text-zinc-400 hover:text-[#08080C] dark:text-white flex items-center justify-center transition shrink-0"
             title="Kapat ve Yalnızca Zorunluları Kabul Et"
           >
             <X size={14} />
@@ -89,11 +89,11 @@ export const CookieConsentBanner: React.FC = () => {
         {/* Content */}
         <p className="text-[11px] text-[#08080C]/80 leading-relaxed font-normal">
           Mizan, güvenli oturum sağlamak, fıkhi tercihlerinizi hatırlamak ve kullanıcı deneyimini optimize etmek için çerezleri kullanır. Ayrıntılar için{" "}
-          <Link href="/cerez-politikasi" className="font-bold underline text-[#08080C]">
+          <Link href="/cerez-politikasi" className="font-bold underline text-[#08080C] dark:text-white">
             Çerez Politikamızı
           </Link>{" "}
           ve{" "}
-          <Link href="/gizlilik-politikasi" className="font-bold underline text-[#08080C]">
+          <Link href="/gizlilik-politikasi" className="font-bold underline text-[#08080C] dark:text-white">
             KVKK Metnimizi
           </Link>{" "}
           inceleyebilirsiniz.
@@ -104,16 +104,16 @@ export const CookieConsentBanner: React.FC = () => {
           <div className="space-y-2.5 pt-2 border-t border-[#EDF1F7] text-[11px]">
             <div className="flex items-center justify-between py-1">
               <div className="space-y-0.5">
-                <span className="font-bold text-[#08080C] block">Zorunlu ve Güvenlik Çerezleri</span>
-                <span className="text-[10px] text-[#6E81A0] block">Oturum güvenliği ve CSRF koruması</span>
+                <span className="font-bold text-[#08080C] dark:text-white block">Zorunlu ve Güvenlik Çerezleri</span>
+                <span className="text-[10px] text-[#6E81A0] dark:text-zinc-400 block">Oturum güvenliği ve CSRF koruması</span>
               </div>
-              <span className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">Zorunlu</span>
+              <span className="text-[10px] font-bold text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-white/[0.06] px-2 py-0.5 rounded-md">Zorunlu</span>
             </div>
 
             <div className="flex items-center justify-between py-1">
               <div className="space-y-0.5">
-                <span className="font-bold text-[#08080C] block">İşlevsel Çerezler</span>
-                <span className="text-[10px] text-[#6E81A0] block">Fıkhi standart ve bakiye maskeleme tercihleri</span>
+                <span className="font-bold text-[#08080C] dark:text-white block">İşlevsel Çerezler</span>
+                <span className="text-[10px] text-[#6E81A0] dark:text-zinc-400 block">Fıkhi standart ve bakiye maskeleme tercihleri</span>
               </div>
               <input
                 type="checkbox"
@@ -125,8 +125,8 @@ export const CookieConsentBanner: React.FC = () => {
 
             <div className="flex items-center justify-between py-1">
               <div className="space-y-0.5">
-                <span className="font-bold text-[#08080C] block">Performans &amp; Analitik</span>
-                <span className="text-[10px] text-[#6E81A0] block">Sayfa hız analizi ve hata tespiti (Anonim)</span>
+                <span className="font-bold text-[#08080C] dark:text-white block">Performans &amp; Analitik</span>
+                <span className="text-[10px] text-[#6E81A0] dark:text-zinc-400 block">Sayfa hız analizi ve hata tespiti (Anonim)</span>
               </div>
               <input
                 type="checkbox"
@@ -143,7 +143,7 @@ export const CookieConsentBanner: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowDetails(!showDetails)}
-            className="text-[11px] font-bold text-[#6E81A0] hover:text-[#08080C] flex items-center gap-1 transition"
+            className="text-[11px] font-bold text-[#6E81A0] dark:text-zinc-400 hover:text-[#08080C] dark:text-white flex items-center gap-1 transition"
           >
             <SlidersHorizontal size={12} />
             <span>{showDetails ? "Özeti Gizle" : "Özelleştir"}</span>
@@ -154,7 +154,7 @@ export const CookieConsentBanner: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveCustom}
-                className="px-3.5 py-1.5 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition shadow-xs"
+                className="px-3.5 py-1.5 rounded-xl mizan-accent-btn text-xs font-bold transition shadow-xs"
               >
                 Seçimi Kaydet
               </button>
@@ -163,14 +163,14 @@ export const CookieConsentBanner: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleRejectNonEssential}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#08080C] text-xs font-bold transition"
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 text-[#08080C] dark:text-white text-xs font-bold transition"
                 >
                   Yalnızca Zorunlu
                 </button>
                 <button
                   type="button"
                   onClick={handleAcceptAll}
-                  className="px-4 py-1.5 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition shadow-xs"
+                  className="px-4 py-1.5 rounded-xl mizan-accent-btn text-xs font-bold transition shadow-xs"
                 >
                   Tümünü Kabul Et
                 </button>

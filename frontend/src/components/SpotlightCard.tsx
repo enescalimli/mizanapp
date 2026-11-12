@@ -37,7 +37,7 @@ export const SpotlightCard: React.FC<SpotlightCardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden rounded-3xl bg-white border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 ${className}`}
+      className={`relative overflow-hidden rounded-3xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/[0.09] shadow-sm transition-all duration-300 hover:shadow-md hover:border-slate-300 ${className}`}
       {...props}
     >
       {/* Dynamic Cursor Spotlight Layer */}
