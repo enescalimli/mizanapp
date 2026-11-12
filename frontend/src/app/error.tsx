@@ -16,7 +16,7 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden transition-colors">
+    <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden transition-colors">
       {/* Top Brand Bar */}
       <header className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between">
         <Link href="/" className="inline-flex items-center gap-2.5">
@@ -28,7 +28,7 @@ export default function ErrorPage({
 
       {/* Central Bento 500 Error Card */}
       <main className="relative z-10 max-w-lg mx-auto w-full my-auto py-10 space-y-6 text-center">
-        <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-10 shadow-2xl space-y-6">
+        <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-10 shadow-2xl space-y-6">
           <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
             <AlertOctagon size={24} />
           </div>
@@ -52,7 +52,7 @@ export default function ErrorPage({
             <button
               type="button"
               onClick={() => reset()}
-              className="px-5 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold flex items-center gap-2 shadow-xs transition hover:opacity-90 active:scale-95 cursor-pointer"
+              className="px-5 py-2.5 rounded-full mizan-accent-btn text-xs font-semibold flex items-center gap-2 shadow-xs transition hover:opacity-90 active:scale-95 cursor-pointer"
             >
               <RefreshCw size={13} />
               <span>Tekrar Dene</span>

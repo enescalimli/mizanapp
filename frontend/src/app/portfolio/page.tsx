@@ -1207,7 +1207,7 @@ function PortfolioManagementContent() {
     if (!portfolioAnalysis.rows || portfolioAnalysis.rows.length === 0 || portfolioAnalysis.totalMarketValue.lte(0)) {
       return [];
     }
-    const palette = ["#182542", "#0D8B52", "#2563EB", "#7C3AED", "#F59E0B", "#0891B2", "#DC2626", "#475569"];
+    const palette = ["#08080C", "#0D8B52", "#2563EB", "#7C3AED", "#F59E0B", "#0891B2", "#DC2626", "#475569"];
     const totalValNum = portfolioAnalysis.totalMarketValue.toNumber();
 
     return portfolioAnalysis.rows
@@ -1321,7 +1321,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={tickLivePrices}
-              className="w-9 h-9 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
+              className="w-9 h-9 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer"
               title="Canlı Fiyatları Güncelle"
             >
               <RefreshCw size={14} />
@@ -1330,7 +1330,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={handleExportCSV}
-              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              className="rounded-full bg-white dark:bg-[#0D0E14] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
               title="CSV olarak indir"
             >
               <Download size={13} className="text-blue-500" />
@@ -1340,7 +1340,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={() => setCsvImportModalOpen(true)}
-              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              className="rounded-full bg-white dark:bg-[#0D0E14] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
               title="Portföyü içe aktar"
             >
               <Upload size={13} className="text-purple-500" />
@@ -1350,7 +1350,7 @@ function PortfolioManagementContent() {
             <button
               type="button"
               onClick={() => setShowCertificateModal(true)}
-              className="rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
+              className="rounded-full bg-white dark:bg-[#0D0E14] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-zinc-200 px-3.5 py-2 text-xs font-semibold shadow-xs flex items-center gap-1.5 transition active:scale-95 cursor-pointer"
               title="Resmi DİB & TKBB Tevsik Belgesi (PDF)"
             >
               <FileText size={13} className="text-emerald-500" />
@@ -1378,7 +1378,7 @@ function PortfolioManagementContent() {
             className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
               activeBasket === "ALL"
                 ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
-                : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
+                : "bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             <Layers size={12} />
@@ -1395,7 +1395,7 @@ function PortfolioManagementContent() {
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
                   activeBasket === basketName
                     ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
-                    : "bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
+                    : "bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <Folder size={12} />
@@ -1440,7 +1440,7 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* 1. Portföy Değeri */}
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2">
             <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
               Toplam Değer
             </span>
@@ -1460,7 +1460,7 @@ function PortfolioManagementContent() {
           </div>
 
           {/* 2. Katılım Uyum Oranı */}
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2">
             <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
               Katılım Uyumu
             </span>
@@ -1475,7 +1475,7 @@ function PortfolioManagementContent() {
           {/* 3. Fıkhi Arındırma */}
           <div
             onClick={() => setActiveTab("PURIFICATION")}
-            className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition group"
+            className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition group"
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
@@ -1486,7 +1486,7 @@ function PortfolioManagementContent() {
             <div className="text-xl sm:text-2xl font-black font-mono text-slate-900 dark:text-white tracking-tight">
               {formatTRY(portfolioAnalysis.totalExitPurificationPayable, 2)}
             </div>
-            <div className="text-[11px] text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+            <div className="text-[11px] text-blue-600 dark:text-[#C6F432] font-semibold flex items-center gap-1">
               <span>İnfak Dökümü &rarr;</span>
             </div>
           </div>
@@ -1494,7 +1494,7 @@ function PortfolioManagementContent() {
           {/* 4. Yıllık Hisse Zekâtı */}
           <div
             onClick={() => setActiveTab("ZAKAT")}
-            className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition group"
+            className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-2 cursor-pointer hover:border-slate-300 dark:hover:border-white/20 transition group"
           >
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-400 block uppercase tracking-wider">
@@ -1516,14 +1516,14 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {/* İNTERAKTİF VARLIK ÇİZGİ GRAFİĞİ & BENCHMARK (Midas + Robinhood)   */}
         {/* ================================================================= */}
-        <div className="bg-white dark:bg-[#0E1015] rounded-[26px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
+        <div className="bg-white dark:bg-[#0D0E14] rounded-[26px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/5 pb-4">
             <div>
               <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                 Portföy Varlık Eğrisi &amp; Alpha Performansı
               </span>
               <div className="flex items-baseline gap-3 mt-1">
-                <span className="text-2xl sm:text-3xl font-black font-mono text-[#182542] dark:text-white">
+                <span className="text-2xl sm:text-3xl font-black font-mono text-[#08080C] dark:text-white">
                   ₺{scrubbedPoint ? scrubbedPoint.value.toLocaleString("tr-TR") : portfolioAnalysis.totalMarketValue.toNumber().toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                 </span>
                 
@@ -1537,7 +1537,7 @@ function PortfolioManagementContent() {
                 </span>
 
                 {benchmarkIndex !== "NONE" && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-blue-500/15 text-blue-600 dark:text-[#C6F432] border border-blue-500/30">
                     <Activity size={12} />
                     <span>Alpha: +%{scrubbedPoint?.alphaPercent ?? timelineData[timelineData.length - 1]?.alphaPercent ?? 2.8} ({benchmarkIndex} Üzeri)</span>
                   </span>
@@ -1558,8 +1558,8 @@ function PortfolioManagementContent() {
                     }}
                     className={`px-2.5 py-1 rounded-lg transition cursor-pointer ${
                       chartTimeframe === tf
-                        ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-2xs"
-                        : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                        ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-2xs"
+                        : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                     }`}
                   >
                     {tf === "ALL" ? "TÜMÜ" : tf}
@@ -1679,7 +1679,7 @@ function PortfolioManagementContent() {
                         cx={p.x}
                         cy={p.y}
                         r={scrubbedPoint?.label === p.label ? "6" : "3.5"}
-                        fill={scrubbedPoint?.label === p.label ? "#10B981" : "#182542"}
+                        fill={scrubbedPoint?.label === p.label ? "#10B981" : "#08080C"}
                         stroke="#10B981"
                         strokeWidth="2"
                         className="transition-all duration-200"
@@ -1897,7 +1897,7 @@ function PortfolioManagementContent() {
             {/* ============================================================= */}
             {/* PORTFÖY POZİSYONLARI TABLOSU (BAŞ TACI)                         */}
             {/* ============================================================= */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-xs overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/80 dark:border-white/10 shadow-xs overflow-hidden transition-colors">
               <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -2012,7 +2012,7 @@ function PortfolioManagementContent() {
                           {row.positionPnlTRY.gte(0) ? "+" : ""}{formatTRY(row.positionPnlTRY, 2)} ({row.positionPnlPercent.toFixed(1)}%)
                         </td>
 
-                        <td className="py-3 px-4 text-right font-mono font-bold text-blue-600 dark:text-blue-400">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-blue-600 dark:text-[#C6F432]">
                           {formatTRY(row.purificationResult.totalPurificationPayable, 2)}
                         </td>
 
@@ -2049,7 +2049,7 @@ function PortfolioManagementContent() {
             {/* ============================================================= */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               {/* Kolon 1: Varlık Ağırlık Dağılımı (Donut & Maliyet) */}
-              <div className="lg:col-span-6 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
+              <div className="lg:col-span-6 bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -2173,7 +2173,7 @@ function PortfolioManagementContent() {
               </div>
 
               {/* Kolon 2: Sektörel Dağılım & Yoğunlaşma (Simply Wall St) */}
-              <div className="lg:col-span-6 bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
+              <div className="lg:col-span-6 bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
                   <div>
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -2235,7 +2235,7 @@ function PortfolioManagementContent() {
             {/* ============================================================= */}
             {/* FIKHİ PORTFÖY GÜVENLİK VE OTOMASYON KURALLARI                   */}
             {/* ============================================================= */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3 transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-4 sm:p-5 border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3 transition-colors">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
@@ -2331,7 +2331,7 @@ function PortfolioManagementContent() {
           <div className="space-y-6">
             {/* 4 KPI Kartı */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+              <div className="bg-white dark:bg-[#0D0E14] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   Tahmini Yıllık Temettü
                 </span>
@@ -2343,11 +2343,11 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+              <div className="bg-white dark:bg-[#0D0E14] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   Yield on Cost (Maliyet Verimi)
                 </span>
-                <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
+                <div className="text-2xl font-black font-mono text-[#08080C] dark:text-white">
                   %{portfolioAnalysis.projectedYieldOnCost.toFixed(2)}
                 </div>
                 <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
@@ -2355,11 +2355,11 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+              <div className="bg-white dark:bg-[#0D0E14] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   Temettü Veren Şirketler
                 </span>
-                <div className="text-2xl font-black font-mono text-blue-600 dark:text-blue-400">
+                <div className="text-2xl font-black font-mono text-blue-600 dark:text-[#C6F432]">
                   {portfolioAnalysis.rows.filter(r => ["BIMAS", "FROTO", "TUPRS", "EREGL", "ASELS", "MAVI"].includes(r.ticker)).length} Şirket
                 </div>
                 <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">
@@ -2367,7 +2367,7 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
+              <div className="bg-white dark:bg-[#0D0E14] p-5 rounded-[22px] border border-slate-200/60 dark:border-white/10 shadow-2xs space-y-2">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   Portföyüme Özel KAP
                 </span>
@@ -2381,10 +2381,10 @@ function PortfolioManagementContent() {
             </div>
 
             {/* 12 Aylık Temettü Nakit Akışı Bar Grafiği */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-5 transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-5 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-3">
                 <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
                     <Calendar size={16} className="text-[#0D8B52] dark:text-emerald-400" />
                     <span>12 Aylık Tahmini Temettü Nakit Akışı (Ocak - Aralık)</span>
                   </h3>
@@ -2411,7 +2411,7 @@ function PortfolioManagementContent() {
 
                         return (
                           <div key={idx} className="flex flex-col items-center h-full justify-end group">
-                            <div className="text-[10px] font-mono font-bold text-[#182542] dark:text-white opacity-0 group-hover:opacity-100 transition mb-1 text-center truncate max-w-full">
+                            <div className="text-[10px] font-mono font-bold text-[#08080C] dark:text-white opacity-0 group-hover:opacity-100 transition mb-1 text-center truncate max-w-full">
                               {hasIncome ? `₺${amount.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}` : ""}
                             </div>
 
@@ -2421,7 +2421,7 @@ function PortfolioManagementContent() {
                                   hasIncome
                                     ? isCurrentMonth
                                       ? "bg-[#0D8B52] dark:bg-emerald-500 shadow-sm"
-                                      : "bg-[#182542] dark:bg-[#273869] group-hover:bg-[#0D8B52]"
+                                      : "bg-[#08080C] dark:bg-[#10B981] group-hover:bg-[#0D8B52]"
                                     : "bg-slate-200/50 dark:bg-white/5"
                                 }`}
                                 style={{ height: hasIncome ? `${Math.max(12, heightPercent)}%` : "4px" }}
@@ -2449,7 +2449,7 @@ function PortfolioManagementContent() {
 
                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-[#6E81A0] dark:text-[#94A3B8]">
                       <span>* Şirketlerin Genel Kurul onaylı nakit kâr payı dağıtım kararları baz alınmıştır.</span>
-                      <span className="font-bold text-[#182542] dark:text-white">DİB &amp; TKBB Uyumlu Tahakkuk</span>
+                      <span className="font-bold text-[#08080C] dark:text-white">DİB &amp; TKBB Uyumlu Tahakkuk</span>
                     </div>
                   </div>
                 );
@@ -2457,10 +2457,10 @@ function PortfolioManagementContent() {
             </div>
 
             {/* Portföyüme Özel Canlı KAP Akışı */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
                     <BellRing size={16} className="text-purple-600 dark:text-purple-400" />
                     <span>Portföyüme Özel KAP Canlı Akışı</span>
                   </h3>
@@ -2479,7 +2479,7 @@ function PortfolioManagementContent() {
                     <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-[#6E81A0] flex items-center justify-center mx-auto">
                       <BellRing size={22} />
                     </div>
-                    <div className="text-sm font-bold text-[#182542] dark:text-white">
+                    <div className="text-sm font-bold text-[#08080C] dark:text-white">
                       Portföyünüzdeki Hisseler İçin Yeni KAP Bildirimi Yok
                     </div>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] max-w-sm mx-auto">
@@ -2493,7 +2493,7 @@ function PortfolioManagementContent() {
                         <StockLogo ticker={kap.ticker} name={kap.companyName} size="md" />
                         <div className="space-y-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <Link href={`/companies/${kap.ticker}`} className="font-extrabold text-sm text-[#182542] dark:text-white hover:text-blue-600 transition">
+                            <Link href={`/companies/${kap.ticker}`} className="font-extrabold text-sm text-[#08080C] dark:text-white hover:text-blue-600 transition">
                               {kap.ticker}
                             </Link>
                             <span className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2503,7 +2503,7 @@ function PortfolioManagementContent() {
                               kap.type === "DIVIDEND"
                                 ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25"
                                 : kap.type === "KAFIF"
-                                ? "bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25"
+                                ? "bg-blue-500/15 text-blue-700 dark:text-[#C6F432] border border-blue-500/25"
                                 : kap.type === "COMPLIANCE"
                                 ? "bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/25"
                                 : "bg-purple-500/15 text-purple-700 dark:text-purple-400 border border-purple-500/25"
@@ -2512,7 +2512,7 @@ function PortfolioManagementContent() {
                             </span>
                           </div>
 
-                          <h4 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                          <h4 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white">
                             {kap.title}
                           </h4>
 
@@ -2540,10 +2540,10 @@ function PortfolioManagementContent() {
           <div className="space-y-6">
             
             {/* Hisse Bazlı Arındırma Dökümü Tablosu */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                  <h3 className="text-sm font-bold text-[#08080C] dark:text-white">
                     Hisse Başına Güncel Arındırma Hesabı
                   </h3>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2567,7 +2567,7 @@ function PortfolioManagementContent() {
                       <th className="py-3 px-4 text-right">Lot Miktarı</th>
                       <th className="py-3 px-4 text-right">Pay Başı Yıllık Mahzurlu Gelir</th>
                       <th className="py-3 px-4 text-right">Yıllık Gün Oranı (Pro-Rata)</th>
-                      <th className="py-3 px-4 text-right font-black text-[#182542] dark:text-white">Toplam Arındırılacak</th>
+                      <th className="py-3 px-4 text-right font-black text-[#08080C] dark:text-white">Toplam Arındırılacak</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -2584,7 +2584,7 @@ function PortfolioManagementContent() {
                           <div className="flex items-center gap-3">
                             <StockLogo ticker={row.ticker} name={row.companyName} size="sm" />
                             <div>
-                              <span className="font-bold text-xs text-[#182542] dark:text-white block">
+                              <span className="font-bold text-xs text-[#08080C] dark:text-white block">
                                 {row.ticker}
                               </span>
                               <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2595,7 +2595,7 @@ function PortfolioManagementContent() {
                         </td>
 
                         <td className="py-3 px-4 text-center font-mono">
-                          <div className="font-bold text-xs text-[#182542] dark:text-white">
+                          <div className="font-bold text-xs text-[#08080C] dark:text-white">
                             {row.daysHeld} Gün
                           </div>
                           <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2603,7 +2603,7 @@ function PortfolioManagementContent() {
                           </div>
                         </td>
 
-                        <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-[#08080C] dark:text-white">
                           {row.lots} Lot
                         </td>
 
@@ -2663,9 +2663,9 @@ function PortfolioManagementContent() {
             
             {/* KPI Özet Kartları */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
+              <div className="bg-white dark:bg-[#0D0E14] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
                 <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">Toplam Satış Hasılatı</span>
-                <span className="text-base font-black font-mono text-[#182542] dark:text-white mt-1 block">
+                <span className="text-base font-black font-mono text-[#08080C] dark:text-white mt-1 block">
                   {formatTRY(transactionSummary.totalSellProceeds, 2)}
                 </span>
                 <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] mt-0.5 block">
@@ -2673,7 +2673,7 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
+              <div className="bg-white dark:bg-[#0D0E14] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
                 <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">Realize Kâr / Zarar</span>
                 <span className={`text-base font-black font-mono mt-1 block ${
                   transactionSummary.totalRealizedPnl.gte(0) ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
@@ -2685,9 +2685,9 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
+              <div className="bg-white dark:bg-[#0D0E14] p-4 rounded-2xl border border-slate-200/60 dark:border-white/10 shadow-2xs">
                 <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">Tahakkuk Eden Arındırma</span>
-                <span className="text-base font-black font-mono text-blue-600 dark:text-blue-400 mt-1 block">
+                <span className="text-base font-black font-mono text-blue-600 dark:text-[#C6F432] mt-1 block">
                   {formatTRY(transactionSummary.totalPurificationSum, 2)}
                 </span>
                 <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] mt-0.5 block">
@@ -2695,7 +2695,7 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-2xs">
+              <div className="bg-white dark:bg-[#0D0E14] p-4 rounded-2xl border border-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/20 shadow-2xs">
                 <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 block flex items-center gap-1">
                   <CheckCheck size={13} className="text-emerald-600" />
                   İnfak Edilen Arındırma
@@ -2708,7 +2708,7 @@ function PortfolioManagementContent() {
                 </span>
               </div>
 
-              <div className="bg-white dark:bg-[#0E1015] p-4 rounded-2xl border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 shadow-2xs col-span-2 md:col-span-1">
+              <div className="bg-white dark:bg-[#0D0E14] p-4 rounded-2xl border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 shadow-2xs col-span-2 md:col-span-1">
                 <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 block flex items-center gap-1">
                   <Clock size={13} className="text-amber-600" />
                   Kalan İnfak Borcu
@@ -2723,10 +2723,10 @@ function PortfolioManagementContent() {
             </div>
 
             {/* İşlem Listesi Tablosu */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#08080C] dark:text-white flex items-center gap-2">
                     <History size={16} className="text-blue-500" />
                     <span>Gerçekleşen Satışlar &amp; İnfak Defteri</span>
                   </h3>
@@ -2739,7 +2739,7 @@ function PortfolioManagementContent() {
                   <button
                     type="button"
                     onClick={() => setManualTradeModalOpen(true)}
-                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-[#182542] dark:text-white transition flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-[#08080C] dark:text-white transition flex items-center gap-1.5 cursor-pointer"
                   >
                     <Plus size={14} />
                     <span>+ Geçmiş Satış Ekle</span>
@@ -2756,7 +2756,7 @@ function PortfolioManagementContent() {
                       <th className="py-3 px-4 text-right">Adet &amp; Fiyat</th>
                       <th className="py-3 px-4 text-right">Satış Tutarı</th>
                       <th className="py-3 px-4 text-right">Realize K/Z</th>
-                      <th className="py-3 px-4 text-right font-bold text-[#182542] dark:text-white">Tahakkuk Eden Arındırma</th>
+                      <th className="py-3 px-4 text-right font-bold text-[#08080C] dark:text-white">Tahakkuk Eden Arındırma</th>
                       <th className="py-3 px-4 text-center">Fıkhi Arındırma Durumu</th>
                       <th className="py-3 px-4 text-right">İşlem</th>
                     </tr>
@@ -2769,7 +2769,7 @@ function PortfolioManagementContent() {
                             <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 mx-auto flex items-center justify-center text-slate-400">
                               <History size={24} />
                             </div>
-                            <p className="font-bold text-[#182542] dark:text-white">
+                            <p className="font-bold text-[#08080C] dark:text-white">
                               Henüz Kayıtlı Satış veya İşlem Bulunmuyor
                             </p>
                             <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2792,13 +2792,13 @@ function PortfolioManagementContent() {
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                                   tx.type === "SELL"
                                     ? "bg-rose-500/15 text-rose-600 dark:text-rose-400"
-                                    : "bg-blue-500/15 text-blue-600 dark:text-blue-400"
+                                    : "bg-blue-500/15 text-blue-600 dark:text-[#C6F432]"
                                 }`}>
                                   {tx.type === "SELL" ? "SATIŞ" : "ALIŞ"}
                                 </span>
                                 <StockLogo ticker={tx.ticker} name={comp?.name || tx.ticker} size="sm" />
                                 <div>
-                                  <span className="font-bold text-xs text-[#182542] dark:text-white block">
+                                  <span className="font-bold text-xs text-[#08080C] dark:text-white block">
                                     {tx.ticker}
                                   </span>
                                   <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[120px]">
@@ -2809,11 +2809,11 @@ function PortfolioManagementContent() {
                             </td>
 
                             <td className="py-3 px-4 text-right font-mono">
-                              <div className="font-bold text-[#182542] dark:text-white">{tx.lots} Lot</div>
+                              <div className="font-bold text-[#08080C] dark:text-white">{tx.lots} Lot</div>
                               <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">₺{tx.priceTRY.toFixed(2)}</div>
                             </td>
 
-                            <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
+                            <td className="py-3 px-4 text-right font-mono font-bold text-[#08080C] dark:text-white">
                               {formatTRY(tx.totalAmountTRY, 2)}
                             </td>
 
@@ -2828,7 +2828,7 @@ function PortfolioManagementContent() {
                               )}
                             </td>
 
-                            <td className="py-3 px-4 text-right font-mono font-black text-sm text-blue-600 dark:text-blue-400">
+                            <td className="py-3 px-4 text-right font-mono font-black text-sm text-blue-600 dark:text-[#C6F432]">
                               {formatTRY(tx.purificationAmountTRY, 2)}
                             </td>
 
@@ -2886,14 +2886,14 @@ function PortfolioManagementContent() {
           <div className="space-y-6">
             
             {/* Zekât Fıkhi Esas Kartı */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                     <Coins size={20} />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-[#182542] dark:text-white">
+                    <h3 className="text-base font-bold text-[#08080C] dark:text-white">
                       Hisse Senedi Zekâtı Hesaplama Metodu (1/40 - %2,5)
                     </h3>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2912,7 +2912,7 @@ function PortfolioManagementContent() {
                       onClick={() => setGlobalZakatIntent("LONG_TERM_DIVIDEND")}
                       className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                         globalZakatIntent === "LONG_TERM_DIVIDEND"
-                          ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                          ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
                           : "text-[#6E81A0] dark:text-[#94A3B8]"
                       }`}
                     >
@@ -2923,7 +2923,7 @@ function PortfolioManagementContent() {
                       onClick={() => setGlobalZakatIntent("TRADING_SHORT_TERM")}
                       className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                         globalZakatIntent === "TRADING_SHORT_TERM"
-                          ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
+                          ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
                           : "text-[#6E81A0] dark:text-[#94A3B8]"
                       }`}
                     >
@@ -2933,7 +2933,7 @@ function PortfolioManagementContent() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs text-[#182542] dark:text-sky-200 flex items-start gap-3">
+              <div className="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs text-[#08080C] dark:text-sky-200 flex items-start gap-3">
                 <Info size={18} className="text-sky-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <span className="font-bold block">Uzun Vade ile Kısa Vade Farkı</span>
@@ -2953,10 +2953,10 @@ function PortfolioManagementContent() {
             </div>
 
             {/* Zekât Tablosu */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                  <h3 className="text-sm font-bold text-[#08080C] dark:text-white">
                     Hisse Bazında Zekât Matrahı ve Ödenecek Tutar
                   </h3>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -2996,7 +2996,7 @@ function PortfolioManagementContent() {
                           <div className="flex items-center gap-3">
                             <StockLogo ticker={row.ticker} name={row.companyName} size="sm" />
                             <div>
-                              <span className="font-bold text-xs text-[#182542] dark:text-white block">
+                              <span className="font-bold text-xs text-[#08080C] dark:text-white block">
                                 {row.ticker}
                               </span>
                               <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3007,16 +3007,16 @@ function PortfolioManagementContent() {
                         </td>
 
                         <td className="py-3 px-4 text-center">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-white/10 text-[#182542] dark:text-white">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-white/10 text-[#08080C] dark:text-white">
                             {globalZakatIntent === "LONG_TERM_DIVIDEND" ? "Dönen Varlık" : "Ticari Mal"}
                           </span>
                         </td>
 
-                        <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-[#08080C] dark:text-white">
                           {row.lots} Lot
                         </td>
 
-                        <td className="py-3 px-4 text-right font-mono text-[#182542] dark:text-white font-bold">
+                        <td className="py-3 px-4 text-right font-mono text-[#08080C] dark:text-white font-bold">
                           {formatTRY(row.zakatResult.zakatBaseTRY, 2)}
                         </td>
 
@@ -3034,7 +3034,7 @@ function PortfolioManagementContent() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-5 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/10 flex items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white block">
                     Nisap Miktarı Karşılaştırması (80.18 gr Altın)
                   </span>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3058,7 +3058,7 @@ function PortfolioManagementContent() {
                 <button
                   type="button"
                   onClick={() => setShowCertificateModal(true)}
-                  className="px-4 py-2 rounded-full bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 shrink-0"
+                  className="px-4 py-2 rounded-full bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 shrink-0"
                 >
                   <Printer size={14} className="text-amber-400" />
                   <span>Zekât Belgesini Yazdır</span>
@@ -3121,10 +3121,10 @@ function PortfolioManagementContent() {
                 <div className="border-b-2 border-slate-900 pb-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-[#182542] text-white text-[11px] font-black flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-lg bg-[#08080C] text-white text-[11px] font-black flex items-center justify-center">
                         M
                       </span>
-                      <span className="text-xs font-black tracking-widest text-[#182542] uppercase">
+                      <span className="text-xs font-black tracking-widest text-[#08080C] uppercase">
                         Mizan Katılım Finans Sistemleri
                       </span>
                     </div>
@@ -3377,12 +3377,12 @@ function PortfolioManagementContent() {
 
           return (
             <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-              <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+              <div className="bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
                   <div className="flex items-center gap-3">
                     <StockLogo ticker={selectedHoldingForSell.ticker} name={selectedHoldingForSell.companyName} size="md" />
                     <div>
-                      <h3 className="font-bold text-base text-[#182542] dark:text-white flex items-center gap-1.5">
+                      <h3 className="font-bold text-base text-[#08080C] dark:text-white flex items-center gap-1.5">
                         <span>{selectedHoldingForSell.ticker} Hisse Satışı</span>
                       </h3>
                       <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3406,15 +3406,15 @@ function PortfolioManagementContent() {
                 <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-white/5 p-3 rounded-2xl text-center">
                   <div>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">Mevcut Adet</span>
-                    <span className="text-xs font-bold font-mono text-[#182542] dark:text-white">{availableLots} Lot</span>
+                    <span className="text-xs font-bold font-mono text-[#08080C] dark:text-white">{availableLots} Lot</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">Ort. Maliyet</span>
-                    <span className="text-xs font-bold font-mono text-[#182542] dark:text-white">₺{avgCostNum.toFixed(2)}</span>
+                    <span className="text-xs font-bold font-mono text-[#08080C] dark:text-white">₺{avgCostNum.toFixed(2)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block">Elde Tutulan</span>
-                    <span className="text-xs font-bold font-mono text-blue-600 dark:text-blue-400">{totalDaysHeld} Gün</span>
+                    <span className="text-xs font-bold font-mono text-blue-600 dark:text-[#C6F432]">{totalDaysHeld} Gün</span>
                   </div>
                 </div>
 
@@ -3422,7 +3422,7 @@ function PortfolioManagementContent() {
                 <div className="space-y-3.5">
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-bold text-[#182542] dark:text-white">
+                      <label className="text-xs font-bold text-[#08080C] dark:text-white">
                         Satılacak Lot Miktarı
                       </label>
                       <div className="flex items-center gap-1">
@@ -3433,7 +3433,7 @@ function PortfolioManagementContent() {
                               key={ratio}
                               type="button"
                               onClick={() => setSellLotsInput(String(targetLot))}
-                              className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-[#182542] dark:text-white transition cursor-pointer"
+                              className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-[#08080C] dark:text-white transition cursor-pointer"
                             >
                               %{ratio * 100}
                             </button>
@@ -3447,13 +3447,13 @@ function PortfolioManagementContent() {
                       max={availableLots}
                       value={sellLotsInput}
                       onChange={(e) => setSellLotsInput(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold font-mono text-sm text-[#182542] dark:text-white outline-none focus:border-rose-500"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold font-mono text-sm text-[#08080C] dark:text-white outline-none focus:border-rose-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1.5">
+                      <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1.5">
                         Satış Birim Fiyatı (₺)
                       </label>
                       <input
@@ -3462,19 +3462,19 @@ function PortfolioManagementContent() {
                         min="0"
                         value={sellPriceInput}
                         onChange={(e) => setSellPriceInput(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold font-mono text-sm text-[#182542] dark:text-white outline-none focus:border-rose-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold font-mono text-sm text-[#08080C] dark:text-white outline-none focus:border-rose-500"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1.5">
+                      <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1.5">
                         Satış Tarihi
                       </label>
                       <input
                         type="date"
                         value={sellDateInput}
                         onChange={(e) => setSellDateInput(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-rose-500"
+                        className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#08080C] dark:text-white outline-none focus:border-rose-500"
                       />
                     </div>
                   </div>
@@ -3484,20 +3484,20 @@ function PortfolioManagementContent() {
                 <div className="space-y-2 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-200/60 dark:border-white/10">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#6E81A0] dark:text-[#94A3B8]">Brüt Satış Tutarı:</span>
-                    <span className="font-bold font-mono text-[#182542] dark:text-white">
+                    <span className="font-bold font-mono text-[#08080C] dark:text-white">
                       {formatTRY(grossProceeds, 2)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#6E81A0] dark:text-[#94A3B8]">Maliyet Bedeli:</span>
-                    <span className="font-bold font-mono text-[#182542] dark:text-white">
+                    <span className="font-bold font-mono text-[#08080C] dark:text-white">
                       {formatTRY(costBasis, 2)}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/50 dark:border-white/10">
-                    <span className="font-bold text-[#182542] dark:text-white">Gerçekleşen Kâr / Zarar:</span>
+                    <span className="font-bold text-[#08080C] dark:text-white">Gerçekleşen Kâr / Zarar:</span>
                     <span className={`font-black font-mono ${
                       realizedPnl >= 0 ? "text-[#0D8B52] dark:text-emerald-400" : "text-[#C62E26] dark:text-rose-400"
                     }`}>
@@ -3506,25 +3506,25 @@ function PortfolioManagementContent() {
                   </div>
 
                   {/* Fıkhi Arındırma Vurgusu */}
-                  <div className="mt-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-500/30">
+                  <div className="mt-3 p-3 rounded-xl bg-blue-50 dark:bg-[#C6F432]/15 border border-blue-200 dark:border-[#C6F432]/30">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
-                        <Scale size={15} className="text-blue-600 dark:text-blue-400" />
+                        <Scale size={15} className="text-blue-600 dark:text-[#C6F432]" />
                         <span className="text-xs font-bold text-blue-900 dark:text-blue-200">
                           Tahakkuk Eden Fıkhi Arındırma:
                         </span>
                       </div>
-                      <span className="text-sm font-black font-mono text-blue-700 dark:text-blue-300">
+                      <span className="text-sm font-black font-mono text-blue-700 dark:text-[#C6F432]">
                         {formatTRY(purificationAmount, 2)}
                       </span>
                     </div>
-                    <p className="text-[10px] text-blue-800/80 dark:text-blue-300/80 mt-1 leading-relaxed">
+                    <p className="text-[10px] text-blue-800/80 dark:text-[#C6F432]/80 mt-1 leading-relaxed">
                       TKBB standartları uyarınca, bu hisseden {totalDaysHeld} gün elde tutma süresi için hesaplanan pro-rata infak borcudur. Satış onaylandığında İşlem Geçmişi &amp; İnfak Defterinize aktarılacaktır.
                     </p>
                   </div>
 
                   <div className="flex items-center justify-between text-xs pt-2">
-                    <span className="font-bold text-[#182542] dark:text-white">Net Helal Satış Hasılatı:</span>
+                    <span className="font-bold text-[#08080C] dark:text-white">Net Helal Satış Hasılatı:</span>
                     <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">
                       {formatTRY(netHalalProceeds, 2)}
                     </span>
@@ -3562,14 +3562,14 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {manualTradeModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-            <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
+            <div className="bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-[#C6F432]/15 text-blue-600 flex items-center justify-center font-bold">
                     <History size={18} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                    <h3 className="font-bold text-base text-[#08080C] dark:text-white">
                       Geçmiş Satış Kaydı Ekle
                     </h3>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3588,16 +3588,16 @@ function PortfolioManagementContent() {
 
               <form onSubmit={handleAddManualTrade} className="space-y-4">
                 <div>
-                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                  <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                     Hisse Kodu (Ticker)
                   </label>
                   <select
                     value={manualTicker}
                     onChange={(e) => setManualTicker(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-bold text-xs text-[#08080C] dark:text-white outline-none focus:border-blue-500"
                   >
                     {SAMPLE_COMPANIES_SUMMARY.map((c) => (
-                      <option key={c.ticker} value={c.ticker} className="dark:bg-[#182542]">
+                      <option key={c.ticker} value={c.ticker} className="dark:bg-[#08080C]">
                         {c.ticker} - {c.name}
                       </option>
                     ))}
@@ -3606,7 +3606,7 @@ function PortfolioManagementContent() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                       Satılan Lot Adedi
                     </label>
                     <input
@@ -3614,11 +3614,11 @@ function PortfolioManagementContent() {
                       min="1"
                       value={manualLots}
                       onChange={(e) => setManualLots(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#08080C] dark:text-white outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                       Alış Fiyatı / Maliyet (₺)
                     </label>
                     <input
@@ -3626,14 +3626,14 @@ function PortfolioManagementContent() {
                       step="0.01"
                       value={manualBuyPrice}
                       onChange={(e) => setManualBuyPrice(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#08080C] dark:text-white outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                       Satış Fiyatı (₺)
                     </label>
                     <input
@@ -3641,37 +3641,37 @@ function PortfolioManagementContent() {
                       step="0.01"
                       value={manualSellPrice}
                       onChange={(e) => setManualSellPrice(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#08080C] dark:text-white outline-none focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                    <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                       Satış Tarihi
                     </label>
                     <input
                       type="date"
                       value={manualSellDate}
                       onChange={(e) => setManualSellDate(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#08080C] dark:text-white outline-none focus:border-blue-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                  <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                     Alış Tarihi (Elde Tutma Süresi Hesabı İçin)
                   </label>
                   <input
                     type="date"
                     value={manualBuyDate}
                     onChange={(e) => setManualBuyDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#182542] dark:text-white outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 font-mono text-xs text-[#08080C] dark:text-white outline-none focus:border-blue-500"
                   />
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 flex items-center justify-between">
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white block">
                       Arındırma Tutarı İnfak Edildi mi?
                     </span>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3712,14 +3712,14 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {newBasketModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-            <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
+            <div className="bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 flex items-center justify-center font-bold">
                     <FolderPlus size={18} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                    <h3 className="font-bold text-base text-[#08080C] dark:text-white">
                       Yeni Portföy Sepeti Oluştur
                     </h3>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3741,7 +3741,7 @@ function PortfolioManagementContent() {
 
               <form onSubmit={handleCreateBasket} className="space-y-4">
                 <div>
-                  <label className="text-xs font-bold text-[#182542] dark:text-white block mb-1">
+                  <label className="text-xs font-bold text-[#08080C] dark:text-white block mb-1">
                     Sepet Adı
                   </label>
                   <input
@@ -3749,7 +3749,7 @@ function PortfolioManagementContent() {
                     value={newBasketName}
                     onChange={(e) => setNewBasketName(e.target.value)}
                     placeholder="Örn: Döviz Bazlı İhracatçılar, Temettü 2030, vb."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-[#182542] dark:text-white outline-none focus:border-purple-500 font-semibold"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs text-[#08080C] dark:text-white outline-none focus:border-purple-500 font-semibold"
                     autoFocus
                   />
                 </div>
@@ -3788,14 +3788,14 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {csvImportModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-            <div className="bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
+            <div className="bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-[#C6F432]/15 text-blue-600 flex items-center justify-center font-bold">
                     <Upload size={18} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                    <h3 className="font-bold text-base text-[#08080C] dark:text-white">
                       Portföyü İçe Aktar (CSV / Metin)
                     </h3>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3897,7 +3897,7 @@ function PortfolioManagementContent() {
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-bold text-[#182542] dark:text-white">
+                    <label className="text-xs font-bold text-[#08080C] dark:text-white">
                       Metin veya Ekstre Verisini Yapıştırın
                     </label>
                     {csvInputText.trim() && (
@@ -3911,7 +3911,7 @@ function PortfolioManagementContent() {
                     value={csvInputText}
                     onChange={(e) => setCsvInputText(e.target.value)}
                     placeholder="BIMAS, 100, 480.00, 2026-01-15, Temettü Emekliliği&#10;THYAO, 50, 290.50, 2026-02-01, Genel Portföy&#10;veya Midas/Kuveyt Türk ekstre metni..."
-                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono text-[#182542] dark:text-white outline-none focus:border-emerald-500"
+                    className="w-full p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono text-[#08080C] dark:text-white outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -3956,14 +3956,14 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {addHoldingModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-            <div className="bg-white dark:bg-[#0E1015] border border-black/10 dark:border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 text-[#182542] dark:text-white">
+            <div className="bg-white dark:bg-[#0D0E14] border border-black/10 dark:border-white/10 rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 text-[#08080C] dark:text-white">
               <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-black/5 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
+                  <div className="w-9 h-9 rounded-xl bg-black/5 dark:bg-white/10 flex items-center justify-center text-[#08080C] dark:text-white">
                     <Plus size={18} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                    <h3 className="font-bold text-base text-[#08080C] dark:text-white">
                       Hisse Ekle
                     </h3>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -3990,7 +3990,7 @@ function PortfolioManagementContent() {
                     <select
                       value={newTicker}
                       onChange={(e) => handleSelectNewTicker(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-bold text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-bold text-[#08080C] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
                     >
                       {SAMPLE_COMPANIES_SUMMARY.map((comp) => (
                         <option key={comp.ticker} value={comp.ticker} className="dark:bg-[#14171F]">
@@ -4009,7 +4009,7 @@ function PortfolioManagementContent() {
                   <select
                     value={newHoldingBasket}
                     onChange={(e) => setNewHoldingBasket(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-medium text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-medium text-[#08080C] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
                   >
                     <option value="Genel Portföy" className="dark:bg-[#14171F]">Genel Portföy</option>
                     {customBaskets.map((b) => (
@@ -4034,7 +4034,7 @@ function PortfolioManagementContent() {
                       value={newLots}
                       onChange={(e) => setNewLots(e.target.value)}
                       placeholder="100"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono font-bold text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono font-bold text-[#08080C] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
                     />
                   </div>
                   <div>
@@ -4049,7 +4049,7 @@ function PortfolioManagementContent() {
                       value={newAvgCost}
                       onChange={(e) => setNewAvgCost(e.target.value)}
                       placeholder="100.00"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono font-bold text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono font-bold text-[#08080C] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
                     />
                   </div>
                 </div>
@@ -4063,7 +4063,7 @@ function PortfolioManagementContent() {
                     type="date"
                     value={newPurchaseDate}
                     onChange={(e) => handleNewDateChange(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-mono text-[#08080C] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
                   />
                 </div>
 
@@ -4075,7 +4075,7 @@ function PortfolioManagementContent() {
                   <select
                     value={newZakatIntent}
                     onChange={(e) => setNewZakatIntent(e.target.value as ZakatIntentionType)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-medium text-[#182542] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-sm font-medium text-[#08080C] dark:text-white outline-none focus:border-black dark:focus:border-white transition"
                   >
                     <option value="LONG_TERM_DIVIDEND" className="dark:bg-[#14171F]">
                       Uzun Vadeli / Temettü (Dönen Varlıklar Üzerinden)
@@ -4097,7 +4097,7 @@ function PortfolioManagementContent() {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2.5 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl mizan-accent-btn hover:opacity-90 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm cursor-pointer"
                   >
                     <Plus size={15} />
                     <span>Hisse Ekle</span>
@@ -4113,14 +4113,14 @@ function PortfolioManagementContent() {
         {/* ================================================================= */}
         {swapModalOpen && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-            <div className="bg-white dark:bg-[#0E1015] border border-black/10 dark:border-white/10 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6 text-[#182542] dark:text-white">
+            <div className="bg-white dark:bg-[#0D0E14] border border-black/10 dark:border-white/10 rounded-3xl max-w-2xl w-full p-6 shadow-2xl space-y-6 text-[#08080C] dark:text-white">
               <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
                     <ArrowLeftRight size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-base text-[#182542] dark:text-white">
+                    <h3 className="font-bold text-base text-[#08080C] dark:text-white">
                       Katılım Dışı Varlık İkame Motoru
                     </h3>
                     <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -4140,7 +4140,7 @@ function PortfolioManagementContent() {
               {nonCompliantHoldings.length === 0 ? (
                 <div className="py-8 text-center space-y-2">
                   <BadgeCheck size={36} className="text-emerald-500 mx-auto" />
-                  <h4 className="font-bold text-sm text-[#182542] dark:text-white">
+                  <h4 className="font-bold text-sm text-[#08080C] dark:text-white">
                     Tebrikler! Portföyünüz %100 Katılım Uyumlu
                   </h4>
                   <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -4161,7 +4161,7 @@ function PortfolioManagementContent() {
                             <StockLogo ticker={holding.ticker} name={holding.companyName} size="md" />
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-bold text-sm text-[#182542] dark:text-white">
+                                <span className="font-bold text-sm text-[#08080C] dark:text-white">
                                   {holding.ticker}
                                 </span>
                                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
@@ -4188,7 +4188,7 @@ function PortfolioManagementContent() {
                               >
                                 <div>
                                   <div className="flex items-center justify-between mb-1">
-                                    <span className="font-bold text-xs text-[#182542] dark:text-white">
+                                    <span className="font-bold text-xs text-[#08080C] dark:text-white">
                                       {alt.ticker}
                                     </span>
                                     {alt.debtRatio && (
@@ -4209,7 +4209,7 @@ function PortfolioManagementContent() {
                                 <button
                                   type="button"
                                   onClick={() => handleSwapHolding(holding.id, holding.ticker, alt.ticker, alt.name)}
-                                  className="w-full mt-1 py-1.5 px-2 rounded-lg bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-[11px] font-semibold transition flex items-center justify-center gap-1 cursor-pointer"
+                                  className="w-full mt-1 py-1.5 px-2 rounded-lg mizan-accent-btn hover:opacity-90 text-[11px] font-semibold transition flex items-center justify-center gap-1 cursor-pointer"
                                 >
                                   <ArrowLeftRight size={12} />
                                   <span>Değiştir</span>
@@ -4228,7 +4228,7 @@ function PortfolioManagementContent() {
                 <button
                   type="button"
                   onClick={() => setSwapModalOpen(false)}
-                  className="px-5 py-2.5 rounded-xl bg-black/5 dark:bg-white/10 text-xs font-semibold text-[#182542] dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl bg-black/5 dark:bg-white/10 text-xs font-semibold text-[#08080C] dark:text-white hover:bg-black/10 dark:hover:bg-white/20 transition cursor-pointer"
                 >
                   Kapat
                 </button>
@@ -4269,9 +4269,9 @@ function PortfolioManagementContent() {
 export default function PortfolioManagementPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] flex items-center justify-center p-6">
         <div className="text-center space-y-3">
-          <div className="w-10 h-10 border-3 border-[#182542] border-t-transparent rounded-full animate-spin mx-auto" />
+          <div className="w-10 h-10 border-3 border-[#08080C] border-t-transparent rounded-full animate-spin mx-auto" />
           <span className="text-xs font-bold text-[#6E81A0]">Portföy yükleniyor...</span>
         </div>
       </div>

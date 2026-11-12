@@ -367,7 +367,7 @@ export const ScrollBackgroundMizanLogo: React.FC = () => {
                 </tspan>
                 <tspan dx="16" />
                 <tspan
-                  className="fill-[#273869] dark:fill-[#cbd5e1]"
+                  className="fill-[#10B981] dark:fill-[#cbd5e1]"
                   fontWeight="700"
                   fontSize="42"
                   letterSpacing="-0.01em"

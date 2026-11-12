@@ -18,7 +18,7 @@ function generateOtpEmailHtml(name: string, code: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mizan Katılım Güvenlik Kodu</title>
 </head>
-<body style="margin: 0; padding: 0; background-color: #EBEEF2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #182542;">
+<body style="margin: 0; padding: 0; background-color: #EBEEF2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #08080C;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #EBEEF2; padding: 40px 10px;">
     <tr>
       <td align="center">
@@ -26,7 +26,7 @@ function generateOtpEmailHtml(name: string, code: string): string {
           
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #182542 0%, #273869 100%); padding: 32px 30px; text-align: center;">
+            <td style="background: linear-gradient(135deg, #08080C 0%, #10B981 100%); padding: 32px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">
                 mizan <span style="font-size: 13px; font-weight: 400; color: #87A8CD; margin-left: 4px;">katılım</span>
               </h1>
@@ -39,7 +39,7 @@ function generateOtpEmailHtml(name: string, code: string): string {
           <!-- Body -->
           <tr>
             <td style="padding: 36px 32px 28px;">
-              <h2 style="margin: 0 0 12px; color: #182542; font-size: 18px; font-weight: 800;">
+              <h2 style="margin: 0 0 12px; color: #08080C; font-size: 18px; font-weight: 800;">
                 Giriş Doğrulama Kodunuz
               </h2>
               <p style="margin: 0 0 24px; color: #6E81A0; font-size: 14px; line-height: 1.5;">
@@ -51,7 +51,7 @@ function generateOtpEmailHtml(name: string, code: string): string {
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0 28px;">
                 <tr>
                   <td align="center" style="background-color: #F8FAFC; border: 2px dashed #CBD5E1; border-radius: 16px; padding: 22px;">
-                    <span style="font-family: 'Courier New', Courier, monospace; font-size: 34px; font-weight: 900; letter-spacing: 10px; color: #182542; display: inline-block;">
+                    <span style="font-family: 'Courier New', Courier, monospace; font-size: 34px; font-weight: 900; letter-spacing: 10px; color: #08080C; display: inline-block;">
                       ${code}
                     </span>
                   </td>

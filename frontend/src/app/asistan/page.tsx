@@ -189,12 +189,12 @@ function AsistanContent() {
         {/* ================================================================= */}
         <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-200/60 dark:border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#0D8B52] dark:from-[#273869] dark:to-[#0D8B52] text-white flex items-center justify-center shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#08080C] to-[#0D8B52] dark:from-[#10B981] dark:to-[#0D8B52] text-white flex items-center justify-center shadow-md">
               <Sparkles size={20} className="text-emerald-300" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#182542] dark:text-white">
+                <h1 className="text-lg sm:text-xl font-black tracking-tight text-[#08080C] dark:text-white">
                   Mizan AI Asistan
                 </h1>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -209,7 +209,7 @@ function AsistanContent() {
             <button
               type="button"
               onClick={handleClear}
-              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:text-rose-600 shadow-xs transition flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200/80 dark:border-white/10 text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:text-rose-600 shadow-xs transition flex items-center gap-1.5"
               title="Sohbeti Temizle"
             >
               <Trash2 size={13} />
@@ -233,7 +233,7 @@ function AsistanContent() {
                 className={`max-w-[92%] sm:max-w-[85%] rounded-2xl p-4 sm:p-5 space-y-3 ${
                   msg.role === "user"
                     ? "bg-black text-white dark:bg-white dark:text-black rounded-br-xs shadow-xs"
-                    : "bg-white dark:bg-[#0E1015] text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/70 dark:border-white/10 shadow-sm"
+                    : "bg-white dark:bg-[#0D0E14] text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/70 dark:border-white/10 shadow-sm"
                 }`}
               >
                 {/* Mesaj Metni: Zengin Markdown Ayrıştırıcı (Raw markdown sembolleri yok) */}
@@ -247,13 +247,13 @@ function AsistanContent() {
 
                 {/* GENERATIVE UI 1: Hisse Durum Özeti Kartı (Yalnızca hisse sorulduysa) */}
                 {msg.stockData && (
-                  <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#0A0B0E] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3">
+                  <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
                         <StockLogo ticker={msg.stockData.ticker} name={msg.stockData.name} size="md" />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-[#182542] dark:text-white">
+                            <span className="font-bold text-sm text-[#08080C] dark:text-white">
                               {msg.stockData.ticker}
                             </span>
                             <span className="text-xs text-slate-500 font-mono">
@@ -296,7 +296,7 @@ function AsistanContent() {
 
                     <Link
                       href={`/companies/${msg.stockData.ticker}`}
-                      className="w-full py-2 rounded-xl bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-center text-xs font-semibold block transition"
+                      className="w-full py-2 rounded-xl mizan-accent-btn hover:opacity-90 text-center text-xs font-semibold block transition"
                     >
                       24 Kriterli Şirket Karnesi Detayını Aç &rarr;
                     </Link>
@@ -315,12 +315,12 @@ function AsistanContent() {
                       {msg.compliantAlternatives.map((alt: any) => (
                         <div
                           key={alt.ticker}
-                          className="p-2.5 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 flex items-center justify-between shadow-xs"
+                          className="p-2.5 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 flex items-center justify-between shadow-xs"
                         >
                           <div className="flex items-center gap-2">
                             <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
                             <div>
-                              <strong className="text-xs text-[#182542] dark:text-white block">{alt.ticker}</strong>
+                              <strong className="text-xs text-[#08080C] dark:text-white block">{alt.ticker}</strong>
                               <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] truncate block max-w-[110px]">
                                 {alt.name}
                               </span>
@@ -332,7 +332,7 @@ function AsistanContent() {
                             </span>
                             <Link
                               href={`/companies/${alt.ticker}`}
-                              className="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline"
+                              className="text-[10px] text-blue-600 dark:text-[#C6F432] font-bold hover:underline"
                             >
                               İncele &rarr;
                             </Link>
@@ -381,7 +381,7 @@ function AsistanContent() {
                         key={idx}
                         type="button"
                         onClick={() => handleSend(q)}
-                        className="px-3 py-1 rounded-full bg-white/70 dark:bg-[#0E1015]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/10 text-xs text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm shadow-2xs"
+                        className="px-3 py-1 rounded-full bg-white/70 dark:bg-[#0D0E14]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/10 text-xs text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm shadow-2xs"
                       >
                         {q} &rarr;
                       </button>
@@ -392,7 +392,7 @@ function AsistanContent() {
             ))}
 
             {loading && (
-              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/70 dark:bg-[#0E1015]/70 backdrop-blur-md border border-slate-200/60 dark:border-white/10 max-w-[70%] shadow-xs">
+              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/70 dark:bg-[#0D0E14]/70 backdrop-blur-md border border-slate-200/60 dark:border-white/10 max-w-[70%] shadow-xs">
                 <div className="w-4 h-4 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
                 <span className="text-xs text-slate-600 dark:text-slate-300 font-medium animate-pulse">
                   Mizan AI fıkhi ve finansal verileri analiz ediyor...
@@ -412,7 +412,7 @@ function AsistanContent() {
                 e.preventDefault();
                 handleSend();
               }}
-              className="flex items-center gap-2 bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#0D8B52] shadow-sm transition-all"
+              className="flex items-center gap-2 bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/80 dark:border-white/10 rounded-2xl px-4 py-2.5 focus-within:border-[#0D8B52] shadow-sm transition-all"
             >
               <input
                 type="text"

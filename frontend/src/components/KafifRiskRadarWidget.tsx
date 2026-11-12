@@ -170,7 +170,7 @@ export function KafifRiskRadarWidget({
 
   // Full & Compact Modu (Kapsamlı Bento Kartı)
   return (
-    <div className={`rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors ${className}`}>
+    <div className={`rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors ${className}`}>
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-3">
         <div className="flex items-center gap-2.5">
@@ -179,7 +179,7 @@ export function KafifRiskRadarWidget({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+              <h3 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white">
                 KAFİF Erken Uyarı Risk Radarı
               </h3>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400">
@@ -220,7 +220,7 @@ export function KafifRiskRadarWidget({
                     <div className="flex items-center gap-2">
                       <Link
                         href={`/companies/${stock.ticker}`}
-                        className="font-bold text-sm text-[#182542] dark:text-white hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
+                        className="font-bold text-sm text-[#08080C] dark:text-white hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors"
                       >
                         {stock.ticker}
                       </Link>

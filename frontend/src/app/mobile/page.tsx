@@ -162,8 +162,8 @@ export default function MobileAppEntryPage() {
 
   if (checkingSavedSession) {
     return (
-      <div className="min-h-screen bg-[#000000] text-white flex flex-col items-center justify-center p-6 select-none">
-        <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-[#182542] via-[#273869] to-[#0D8B52]/40 p-3 border border-white/10 flex items-center justify-center animate-pulse">
+      <div className="min-h-screen bg-[#08080C] text-white flex flex-col items-center justify-center p-6 select-none">
+        <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-[#08080C] via-[#10B981] to-[#0D8B52]/40 p-3 border border-white/10 flex items-center justify-center animate-pulse">
           <Image src="/brand/logo-white.svg" alt="Mizan" width={40} height={40} className="object-contain" priority />
         </div>
         <span className="text-xs font-bold text-slate-400 mt-4 tracking-wider uppercase">
@@ -174,17 +174,17 @@ export default function MobileAppEntryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white flex flex-col justify-between p-5 sm:p-8 relative overflow-hidden select-none">
+    <div className="min-h-screen bg-[#08080C] text-white flex flex-col justify-between p-5 sm:p-8 relative overflow-hidden select-none">
       {/* Arka Plan Atmosferik Parlamalar */}
       <div className="absolute -top-32 -left-32 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-[#273869]/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-80 h-80 bg-[#10B981]/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* =================================================================== */}
       {/* 1. ÜST MARKA VE LOGO ALANI                                           */}
       {/* =================================================================== */}
       <div className="relative z-10 pt-4 flex flex-col items-center text-center">
         {/* Logo Kutusu */}
-        <div className="w-20 h-20 rounded-[28px] bg-gradient-to-tr from-[#182542] via-[#273869] to-[#0D8B52]/30 p-3.5 border border-white/15 shadow-[0_16px_40px_rgba(0,0,0,0.8)] flex items-center justify-center mb-4 transition-transform active:scale-95">
+        <div className="w-20 h-20 rounded-[28px] bg-gradient-to-tr from-[#08080C] via-[#10B981] to-[#0D8B52]/30 p-3.5 border border-white/15 shadow-[0_16px_40px_rgba(0,0,0,0.8)] flex items-center justify-center mb-4 transition-transform active:scale-95">
           <Image
             src="/brand/logo-white.svg"
             alt="Mizan Katılım"
@@ -259,7 +259,7 @@ export default function MobileAppEntryPage() {
                   setViewMode("login");
                   setErrorMessage(null);
                 }}
-                className="w-full py-3.5 px-4 rounded-2xl bg-[#273869] hover:bg-[#324884] text-white text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                className="w-full py-3.5 px-4 rounded-2xl bg-[#10B981] hover:bg-[#324884] text-white text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
               >
                 <span>Giriş Yap</span>
                 <ArrowRight size={16} />
@@ -360,7 +360,7 @@ export default function MobileAppEntryPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-xl bg-[#273869] hover:bg-[#324884] disabled:opacity-50 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3 px-4 rounded-xl bg-[#10B981] hover:bg-[#324884] disabled:opacity-50 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-2 mt-2"
             >
               {isLoading ? (
                 <>

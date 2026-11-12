@@ -218,11 +218,11 @@ html.dark .orbix-floating-dock {
   box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Primary Navy Buttons (Navy 900 #273869) */
+/* Primary Navy Buttons (Navy 900 #10B981) */
 .payno-btn-primary,
 .fintech-btn-primary,
 .apple-btn-primary {
-  background: #273869;
+  background: #10B981;
   color: #ffffff;
   border-radius: 9999px;
   padding: 0.625rem 1.4rem;
@@ -248,7 +248,7 @@ html.dark .orbix-floating-dock {
 .apple-btn-secondary {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
-  color: #273869;
+  color: #10B981;
   border: 1px solid rgba(39, 56, 105, 0.14);
   border-radius: 9999px;
   padding: 0.55rem 1.2rem;
@@ -265,7 +265,7 @@ html.dark .orbix-floating-dock {
 .payno-btn-secondary:hover,
 .apple-btn-secondary:hover {
   background: #ffffff;
-  border-color: #273869;
+  border-color: #10B981;
 }
 
 html.dark .payno-btn-secondary,
@@ -300,7 +300,7 @@ html.dark .apple-btn-secondary:hover {
 
 .orbix-micro-pill:hover {
   background: rgba(39, 56, 105, 0.1);
-  color: #273869;
+  color: #10B981;
 }
 
 html.dark .orbix-micro-pill {
@@ -372,12 +372,12 @@ html.dark .apple-segmented-item {
 
 .apple-segmented-item.active {
   background: #ffffff;
-  color: #273869;
+  color: #10B981;
   box-shadow: 0 2px 8px rgba(39, 56, 105, 0.14);
 }
 
 html.dark .apple-segmented-item.active {
-  background: #273869;
+  background: #10B981;
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }

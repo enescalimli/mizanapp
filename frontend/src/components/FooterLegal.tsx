@@ -5,7 +5,7 @@ import { ShieldCheck, Lock, Mail, Scale, Sparkles, AlertCircle } from "lucide-re
 
 export const FooterLegal: React.FC = () => {
   return (
-    <footer className="mt-16 pt-10 pb-16 border-t border-[#182542]/10 text-xs text-[#6E81A0] space-y-8">
+    <footer className="mt-16 pt-10 pb-16 border-t border-[#08080C]/10 text-xs text-[#6E81A0] space-y-8">
       {/* Top Footer Columns */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         
@@ -28,8 +28,8 @@ export const FooterLegal: React.FC = () => {
                 className="w-full h-full object-contain hidden dark:block"
               />
             </div>
-            <span className="text-base font-extrabold text-[#182542] dark:text-white tracking-tight">
-              mizan<span className="text-[#273869] dark:text-slate-300 font-serif italic ml-1">katılım</span>
+            <span className="text-base font-extrabold text-[#08080C] dark:text-white tracking-tight">
+              mizan<span className="text-[#10B981] dark:text-slate-300 font-serif italic ml-1">katılım</span>
             </span>
           </Link>
           <p className="text-[11px] text-[#6E81A0] leading-relaxed">
@@ -43,39 +43,39 @@ export const FooterLegal: React.FC = () => {
 
         {/* Column 2: Platform Ürünleri */}
         <div className="space-y-2.5">
-          <h4 className="text-xs font-extrabold text-[#182542] uppercase tracking-wider">
+          <h4 className="text-xs font-extrabold text-[#08080C] uppercase tracking-wider">
             Platform Araçları
           </h4>
           <ul className="space-y-1.5 text-[11px]">
             <li>
-              <Link href="/tarayici" className="hover:text-[#182542] transition flex items-center gap-1.5">
+              <Link href="/tarayici" className="hover:text-[#08080C] transition flex items-center gap-1.5">
                 <span>BIST Hisse Tarayıcı</span>
-                <span className="text-[9px] font-bold px-1.5 py-0.2 bg-[#182542]/10 text-[#182542] rounded-md">Canlı</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.2 bg-[#08080C]/10 text-[#08080C] rounded-md">Canlı</span>
               </Link>
             </li>
             <li>
-              <Link href="/ipo" className="hover:text-[#182542] transition">
+              <Link href="/ipo" className="hover:text-[#08080C] transition">
                 2026 Katılım Halka Arz Takvimi
               </Link>
             </li>
             <li>
-              <Link href="/tefas" className="hover:text-[#182542] transition flex items-center gap-1.5">
+              <Link href="/tefas" className="hover:text-[#08080C] transition flex items-center gap-1.5">
                 <span>TEFAS Fon Röntgeni</span>
                 <span className="text-[9px] font-bold px-1.5 py-0.2 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-md">Yeni</span>
               </Link>
             </li>
             <li>
-              <Link href="/portfolio" className="hover:text-[#182542] transition">
+              <Link href="/portfolio" className="hover:text-[#08080C] transition">
                 Katılım Portföy Takibi &amp; Maskeleme
               </Link>
             </li>
             <li>
-              <Link href="/portfolio?tab=arindirma" className="hover:text-[#182542] transition">
+              <Link href="/portfolio?tab=arindirma" className="hover:text-[#08080C] transition">
                 Kuruşu Kuruşuna Arındırma Hesaplayıcı
               </Link>
             </li>
             <li>
-              <Link href="/rehber" className="hover:text-[#182542] transition">
+              <Link href="/rehber" className="hover:text-[#08080C] transition">
                 Fıkhi Standartlar &amp; İcazet Rehberi
               </Link>
             </li>
@@ -84,32 +84,32 @@ export const FooterLegal: React.FC = () => {
 
         {/* Column 3: Hukuki & Sözleşmeler */}
         <div className="space-y-2.5">
-          <h4 className="text-xs font-extrabold text-[#182542] uppercase tracking-wider">
+          <h4 className="text-xs font-extrabold text-[#08080C] uppercase tracking-wider">
             Hukuk &amp; Regülasyon
           </h4>
           <ul className="space-y-1.5 text-[11px]">
             <li>
-              <Link href="/kullanim-kosullari" className="hover:text-[#182542] transition">
+              <Link href="/kullanim-kosullari" className="hover:text-[#08080C] transition">
                 Kullanım Koşulları &amp; Hizmet Şartları
               </Link>
             </li>
             <li>
-              <Link href="/gizlilik-politikasi" className="hover:text-[#182542] transition">
+              <Link href="/gizlilik-politikasi" className="hover:text-[#08080C] transition">
                 Gizlilik Politikası &amp; KVKK Metni
               </Link>
             </li>
             <li>
-              <Link href="/cerez-politikasi" className="hover:text-[#182542] transition">
+              <Link href="/cerez-politikasi" className="hover:text-[#08080C] transition">
                 Çerez Politikası &amp; İzin Yönetimi
               </Link>
             </li>
             <li>
-              <Link href="/iade-ve-iptal" className="hover:text-[#182542] transition">
+              <Link href="/iade-ve-iptal" className="hover:text-[#08080C] transition">
                 İptal ve İade Şartları (7 Gün Güvencesi)
               </Link>
             </li>
             <li>
-              <Link href="/mesafeli-satis" className="hover:text-[#182542] transition">
+              <Link href="/mesafeli-satis" className="hover:text-[#08080C] transition">
                 Mesafeli Satış Sözleşmesi (Ön Bilgilendirme)
               </Link>
             </li>
@@ -118,13 +118,13 @@ export const FooterLegal: React.FC = () => {
 
         {/* Column 4: İletişim & Kurumsal Künye */}
         <div className="space-y-2.5">
-          <h4 className="text-xs font-extrabold text-[#182542] uppercase tracking-wider">
+          <h4 className="text-xs font-extrabold text-[#08080C] uppercase tracking-wider">
             İletişim &amp; Destek
           </h4>
           <div className="space-y-1.5 text-[11px] leading-relaxed">
-            <p className="font-semibold text-[#182542]">Mizan Katılım Finans Teknolojileri</p>
+            <p className="font-semibold text-[#08080C]">Mizan Katılım Finans Teknolojileri</p>
             <p>Levent Mah. Büyükdere Cad. Beşiktaş / İstanbul</p>
-            <p className="flex items-center gap-1.5 text-[#182542] font-mono">
+            <p className="flex items-center gap-1.5 text-[#08080C] font-mono">
               <Mail size={12} className="text-[#6E81A0]" />
               <a href="mailto:destek@mizanapp.tr" className="hover:underline font-bold">
                 destek@mizanapp.tr
@@ -133,7 +133,7 @@ export const FooterLegal: React.FC = () => {
             <div className="pt-1">
               <Link
                 href="/ayarlar"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-[#EDF1F7] text-[10px] font-bold text-[#182542] hover:bg-slate-50 transition shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-[#EDF1F7] text-[10px] font-bold text-[#08080C] hover:bg-slate-50 transition shadow-2xs"
               >
                 <span>Abonelik &amp; Müşteri Portali</span>
               </Link>
@@ -152,7 +152,7 @@ export const FooterLegal: React.FC = () => {
       </div>
 
       {/* Bottom Copyright & Security Badges */}
-      <div className="pt-4 border-t border-[#182542]/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px]">
+      <div className="pt-4 border-t border-[#08080C]/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px]">
         <div className="flex items-center gap-2">
           <span>&copy; {new Date().getFullYear()} Mizan Finans Teknolojileri. Tüm hakları saklıdır.</span>
           <span>&bull;</span>

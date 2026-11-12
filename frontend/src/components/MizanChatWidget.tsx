@@ -159,7 +159,7 @@ export const MizanChatWidget: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#182542] via-[#1f325c] to-[#0D8B52] dark:from-[#273869] dark:via-[#1e3059] dark:to-[#0D8B52] text-white shadow-[0_10px_30px_rgba(13,139,82,0.35)] hover:shadow-[0_15px_40px_rgba(13,139,82,0.5)] hover:scale-105 active:scale-95 transition-all duration-200 border border-white/20 select-none backdrop-blur-xl"
+            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#08080C] via-[#1f325c] to-[#0D8B52] dark:from-[#10B981] dark:via-[#1e3059] dark:to-[#0D8B52] text-white shadow-[0_10px_30px_rgba(13,139,82,0.35)] hover:shadow-[0_15px_40px_rgba(13,139,82,0.5)] hover:scale-105 active:scale-95 transition-all duration-200 border border-white/20 select-none backdrop-blur-xl"
             title="Mizan AI Fıkhi & Finansal Asistan"
           >
             {/* Animasyonlu Parıltı Halkası */}
@@ -186,10 +186,10 @@ export const MizanChatWidget: React.FC = () => {
 
       {/* 2. AÇILIR MINI ASİSTAN MODAL PENCERESİ */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white/85 dark:bg-[#0A0B0E]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white/85 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {/* Üst Bar */}
-          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#182542] via-[#20345e] to-[#0D8B52] dark:from-[#0E1015]/95 dark:via-[#182542]/95 dark:to-[#0D8B52]/90 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10 shrink-0">
+          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#08080C] via-[#20345e] to-[#0D8B52] dark:from-[#0D0E14]/95 dark:via-[#08080C]/95 dark:to-[#0D8B52]/90 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
                 <Sparkles size={16} className="text-emerald-300" />
@@ -255,7 +255,7 @@ export const MizanChatWidget: React.FC = () => {
                 <div
                   className={`max-w-[88%] rounded-2xl p-3.5 space-y-2.5 ${
                     msg.role === "user"
-                      ? "bg-[#182542] text-white rounded-br-xs shadow-xs"
+                      ? "bg-[#08080C] text-white rounded-br-xs shadow-xs"
                       : "bg-slate-100 dark:bg-white/10 text-slate-900 dark:text-slate-100 rounded-bl-xs border border-slate-200/60 dark:border-white/10 shadow-xs"
                   }`}
                 >
@@ -270,7 +270,7 @@ export const MizanChatWidget: React.FC = () => {
 
                   {/* GENERATIVE UI 1: Hisse Durum Özeti Kartı */}
                   {msg.stockData && (
-                    <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-white space-y-2 shadow-xs">
+                    <div className="mt-2.5 p-3 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-white space-y-2 shadow-xs">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <StockLogo ticker={msg.stockData.ticker} name={msg.stockData.name} size="sm" />
@@ -324,7 +324,7 @@ export const MizanChatWidget: React.FC = () => {
                         {msg.compliantAlternatives.map((alt: any) => (
                           <div
                             key={alt.ticker}
-                            className="p-2 rounded-lg bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 flex items-center justify-between text-[11px]"
+                            className="p-2 rounded-lg bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 flex items-center justify-between text-[11px]"
                           >
                             <div className="flex items-center gap-2">
                               <StockLogo ticker={alt.ticker} name={alt.name} size="sm" />
@@ -341,7 +341,7 @@ export const MizanChatWidget: React.FC = () => {
                               </span>
                               <Link
                                 href={`/companies/${alt.ticker}`}
-                                className="text-[9px] text-blue-600 dark:text-blue-400 underline font-bold"
+                                className="text-[9px] text-blue-600 dark:text-[#C6F432] underline font-bold"
                               >
                                 İncele &rarr;
                               </Link>
@@ -404,7 +404,7 @@ export const MizanChatWidget: React.FC = () => {
                         key={idx}
                         type="button"
                         onClick={() => handleSendMessage(q)}
-                        className="px-2.5 py-1 rounded-full bg-white/70 dark:bg-[#0E1015]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm"
+                        className="px-2.5 py-1 rounded-full bg-white/70 dark:bg-[#0D0E14]/80 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-200/70 dark:border-white/15 text-[10px] text-slate-700 dark:text-slate-200 transition text-left backdrop-blur-sm"
                       >
                         {q}
                       </button>
@@ -427,7 +427,7 @@ export const MizanChatWidget: React.FC = () => {
           </div>
 
           {/* Mesaj Giriş Alanı */}
-          <div className="p-3 bg-white/80 dark:bg-[#0A0B0E]/80 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 shrink-0">
+          <div className="p-3 bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/10 shrink-0">
             <form
               onSubmit={(e) => {
                 e.preventDefault();

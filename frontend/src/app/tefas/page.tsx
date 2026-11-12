@@ -80,7 +80,7 @@ export default function TefasKatilimPage() {
                 DİB &amp; TKBB Standartları
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-black text-[#08080C] dark:text-white tracking-tight">
               TEFAS Katılım Fonları Röntgeni
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -89,15 +89,15 @@ export default function TefasKatilimPage() {
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
+            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">Toplam Katılım Fon Büyüklüğü</span>
               <span className="font-mono text-base font-black text-emerald-600 dark:text-emerald-400">
                 {formatTRY(totalAum, 0)}
               </span>
             </div>
-            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
+            <div className="p-3 rounded-2xl bg-white/80 dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-right">
               <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-medium">Toplam Yatırımcı</span>
-              <span className="font-mono text-base font-black text-[#182542] dark:text-white">
+              <span className="font-mono text-base font-black text-[#08080C] dark:text-white">
                 {totalInvestors.toLocaleString("tr-TR")}
               </span>
             </div>
@@ -117,8 +117,8 @@ export default function TefasKatilimPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                   selectedCategory === cat
-                    ? "bg-[#182542] dark:bg-white text-white dark:text-black shadow-xs"
-                    : "bg-white dark:bg-[#0E1015] text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
+                    : "bg-white dark:bg-[#0D0E14] text-slate-600 dark:text-slate-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
                 }`}
               >
                 {cat}
@@ -134,7 +134,7 @@ export default function TefasKatilimPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Fon Kodu veya Kurucu Ara (KHA, ZPF)..."
-              className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-xs"
+              className="w-full pl-9 pr-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-xs"
             />
           </div>
         </div>
@@ -164,14 +164,14 @@ export default function TefasKatilimPage() {
                     onClick={() => setActiveFund(fund)}
                     className={`rounded-2xl p-4 transition-all cursor-pointer border ${
                       isSelected
-                        ? "bg-white dark:bg-[#0E1015] border-emerald-500 shadow-md ring-1 ring-emerald-500/20"
-                        : "bg-white/60 dark:bg-[#0E1015]/60 hover:bg-white dark:hover:bg-[#0E1015] border-slate-200/60 dark:border-white/10 shadow-xs"
+                        ? "bg-white dark:bg-[#0D0E14] border-emerald-500 shadow-md ring-1 ring-emerald-500/20"
+                        : "bg-white/60 dark:bg-[#0D0E14]/60 hover:bg-white dark:hover:bg-[#0D0E14] border-slate-200/60 dark:border-white/10 shadow-xs"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-black text-sm font-mono text-[#182542] dark:text-white bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded-md">
+                          <span className="font-black text-sm font-mono text-[#08080C] dark:text-white bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded-md">
                             {fund.code}
                           </span>
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
@@ -221,13 +221,13 @@ export default function TefasKatilimPage() {
           {/* SAĞ: SEÇİLİ FONUN LOOK-THROUGH RÖNTGENİ (lg:col-span-7) */}
           <div className="lg:col-span-7 sticky top-6">
             {activeFund ? (
-              <div className="rounded-[28px] p-5 sm:p-6 bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-lg space-y-5 transition-colors">
+              <div className="rounded-[28px] p-5 sm:p-6 bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-lg space-y-5 transition-colors">
                 
                 {/* Header */}
                 <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 dark:border-white/5 pb-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-base font-black font-mono text-[#182542] dark:text-white bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-xl">
+                      <span className="text-base font-black font-mono text-[#08080C] dark:text-white bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-2.5 py-1 rounded-xl">
                         {activeFund.code}
                       </span>
                       <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-300">
@@ -248,7 +248,7 @@ export default function TefasKatilimPage() {
 
                   <div className="text-right">
                     <span className="text-[11px] text-slate-400 block font-medium">Birim Pay Değeri</span>
-                    <span className="text-xl font-black font-mono text-[#182542] dark:text-white">
+                    <span className="text-xl font-black font-mono text-[#08080C] dark:text-white">
                       ₺{activeFund.navPriceTRY.toFixed(4)}
                     </span>
                     <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 block font-bold">
@@ -336,7 +336,7 @@ export default function TefasKatilimPage() {
                               <div className="flex items-center gap-2">
                                 <Link
                                   href={`/companies/${item.ticker}`}
-                                  className="font-mono font-bold text-[#182542] dark:text-white hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center gap-1"
+                                  className="font-mono font-bold text-[#08080C] dark:text-white hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors flex items-center gap-1"
                                 >
                                   <span>{item.ticker}</span>
                                   {item.isKatilimCompliant && !item.ticker.includes("-") && (
@@ -372,7 +372,7 @@ export default function TefasKatilimPage() {
 
                 {/* İcazet & Danışma Kurulu Kararı */}
                 <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#182542] dark:text-white">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#08080C] dark:text-white">
                     <Sparkles size={14} className="text-emerald-500" />
                     <span>Danışma Kurulu &amp; Fıkhi İcazet Beyanı</span>
                   </div>

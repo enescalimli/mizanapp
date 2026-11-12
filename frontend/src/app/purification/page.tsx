@@ -11,7 +11,7 @@ export default function PortfolioPurificationPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] flex items-center justify-center p-6">
       <div className="text-center space-y-3">
         <div className="w-8 h-8 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin mx-auto" />
         <span className="text-xs font-semibold text-slate-500 dark:text-zinc-400">

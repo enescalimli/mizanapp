@@ -161,7 +161,7 @@ export default function IpoCalendarPage() {
         {/* ===================================================================== */}
         {/* 1. ÜST HERO BAŞLIK                                                    */}
         {/* ===================================================================== */}
-        <section className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-slate-200/60 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
+        <section className="bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl rounded-[28px] border border-slate-200/60 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4 transition-colors">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-bold">
               <ShieldCheck size={14} />
@@ -170,13 +170,13 @@ export default function IpoCalendarPage() {
 
             <div className="flex items-center gap-3 text-xs font-mono">
               <span className="text-[#6E81A0] dark:text-[#94A3B8]">
-                Canlı Akış: <strong className="text-[#182542] dark:text-white">{lastSyncTime}</strong>
+                Canlı Akış: <strong className="text-[#08080C] dark:text-white">{lastSyncTime}</strong>
               </span>
               <button
                 type="button"
                 onClick={() => fetchIpos(false, true)}
                 disabled={loading}
-                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white flex items-center justify-center transition disabled:opacity-50"
+                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#08080C] dark:text-white flex items-center justify-center transition disabled:opacity-50"
                 title="Şimdi Yenile"
               >
                 <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
@@ -185,7 +185,7 @@ export default function IpoCalendarPage() {
           </div>
 
           <div className="max-w-3xl space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#182542] dark:text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
               2026 BIST Katılım Halka Arz Takvimi
             </h1>
             <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
@@ -198,11 +198,11 @@ export default function IpoCalendarPage() {
         {/* 2. DÖRT BİLEŞENLİ BENTO İSTATİSTİK ŞERİDİ                              */}
         {/* ===================================================================== */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Aktif &amp; Taslak Halka Arz
             </span>
-            <div className="text-3xl font-black text-[#182542] dark:text-white font-mono">
+            <div className="text-3xl font-black text-[#08080C] dark:text-white font-mono">
               {stats.total}{" "}
               <span className="text-xs text-[#6E81A0] dark:text-[#94A3B8] font-normal">Şirket</span>
             </div>
@@ -211,7 +211,7 @@ export default function IpoCalendarPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Katılıma Uygun Bulunan
             </span>
@@ -225,7 +225,7 @@ export default function IpoCalendarPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Taslak İzahname Aşaması
             </span>
@@ -239,7 +239,7 @@ export default function IpoCalendarPage() {
             </span>
           </div>
 
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
+          <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2 transition-colors">
             <span className="text-[11px] font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
               Katılım Dışı / Kapsam Dışı
             </span>
@@ -274,8 +274,8 @@ export default function IpoCalendarPage() {
                   onClick={() => setActiveTab(tab.id as typeof activeTab)}
                   className={`px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer ${
                     activeTab === tab.id
-                      ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
-                      : "bg-white dark:bg-[#0E1015] text-[#6E81A0] dark:text-[#94A3B8] border border-slate-200/60 dark:border-white/10 hover:text-black dark:hover:text-white"
+                      ? "mizan-accent-btn shadow-xs font-bold"
+                      : "bg-white dark:bg-[#0D0E14] text-[#6E81A0] dark:text-[#94A3B8] border border-slate-200/60 dark:border-white/10 hover:text-black dark:hover:text-white"
                   }`}
                 >
                   {tab.label}
@@ -285,13 +285,13 @@ export default function IpoCalendarPage() {
 
             <div className="flex items-center gap-3">
               {/* View Mode Toggle: Cards vs Table */}
-              <div className="inline-flex items-center bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 rounded-full p-1 shadow-xs">
+              <div className="inline-flex items-center bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 rounded-full p-1 shadow-xs">
                 <button
                   type="button"
                   onClick={() => setViewMode("cards")}
                   className={`p-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                     viewMode === "cards"
-                      ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                      ? "mizan-accent-btn shadow-xs font-bold"
                       : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-black dark:hover:text-white"
                   }`}
                   title="Kart Görünümü"
@@ -304,7 +304,7 @@ export default function IpoCalendarPage() {
                   onClick={() => setViewMode("table")}
                   className={`p-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
                     viewMode === "table"
-                      ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
+                      ? "mizan-accent-btn shadow-xs font-bold"
                       : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-black dark:hover:text-white"
                   }`}
                   title="Tablo Görünümü"
@@ -325,7 +325,7 @@ export default function IpoCalendarPage() {
                   placeholder="Şirket, kod veya sektör ara..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-xs font-medium text-[#182542] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#182542]/20 dark:focus:ring-white/20 transition"
+                  className="w-full pl-9 pr-4 py-2 rounded-2xl bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs font-medium text-[#08080C] dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#08080C]/20 dark:focus:ring-[#C6F432]/30 transition"
                 />
               </div>
             </div>
@@ -340,18 +340,18 @@ export default function IpoCalendarPage() {
                 <div
                   key={item.id}
                   onClick={() => setSelectedDetailIpo(item)}
-                  className={`bg-white dark:bg-[#0E1015] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-all duration-200 hover:border-slate-300 dark:hover:border-white/20 hover:scale-[1.008] cursor-pointer group ${
+                  className={`bg-white dark:bg-[#0D0E14] rounded-[24px] p-5 sm:p-6 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-4 transition-all duration-200 hover:border-slate-300 dark:hover:border-white/20 hover:scale-[1.008] cursor-pointer group ${
                     !item.isKatilimCompliant ? "border-rose-200/70 dark:border-rose-900/40" : ""
                   }`}
                 >
                   {/* Üst Satır: Ticker, Durum ve Katılım Rozeti */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-2xl bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center font-mono font-black text-sm shadow-xs group-hover:scale-105 transition">
+                      <div className="w-11 h-11 rounded-2xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center font-mono font-black text-sm shadow-xs group-hover:scale-105 transition">
                         {item.ticker}
                       </div>
                       <div>
-                        <h3 className="font-extrabold text-[#182542] dark:text-white text-base tracking-tight leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
+                        <h3 className="font-extrabold text-[#08080C] dark:text-white text-base tracking-tight leading-snug group-hover:text-blue-600 dark:group-hover:text-[#C6F432] transition">
                           {item.companyName}
                         </h3>
                         <span className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -384,7 +384,7 @@ export default function IpoCalendarPage() {
                   {/* 3 Hap Bento Bilgi: Fıkhi Karar, Fon Kullanım Yeri, Tahmini Dağıtım */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3 rounded-2xl bg-[#F8F9FA] dark:bg-white/5 border border-slate-100 dark:border-white/5 text-xs">
                     {/* Hap 1: Fıkhi Karar & Gerekçe */}
-                    <div className="p-2 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/5 space-y-1">
+                    <div className="p-2 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/5 space-y-1">
                       <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold uppercase tracking-wider block">
                         1. Fıkhi Hüküm
                       </span>
@@ -411,7 +411,7 @@ export default function IpoCalendarPage() {
                     </div>
 
                     {/* Hap 2: Fon Kullanım Yeri */}
-                    <div className="p-2 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/5 space-y-1">
+                    <div className="p-2 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/5 space-y-1">
                       <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold uppercase tracking-wider block">
                         2. Fon Kullanım Yeri
                       </span>
@@ -428,11 +428,11 @@ export default function IpoCalendarPage() {
                       const estLots = Math.max(1, Math.round(item.totalLotCount / 2200000));
                       const estTRY = estLots * (item.ipoPriceTRY > 0 ? item.ipoPriceTRY : 45);
                       return (
-                        <div className="p-2 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/5 space-y-1">
+                        <div className="p-2 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/5 space-y-1">
                           <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold uppercase tracking-wider block">
                             3. Tahmini Dağıtım
                           </span>
-                          <span className="text-xs font-black font-mono text-[#182542] dark:text-white block">
+                          <span className="text-xs font-black font-mono text-[#08080C] dark:text-white block">
                             ~{estLots} Lot ({formatTRY(estTRY, 0)})
                           </span>
                           <p className="text-[10px] text-slate-500 dark:text-slate-400 line-clamp-1">
@@ -465,14 +465,14 @@ export default function IpoCalendarPage() {
           {/* VIEW 2: TABLO GÖRÜNÜMÜ                                              */}
           {/* =================================================================== */}
           {viewMode === "table" && (
-            <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[11px] font-bold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8]">
                       <th
                         onClick={() => handleSort("ticker")}
-                        className="py-3.5 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white transition"
+                        className="py-3.5 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white transition"
                       >
                         <div className="flex items-center gap-1">
                           <span>Halka Arz / Kod</span>
@@ -486,7 +486,7 @@ export default function IpoCalendarPage() {
 
                       <th
                         onClick={() => handleSort("isKatilimCompliant")}
-                        className="py-3.5 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white transition"
+                        className="py-3.5 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white transition"
                       >
                         <div className="flex items-center gap-1">
                           <span>Katılım Durumu</span>
@@ -504,7 +504,7 @@ export default function IpoCalendarPage() {
 
                       <th
                         onClick={() => handleSort("ipoPriceTRY")}
-                        className="py-3.5 px-4 text-right cursor-pointer hover:text-[#182542] dark:hover:text-white transition"
+                        className="py-3.5 px-4 text-right cursor-pointer hover:text-[#08080C] dark:hover:text-white transition"
                       >
                         <div className="flex items-center justify-end gap-1">
                           <span>Arz Fiyatı</span>
@@ -518,7 +518,7 @@ export default function IpoCalendarPage() {
 
                       <th
                         onClick={() => handleSort("totalLotCount")}
-                        className="py-3.5 px-4 text-right cursor-pointer hover:text-[#182542] dark:hover:text-white transition"
+                        className="py-3.5 px-4 text-right cursor-pointer hover:text-[#08080C] dark:hover:text-white transition"
                       >
                         <div className="flex items-center justify-end gap-1">
                           <span>Toplam Lot</span>
@@ -546,11 +546,11 @@ export default function IpoCalendarPage() {
                         {/* Ticker & Şirket */}
                         <td className="py-4 px-4 font-mono">
                           <div className="flex items-center gap-2.5">
-                            <span className="w-8 h-8 rounded-xl bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                            <span className="w-8 h-8 rounded-xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                               {item.ticker}
                             </span>
                             <div>
-                              <span className="font-extrabold text-[#182542] dark:text-white block font-sans">
+                              <span className="font-extrabold text-[#08080C] dark:text-white block font-sans">
                                 {item.companyName}
                               </span>
                               <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] font-sans">
@@ -594,7 +594,7 @@ export default function IpoCalendarPage() {
                         </td>
 
                         {/* Fiyat */}
-                        <td className="py-4 px-4 text-right font-mono font-bold text-[#182542] dark:text-white whitespace-nowrap">
+                        <td className="py-4 px-4 text-right font-mono font-bold text-[#08080C] dark:text-white whitespace-nowrap">
                           {item.ipoPriceTRY > 0 ? `₺${item.ipoPriceTRY.toFixed(2)}` : "—"}
                         </td>
 
@@ -605,7 +605,7 @@ export default function IpoCalendarPage() {
 
                         {/* Tarihler */}
                         <td className="py-4 px-4 text-center whitespace-nowrap">
-                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/10 text-[#182542] dark:text-white font-bold text-[11px]">
+                          <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/10 text-[#08080C] dark:text-white font-bold text-[11px]">
                             {item.ipoDates}
                           </span>
                         </td>
@@ -624,19 +624,19 @@ export default function IpoCalendarPage() {
         {selectedDetailIpo && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
             <div
-              className="bg-white dark:bg-[#0E1015] rounded-[32px] border border-slate-200/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.3)] max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150"
+              className="bg-white dark:bg-[#0D0E14] rounded-[32px] border border-slate-200/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.3)] max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 animate-in zoom-in-95 duration-150"
               onClick={(e) => e.stopPropagation()}
             >
               
               {/* Modal Başlık ve Kapat Butonu */}
               <div className="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-5">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-[#182542] dark:bg-[#273869] text-white flex items-center justify-center font-mono font-black text-base shadow-xs">
+                  <div className="w-12 h-12 rounded-2xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center font-mono font-black text-base shadow-xs">
                     {selectedDetailIpo.ticker}
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-lg sm:text-xl font-black text-[#182542] dark:text-white tracking-tight">
+                      <h2 className="text-lg sm:text-xl font-black text-[#08080C] dark:text-white tracking-tight">
                         {selectedDetailIpo.companyName}
                       </h2>
                     </div>
@@ -649,7 +649,7 @@ export default function IpoCalendarPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedDetailIpo(null)}
-                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-[#182542] dark:text-white flex items-center justify-center transition shrink-0"
+                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/20 text-[#08080C] dark:text-white flex items-center justify-center transition shrink-0"
                 >
                   <X size={18} />
                 </button>
@@ -678,7 +678,7 @@ export default function IpoCalendarPage() {
                     </>
                   )}
                 </div>
-                <p className="text-xs text-[#182542] dark:text-slate-200 leading-relaxed font-medium">
+                <p className="text-xs text-[#08080C] dark:text-slate-200 leading-relaxed font-medium">
                   {selectedDetailIpo.complianceReason}
                 </p>
               </div>
@@ -689,7 +689,7 @@ export default function IpoCalendarPage() {
                   <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold block uppercase">
                     Arz Fiyatı
                   </span>
-                  <span className="text-base font-extrabold text-[#182542] dark:text-white font-mono">
+                  <span className="text-base font-extrabold text-[#08080C] dark:text-white font-mono">
                     ₺{selectedDetailIpo.ipoPriceTRY.toFixed(2)}
                   </span>
                 </div>
@@ -697,7 +697,7 @@ export default function IpoCalendarPage() {
                   <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold block uppercase">
                     Talep Tarihleri
                   </span>
-                  <span className="text-xs font-bold text-[#182542] dark:text-white">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white">
                     {selectedDetailIpo.ipoDates}
                   </span>
                 </div>
@@ -705,7 +705,7 @@ export default function IpoCalendarPage() {
                   <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold block uppercase">
                     Toplam Pay
                   </span>
-                  <span className="text-xs font-bold text-[#182542] dark:text-white font-mono">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white font-mono">
                     {selectedDetailIpo.totalLotCount.toLocaleString("tr-TR")} Lot
                   </span>
                 </div>
@@ -713,7 +713,7 @@ export default function IpoCalendarPage() {
                   <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-bold block uppercase">
                     Dağıtım Şekli
                   </span>
-                  <span className="text-xs font-bold text-[#182542] dark:text-white">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white">
                     {selectedDetailIpo.distributionMethod}
                   </span>
                 </div>
@@ -722,7 +722,7 @@ export default function IpoCalendarPage() {
               {/* ============================================================= */}
               {/* INTERAKTİF LOT DAĞITIM HESAPLAYICI                             */}
               {/* ============================================================= */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#182542] to-[#273869] text-white shadow-xl space-y-4">
+              <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#08080C] to-[#10B981] text-white shadow-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-base">🎯</span>
@@ -752,7 +752,7 @@ export default function IpoCalendarPage() {
                         onClick={() => setModalParticipants(btn.val)}
                         className={`py-2 px-2.5 rounded-xl text-xs font-bold transition text-center ${
                           modalParticipants === btn.val
-                            ? "bg-white text-[#182542] shadow-xs scale-105"
+                            ? "bg-white text-[#08080C] shadow-xs scale-105"
                             : "bg-white/10 hover:bg-white/20 text-white"
                         }`}
                       >
@@ -784,13 +784,13 @@ export default function IpoCalendarPage() {
               {/* Ek İzahname Bilgileri: Konsorsiyum, Fon Kullanımı, T1-T2 */}
               <div className="text-xs text-[#6E81A0] dark:text-[#94A3B8] space-y-2 pt-2 border-t border-slate-100 dark:border-white/10">
                 <div>
-                  <strong className="text-[#182542] dark:text-white">Konsorsiyum Lideri:</strong> {selectedDetailIpo.consortiumLead}
+                  <strong className="text-[#08080C] dark:text-white">Konsorsiyum Lideri:</strong> {selectedDetailIpo.consortiumLead}
                 </div>
                 <div>
-                  <strong className="text-[#182542] dark:text-white">Fon Kullanım Yeri:</strong> {selectedDetailIpo.fundUsage}
+                  <strong className="text-[#08080C] dark:text-white">Fon Kullanım Yeri:</strong> {selectedDetailIpo.fundUsage}
                 </div>
                 <div>
-                  <strong className="text-[#182542] dark:text-white">T1-T2 Bakiye:</strong>{" "}
+                  <strong className="text-[#08080C] dark:text-white">T1-T2 Bakiye:</strong>{" "}
                   {selectedDetailIpo.t1t2Available ? (
                     <span className="text-[#0D8B52] dark:text-emerald-400 font-bold">Kullanılabilir</span>
                   ) : (

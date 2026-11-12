@@ -735,7 +735,7 @@ const SlideCard: React.FC<SlideRendererProps> = ({
 
           {/* Sağ: Kategori Rozeti + Slayt Numarası */}
           <div className="flex items-center gap-3">
-            <div className="px-4 py-2 rounded-full bg-[#182542]/60 border border-white/[0.12] text-slate-200">
+            <div className="px-4 py-2 rounded-full bg-[#08080C]/60 border border-white/[0.12] text-slate-200">
               <span className="text-xs font-mono font-bold tracking-wider uppercase">
                 {slide.category}
               </span>
@@ -1049,7 +1049,7 @@ export function SocialStudioClient() {
 
       {/* İlerleme Çubuğu */}
       {exportProgress && (
-        <div className="bg-[#182542]/80 border-b border-white/[0.12] py-2 px-6 text-center text-xs font-mono font-medium text-slate-200 flex items-center justify-center gap-2">
+        <div className="bg-[#08080C]/80 border-b border-white/[0.12] py-2 px-6 text-center text-xs font-mono font-medium text-slate-200 flex items-center justify-center gap-2">
           <RefreshCw size={12} className="animate-spin text-sky-400" />
           <span>{exportProgress}</span>
         </div>
@@ -1111,7 +1111,7 @@ export function SocialStudioClient() {
             </div>
 
             <div className="mt-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-[11px] text-slate-400">
-              💎 <strong>Prestij Notu:</strong> Tasarımda yeşil yerine Mizan'ın kurumsal gece laciverti (`#182542`, `#273869`), platin beyaz ve saf cam katmanları kullanılmıştır.
+              💎 <strong>Prestij Notu:</strong> Tasarımda yeşil yerine Mizan'ın kurumsal gece laciverti (`#08080C`, `#10B981`), platin beyaz ve saf cam katmanları kullanılmıştır.
             </div>
           </div>
         </aside>
@@ -1332,8 +1332,8 @@ export function SocialStudioClient() {
                 <h4 className="font-bold text-white mb-1">🏛️ Kurumsal Renk Disiplini (Yeşilsiz Prestij Paleti)</h4>
                 <p>
                   Projedeki <code>tailwind.config.ts</code> paletine sadık kalınarak <strong>Derin Gece Mürekkebi</strong>{" "}
-                  (<code>#06080F</code>), <strong>Kurumsal Orbix Laciverti</strong> (<code>#182542</code>,{" "}
-                  <code>#273869</code>), <strong>Platin Beyaz</strong> (<code>#FFFFFF</code>) ve ince safir buz ışıltıları
+                  (<code>#06080F</code>), <strong>Kurumsal Orbix Laciverti</strong> (<code>#08080C</code>,{" "}
+                  <code>#10B981</code>), <strong>Platin Beyaz</strong> (<code>#FFFFFF</code>) ve ince safir buz ışıltıları
                   kullanılmıştır.
                 </p>
               </div>

@@ -107,7 +107,7 @@ export const MizanSplashIntro: React.FC = () => {
       aria-live="polite"
       aria-label="Mizan Katılım Yükleniyor"
       onClick={dismissSplash}
-      className="fixed inset-0 z-[120] flex flex-col items-center justify-center bg-[#EEF0F4]/95 dark:bg-[#020617]/95 backdrop-blur-2xl cursor-pointer select-none mizan-splash-container"
+      className="fixed inset-0 z-[120] flex flex-col items-center justify-center bg-[#F4F5F7]/95 dark:bg-[#020617]/95 backdrop-blur-2xl cursor-pointer select-none mizan-splash-container"
       style={{
         animation: isExiting
           ? "mizanSplashSubtleExit 520ms var(--ease-subtle-exit) forwards"
@@ -118,7 +118,7 @@ export const MizanSplashIntro: React.FC = () => {
       {/* Subtle Ambient Radial Backdrop */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-[#182542]/15 via-[#273869]/10 to-emerald-500/10 dark:from-blue-500/15 dark:via-[#273869]/20 dark:to-emerald-500/10 blur-3xl"
+        className="pointer-events-none absolute w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-[#08080C]/15 via-[#10B981]/10 to-emerald-500/10 dark:from-blue-500/15 dark:via-[#10B981]/20 dark:to-emerald-500/10 blur-3xl"
       />
 
       {/* Center High-Resolution Pure Animated Icon & Brand (No Square Box) */}
@@ -142,11 +142,11 @@ export const MizanSplashIntro: React.FC = () => {
           }}
         >
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#182542] dark:text-white">
+            <span className="text-3xl sm:text-4xl font-black tracking-tight text-[#08080C] dark:text-white">
               mizan
             </span>
             <span className="w-2 h-2 rounded-full bg-[#12B76A]" />
-            <span className="text-sm sm:text-base font-bold text-[#273869] dark:text-slate-300">
+            <span className="text-sm sm:text-base font-bold text-[#10B981] dark:text-slate-300">
               katılım
             </span>
           </div>

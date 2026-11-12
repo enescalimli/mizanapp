@@ -143,7 +143,7 @@ export default function LandingPage() {
               <span className="text-xl sm:text-2xl font-black tracking-tight text-[#08080C] dark:text-white">
                 mizan
               </span>
-              <span className="text-xs font-bold text-[#273869] dark:text-slate-300">
+              <span className="text-xs font-bold text-[#10B981] dark:text-slate-300">
                 katılım
               </span>
             </div>
@@ -166,7 +166,7 @@ export default function LandingPage() {
                 onClick={() => {
                   if (item.tab) setActiveFeatureTab(item.tab as any);
                 }}
-                className="px-3.5 py-2 rounded-full text-xs xl:text-sm font-semibold text-[#525E75] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5 transition cursor-pointer"
+                className="px-3.5 py-2 rounded-full text-xs xl:text-sm font-semibold text-[#525E75] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5 transition cursor-pointer"
               >
                 {item.label}
               </a>
@@ -230,7 +230,7 @@ export default function LandingPage() {
               />
 
               {/* Top Pill Eyebrow with Beacon */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/65 dark:bg-[#0E1015]/70 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm text-xs font-bold text-[#182542] dark:text-white">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/65 dark:bg-[#0D0E14]/70 backdrop-blur-md border border-slate-200/80 dark:border-white/10 shadow-sm text-xs font-bold text-[#08080C] dark:text-white">
                 <span className="relative flex h-2 w-2">
                   <span
                     className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
@@ -276,7 +276,7 @@ export default function LandingPage() {
 
               <Link
                 href="/tarayici"
-                className="w-full sm:w-auto px-7 py-4 rounded-full bg-white dark:bg-[#0E1015] hover:bg-slate-50 dark:hover:bg-[#151720] text-[#182542] dark:text-white border border-slate-200/80 dark:border-white/10 text-base font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
+                className="w-full sm:w-auto px-7 py-4 rounded-full bg-white dark:bg-[#0D0E14] hover:bg-slate-50 dark:hover:bg-[#151720] text-[#08080C] dark:text-white border border-slate-200/80 dark:border-white/10 text-base font-bold flex items-center justify-center gap-2 shadow-sm transition-all"
               >
                 <Search size={16} />
                 <span>BIST Hisse Tarayıcısı</span>
@@ -341,7 +341,7 @@ export default function LandingPage() {
                     <div className="flex items-center gap-2.5">
                       <StockLogo ticker="BIMAS" name="BİM Mağazalar" size="md" />
                       <div>
-                        <span className="text-sm font-extrabold text-[#182542] dark:text-white block font-mono">BIMAS</span>
+                        <span className="text-sm font-extrabold text-[#08080C] dark:text-white block font-mono">BIMAS</span>
                         <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">BİM Birleşik Mağazalar</span>
                       </div>
                     </div>
@@ -363,7 +363,7 @@ export default function LandingPage() {
                   <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/50 dark:border-white/5 text-[11px]">
                     <div>
                       <span className="text-[#6E81A0] dark:text-[#94A3B8] block">FAVÖK Marjı</span>
-                      <strong className="text-[#182542] dark:text-white font-mono font-bold">%6,2</strong>
+                      <strong className="text-[#08080C] dark:text-white font-mono font-bold">%6,2</strong>
                     </div>
                     <div>
                       <span className="text-[#6E81A0] dark:text-[#94A3B8] block">Arındırma Payı</span>
@@ -380,7 +380,7 @@ export default function LandingPage() {
                         <Radio size={14} className="animate-pulse" />
                       </span>
                       <div>
-                        <span className="text-xs font-extrabold text-[#182542] dark:text-white block">KAP &amp; SPK Canlı Akış</span>
+                        <span className="text-xs font-extrabold text-[#08080C] dark:text-white block">KAP &amp; SPK Canlı Akış</span>
                         <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Resmi Regülasyon Radarı</span>
                       </div>
                     </div>
@@ -394,7 +394,7 @@ export default function LandingPage() {
                       <span className="font-mono font-bold text-purple-600 dark:text-purple-400">REEDR</span>
                       <span className="text-slate-400 font-mono">14:15</span>
                     </div>
-                    <p className="text-[11px] font-bold text-[#182542] dark:text-white line-clamp-1">
+                    <p className="text-[11px] font-bold text-[#08080C] dark:text-white line-clamp-1">
                       Pay Piyasasında Devre Kesici Bildirimi
                     </p>
                     <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold block">
@@ -404,7 +404,7 @@ export default function LandingPage() {
 
                   <div className="flex items-center justify-between pt-1 border-t border-slate-200/50 dark:border-white/5 text-[11px]">
                     <span className="text-[#6E81A0] dark:text-[#94A3B8]">Resmi SPK Bülteni:</span>
-                    <strong className="text-[#182542] dark:text-white font-mono font-bold">2026/16 Yayında</strong>
+                    <strong className="text-[#08080C] dark:text-white font-mono font-bold">2026/16 Yayında</strong>
                   </div>
                 </div>
 
@@ -421,7 +421,7 @@ export default function LandingPage() {
                   </div>
 
                   <div className="space-y-1.5 text-xs">
-                    <div className="p-2 rounded-xl bg-white/55 dark:bg-[#141720]/60 border border-slate-200/50 dark:border-white/10 text-[#182542] dark:text-white text-[11px]">
+                    <div className="p-2 rounded-xl bg-white/55 dark:bg-[#141720]/60 border border-slate-200/50 dark:border-white/10 text-[#08080C] dark:text-white text-[11px]">
                       <span className="text-slate-400 text-[10px] block font-semibold">Soru:</span>
                       "THYAO bu çeyrek katılım endeksine girer mi?"
                     </div>
@@ -441,7 +441,7 @@ export default function LandingPage() {
       {/* =================================================================== */}
       {/* 3. INFINITE LIVE TICKER RIBBON (Midas-style market marquee)         */}
       {/* =================================================================== */}
-      <div className="relative z-10 border-y border-slate-200/70 dark:border-white/10 bg-white/40 dark:bg-[#000000]/50 backdrop-blur-md overflow-hidden py-3">
+      <div className="relative z-10 border-y border-slate-200/70 dark:border-white/10 bg-white/40 dark:bg-[#08080C]/50 backdrop-blur-md overflow-hidden py-3">
         <div className="flex items-center gap-8 animate-marquee whitespace-nowrap">
           {ribbonStocks.map((s, idx) => (
             <Link
@@ -451,7 +451,7 @@ export default function LandingPage() {
             >
               <StockLogo ticker={s.ticker} name={s.name} size="sm" />
               <div className="flex items-baseline gap-2">
-                <span className="font-mono font-extrabold text-xs text-[#182542] dark:text-white">
+                <span className="font-mono font-extrabold text-xs text-[#08080C] dark:text-white">
                   {s.ticker}
                 </span>
                 <span className="font-mono text-xs text-[#525E75] dark:text-[#94A3B8]">
@@ -489,7 +489,7 @@ export default function LandingPage() {
           <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
             Profesyonel Fıkhi Çözümler
           </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#182542] dark:text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             Neden Mizan ile Yatırım Yapmalısınız?
           </h2>
           <p className="text-sm sm:text-base text-[#525E75] dark:text-[#94A3B8]">
@@ -501,11 +501,11 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           
           {/* Card 1: Canlı KAP & SPK Bildirim Akışı */}
-          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-400 flex items-center justify-center">
               <Radio size={24} className="animate-pulse" />
             </div>
-            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+            <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
               Canlı KAP &amp; SPK Bildirim Akışı
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -514,11 +514,11 @@ export default function LandingPage() {
           </div>
 
           {/* Card 2: Mizan AI Katılım Danışmanı */}
-          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 flex items-center justify-center">
               <Sparkles size={24} />
             </div>
-            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+            <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
               Mizan AI Fıkhi &amp; Finansal Asistan
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -527,11 +527,11 @@ export default function LandingPage() {
           </div>
 
           {/* Card 3: BIST Katılım 7/24 Radar */}
-          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 flex items-center justify-center">
+          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#C6F432]/15 text-blue-700 dark:text-[#C6F432] flex items-center justify-center">
               <Scale size={24} />
             </div>
-            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+            <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
               BIST Katılım 7/24 Fıkhi Radar
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -541,11 +541,11 @@ export default function LandingPage() {
           </div>
 
           {/* Card 4: Kuruşu Kuruşuna Arındırma Motoru */}
-          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 flex items-center justify-center">
+          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-[#C6F432]/15 text-indigo-700 dark:text-[#C6F432] flex items-center justify-center">
               <Coins size={24} />
             </div>
-            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+            <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
               Kuruşu Kuruşuna Arındırma Motoru
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -555,11 +555,11 @@ export default function LandingPage() {
           </div>
 
           {/* Card 5: Fintables Düzeyinde Şirket Karnesi */}
-          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-400 flex items-center justify-center">
               <BarChart3 size={24} />
             </div>
-            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+            <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
               24 Kriterli Şirket Karnesi
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -569,11 +569,11 @@ export default function LandingPage() {
           </div>
 
           {/* Card 6: Halka Arz Radarı */}
-          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
+          <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center">
               <Calendar size={24} />
             </div>
-            <h3 className="text-lg font-bold text-[#182542] dark:text-white">
+            <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
               Halka Arz (XHARZ) Takvimi
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -592,16 +592,20 @@ export default function LandingPage() {
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-3 max-w-2xl">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#10B981] dark:text-[#C6F432] block">
                 Platform Özellikleri
               </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#182542] dark:text-white tracking-tight">
-                Yatırım Kararlarınızı Fıkhi ve Finansal Güçle Donatın.
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
+                Yatırım Kararlarınızı{" "}
+                <span className="font-orbix-serif italic font-semibold text-[#10B981] dark:text-[#C6F432]">
+                  Fıkhi ve Finansal
+                </span>{" "}
+                Güçle Donatın.
               </h2>
             </div>
 
             {/* Feature Tab Selector */}
-            <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-[#0E1015] rounded-full border border-slate-200/80 dark:border-white/10 shadow-sm overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-[#0D0E14] rounded-full border border-slate-200/80 dark:border-white/10 shadow-sm overflow-x-auto scrollbar-none">
               {[
                 { id: "KAP_SPK", label: "KAP & SPK Akışı", isNew: true },
                 { id: "AI_ASISTAN", label: "Mizan AI Asistan", isNew: true },
@@ -615,16 +619,16 @@ export default function LandingPage() {
                   onClick={() => setActiveFeatureTab(tab.id as any)}
                   className={`px-4 py-2 rounded-full text-xs font-bold transition whitespace-nowrap flex items-center gap-1.5 ${
                     activeFeatureTab === tab.id
-                      ? "bg-[#182542] dark:bg-white text-white dark:text-[#182542] shadow-xs"
-                      : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                      ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
+                      : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                   }`}
                 >
                   <span>{tab.label}</span>
                   {tab.isNew && (
                     <span className={`text-[9px] font-black px-1.5 py-0.2 rounded-full ${
                       activeFeatureTab === tab.id
-                        ? "bg-white/20 dark:bg-[#182542]/20 text-white dark:text-[#182542]"
-                        : "bg-[#182542]/10 dark:bg-white/10 text-[#182542] dark:text-white"
+                        ? "bg-white/20 dark:bg-[#08080C]/15 text-current"
+                        : "bg-[#08080C]/10 dark:bg-white/10 text-[#08080C] dark:text-white"
                     }`}>
                       YENİ
                     </span>
@@ -635,16 +639,16 @@ export default function LandingPage() {
           </div>
 
           {/* Interactive Feature Display */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl rounded-[32px] border border-white/80 dark:border-white/10 p-6 sm:p-10 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/45 dark:bg-[#0D0E14]/70 backdrop-blur-xl rounded-[32px] border border-white/80 dark:border-white/10 p-6 sm:p-10 shadow-sm">
             
             <div className="lg:col-span-5 space-y-5">
               {activeFeatureTab === "KAP_SPK" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] text-xs font-bold">
                     <Radio size={13} className="animate-pulse" />
                     <span>Canlı KAP &amp; SPK Bildirim Motoru</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Devre Kesici, Sermaye Artırımı ve SPK Bültenleri Anlık Ekranınızda.
                   </h3>
                   <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -652,7 +656,7 @@ export default function LandingPage() {
                   </p>
                   <Link
                     href="/auth/login"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#08080C] dark:text-[#C6F432] hover:underline pt-2"
                   >
                     <span>Canlı Bildirimleri Panoda İncele</span>
                     <ArrowRight size={14} />
@@ -662,11 +666,11 @@ export default function LandingPage() {
 
               {activeFeatureTab === "AI_ASISTAN" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-[#C6F432]/15 text-blue-800 dark:text-[#C6F432] text-xs font-bold">
                     <Sparkles size={13} />
                     <span>Gemini 3.8 Flash Fıkhi Danışman</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Akıllı İcazet Denetimi ve Bilanço Dipnot Danışmanı.
                   </h3>
                   <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -674,7 +678,7 @@ export default function LandingPage() {
                   </p>
                   <Link
                     href="/auth/login"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#08080C] dark:text-[#C6F432] hover:underline pt-2"
                   >
                     <span>Mizan AI ile Şimdi Konuş</span>
                     <ArrowRight size={14} />
@@ -684,11 +688,11 @@ export default function LandingPage() {
 
               {activeFeatureTab === "TARAYICI" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-[#C6F432]/15 text-blue-800 dark:text-[#C6F432] text-xs font-bold">
                     <Search size={13} />
                     <span>Canlı BIST Katılım Tarayıcısı</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Borsa İstanbul’daki Her Hissenin Fıkhi Röntgeni.
                   </h3>
                   <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -697,7 +701,7 @@ export default function LandingPage() {
                   </p>
                   <Link
                     href="/tarayici"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#08080C] dark:text-[#C6F432] hover:underline pt-2"
                   >
                     <span>Tarayıcıyı Şimdi Deneyin</span>
                     <ArrowRight size={14} />
@@ -707,11 +711,11 @@ export default function LandingPage() {
 
               {activeFeatureTab === "ARINDIRMA" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 dark:bg-[#C6F432]/15 text-indigo-800 dark:text-indigo-300 text-xs font-bold">
                     <Coins size={13} />
                     <span>Hassas Tathir &amp; Arındırma</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Portföyünüzün Kuruşu Kuruşuna Fıkhi Temizliği.
                   </h3>
                   <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -720,7 +724,7 @@ export default function LandingPage() {
                   </p>
                   <Link
                     href="/auth/login"
-                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#182542] dark:text-blue-400 hover:underline pt-2"
+                    className="inline-flex items-center gap-2 text-xs font-extrabold text-[#08080C] dark:text-[#C6F432] hover:underline pt-2"
                   >
                     <span>Portföyünüzü Ekleyin</span>
                     <ArrowRight size={14} />
@@ -734,7 +738,7 @@ export default function LandingPage() {
                     <Award size={13} />
                     <span>24 Kriterli Şirket Karnesi</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Kârlılık, Büyüme, Borçluluk ve Fıkıh Puanı.
                   </h3>
                   <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -757,7 +761,7 @@ export default function LandingPage() {
                     <Calendar size={13} />
                     <span>Halka Arz (XHARZ) Radarı</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Yeni Arzların Katılım Uygunluğu ve Lot Dağıtımı.
                   </h3>
                   <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
@@ -776,14 +780,14 @@ export default function LandingPage() {
             </div>
 
             {/* Right Screen Graphic (Dynamic by Tab) */}
-            <div className="lg:col-span-7 bg-white/40 dark:bg-[#0E1015]/55 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/80 dark:border-white/10 space-y-4">
+            <div className="lg:col-span-7 bg-white/40 dark:bg-[#0D0E14]/55 backdrop-blur-md rounded-2xl p-4 sm:p-6 border border-white/80 dark:border-white/10 space-y-4">
               
               {activeFeatureTab === "KAP_SPK" && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
                     <div className="flex items-center gap-2">
                       <Radio size={14} className="text-purple-600 dark:text-purple-400 animate-pulse" />
-                      <span className="text-xs font-bold text-[#182542] dark:text-white">
+                      <span className="text-xs font-bold text-[#08080C] dark:text-white">
                         Resmi KAP &amp; SPK Canlı Akış Önizlemesi
                       </span>
                     </div>
@@ -801,7 +805,7 @@ export default function LandingPage() {
                       </span>
                       <span className="text-[10px] font-mono text-slate-400">18:45</span>
                     </div>
-                    <h4 className="text-xs font-extrabold text-[#182542] dark:text-white">
+                    <h4 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                       SPK Haftalık Bülteni 2026/16 Yayımlandı
                     </h4>
                     <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -819,7 +823,7 @@ export default function LandingPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <StockLogo ticker="REEDR" name="Reeder Teknoloji" size="sm" />
-                      <h4 className="text-xs font-extrabold text-[#182542] dark:text-white">
+                      <h4 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                         REEDR Pay Piyasasında Devre Kesici Tetiklendi
                       </h4>
                     </div>
@@ -839,7 +843,7 @@ export default function LandingPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <StockLogo ticker="BIMAS" name="BİM" size="sm" />
-                      <h4 className="text-xs font-extrabold text-[#182542] dark:text-white">
+                      <h4 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                         BIMAS Katılım Finansı İlkeleri Bilgi Formu Beyanı
                       </h4>
                     </div>
@@ -855,7 +859,7 @@ export default function LandingPage() {
                   <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
                     <div className="flex items-center gap-2">
                       <Sparkles size={14} className="text-emerald-600 dark:text-emerald-400" />
-                      <span className="text-xs font-bold text-[#182542] dark:text-white">
+                      <span className="text-xs font-bold text-[#08080C] dark:text-white">
                         Mizan AI Asistan Canlı Sorgulama
                       </span>
                     </div>
@@ -866,7 +870,7 @@ export default function LandingPage() {
 
                   {/* Chat Dialog 1 */}
                   <div className="flex justify-end">
-                    <div className="max-w-[85%] p-3 rounded-2xl rounded-tr-xs bg-[#182542] text-white text-xs space-y-1 shadow-xs">
+                    <div className="max-w-[85%] p-3 rounded-2xl rounded-tr-xs bg-[#08080C] text-white text-xs space-y-1 shadow-xs">
                       <span className="text-[9px] text-slate-300 block font-mono">Yatırımcı Sorusu:</span>
                       <p>Beton ve çimento hisseleri katılım endeksine uygun mudur, arındırma gerekir mi?</p>
                     </div>
@@ -874,7 +878,7 @@ export default function LandingPage() {
 
                   {/* AI Response 1 */}
                   <div className="flex justify-start">
-                    <div className="max-w-[92%] p-3.5 rounded-2xl rounded-tl-xs bg-white dark:bg-[#141720] border border-emerald-500/20 text-[#182542] dark:text-white text-xs space-y-2 shadow-xs">
+                    <div className="max-w-[92%] p-3.5 rounded-2xl rounded-tl-xs bg-white dark:bg-[#141720] border border-emerald-500/20 text-[#08080C] dark:text-white text-xs space-y-2 shadow-xs">
                       <div className="flex items-center gap-2">
                         <span className="px-1.5 py-0.5 rounded-md bg-emerald-500 text-black font-mono font-black text-[9px]">Mizan AI</span>
                         <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">DİB &amp; TKBB Metodolojisi</span>
@@ -893,7 +897,7 @@ export default function LandingPage() {
               {(activeFeatureTab === "TARAYICI" || activeFeatureTab === "KARNE") && (
                 <>
                   <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
-                    <span className="text-xs font-bold text-[#182542] dark:text-white">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white">
                       Mizan Finansal Radar Önizlemesi
                     </span>
                     <span className="text-[10px] font-mono text-[#6E81A0] dark:text-[#94A3B8]">
@@ -916,7 +920,7 @@ export default function LandingPage() {
                         <div className="flex items-center gap-2.5">
                           <StockLogo ticker={row.ticker} name={row.ticker} size="sm" />
                           <div>
-                            <span className="font-mono font-bold text-[#182542] dark:text-white block">{row.ticker}</span>
+                            <span className="font-mono font-bold text-[#08080C] dark:text-white block">{row.ticker}</span>
                             <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">{row.sector}</span>
                           </div>
                         </div>
@@ -954,7 +958,7 @@ export default function LandingPage() {
               {activeFeatureTab === "ARINDIRMA" && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
-                    <span className="text-xs font-bold text-[#182542] dark:text-white">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white">
                       Kuruşu Kuruşuna Tathir &amp; Arındırma Simülatörü
                     </span>
                     <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">
@@ -965,7 +969,7 @@ export default function LandingPage() {
                   <div className="p-4 rounded-2xl bg-white dark:bg-[#141720] border border-slate-200/70 dark:border-white/10 space-y-3">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-[#6E81A0] dark:text-[#94A3B8]">Toplam Portföy Temettü Hasılatı:</span>
-                      <strong className="font-mono text-base font-black text-[#182542] dark:text-white">₺100.000,00</strong>
+                      <strong className="font-mono text-base font-black text-[#08080C] dark:text-white">₺100.000,00</strong>
                     </div>
 
                     <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-2 text-xs">
@@ -989,7 +993,7 @@ export default function LandingPage() {
               {activeFeatureTab === "HALKA_ARZ" && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-white/10 pb-3">
-                    <span className="text-xs font-bold text-[#182542] dark:text-white">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white">
                       Halka Arz Lot Dağıtım Simülasyonu
                     </span>
                     <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold">
@@ -1000,7 +1004,7 @@ export default function LandingPage() {
                   <div className="p-4 rounded-2xl bg-white dark:bg-[#141720] border border-slate-200/70 dark:border-white/10 space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <span className="text-xs font-bold text-[#182542] dark:text-white block font-mono">BETAE</span>
+                        <span className="text-xs font-bold text-[#08080C] dark:text-white block font-mono">BETAE</span>
                         <span className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">Beta Enerji ve Teknoloji A.Ş.</span>
                       </div>
                       <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
@@ -1011,15 +1015,15 @@ export default function LandingPage() {
                     <div className="grid grid-cols-3 gap-2 text-center text-xs pt-1 border-t border-slate-200/50 dark:border-white/5">
                       <div className="p-2 rounded-lg bg-slate-50 dark:bg-white/5">
                         <span className="text-[10px] text-slate-400 block">1.5M Katılımcı</span>
-                        <strong className="font-mono text-[#182542] dark:text-white">~35 Lot (₺1.645)</strong>
+                        <strong className="font-mono text-[#08080C] dark:text-white">~35 Lot (₺1.645)</strong>
                       </div>
                       <div className="p-2 rounded-lg bg-slate-50 dark:bg-white/5">
                         <span className="text-[10px] text-slate-400 block">2.0M Katılımcı</span>
-                        <strong className="font-mono text-[#182542] dark:text-white">~26 Lot (₺1.222)</strong>
+                        <strong className="font-mono text-[#08080C] dark:text-white">~26 Lot (₺1.222)</strong>
                       </div>
                       <div className="p-2 rounded-lg bg-slate-50 dark:bg-white/5">
                         <span className="text-[10px] text-slate-400 block">2.5M Katılımcı</span>
-                        <strong className="font-mono text-[#182542] dark:text-white">~21 Lot (₺987)</strong>
+                        <strong className="font-mono text-[#08080C] dark:text-white">~21 Lot (₺987)</strong>
                       </div>
                     </div>
                   </div>
@@ -1041,7 +1045,7 @@ export default function LandingPage() {
           <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
             Fıkhi Metodoloji &amp; Standartlar
           </span>
-          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#182542] dark:text-white tracking-tight">
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             İcazetli ve Şeffaf Kurallar Üzerine İnşa Edildi.
           </h2>
           <p className="text-sm sm:text-base text-[#525E75] dark:text-[#94A3B8]">
@@ -1052,33 +1056,33 @@ export default function LandingPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
-          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono block">≤ %33,00</span>
-            <h4 className="text-sm font-bold text-[#182542] dark:text-white">Faizli Borç Oranı</h4>
+            <h4 className="text-sm font-bold text-[#08080C] dark:text-white">Faizli Borç Oranı</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Şirketin konvansiyonel banka borçlarının toplam aktif büyüklüğüne veya ortalama piyasa değerine azami oranı.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
-            <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 font-mono block">≤ %33,00</span>
-            <h4 className="text-sm font-bold text-[#182542] dark:text-white">Faizli Nakit Varlıklar</h4>
+          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
+            <span className="text-2xl font-black text-indigo-600 dark:text-[#C6F432] font-mono block">≤ %33,00</span>
+            <h4 className="text-sm font-bold text-[#08080C] dark:text-white">Faizli Nakit Varlıklar</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Vadeli mevduat, repo ve faizli menkul kıymetlerin toplam varlıklara azami izin verilen tolerans tavanı.
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-purple-600 dark:text-purple-400 font-mono block">≤ %5,00</span>
-            <h4 className="text-sm font-bold text-[#182542] dark:text-white">Uygunsuz Gelir Limiti</h4>
+            <h4 className="text-sm font-bold text-[#08080C] dark:text-white">Uygunsuz Gelir Limiti</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Şirket hasılatı içinde faiz ve meşru olmayan yan faaliyet gelirlerinin azami payı (arındırmaya tabidir).
             </p>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
+          <div className="p-6 rounded-2xl bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 space-y-2">
             <span className="text-2xl font-black text-rose-600 dark:text-rose-400 font-mono block">0 Tolerans</span>
-            <h4 className="text-sm font-bold text-[#182542] dark:text-white">Haram Faaliyetler</h4>
+            <h4 className="text-sm font-bold text-[#08080C] dark:text-white">Haram Faaliyetler</h4>
             <p className="text-xs text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
               Faizli bankacılık, alkollü içecekler, kumar, şans oyunları, domuz mamulleri ve tütün doğrudan kapsam dışıdır.
             </p>
@@ -1097,7 +1101,7 @@ export default function LandingPage() {
             <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
               Merak Edilenler
             </span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#182542] dark:text-white tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
               Sıkça Sorulan Sorular
             </h2>
           </div>
@@ -1108,11 +1112,11 @@ export default function LandingPage() {
               return (
                 <div
                   key={idx}
-                  className="rounded-2xl bg-white/50 dark:bg-[#0E1015]/60 backdrop-blur-xl border border-white/80 dark:border-white/10 overflow-hidden transition shadow-2xs"
+                  className="rounded-2xl bg-white/50 dark:bg-[#0D0E14]/60 backdrop-blur-xl border border-white/80 dark:border-white/10 overflow-hidden transition shadow-2xs"
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[#182542] dark:text-white"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[#08080C] dark:text-white"
                   >
                     <span>{faq.q}</span>
                     <ChevronDown
@@ -1140,7 +1144,7 @@ export default function LandingPage() {
       {/* 8. PRE-FOOTER CTA BANNER (Midas "Hemen Başla")                     */}
       {/* =================================================================== */}
       <section className="relative z-10 py-20 sm:py-28 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-[36px] overflow-hidden bg-gradient-to-br from-[#182542]/90 via-[#1c2c4d]/85 to-[#0d1627]/90 backdrop-blur-xl text-white p-8 sm:p-14 lg:p-16 text-center space-y-6 shadow-2xl shadow-[#182542]/30 border border-white/10">
+        <div className="relative rounded-[36px] overflow-hidden bg-gradient-to-br from-[#08080C]/90 via-[#1c2c4d]/85 to-[#0d1627]/90 backdrop-blur-xl text-white p-8 sm:p-14 lg:p-16 text-center space-y-6 shadow-2xl shadow-[#08080C]/30 border border-white/10">
           
           <div className="max-w-2xl mx-auto space-y-4">
             <span className="text-xs font-extrabold uppercase tracking-wider text-blue-300 block">
@@ -1157,7 +1161,7 @@ export default function LandingPage() {
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
             <Link
               href="/auth/login"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-slate-100 text-[#182542] font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-black/20 active:scale-95 transition-all"
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-white hover:bg-slate-100 text-[#08080C] font-extrabold text-base flex items-center justify-center gap-2 shadow-lg shadow-black/20 active:scale-95 transition-all"
             >
               <span>Uygulamayı Aç — Ücretsiz</span>
               <ArrowRight size={18} strokeWidth={2.4} />
@@ -1191,7 +1195,7 @@ export default function LandingPage() {
       {/* =================================================================== */}
       {/* 9. COMPREHENSIVE MIDAS-STYLE FOOTER                                 */}
       {/* =================================================================== */}
-      <footer className="relative z-10 border-t border-slate-200/80 dark:border-white/10 bg-white/55 dark:bg-[#000000]/65 backdrop-blur-xl text-xs text-[#525E75] dark:text-[#94A3B8] transition-colors">
+      <footer className="relative z-10 border-t border-slate-200/80 dark:border-white/10 bg-white/55 dark:bg-[#08080C]/65 backdrop-blur-xl text-xs text-[#525E75] dark:text-[#94A3B8] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
           
           {/* Top Row: Brand & Multi-column sitemap */}
@@ -1200,10 +1204,10 @@ export default function LandingPage() {
             {/* Brand column */}
             <div className="col-span-2 space-y-4">
               <Link href="/" className="inline-flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-[#182542] dark:bg-[#0F172A] border border-white/20 p-0.5 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-[#08080C] dark:bg-[#0F172A] border border-white/20 p-0.5 flex items-center justify-center">
                   <Image src="/brand/logo.svg" alt="Mizan" width={32} height={32} className="w-full h-full object-contain" />
                 </div>
-                <span className="text-lg font-black text-[#182542] dark:text-white">mizan katılım</span>
+                <span className="text-lg font-black text-[#08080C] dark:text-white">mizan katılım</span>
               </Link>
               <p className="text-xs text-[#6E81A0] dark:text-[#8C9BB0] leading-relaxed max-w-sm">
                 Borsa İstanbul pay senetleri için Diyanet İşleri Başkanlığı ve TKBB Danışma Kurulu standartlarında fıkhi tarama, KAFİF denetimi ve temettü arındırma teknolojisi.
@@ -1215,7 +1219,7 @@ export default function LandingPage() {
 
             {/* Col 1: Ürünler */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white">
                 Ürünler
               </h4>
               <ul className="space-y-2">
@@ -1229,7 +1233,7 @@ export default function LandingPage() {
 
             {/* Col 2: Fıkhi Kaynaklar */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white">
                 Fıkhi Kaynaklar
               </h4>
               <ul className="space-y-2">
@@ -1243,7 +1247,7 @@ export default function LandingPage() {
 
             {/* Col 3: Kurumsal & Yasal */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white">
                 Yasal &amp; Sözleşmeler
               </h4>
               <ul className="space-y-2">
@@ -1259,7 +1263,7 @@ export default function LandingPage() {
 
           {/* SPK Legal Disclaimer Box */}
           <div className="p-4 sm:p-5 rounded-2xl bg-slate-100/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 text-[11px] leading-relaxed text-[#6E81A0] dark:text-[#8C9BB0] space-y-1.5">
-            <span className="font-bold text-[#182542] dark:text-white block uppercase tracking-wider text-[10px]">
+            <span className="font-bold text-[#08080C] dark:text-white block uppercase tracking-wider text-[10px]">
               Yasal Uyarı (SPK Mevzuatı):
             </span>
             <p>

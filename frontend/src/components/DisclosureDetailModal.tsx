@@ -168,7 +168,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0E1015] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-4 sm:space-y-5 animate-in zoom-in-95 fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0D0E14] rounded-3xl border border-slate-200/80 dark:border-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] z-10 p-5 sm:p-7 flex flex-col space-y-4 sm:space-y-5 animate-in zoom-in-95 fade-in duration-200">
         
         {/* Top bar: Source badge + Live indicator + Close button */}
         <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-white/10 pb-4">
@@ -212,7 +212,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/companies/${disclosure.ticker}`}
-                    className="text-base font-black text-[#182542] dark:text-white hover:text-blue-500 transition"
+                    className="text-base font-black text-[#08080C] dark:text-white hover:text-blue-500 transition"
                   >
                     {disclosure.ticker}
                   </Link>
@@ -251,7 +251,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
 
         {/* Category & Time Information */}
         <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
-          <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 font-bold border border-blue-200/60 dark:border-blue-800/30">
+          <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-[#C6F432]/15 text-blue-700 dark:text-[#C6F432] font-bold border border-blue-200/60 dark:border-blue-800/30">
             {disclosure.category}
           </span>
 
@@ -265,13 +265,13 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
 
         {/* Full Headline / Title */}
         <div className="space-y-1">
-          <h2 className="text-lg sm:text-xl font-black text-[#182542] dark:text-white leading-snug">
+          <h2 className="text-lg sm:text-xl font-black text-[#08080C] dark:text-white leading-snug">
             {disclosure.title}
           </h2>
         </div>
 
         {/* Summary / Body */}
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5 space-y-2 text-sm text-[#182542] dark:text-slate-200 leading-relaxed">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5 space-y-2 text-sm text-[#08080C] dark:text-slate-200 leading-relaxed">
           <div className="text-[11px] font-bold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8] flex items-center gap-1.5">
             <FileText size={12} />
             <span>Bildirim Detayı &amp; Açıklama Metni</span>
@@ -298,7 +298,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
           <button
             type="button"
             onClick={() => setShowPasteBox(!showPasteBox)}
-            className="text-xs font-bold text-[#273869] dark:text-blue-400 hover:underline flex items-center gap-1.5"
+            className="text-xs font-bold text-[#10B981] dark:text-[#C6F432] hover:underline flex items-center gap-1.5"
           >
             <FileCode size={13} />
             <span>{showPasteBox ? "Metin Girişini Gizle" : "PDF İçeriği veya Detaylı Metin Ekleyerek Analiz Et (Opsiyonel)"}</span>
@@ -314,7 +314,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
                 onChange={(e) => setCustomText(e.target.value)}
                 placeholder="Örn: 'Şirketimiz Yönetim Kurulu 2026 konsolide net dönem kârından pay başına brüt ₺2,40 kâr payı dağıtılmasına karar vermiştir...'"
                 rows={3}
-                className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#0E1015] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
+                className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#0D0E14] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
               />
             </div>
           )}
@@ -324,7 +324,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
         {isAnalyzing && (
           <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200/60 dark:border-blue-800/30 text-center space-y-2.5 animate-pulse">
             <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-bold text-[#182542] dark:text-white">
+            <p className="text-xs font-bold text-[#08080C] dark:text-white">
               Mizan AI Metni DİB ve TKBB Standartlarına Göre İnceliyor...
             </p>
             <span className="text-[11px] text-slate-500 block">
@@ -350,7 +350,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
           <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-blue-50/60 to-emerald-50/40 dark:from-blue-950/30 dark:to-emerald-950/20 border border-blue-200/80 dark:border-blue-800/40 space-y-3 animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between border-b border-blue-200/50 dark:border-blue-800/30 pb-2">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-xs font-extrabold text-[#182542] dark:text-white flex items-center gap-1.5">
+                <span className="text-xs font-extrabold text-[#08080C] dark:text-white flex items-center gap-1.5">
                   <Sparkles size={14} className="text-emerald-500" />
                   <span>Mizan AI Fıkhi &amp; Finansal Analizi</span>
                 </span>
@@ -396,7 +396,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
             <button
               type="button"
               onClick={handleOpenInAssistant}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#08080C] dark:text-white text-xs font-bold transition"
               title="Metni Mizan AI Asistanına Taşı"
             >
               <MessageSquare size={13} />
@@ -411,7 +411,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
                 href={disclosure.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#08080C] dark:text-white text-xs font-bold transition"
               >
                 <span>
                   {disclosure.source === "SPK"

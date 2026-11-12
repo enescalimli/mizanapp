@@ -175,9 +175,9 @@ export default function TarayiciPage() {
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) return <ArrowUpDown size={12} className="text-[#8C9BB0]" />;
     return sortDirection === "asc" ? (
-      <ChevronUp size={14} className="text-[#182542] dark:text-white" />
+      <ChevronUp size={14} className="text-[#08080C] dark:text-white" />
     ) : (
-      <ChevronDown size={14} className="text-[#182542] dark:text-white" />
+      <ChevronDown size={14} className="text-[#08080C] dark:text-white" />
     );
   };
 
@@ -201,7 +201,7 @@ export default function TarayiciPage() {
         {/* ================================================================= */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#182542] dark:text-white">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-[#08080C] dark:text-white">
               Borsa İstanbul Katılım Hisseleri
             </h1>
             <p className="text-xs sm:text-sm text-[#6E81A0] dark:text-[#94A3B8]">
@@ -211,7 +211,7 @@ export default function TarayiciPage() {
 
           <div className="flex items-center gap-2.5">
             {/* Görünüm Seçici: Kart Izgarası vs Tablo */}
-            <div className="bg-white dark:bg-[#0E1015] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1">
+            <div className="bg-white dark:bg-[#0D0E14] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
@@ -243,7 +243,7 @@ export default function TarayiciPage() {
               type="button"
               onClick={() => refreshNow()}
               disabled={isRefreshing}
-              className="w-8 h-8 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white flex items-center justify-center transition"
               title="KAP Bilanço Verilerini Yenile"
             >
               <RefreshCw size={14} className={isRefreshing ? "animate-spin text-[#0D8B52]" : ""} />
@@ -290,7 +290,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "COMPLIANT"
                   ? "bg-[#0D8B52] text-white shadow-xs"
-                  : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-[#0D8B52] border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-[#0D8B52] border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>✓ Katılıma Uygun</span>
@@ -307,7 +307,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === "NON_COMPLIANT"
                   ? "bg-[#C62E26] text-white shadow-xs"
-                  : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-[#C62E26] border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-[#C62E26] border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <span>✕ Katılım Dışı</span>
@@ -341,7 +341,7 @@ export default function TarayiciPage() {
               className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 activeTab === "RADAR"
                   ? "bg-amber-500 text-slate-950 shadow-xs"
-                  : "bg-white dark:bg-[#0E1015] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
+                  : "bg-white dark:bg-[#0D0E14] text-[#646A78] dark:text-[#94A3B8] hover:text-amber-500 border border-slate-200/60 dark:border-white/10"
               }`}
             >
               <AlertTriangle size={12} className={activeTab === "RADAR" ? "text-slate-950" : "text-amber-500"} />
@@ -359,7 +359,7 @@ export default function TarayiciPage() {
             <select
               value={sectorFilter}
               onChange={(e) => setSectorFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white outline-none shadow-xs max-w-[160px] sm:max-w-[220px] truncate cursor-pointer"
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 text-xs font-bold text-[#08080C] dark:text-white outline-none shadow-xs max-w-[160px] sm:max-w-[220px] truncate cursor-pointer"
             >
               {sectorList.map((sec) => (
                 <option key={sec} value={sec}>
@@ -403,7 +403,7 @@ export default function TarayiciPage() {
                 <div
                   key={comp.ticker}
                   onClick={() => router.push(`/companies/${comp.ticker}`)}
-                  className="bg-white dark:bg-[#0E1015] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between space-y-3.5 group cursor-pointer relative"
+                  className="bg-white dark:bg-[#0D0E14] rounded-[24px] p-4 sm:p-5 border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:border-slate-300 dark:hover:border-white/20 transition-all flex flex-col justify-between space-y-3.5 group cursor-pointer relative"
                 >
                   {/* Üst: Favori Yıldızı */}
                   <div className="flex justify-end">
@@ -430,7 +430,7 @@ export default function TarayiciPage() {
                     />
 
                     <div className="space-y-0.5">
-                      <span className="font-mono font-black text-sm text-[#182542] dark:text-white group-hover:text-[#273869] dark:group-hover:text-blue-400 transition block">
+                      <span className="font-mono font-black text-sm text-[#08080C] dark:text-white group-hover:text-[#10B981] dark:group-hover:text-[#C6F432] transition block">
                         {comp.ticker}
                       </span>
                       <h4 className="text-[11px] font-semibold text-[#6E81A0] dark:text-[#94A3B8] truncate max-w-[150px]">
@@ -448,7 +448,7 @@ export default function TarayiciPage() {
                   <div className="pt-2.5 border-t border-slate-100 dark:border-white/10 text-center space-y-1">
                     <div className="flex items-center justify-between text-xs font-mono">
                       <span className="text-[#6E81A0] dark:text-[#94A3B8]">Fiyat:</span>
-                      <span className="font-bold text-[#182542] dark:text-white">{comp.priceTRY}</span>
+                      <span className="font-bold text-[#08080C] dark:text-white">{comp.priceTRY}</span>
                     </div>
 
                     <div className="flex items-center justify-between text-[11px]">
@@ -481,37 +481,37 @@ export default function TarayiciPage() {
         {/* GÖRÜNÜM 2: DETAYLI TABLO GÖRÜNÜMÜ                                 */}
         {/* ================================================================= */}
         {viewMode === "table" && (
-          <div className="bg-white dark:bg-[#0E1015] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
+          <div className="bg-white dark:bg-[#0D0E14] rounded-[24px] border border-slate-200/60 dark:border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.03)] overflow-hidden transition-colors">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 text-[#6E81A0] dark:text-[#94A3B8] font-bold text-[11px]">
-                    <th onClick={() => handleSort("ticker")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white">
+                    <th onClick={() => handleSort("ticker")} className="py-3 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white">
                       <div className="flex items-center gap-1">
                         <span>Hisse Kodu &amp; Şirket</span>
                         {getSortIcon("ticker")}
                       </div>
                     </th>
-                    <th onClick={() => handleSort("priceTRY")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
+                    <th onClick={() => handleSort("priceTRY")} className="py-3 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Fiyat</span>
                         {getSortIcon("priceTRY")}
                       </div>
                     </th>
-                    <th onClick={() => handleSort("change24h")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
+                    <th onClick={() => handleSort("change24h")} className="py-3 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Değişim</span>
                         {getSortIcon("change24h")}
                       </div>
                     </th>
                     <th className="py-3 px-4">Fıkhi Durum</th>
-                    <th onClick={() => handleSort("debtRatioPercent")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
+                    <th onClick={() => handleSort("debtRatioPercent")} className="py-3 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Borç Oranı (&lt;%33)</span>
                         {getSortIcon("debtRatioPercent")}
                       </div>
                     </th>
-                    <th onClick={() => handleSort("impureIncomePercent")} className="py-3 px-4 cursor-pointer hover:text-[#182542] dark:hover:text-white text-right">
+                    <th onClick={() => handleSort("impureIncomePercent")} className="py-3 px-4 cursor-pointer hover:text-[#08080C] dark:hover:text-white text-right">
                       <div className="flex items-center justify-end gap-1">
                         <span>Arındırma (&lt;%5)</span>
                         {getSortIcon("impureIncomePercent")}
@@ -533,12 +533,12 @@ export default function TarayiciPage() {
                           <div className="flex items-center gap-3">
                             <StockLogo ticker={comp.ticker} name={comp.name} size="sm" />
                             <div>
-                              <span className="font-bold text-xs text-[#182542] dark:text-white block">{comp.ticker}</span>
+                              <span className="font-bold text-xs text-[#08080C] dark:text-white block">{comp.ticker}</span>
                               <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] block truncate max-w-[180px]">{comp.name}</span>
                             </div>
                           </div>
                         </td>
-                        <td className="py-3 px-4 text-right font-mono font-bold text-[#182542] dark:text-white">
+                        <td className="py-3 px-4 text-right font-mono font-bold text-[#08080C] dark:text-white">
                           {comp.priceTRY}
                         </td>
                         <td className={`py-3 px-4 text-right font-mono font-bold ${
@@ -556,17 +556,17 @@ export default function TarayiciPage() {
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right font-mono">
-                          <span className={comp.debtRatioPercent > 33 ? "text-[#C62E26] dark:text-rose-400 font-bold" : "text-[#182542] dark:text-white font-bold"}>
+                          <span className={comp.debtRatioPercent > 33 ? "text-[#C62E26] dark:text-rose-400 font-bold" : "text-[#08080C] dark:text-white font-bold"}>
                             %{comp.debtRatioPercent.toFixed(1)}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-right font-mono">
-                          <span className={comp.impureIncomePercent > 5 ? "text-[#C62E26] dark:text-rose-400 font-bold" : "text-[#182542] dark:text-white font-bold"}>
+                          <span className={comp.impureIncomePercent > 5 ? "text-[#C62E26] dark:text-rose-400 font-bold" : "text-[#08080C] dark:text-white font-bold"}>
                             %{comp.impureIncomePercent.toFixed(1)}
                           </span>
                         </td>
                         <td className="py-3 px-4 text-center">
-                          <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-[#182542] dark:hover:bg-[#273869] hover:text-white inline-flex items-center justify-center transition">
+                          <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-[#08080C] dark:hover:bg-[#10B981] hover:text-white inline-flex items-center justify-center transition">
                             <ArrowUpRight size={12} />
                           </div>
                         </td>

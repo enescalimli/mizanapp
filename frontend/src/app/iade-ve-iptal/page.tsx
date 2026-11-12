@@ -14,12 +14,12 @@ export default function RefundPolicyPage() {
       <div className="space-y-6 max-w-4xl mx-auto pb-12">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[#6E81A0]">
-          <Link href="/" className="hover:text-[#182542] flex items-center gap-1 transition">
+          <Link href="/" className="hover:text-[#08080C] flex items-center gap-1 transition">
             <ArrowLeft size={13} />
             <span>Ana Sayfa</span>
           </Link>
           <span>/</span>
-          <span className="text-[#182542] font-semibold">İptal ve İade Politikası</span>
+          <span className="text-[#08080C] font-semibold">İptal ve İade Politikası</span>
         </div>
 
         {/* Hero Card */}
@@ -29,7 +29,7 @@ export default function RefundPolicyPage() {
             <span>6502 Sayılı Tüketici Hakları &bull; Mizan Güvencesi</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#182542] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] tracking-tight">
             Abonelik İptali ve <span className="font-serif italic text-[#405881]">İade Politikası</span>
           </h1>
 
@@ -60,7 +60,7 @@ export default function RefundPolicyPage() {
         {/* Detailed Sections */}
         <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6 text-xs text-slate-700 leading-relaxed">
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#182542]">1. Yasal Dayanak ve Cayma Hakkı İstisnası</h2>
+            <h2 className="text-sm font-bold text-[#08080C]">1. Yasal Dayanak ve Cayma Hakkı İstisnası</h2>
             <p>
               6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği&apos;nin 15. maddesinin (ğ) bendi uyarınca; <em>&ldquo;Elektronik ortamda anında ifa edilen hizmetler veya tüketiciye anında teslim edilen gayrimaddi mallara ilişkin sözleşmelerde tüketici cayma hakkını kullanamaz.&rdquo;</em>
             </p>
@@ -70,7 +70,7 @@ export default function RefundPolicyPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#182542]">2. Abonelik İptali Nasıl Yapılır?</h2>
+            <h2 className="text-sm font-bold text-[#08080C]">2. Abonelik İptali Nasıl Yapılır?</h2>
             <p>
               Aboneliğinizi dilediğiniz an tek tıkla iptal edebilirsiniz:
             </p>
@@ -82,16 +82,16 @@ export default function RefundPolicyPage() {
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#182542]">3. İade Süreci ve Para Aktarımı</h2>
+            <h2 className="text-sm font-bold text-[#08080C]">3. İade Süreci ve Para Aktarımı</h2>
             <p>
               İlk 7 gün içerisinde onaylanan iadeler, ödemenin yapıldığı kredi kartına / banka hesabına 3 ila 10 iş günü içerisinde yansıtılır. Bu süre bankanızın takas prosedürlerine bağlı olarak değişebilmektedir.
             </p>
           </section>
 
           <section className="space-y-2">
-            <h2 className="text-sm font-bold text-[#182542]">4. İletişim</h2>
+            <h2 className="text-sm font-bold text-[#08080C]">4. İletişim</h2>
             <p>
-              Her türlü soru ve iade talebiniz için destek ekibimize <a href="mailto:destek@mizanapp.tr" className="font-bold underline text-[#182542]">destek@mizanapp.tr</a> üzerinden 7/24 ulaşabilirsiniz.
+              Her türlü soru ve iade talebiniz için destek ekibimize <a href="mailto:destek@mizanapp.tr" className="font-bold underline text-[#08080C]">destek@mizanapp.tr</a> üzerinden 7/24 ulaşabilirsiniz.
             </p>
           </section>
         </div>

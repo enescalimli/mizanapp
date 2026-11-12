@@ -233,8 +233,8 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                       y2="660"
                       gradientUnits="userSpaceOnUse"
                     >
-                      <stop offset="0%" stopColor="#182542" />
-                      <stop offset="55%" stopColor="#273869" />
+                      <stop offset="0%" stopColor="#08080C" />
+                      <stop offset="55%" stopColor="#10B981" />
                       <stop offset="100%" stopColor="#0f172a" />
                     </linearGradient>
                     <linearGradient
@@ -258,12 +258,12 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
                       y2="520"
                       gradientUnits="userSpaceOnUse"
                     >
-                      <stop offset="0%" stopColor="#273869" />
-                      <stop offset="100%" stopColor="#182542" />
+                      <stop offset="0%" stopColor="#10B981" />
+                      <stop offset="100%" stopColor="#08080C" />
                     </linearGradient>
                     <filter id={`emblemFloat-${uniqueId}`} x="-40%" y="-40%" width="180%" height="180%">
-                      <feDropShadow dx="0" dy="18" stdDeviation="20" floodColor="#182542" floodOpacity="0.2" />
-                      <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#182542" floodOpacity="0.12" />
+                      <feDropShadow dx="0" dy="18" stdDeviation="20" floodColor="#08080C" floodOpacity="0.2" />
+                      <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#08080C" floodOpacity="0.12" />
                     </filter>
                     <filter id={`creaseShadow-${uniqueId}`} x="-30%" y="-30%" width="160%" height="160%">
                       <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur" />
@@ -599,7 +599,7 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
           style={wordmarkAnimStyle}
         >
           <span
-            className="font-black tracking-tight text-[#182542] dark:text-white leading-none"
+            className="font-black tracking-tight text-[#08080C] dark:text-white leading-none"
             style={{
               fontSize: Math.max(18, Math.round(size * 0.56)),
             }}
@@ -611,7 +611,7 @@ export const AnimatedMizanLogo: React.FC<AnimatedMizanLogoProps> = ({
           )}
           {badgeText && (
             <span
-              className="font-bold text-[#273869] dark:text-slate-300 leading-none"
+              className="font-bold text-[#10B981] dark:text-slate-300 leading-none"
               style={{
                 fontSize: Math.max(11, Math.round(size * 0.3)),
               }}

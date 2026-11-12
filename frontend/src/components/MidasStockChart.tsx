@@ -512,7 +512,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
   const gradientId = `midas-gradient-${ticker}`;
 
   return (
-    <div className="rounded-3xl p-5 sm:p-6 bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
+    <div className="rounded-3xl p-5 sm:p-6 bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
       
       {/* Üst Fiyat & Periyot Değişim Başlığı */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
@@ -528,7 +528,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
           </div>
           
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-[#182542] dark:text-white tabular-nums">
+            <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-[#08080C] dark:text-white tabular-nums">
               ₺{displayPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
             
@@ -681,7 +681,7 @@ export const MidasStockChart: React.FC<MidasStockChartProps> = ({
                 }}
                 className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-150 ${
                   isActive
-                    ? "bg-[#182542] dark:bg-white text-white dark:text-[#182542] shadow-xs scale-105"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs scale-105"
                     : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/70 dark:hover:bg-white/5"
                 }`}
               >

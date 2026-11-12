@@ -283,8 +283,8 @@ export default function SettingsPage() {
         {/* =================================================================== */}
         {/* HEADER: Apple Frosted Hero & Pro Membership Badge                   */}
         {/* =================================================================== */}
-        <div className="bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[24px] border border-white/85 dark:border-white/10 p-4 sm:p-6 shadow-xs space-y-3">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#182542]/10 dark:border-white/10 pb-3">
+        <div className="bg-white/70 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[24px] border border-white/85 dark:border-white/10 p-4 sm:p-6 shadow-xs space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#08080C]/10 dark:border-white/10 pb-3">
             <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
               Hesap &amp; Tercih Yönetimi
             </span>
@@ -306,7 +306,7 @@ export default function SettingsPage() {
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
-              <h1 className="text-xl sm:text-2xl font-black text-[#182542] dark:text-white tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-black text-[#08080C] dark:text-white tracking-tight">
                 Kullanıcı Tercihleri
               </h1>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] font-normal leading-relaxed">
@@ -318,7 +318,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleSaveSettings}
-              className="px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold flex items-center gap-2 shadow-xs transition active:scale-95 shrink-0 cursor-pointer"
+              className="px-4 py-2 rounded-full mizan-accent-btn hover:opacity-90 text-xs font-semibold flex items-center gap-2 shadow-xs transition active:scale-95 shrink-0 cursor-pointer"
             >
               <Save size={14} />
               <span>Değişiklikleri Kaydet</span>
@@ -353,8 +353,8 @@ export default function SettingsPage() {
                 onClick={() => setActiveTab(tab.id as SettingsTab)}
                 className={`px-4 py-2 rounded-full text-xs font-semibold flex items-center gap-2 transition shrink-0 cursor-pointer ${
                   isActive
-                    ? "bg-black dark:bg-white text-white dark:text-black shadow-xs font-bold"
-                    : "bg-white dark:bg-[#0E1015] hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
+                    ? "mizan-accent-btn shadow-xs font-bold"
+                    : "bg-white dark:bg-[#0D0E14] hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white border border-slate-200/60 dark:border-white/10"
                 }`}
               >
                 <Icon size={14} />
@@ -373,13 +373,13 @@ export default function SettingsPage() {
         {/* TAB 1: PROFİL & ÜYELİK (Musaffa & Fintables Stili)                  */}
         {/* =================================================================== */}
         {activeTab === "PROFIL" && (
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div className="flex items-center gap-3 border-b border-[#EDF1F7] dark:border-white/10 pb-4">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#273869] text-white flex items-center justify-center font-bold text-sm shadow-xs">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#08080C] to-[#10B981] text-white flex items-center justify-center font-bold text-sm shadow-xs">
                 {settings.fullName.slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <h3 className="text-base font-bold text-[#182542] dark:text-white">{settings.fullName}</h3>
+                <h3 className="text-base font-bold text-[#08080C] dark:text-white">{settings.fullName}</h3>
                 <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] font-mono">{settings.email}</p>
               </div>
             </div>
@@ -393,7 +393,7 @@ export default function SettingsPage() {
                   type="text"
                   value={settings.fullName}
                   onChange={(e) => setSettings({ ...settings, fullName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
                 />
               </div>
 
@@ -405,7 +405,7 @@ export default function SettingsPage() {
                   type="email"
                   value={settings.email}
                   onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
                 />
               </div>
 
@@ -417,7 +417,7 @@ export default function SettingsPage() {
                   type="tel"
                   value={settings.phone}
                   onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
                 />
               </div>
 
@@ -428,11 +428,11 @@ export default function SettingsPage() {
                 <select
                   value={settings.investorLevel}
                   onChange={(e) => setSettings({ ...settings, investorLevel: e.target.value as any })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
                 >
-                  <option value="BASLANGIC" className="dark:bg-[#0E1015]">Başlangıç (BIST Katılım Kriterlerini Yeni Öğreniyor)</option>
-                  <option value="ORTA" className="dark:bg-[#0E1015]">Orta Düzey (Düzenli Halka Arz ve Hisse Yatırımcısı)</option>
-                  <option value="ILERI" className="dark:bg-[#0E1015]">İleri Düzey (Kapsamlı Bilanço &amp; Arındırma Uzmanı)</option>
+                  <option value="BASLANGIC" className="dark:bg-[#0D0E14]">Başlangıç (BIST Katılım Kriterlerini Yeni Öğreniyor)</option>
+                  <option value="ORTA" className="dark:bg-[#0D0E14]">Orta Düzey (Düzenli Halka Arz ve Hisse Yatırımcısı)</option>
+                  <option value="ILERI" className="dark:bg-[#0D0E14]">İleri Düzey (Kapsamlı Bilanço &amp; Arındırma Uzmanı)</option>
                 </select>
               </div>
             </div>
@@ -441,7 +441,7 @@ export default function SettingsPage() {
             <div className="space-y-5 pt-3 border-t border-[#EDF1F7] dark:border-white/10">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white">
                     Abonelik Planı &amp; Fiyatlandırma
                   </h4>
                   <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -456,7 +456,7 @@ export default function SettingsPage() {
                     onClick={() => setBillingCycle("MONTHLY")}
                     className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                       billingCycle === "MONTHLY"
-                        ? "bg-white dark:bg-[#182542] text-[#182542] dark:text-white shadow-xs"
+                        ? "bg-white dark:bg-[#08080C] text-[#08080C] dark:text-white shadow-xs"
                         : "text-[#6E81A0] dark:text-[#94A3B8]"
                     }`}
                   >
@@ -467,7 +467,7 @@ export default function SettingsPage() {
                     onClick={() => setBillingCycle("ANNUAL")}
                     className={`px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                       billingCycle === "ANNUAL"
-                        ? "bg-[#182542] text-white shadow-xs"
+                        ? "bg-[#08080C] text-white shadow-xs"
                         : "text-[#6E81A0] dark:text-[#94A3B8]"
                     }`}
                   >
@@ -492,7 +492,7 @@ export default function SettingsPage() {
                 {/* 1. ÜCRETSİZ PLAN */}
                 <div className={`p-5 rounded-2xl border transition flex flex-col justify-between space-y-4 ${
                   subscriptionPlan === "FREE"
-                    ? "bg-white dark:bg-white/10 border-[#182542] dark:border-blue-400 shadow-md ring-2 ring-[#182542]/10"
+                    ? "bg-white dark:bg-white/10 border-[#08080C] dark:border-[#C6F432] shadow-md ring-2 ring-[#08080C]/10"
                     : "bg-slate-50/70 dark:bg-white/5 border-slate-200/80 dark:border-white/10"
                 }`}>
                   <div className="space-y-3">
@@ -507,7 +507,7 @@ export default function SettingsPage() {
                       )}
                     </div>
                     <div>
-                      <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">₺0</div>
+                      <div className="text-2xl font-black font-mono text-[#08080C] dark:text-white">₺0</div>
                       <div className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">Sonsuza dek ücretsiz</div>
                     </div>
                     <ul className="space-y-2 text-xs text-slate-700 dark:text-slate-300 pt-2 border-t border-slate-200/60 dark:border-white/10">
@@ -536,7 +536,7 @@ export default function SettingsPage() {
                     className={`w-full py-2.5 rounded-xl text-xs font-bold transition shadow-xs ${
                       subscriptionPlan === "FREE"
                         ? "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400 cursor-default"
-                        : "bg-white dark:bg-white/10 hover:bg-slate-100 text-[#182542] dark:text-white border border-slate-300 dark:border-white/20"
+                        : "bg-white dark:bg-white/10 hover:bg-slate-100 text-[#08080C] dark:text-white border border-slate-300 dark:border-white/20"
                     }`}
                   >
                     {subscriptionPlan === "FREE" ? "Mevcut Planınız" : "Ücretsiz Plana Geç"}
@@ -546,7 +546,7 @@ export default function SettingsPage() {
                 {/* 2. MİZAN PRO */}
                 <div className={`p-5 rounded-2xl border transition flex flex-col justify-between space-y-4 relative ${
                   subscriptionPlan === "PRO"
-                    ? "bg-white dark:bg-[#0E1015] border-amber-500 shadow-lg ring-2 ring-amber-500/20"
+                    ? "bg-white dark:bg-[#0D0E14] border-amber-500 shadow-lg ring-2 ring-amber-500/20"
                     : "bg-white dark:bg-white/5 border-slate-200/80 dark:border-white/10 hover:border-amber-400"
                 }`}>
                   <div className="space-y-3">
@@ -560,7 +560,7 @@ export default function SettingsPage() {
                       </span>
                     </div>
                     <div>
-                      <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
+                      <div className="text-2xl font-black font-mono text-[#08080C] dark:text-white">
                         {billingCycle === "ANNUAL" ? "₺1.490" : "₺149"}
                         <span className="text-xs font-normal text-[#6E81A0] dark:text-[#94A3B8]">
                           {billingCycle === "ANNUAL" ? " / yıl" : " / ay"}
@@ -600,7 +600,7 @@ export default function SettingsPage() {
                     className={`w-full py-2.5 rounded-xl text-xs font-bold transition shadow-xs ${
                       subscriptionPlan === "PRO"
                         ? "bg-amber-500 text-white cursor-default"
-                        : "bg-[#182542] hover:bg-[#273869] text-white"
+                        : "bg-[#08080C] hover:bg-[#10B981] text-white"
                     }`}
                   >
                     {subscriptionPlan === "PRO" ? "Aktif Planınız" : "Mizan Pro'ya Geç"}
@@ -610,7 +610,7 @@ export default function SettingsPage() {
                 {/* 3. MİZAN PLUS */}
                 <div className={`p-5 rounded-2xl border transition flex flex-col justify-between space-y-4 relative ${
                   subscriptionPlan === "PLUS"
-                    ? "bg-gradient-to-br from-[#182542] via-[#213054] to-[#2d4170] text-white border-purple-400 shadow-xl ring-2 ring-purple-400/30"
+                    ? "bg-gradient-to-br from-[#08080C] via-[#213054] to-[#2d4170] text-white border-purple-400 shadow-xl ring-2 ring-purple-400/30"
                     : "bg-white dark:bg-white/5 border-purple-200 dark:border-purple-900/50 hover:border-purple-400"
                 }`}>
                   <div className="space-y-3">
@@ -624,7 +624,7 @@ export default function SettingsPage() {
                       </span>
                     </div>
                     <div>
-                      <div className="text-2xl font-black font-mono text-[#182542] dark:text-white">
+                      <div className="text-2xl font-black font-mono text-[#08080C] dark:text-white">
                         {billingCycle === "ANNUAL" ? "₺2.990" : "₺299"}
                         <span className="text-xs font-normal text-[#6E81A0] dark:text-[#94A3B8]">
                           {billingCycle === "ANNUAL" ? " / yıl" : " / ay"}
@@ -681,8 +681,8 @@ export default function SettingsPage() {
               {subscriptionPlan !== "FREE" && (
                 <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="flex items-center gap-2">
-                    <CreditCard size={15} className="text-indigo-600 dark:text-indigo-400" />
-                    <span className="font-bold text-[#182542] dark:text-white">
+                    <CreditCard size={15} className="text-indigo-600 dark:text-[#C6F432]" />
+                    <span className="font-bold text-[#08080C] dark:text-white">
                       {subscriptionPlan === "PLUS" ? "Mizan Plus Yıllık Planı" : "Mizan Pro Yıllık Planı"}
                     </span>
                     <span className="text-[#6E81A0] dark:text-[#94A3B8]">&bull; Kart: &bull;&bull;&bull;&bull; 4242</span>
@@ -692,7 +692,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={() => setShowPortalDetails(!showPortalDetails)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/10 text-[#182542] dark:text-white font-bold hover:bg-slate-200 transition"
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/10 text-[#08080C] dark:text-white font-bold hover:bg-slate-200 transition"
                     >
                       {showPortalDetails ? "Gizle" : "Fatura Bilgileri"}
                     </button>
@@ -711,7 +711,7 @@ export default function SettingsPage() {
                 <div className="p-4 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 space-y-2 text-xs">
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-[#6E81A0] dark:text-[#94A3B8]">Kayıtlı Ödeme Yöntemi:</span>
-                    <span className="font-mono font-bold text-[#182542] dark:text-white">Mastercard &bull;&bull;&bull;&bull; 4242 (SKT: 10/29)</span>
+                    <span className="font-mono font-bold text-[#08080C] dark:text-white">Mastercard &bull;&bull;&bull;&bull; 4242 (SKT: 10/29)</span>
                   </div>
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-[#6E81A0] dark:text-[#94A3B8]">Son Fatura No:</span>
@@ -721,7 +721,7 @@ export default function SettingsPage() {
                     <button
                       type="button"
                       onClick={() => alert("Son dönem e-arşiv faturanız (PDF) indirildi.")}
-                      className="text-[11px] text-blue-600 dark:text-blue-400 underline font-bold"
+                      className="text-[11px] text-blue-600 dark:text-[#C6F432] underline font-bold"
                     >
                       E-Arşiv Faturayı İndir (PDF)
                     </button>
@@ -737,14 +737,14 @@ export default function SettingsPage() {
         {/* TAB 2: MİZAN AI & KİŞİSEL GOOGLE GEMINI API YÖNETİMİ                */}
         {/* =================================================================== */}
         {activeTab === "API_AI" && (
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#EDF1F7] dark:border-white/10 pb-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
                   <Sparkles size={20} />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-[#182542] dark:text-white">
+                  <h3 className="text-base font-bold text-[#08080C] dark:text-white">
                     Google Gemini API Anahtarı &amp; Kişisel Bakiye Yönetimi
                   </h3>
                   <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -761,7 +761,7 @@ export default function SettingsPage() {
                     <span>Kişisel Ücretli Hesap Devrede</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:text-[#C6F432] border border-blue-500/20">
                     <span className="w-2 h-2 rounded-full bg-blue-500" />
                     <span>Mizan Kurumsal Sunucu Devrede</span>
                   </span>
@@ -791,7 +791,7 @@ export default function SettingsPage() {
                     value={userGeminiApiKey}
                     onChange={(e) => setUserGeminiApiKey(e.target.value)}
                     placeholder="AIzaSy..."
-                    className="w-full px-4 py-2.5 pr-10 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-mono font-semibold text-[#182542] dark:text-white focus:border-[#182542] dark:focus:border-blue-400 outline-none transition"
+                    className="w-full px-4 py-2.5 pr-10 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-mono font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
                   />
                   <button
                     type="button"
@@ -811,7 +811,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleSaveApiKey}
-                  className="px-4 py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold transition flex items-center gap-2 shadow-xs cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition flex items-center gap-2 shadow-xs cursor-pointer"
                 >
                   <Save size={13} />
                   <span>Anahtarı Kaydet</span>
@@ -821,7 +821,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={handleTestApiKey}
                   disabled={apiKeyTesting || !userGeminiApiKey.trim()}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#08080C] dark:text-white text-xs font-bold transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   <RefreshCw size={13} className={apiKeyTesting ? "animate-spin" : ""} />
                   <span>{apiKeyTesting ? "Test Ediliyor..." : "Bağlantıyı Test Et"}</span>
@@ -868,7 +868,7 @@ export default function SettingsPage() {
 
             {/* Rehber: Google AI Studio Anahtarı Alma Adımları */}
             <div className="pt-4 border-t border-[#EDF1F7] dark:border-white/10 space-y-2">
-              <h4 className="text-xs font-bold text-[#182542] dark:text-white uppercase tracking-wider">
+              <h4 className="text-xs font-bold text-[#08080C] dark:text-white uppercase tracking-wider">
                 Google AI Studio API Anahtarı Nasıl Alınır?
               </h4>
               <ol className="text-xs text-slate-600 dark:text-slate-400 space-y-1.5 list-decimal list-inside leading-relaxed">
@@ -877,7 +877,7 @@ export default function SettingsPage() {
                     href="https://aistudio.google.com/apikey"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-blue-400 font-bold underline inline-flex items-center gap-1"
+                    className="text-blue-600 dark:text-[#C6F432] font-bold underline inline-flex items-center gap-1"
                   >
                     <span>aistudio.google.com/apikey</span>
                     <ArrowRight size={11} />
@@ -896,9 +896,9 @@ export default function SettingsPage() {
         {/* TAB 3: BİLDİRİMLER & ALARMLAR                                       */}
         {/* =================================================================== */}
         {activeTab === "BILDIRIM" && (
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
             <div>
-              <h3 className="text-base font-bold text-[#182542] dark:text-white">Fıkhi Alarmlar ve KAP Bildirimleri</h3>
+              <h3 className="text-base font-bold text-[#08080C] dark:text-white">Fıkhi Alarmlar ve KAP Bildirimleri</h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">
                 Portföyünüzdeki hisselerin katılım durumunda bir değişiklik olduğunda anında haberdar olun.
               </p>
@@ -934,7 +934,7 @@ export default function SettingsPage() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-[#182542] dark:text-white">{item.title}</span>
+                      <span className="text-xs font-bold text-[#08080C] dark:text-white">{item.title}</span>
                       {item.critical && (
                         <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300">
                           Önemli
@@ -955,7 +955,7 @@ export default function SettingsPage() {
                       })
                     }
                     className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${
-                      settings[item.key as keyof UserSettingsState] ? "bg-[#182542] dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
+                      settings[item.key as keyof UserSettingsState] ? "bg-[#08080C] dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
                     }`}
                   >
                     <span
@@ -974,9 +974,9 @@ export default function SettingsPage() {
         {/* TAB 5: GİZLİLİK & VERİ DIŞA AKTARMA (Data Export & Privacy)         */}
         {/* =================================================================== */}
         {activeTab === "GIZLILIK" && (
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-6">
             <div>
-              <h3 className="text-base font-bold text-[#182542] dark:text-white">Gizlilik ve Veri Güvenliği</h3>
+              <h3 className="text-base font-bold text-[#08080C] dark:text-white">Gizlilik ve Veri Güvenliği</h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-0.5">
                 Portföy gizleme modunu yönetin, verilerinizi yedekleyin veya yerel kayıtları temizleyin.
               </p>
@@ -987,7 +987,7 @@ export default function SettingsPage() {
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   {settings.maskBalances ? <EyeOff size={16} className="dark:text-white" /> : <Eye size={16} className="dark:text-white" />}
-                  <span className="text-xs font-bold text-[#182542] dark:text-white">
+                  <span className="text-xs font-bold text-[#08080C] dark:text-white">
                     Portföy Bakiye Maskeleme (Gizlilik Modu)
                   </span>
                 </div>
@@ -1000,7 +1000,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={() => setSettings({ ...settings, maskBalances: !settings.maskBalances })}
                 className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${
-                  settings.maskBalances ? "bg-[#182542] dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
+                  settings.maskBalances ? "bg-[#08080C] dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
                 }`}
               >
                 <span
@@ -1015,7 +1015,7 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="p-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-3">
                 <div className="flex items-center gap-2">
-                  <Download size={16} className="text-[#182542] dark:text-white" />
+                  <Download size={16} className="text-[#08080C] dark:text-white" />
                   <span className="text-xs font-bold text-slate-900 dark:text-white">
                     Verileri Dışa Aktar (JSON Yedek)
                   </span>
@@ -1027,7 +1027,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={handleExportPortfolioData}
                   disabled={isExporting}
-                  className="px-4 py-2 rounded-xl bg-white dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-300 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white flex items-center gap-2 shadow-xs transition"
+                  className="px-4 py-2 rounded-xl bg-white dark:bg-white/10 hover:bg-slate-100 dark:hover:bg-white/15 border border-slate-300 dark:border-white/10 text-xs font-bold text-[#08080C] dark:text-white flex items-center gap-2 shadow-xs transition"
                 >
                   {isExporting ? <RefreshCw size={13} className="animate-spin" /> : <Download size={13} />}
                   <span>{isExporting ? "Hazırlanıyor..." : "JSON Yedeği İndir"}</span>

@@ -65,7 +65,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
       <LeftDockSidebar />
 
       {/* Main Floating Rounded Bento Canvas (Şeffaf Cam & Frosted Glass) */}
-      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl rounded-[24px] sm:rounded-[36px] border border-white/75 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3 sm:p-6 lg:p-7 space-y-4 sm:space-y-6 transition-colors duration-200">
+      <div className="relative z-10 md:ml-16 lg:ml-20 max-w-[1540px] mx-auto bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] sm:rounded-[36px] border border-white/75 dark:border-white/[0.08] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.7)] p-3 sm:p-6 lg:p-7 space-y-4 sm:space-y-6 transition-colors duration-200">
         
         {/* ================================================================= */}
         {/* TOP UTILITY BAR (Logo + Search/Actions/Profile)                    */}
@@ -99,7 +99,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             <button
               type="button"
               onClick={handleSearch}
-              className="w-8 h-8 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white flex items-center justify-center transition"
               title="BIST Katılım Hissesi Ara..."
             >
               <Search size={15} strokeWidth={2.2} />
@@ -112,7 +112,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             <button
               type="button"
               onClick={() => setShowInfoModal(!showInfoModal)}
-              className="w-8 h-8 rounded-full bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white flex items-center justify-center transition"
+              className="w-8 h-8 rounded-full bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs text-[#646A78] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white flex items-center justify-center transition"
               title="Mizan Fıkhi Standartları Bilgisi"
             >
               <Info size={15} strokeWidth={2.2} />
@@ -122,7 +122,7 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
             {user || isDemoUser ? (
               <Link
                 href="/ayarlar"
-                className="bg-white dark:bg-[#0E1015] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
+                className="bg-white dark:bg-[#0D0E14] border border-slate-200/60 dark:border-white/10 shadow-xs hover:border-slate-300 dark:hover:border-white/20 rounded-full pl-1 pr-2.5 sm:pr-3 py-1 flex items-center gap-2 transition group"
                 title="Hesap ve Ayarlar"
               >
                 {/* Avatar (Northline %10 Lime Vurgulu) */}
@@ -155,8 +155,8 @@ export const PaynoShell: React.FC<PaynoShellProps> = ({
 
         {/* Fıkhi Bilgi Modal (Info) */}
         {showInfoModal && (
-          <div className="p-4 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-md text-xs text-[#646A78] dark:text-[#94A3B8] space-y-2 relative animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between font-bold text-[#182542] dark:text-white">
+          <div className="p-4 rounded-2xl bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-md text-xs text-[#646A78] dark:text-[#94A3B8] space-y-2 relative animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between font-bold text-[#08080C] dark:text-white">
               <span className="flex items-center gap-1.5">
                 <Sparkles size={14} className="text-[#10B981]" />
                 Diyanet İşleri Başkanlığı (DİB) &amp; TKBB Katılım Standartları

@@ -205,7 +205,7 @@ export default function CompanyDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#EBEEF2]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-[#182542] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[#08080C] border-t-transparent rounded-full animate-spin" />
           <span className="text-xs font-semibold text-[#6E81A0] font-mono">
             {ticker} Katılım &amp; Fintables Finansalları Yükleniyor...
           </span>
@@ -219,13 +219,13 @@ export default function CompanyDetailPage() {
       <div className="min-h-screen flex items-center justify-center p-4 bg-[#EBEEF2]">
         <div className="bg-white rounded-3xl p-8 max-w-md w-full text-center space-y-4 border border-white/85 shadow-lg">
           <HelpCircle size={36} className="mx-auto text-[#6E81A0]" />
-          <h2 className="text-lg font-bold text-[#182542]">Şirket Bulunamadı</h2>
+          <h2 className="text-lg font-bold text-[#08080C]">Şirket Bulunamadı</h2>
           <p className="text-xs text-[#6E81A0]">
             &quot;{ticker}&quot; kodlu şirket için henüz veri kaydı bulunamadı.
           </p>
           <Link
             href="/tarayici"
-            className="px-4 py-2.5 rounded-full bg-[#182542] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs"
+            className="px-4 py-2.5 rounded-full bg-[#08080C] text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs"
           >
             <ArrowLeft size={13} />
             <span>Hisse Tarayıcısına Dön</span>
@@ -255,20 +255,20 @@ export default function CompanyDetailPage() {
         {/* =================================================================== */}
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[#6E81A0] dark:text-[#94A3B8]">
           <div className="flex items-center gap-2">
-            <Link href="/tarayici" className="hover:text-[#182542] dark:hover:text-white transition flex items-center gap-1.5 font-bold">
+            <Link href="/tarayici" className="hover:text-[#08080C] dark:hover:text-white transition flex items-center gap-1.5 font-bold">
               <ArrowLeft size={13} />
               <span>BIST Tarayıcı</span>
             </Link>
             <span>/</span>
             <span>Şirketler</span>
             <span>/</span>
-            <span className="text-[#182542] dark:text-white font-mono font-extrabold">{ticker}</span>
+            <span className="text-[#08080C] dark:text-white font-mono font-extrabold">{ticker}</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleAddToPortfolio}
-              className="px-3.5 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95"
+              className="px-3.5 py-1.5 rounded-full bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95"
             >
               <PlusCircle size={13} />
               <span>{addedToPortfolio ? "Eklendi!" : "Portföye Ekle"}</span>
@@ -276,7 +276,7 @@ export default function CompanyDetailPage() {
 
             <button
               onClick={handleShare}
-              className="px-3 py-1.5 rounded-full bg-white/80 dark:bg-[#0E1015] hover:bg-white dark:hover:bg-[#151720] text-[#182542] dark:text-white border border-white/90 dark:border-white/10 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs backdrop-blur-md"
+              className="px-3 py-1.5 rounded-full bg-white/80 dark:bg-[#0D0E14] hover:bg-white dark:hover:bg-[#151720] text-[#08080C] dark:text-white border border-white/90 dark:border-white/10 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs backdrop-blur-md"
             >
               <Share2 size={12} />
               <span>{copied ? "Kopyalandı!" : "Paylaş"}</span>
@@ -287,7 +287,7 @@ export default function CompanyDetailPage() {
         {/* =================================================================== */}
         {/* FINTABLES-GRADE COMPANY HERO BANNER                                 */}
         {/* =================================================================== */}
-        <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5 transition-colors">
+        <div className="bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5 transition-colors">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             
             {/* Ticker & Info */}
@@ -301,14 +301,14 @@ export default function CompanyDetailPage() {
               />
               <div className="space-y-1">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <h1 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white tracking-tight">
+                  <h1 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
                     {data.companyName}
                   </h1>
                   <ComplianceBadge status={data.overallStatus} size="sm" />
                 </div>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-[#6E81A0] dark:text-[#94A3B8] font-medium">
                   <span className="flex items-center gap-1">
-                    <Building2 size={12} className="text-[#182542] dark:text-white" />
+                    <Building2 size={12} className="text-[#08080C] dark:text-white" />
                     <span>{data.sector}</span>
                     {data.subSector && data.subSector !== data.sector && (
                       <>
@@ -319,7 +319,7 @@ export default function CompanyDetailPage() {
                   </span>
                   <span>&bull;</span>
                   <span className="flex items-center gap-1 font-mono">
-                    <Calendar size={12} className="text-[#182542] dark:text-white" />
+                    <Calendar size={12} className="text-[#08080C] dark:text-white" />
                     {data.fiscalPeriod} &bull; Değerleme: {data.valuationDate}
                   </span>
                 </div>
@@ -327,7 +327,7 @@ export default function CompanyDetailPage() {
             </div>
 
             {/* Resmi Fıkhi Standart Rozeti */}
-            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[#EBEEF2]/90 dark:bg-white/10 border border-white/80 dark:border-white/10 shadow-2xs shrink-0 text-xs font-bold text-[#182542] dark:text-white">
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-2xl bg-[#EBEEF2]/90 dark:bg-white/10 border border-white/80 dark:border-white/10 shadow-2xs shrink-0 text-xs font-bold text-[#08080C] dark:text-white">
               <Scale size={13} className="text-emerald-600 dark:text-emerald-400" />
               <span>DİB &amp; BIST Katılım Standartları (&lt;%33)</span>
             </div>
@@ -414,7 +414,7 @@ export default function CompanyDetailPage() {
         {/* 6 INTERACTIVE NAVIGATION TABS (V14 Pill Container)                  */}
         {/* =================================================================== */}
         <div className="flex items-center justify-start sm:justify-center overflow-x-auto py-1 scrollbar-none">
-          <div className="bg-white dark:bg-[#0E1015] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
+          <div className="bg-white dark:bg-[#0D0E14] rounded-full p-1 border border-slate-200/60 dark:border-white/10 shadow-xs flex items-center gap-1 shrink-0">
             {[
               { id: "FIKIH", label: "Fıkhi Analiz", icon: Scale },
               {
@@ -467,13 +467,13 @@ export default function CompanyDetailPage() {
             {/* =============================================================== */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
               {/* Sol Bento: Kar Tanesi Radarı */}
-              <div className="lg:col-span-5 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between transition-colors">
+              <div className="lg:col-span-5 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between transition-colors">
                 <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-white/5">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                       <Sparkles size={13} />
                     </div>
-                    <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white">
                       6-Eksenli Kar Tanesi
                     </h3>
                   </div>
@@ -496,13 +496,13 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Sağ Bento: Kompakt DİB / TKBB Fıkhi Oran Eşikleri */}
-              <div className="lg:col-span-7 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-3.5 transition-colors">
+              <div className="lg:col-span-7 rounded-2xl p-4 sm:p-5 bg-white/80 dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-3.5 transition-colors">
                 <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-white/5 pb-2.5">
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                       <Scale size={13} />
                     </div>
-                    <h3 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white">
                       DİB / TKBB Fıkhi Oran Eşikleri
                     </h3>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
@@ -510,7 +510,7 @@ export default function CompanyDetailPage() {
                     </span>
                   </div>
                   <div className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                    Payda: <strong className="text-[#182542] dark:text-white font-mono">{formatTRY(data.ratios?.denominatorValueTRY || 0, 0)}</strong>
+                    Payda: <strong className="text-[#08080C] dark:text-white font-mono">{formatTRY(data.ratios?.denominatorValueTRY || 0, 0)}</strong>
                   </div>
                 </div>
 
@@ -619,12 +619,12 @@ export default function CompanyDetailPage() {
             )}
 
             {/* Purification & Zakat Fast Metrics */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs text-xs transition-colors">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs text-xs transition-colors">
               <div>
                 <span className="text-[10px] uppercase font-semibold text-[#6E81A0] dark:text-[#94A3B8] tracking-wider block mb-1">
                   Piyasa Değeri
                 </span>
-                <span className="font-mono tabular-nums font-bold text-[#182542] dark:text-white text-sm">
+                <span className="font-mono tabular-nums font-bold text-[#08080C] dark:text-white text-sm">
                   {formatTRY(data.ratios?.spotMarketCapTRY || 0, 0)}
                 </span>
               </div>
@@ -648,7 +648,7 @@ export default function CompanyDetailPage() {
                 <span className="text-[10px] uppercase font-semibold text-[#6E81A0] dark:text-[#94A3B8] tracking-wider block mb-1">
                   Hisse Başı Zekât Matrahı
                 </span>
-                <span className="font-mono tabular-nums font-bold text-[#182542] dark:text-white text-sm">
+                <span className="font-mono tabular-nums font-bold text-[#08080C] dark:text-white text-sm">
                   ₺{data.purificationMetrics?.zatableNetCurrentAssetsPerShareTRY || "0.00"}
                 </span>
               </div>
@@ -656,11 +656,11 @@ export default function CompanyDetailPage() {
 
             {/* Canlı KAP Bildirimleri Önizleme Kartı (Fıkhi Tab İçinde Görünür) */}
             {disclosures.length > 0 && (
-              <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-[22px] border border-white/85 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3">
+              <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-[22px] border border-white/85 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3">
                 <div className="flex items-center justify-between gap-2 flex-wrap pb-2 border-b border-slate-100 dark:border-white/5">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                    <span className="text-xs font-bold text-[#182542] dark:text-white flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white flex items-center gap-1.5">
                       <Radio size={13} className="text-emerald-500" />
                       <span>{ticker} • Son Canlı KAP &amp; SPK Bildirimi</span>
                     </span>
@@ -668,7 +668,7 @@ export default function CompanyDetailPage() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("AKIS")}
-                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                    className="text-xs text-blue-600 dark:text-[#C6F432] hover:underline font-bold flex items-center gap-1 cursor-pointer"
                   >
                     <span>Tüm Akışı İncele ({disclosures.length})</span>
                     <ArrowRight size={12} />
@@ -678,14 +678,14 @@ export default function CompanyDetailPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-700 dark:text-[#C6F432] border border-blue-500/20">
                         {disclosures[0].category}
                       </span>
                       <span className="text-[11px] font-mono text-slate-400">
                         {disclosures[0].timeAgo}
                       </span>
                     </div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white truncate">
+                    <h4 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white truncate">
                       {disclosures[0].title}
                     </h4>
                   </div>
@@ -712,17 +712,17 @@ export default function CompanyDetailPage() {
         {activeTab === "KARNE" && scorecard && (
           <div className="space-y-6">
             {/* Header Score Banner */}
-            <div className="bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
+            <div className="bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8]">
                     Fintables &amp; Mizan Entegre Sağlık Karnesi 2.0
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-[#C6F432]/15 text-blue-800 dark:text-[#C6F432]">
                     24 Kriterli Bilanço &amp; Fıkıh Denetimi
                   </span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-[#182542] dark:text-white">
+                <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                   {ticker} Şirket Yatırım &amp; Fıkıh Karnesi
                 </h3>
                 <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -732,7 +732,7 @@ export default function CompanyDetailPage() {
 
               <div className="flex items-center gap-4 shrink-0">
                 <div className="text-right">
-                  <div className="text-2xl font-mono font-extrabold text-[#182542] dark:text-white">
+                  <div className="text-2xl font-mono font-extrabold text-[#08080C] dark:text-white">
                     {scorecard.totalScore} <span className="text-sm text-[#6E81A0]">/ 24</span>
                   </div>
                   <div className="text-[10px] text-[#6E81A0] font-bold flex items-center justify-end gap-1.5 mt-0.5">
@@ -760,8 +760,8 @@ export default function CompanyDetailPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
                 <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">1. Kârlılık</span>
-                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.profitabilityScore}/6</span>
+                    <span className="text-[10px] font-bold text-blue-700 dark:text-[#C6F432] uppercase tracking-wider">1. Kârlılık</span>
+                    <span className="font-mono font-bold text-xs text-[#08080C] dark:text-white">{scorecard.profitabilityScore}/6</span>
                   </div>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
                     {scorecard.categorySummaries.profitability}
@@ -770,7 +770,7 @@ export default function CompanyDetailPage() {
                 <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">2. Büyüme</span>
-                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.growthScore}/6</span>
+                    <span className="font-mono font-bold text-xs text-[#08080C] dark:text-white">{scorecard.growthScore}/6</span>
                   </div>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
                     {scorecard.categorySummaries.growth}
@@ -778,8 +778,8 @@ export default function CompanyDetailPage() {
                 </div>
                 <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider">3. Borçluluk</span>
-                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.debtScore}/6</span>
+                    <span className="text-[10px] font-bold text-indigo-700 dark:text-[#C6F432] uppercase tracking-wider">3. Borçluluk</span>
+                    <span className="font-mono font-bold text-xs text-[#08080C] dark:text-white">{scorecard.debtScore}/6</span>
                   </div>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
                     {scorecard.categorySummaries.debt}
@@ -788,7 +788,7 @@ export default function CompanyDetailPage() {
                 <div className="p-4 rounded-2xl bg-white/70 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">4. Fıkhi Uyum</span>
-                    <span className="font-mono font-bold text-xs text-[#182542] dark:text-white">{scorecard.shariahScore}/6</span>
+                    <span className="font-mono font-bold text-xs text-[#08080C] dark:text-white">{scorecard.shariahScore}/6</span>
                   </div>
                   <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight font-normal">
                     {scorecard.categorySummaries.shariah}
@@ -800,13 +800,13 @@ export default function CompanyDetailPage() {
             {/* 4 Scorecard Pillars Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Pillar 1: Kârlılık */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
-                  <span className="text-xs font-extrabold uppercase text-[#182542] dark:text-white flex items-center gap-1.5">
-                    <Activity size={14} className="text-blue-600 dark:text-blue-400" />
+                  <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
+                    <Activity size={14} className="text-blue-600 dark:text-[#C6F432]" />
                     <span>1. Kârlılık Karnesi</span>
                   </span>
-                  <span className="font-mono text-xs font-bold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-lg">
+                  <span className="font-mono text-xs font-bold text-blue-700 dark:text-[#C6F432] bg-blue-50 dark:bg-[#C6F432]/15 px-2 py-0.5 rounded-lg">
                     {scorecard.profitabilityScore} / 6
                   </span>
                 </div>
@@ -844,9 +844,9 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Pillar 2: Büyüme */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
-                  <span className="text-xs font-extrabold uppercase text-[#182542] dark:text-white flex items-center gap-1.5">
+                  <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
                     <TrendingUp size={14} className="text-emerald-600 dark:text-emerald-400" />
                     <span>2. Büyüme Karnesi</span>
                   </span>
@@ -888,13 +888,13 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Pillar 3: Borçluluk */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
-                  <span className="text-xs font-extrabold uppercase text-[#182542] dark:text-white flex items-center gap-1.5">
-                    <ShieldCheck size={14} className="text-indigo-600 dark:text-indigo-400" />
+                  <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
+                    <ShieldCheck size={14} className="text-indigo-600 dark:text-[#C6F432]" />
                     <span>3. Borçluluk &amp; Kaldıraç Karnesi</span>
                   </span>
-                  <span className="font-mono text-xs font-bold text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-lg">
+                  <span className="font-mono text-xs font-bold text-indigo-700 dark:text-[#C6F432] bg-indigo-50 dark:bg-[#C6F432]/15 px-2 py-0.5 rounded-lg">
                     {scorecard.debtScore} / 6
                   </span>
                 </div>
@@ -932,9 +932,9 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Pillar 4: Fıkhi Katılım */}
-              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0E1015] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+              <div className="p-5 rounded-[28px] bg-white/85 dark:bg-[#0D0E14] backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-2">
-                  <span className="text-xs font-extrabold uppercase text-[#182542] dark:text-white flex items-center gap-1.5">
+                  <span className="text-xs font-extrabold uppercase text-[#08080C] dark:text-white flex items-center gap-1.5">
                     <Scale size={14} className="text-emerald-600 dark:text-emerald-400" />
                     <span>4. Mizan Fıkhi Katılım Karnesi</span>
                   </span>
@@ -985,26 +985,26 @@ export default function CompanyDetailPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Category 1: Değerleme Çarpanları */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   1. Değerleme Çarpanları
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">F/K (Fiyat/Kazanç)</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.valuation.pe}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.valuation.pe}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">PD / DD (Defter Değeri)</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.valuation.pb}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.valuation.pb}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">FD / FAVÖK</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.valuation.evEbitda}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.valuation.evEbitda}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Fiyat / Serbest Nakit</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.valuation.priceToFcf === "A/D" ? "A/D" : `${dRatios.valuation.priceToFcf}x`}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.valuation.priceToFcf === "A/D" ? "A/D" : `${dRatios.valuation.priceToFcf}x`}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Hisse Başına Kâr (EPS)</span>
@@ -1018,14 +1018,14 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Category 2: Kârlılık Oranları */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   2. Kârlılık Marjları
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Brüt Kâr Marjı</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.profitability.grossMargin}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.profitability.grossMargin}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">FAVÖK Marjı</span>
@@ -1033,15 +1033,15 @@ export default function CompanyDetailPage() {
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Net Kâr Marjı</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.profitability.netMargin}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.profitability.netMargin}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Özkaynak Kârlılığı (ROE)</span>
-                    <span className="text-base font-mono font-extrabold text-indigo-700 dark:text-indigo-400">{dRatios.profitability.roe}</span>
+                    <span className="text-base font-mono font-extrabold text-indigo-700 dark:text-[#C6F432]">{dRatios.profitability.roe}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Varlık Kârlılığı (ROA)</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.profitability.roa}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.profitability.roa}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Yatırılan Sermaye (ROIC)</span>
@@ -1051,18 +1051,18 @@ export default function CompanyDetailPage() {
               </div>
 
               {/* Category 3: Likidite & Çalışma Sermayesi */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   3. Likidite ve Çalışma Sermayesi
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Cari Oran (Current Ratio)</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.liquidity.currentRatio}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.liquidity.currentRatio}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Likit Oran (Asit-Test)</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.liquidity.quickRatio}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.liquidity.quickRatio}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Nakit Oranı</span>
@@ -1070,28 +1070,28 @@ export default function CompanyDetailPage() {
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Net Çalışma Sermayesi</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.liquidity.workingCapitalTRY}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.liquidity.workingCapitalTRY}</span>
                   </div>
                 </div>
               </div>
 
               {/* Category 4: Borçluluk & Finansal Yapı */}
-              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0E1015] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
-                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#182542] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
+              <div className="p-5 rounded-[28px] bg-white/80 dark:bg-[#0D0E14] backdrop-blur-2xl border border-white/85 dark:border-white/10 shadow-2xs space-y-3 transition-colors">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-[#08080C] dark:text-white border-b border-slate-100 dark:border-white/10 pb-2">
                   4. Borçluluk ve Kaldıraç
                 </h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Finansal Borç / Özkaynak</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.debt.debtToEquity}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.debt.debtToEquity}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Net Borç / FAVÖK</span>
-                    <span className="text-base font-mono font-extrabold text-indigo-700 dark:text-indigo-400">{dRatios.debt.netDebtToEbitda}</span>
+                    <span className="text-base font-mono font-extrabold text-indigo-700 dark:text-[#C6F432]">{dRatios.debt.netDebtToEbitda}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Kaldıraç (Borç / Aktif)</span>
-                    <span className="text-base font-mono font-extrabold text-[#182542] dark:text-white">{dRatios.debt.debtToAssets}</span>
+                    <span className="text-base font-mono font-extrabold text-[#08080C] dark:text-white">{dRatios.debt.debtToAssets}</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10">
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8] font-semibold block">Toplam Finansal Borç</span>
@@ -1121,10 +1121,10 @@ export default function CompanyDetailPage() {
         {activeTab === "TEMETTU_RAKIP" && (
           <div className="space-y-6">
             {/* Temettü Geçmişi & Fıkhi Arındırma Tablosu */}
-            <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
               <div className="flex items-center justify-between border-b border-[#EDF1F7] dark:border-white/10 pb-3">
                 <div className="space-y-0.5">
-                  <h3 className="text-base font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                  <h3 className="text-base font-bold text-[#08080C] dark:text-white flex items-center gap-2">
                     <Coins size={16} className="text-emerald-600 dark:text-emerald-400" />
                     <span>Temettü Geçmişi ve Temettü Başına Fıkhi Arındırma</span>
                   </h3>
@@ -1149,7 +1149,7 @@ export default function CompanyDetailPage() {
                     <tbody className="divide-y divide-slate-100 dark:divide-white/5 font-mono">
                       {divHist.map((d) => (
                         <tr key={d.year} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition">
-                          <td className="py-2.5 px-3 font-bold text-[#182542] dark:text-white">{d.year}</td>
+                          <td className="py-2.5 px-3 font-bold text-[#08080C] dark:text-white">{d.year}</td>
                           <td className="py-2.5 px-3 font-bold text-slate-800 dark:text-slate-200">{d.grossPerShareTRY}</td>
                           <td className="py-2.5 px-3 text-emerald-700 dark:text-emerald-400 font-bold">{d.dividendYieldPercent}</td>
                           <td className="py-2.5 px-3 font-bold text-amber-700 dark:text-amber-400">{d.purificationPerShareTRY}</td>
@@ -1165,11 +1165,11 @@ export default function CompanyDetailPage() {
             </div>
 
             {/* Sektörel Rakip Kıyaslama Tablosu */}
-            <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
               <div className="flex items-center justify-between border-b border-[#EDF1F7] dark:border-white/10 pb-3">
                 <div className="space-y-0.5">
-                  <h3 className="text-base font-bold text-[#182542] dark:text-white flex items-center gap-2">
-                    <Users2 size={16} className="text-indigo-600 dark:text-indigo-400" />
+                  <h3 className="text-base font-bold text-[#08080C] dark:text-white flex items-center gap-2">
+                    <Users2 size={16} className="text-indigo-600 dark:text-[#C6F432]" />
                     <span>Sektörel Rakip Kıyaslaması ({data.sector})</span>
                   </h3>
                   <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">Aynı sektörde işlem gören diğer hisselerle çarpan ve katılım kıyası.</p>
@@ -1195,7 +1195,7 @@ export default function CompanyDetailPage() {
                     <tbody className="divide-y divide-slate-100 dark:divide-white/5 font-mono">
                       {peers.map((p) => (
                         <tr key={p.ticker} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition">
-                          <td className="py-2.5 px-3 font-bold text-[#182542] dark:text-white">
+                          <td className="py-2.5 px-3 font-bold text-[#08080C] dark:text-white">
                             <div className="flex items-center gap-2">
                               <StockLogo ticker={p.ticker} name={p.name} size="xs" />
                               <div>
@@ -1225,12 +1225,12 @@ export default function CompanyDetailPage() {
                           <td className="py-2.5 px-3 font-bold text-slate-700 dark:text-slate-300">{p.peRatio}</td>
                           <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300">{p.pbRatio}</td>
                           <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300">{p.evEbitda}</td>
-                          <td className="py-2.5 px-3 text-indigo-700 dark:text-indigo-400 font-semibold">{p.roePercent || "-"}</td>
+                          <td className="py-2.5 px-3 text-indigo-700 dark:text-[#C6F432] font-semibold">{p.roePercent || "-"}</td>
                           <td className="py-2.5 px-3 text-slate-700 dark:text-slate-300">%{p.debtRatioPercent.toFixed(1)}</td>
                           <td className="py-2.5 px-3 text-right">
                             <Link
                               href={`/companies/${p.ticker}`}
-                              className="px-2.5 py-1 rounded-lg bg-[#182542] hover:bg-[#273869] text-white text-[10px] font-bold font-sans transition inline-flex items-center gap-1"
+                              className="px-2.5 py-1 rounded-lg bg-[#08080C] hover:bg-[#10B981] text-white text-[10px] font-bold font-sans transition inline-flex items-center gap-1"
                             >
                               <span>İncele</span>
                               <ArrowRight size={10} />
@@ -1255,15 +1255,15 @@ export default function CompanyDetailPage() {
           <div className="space-y-6">
             
             {/* AI Header Card */}
-            <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
+            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-[#182542] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-[#08080C] text-white flex items-center justify-center shadow-xs">
                     <Sparkles size={22} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-extrabold text-[#182542] dark:text-white">Mizan AI 2.0 &bull; Fıkhi ve Finansal Bilanço Zekâsı</h3>
+                      <h3 className="text-base font-extrabold text-[#08080C] dark:text-white">Mizan AI 2.0 &bull; Fıkhi ve Finansal Bilanço Zekâsı</h3>
                       {isSampleFreeStock ? (
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300">
                           Örnek Ücretsiz Rapor (BIMAS)
@@ -1279,17 +1279,17 @@ export default function CompanyDetailPage() {
                 </div>
 
                 {/* Score Capsule */}
-                <div className="flex items-center gap-2 bg-[#182542] text-white px-4 py-2 rounded-2xl shadow-sm border border-white/10">
+                <div className="flex items-center gap-2 bg-[#08080C] text-white px-4 py-2 rounded-2xl shadow-sm border border-white/10">
                   <span className="text-xs font-medium text-white/70">Mizan Skoru:</span>
                   <span className="font-mono font-extrabold text-base text-emerald-300">{ai.score} / 10</span>
                 </div>
               </div>
 
               {/* Verdict Summary Callout */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-semibold text-[#182542] dark:text-white leading-relaxed flex items-start gap-2.5">
-                <Compass size={16} className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white leading-relaxed flex items-start gap-2.5">
+                <Compass size={16} className="text-indigo-600 dark:text-[#C6F432] shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-extrabold text-[#182542] dark:text-white">{ai.verdict}: </span>
+                  <span className="font-extrabold text-[#08080C] dark:text-white">{ai.verdict}: </span>
                   <span className="text-slate-700 dark:text-slate-300 font-normal">{ai.shariahRiskSummary}</span>
                 </div>
               </div>
@@ -1319,10 +1319,10 @@ export default function CompanyDetailPage() {
                       2. Finansal Dayanıklılık
                     </span>
                     <div className="flex items-baseline justify-between">
-                      <span className="font-mono font-extrabold text-base text-indigo-700 dark:text-indigo-400">
+                      <span className="font-mono font-extrabold text-base text-indigo-700 dark:text-[#C6F432]">
                         {ai.scoresBreakdown.financialResilience.score} <span className="text-xs font-normal text-slate-400">/ 10</span>
                       </span>
-                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300">
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-[#C6F432]/15 text-indigo-800 dark:text-indigo-300">
                         {ai.scoresBreakdown.financialResilience.status}
                       </span>
                     </div>
@@ -1398,7 +1398,7 @@ export default function CompanyDetailPage() {
                 <div className="p-4 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200/80 dark:border-indigo-800/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                   <div className="space-y-0.5">
                     <span className="text-[10px] uppercase font-bold text-indigo-900 dark:text-indigo-300 flex items-center gap-1.5">
-                      <Cpu size={14} className="text-indigo-700 dark:text-indigo-400" />
+                      <Cpu size={14} className="text-indigo-700 dark:text-[#C6F432]" />
                       <span>Mizan AI 2.0 Fıkhi Stres Testi &amp; Borçlanma Simülasyonu</span>
                     </span>
                     <p className="text-indigo-950 dark:text-indigo-200 font-normal leading-relaxed text-[11px]">
@@ -1454,7 +1454,7 @@ export default function CompanyDetailPage() {
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <ShieldCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
-                        <h4 className="text-sm font-extrabold text-[#182542] dark:text-white">
+                        <h4 className="text-sm font-extrabold text-[#08080C] dark:text-white">
                           Sektörel İkame &bull; Katılım Uyumlu Alternatifler
                         </h4>
                       </div>
@@ -1470,10 +1470,10 @@ export default function CompanyDetailPage() {
                         <Link
                           key={alt.ticker}
                           href={`/companies/${alt.ticker}`}
-                          className="p-4 rounded-2xl bg-white dark:bg-[#0E1015] border border-slate-200/80 dark:border-white/10 hover:border-emerald-500 transition shadow-xs group block"
+                          className="p-4 rounded-2xl bg-white dark:bg-[#0D0E14] border border-slate-200/80 dark:border-white/10 hover:border-emerald-500 transition shadow-xs group block"
                         >
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="font-extrabold text-sm text-[#182542] dark:text-white group-hover:text-emerald-600 transition">
+                            <span className="font-extrabold text-sm text-[#08080C] dark:text-white group-hover:text-emerald-600 transition">
                               {alt.ticker}
                             </span>
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60">
@@ -1489,7 +1489,7 @@ export default function CompanyDetailPage() {
                           </div>
                           <div className="flex items-center justify-between text-[11px] pt-1">
                             <span className="text-slate-500">F/K &bull; PD/DD:</span>
-                            <span className="font-mono font-bold text-[#182542] dark:text-white">{alt.peRatio} &bull; {alt.pbRatio}</span>
+                            <span className="font-mono font-bold text-[#08080C] dark:text-white">{alt.peRatio} &bull; {alt.pbRatio}</span>
                           </div>
                           <div className="mt-2 text-[10px] text-slate-500 italic line-clamp-1">
                             {alt.reason}
@@ -1503,9 +1503,9 @@ export default function CompanyDetailPage() {
                 {/* 6 In-Depth Analysis Bento Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Section 1: Financial Health */}
-                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
-                      <Activity size={14} className="text-indigo-600 dark:text-indigo-400" />
+                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
+                      <Activity size={14} className="text-indigo-600 dark:text-[#C6F432]" />
                       <span>1. Finansal Büyüme &amp; Kârlılık Röntgeni</span>
                     </h4>
                     <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
@@ -1514,8 +1514,8 @@ export default function CompanyDetailPage() {
                   </div>
 
                   {/* Section 2: Purification Note */}
-                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
+                  <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                       <Coins size={14} className="text-emerald-600 dark:text-emerald-400" />
                       <span>2. Fıkhi Arındırma &amp; Zekât Yükü</span>
                     </h4>
@@ -1526,8 +1526,8 @@ export default function CompanyDetailPage() {
 
                   {/* Section 3: DuPont & ROE Quality */}
                   {ai.dupontAiSynthesis && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <Split size={14} className="text-purple-600 dark:text-purple-400" />
                         <span>3. DuPont Model &amp; ROE Kalitesi Sentezi</span>
                       </h4>
@@ -1539,8 +1539,8 @@ export default function CompanyDetailPage() {
 
                   {/* Section 4: Valuation & Peer Benchmarking */}
                   {ai.valuationInsight && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <BarChart3 size={14} className="text-amber-600 dark:text-amber-400" />
                         <span>4. Sektörel Değerleme &amp; Çarpan Kıyaslaması</span>
                       </h4>
@@ -1552,8 +1552,8 @@ export default function CompanyDetailPage() {
 
                   {/* Section 5: Target Investor Profile */}
                   {ai.targetInvestorProfile && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <Target size={14} className="text-rose-600 dark:text-rose-400" />
                         <span>5. Hedef Yatırımcı Profili &amp; Uygunluk</span>
                       </h4>
@@ -1565,15 +1565,15 @@ export default function CompanyDetailPage() {
 
                   {/* Section 6: Action Plan */}
                   {ai.shariahActionPlan && (
-                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
-                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#182542] dark:text-white flex items-center gap-2">
+                    <div className="p-6 rounded-[28px] bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl border border-white/85 dark:border-white/10 shadow-2xs space-y-2">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-[#08080C] dark:text-white flex items-center gap-2">
                         <Scale size={14} className="text-emerald-600 dark:text-emerald-400" />
                         <span>6. Mizan Fıkhi Aksiyon Rehberi</span>
                       </h4>
                       <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
                         {ai.shariahActionPlan.split("\n").map((step, idx) => (
                           <p key={idx} className="flex items-start gap-1.5">
-                            <span className="font-bold text-[#182542] dark:text-white shrink-0">&bull;</span>
+                            <span className="font-bold text-[#08080C] dark:text-white shrink-0">&bull;</span>
                             <span>{step.replace(/^[0-9]+\.\s*/, "")}</span>
                           </p>
                         ))}
@@ -1616,7 +1616,7 @@ export default function CompanyDetailPage() {
               /* LOCKED PAYWALL FOR OTHER STOCKS WHEN ON FREE TIER */
               <div className="relative rounded-[28px] overflow-hidden border border-white/90 dark:border-white/10 shadow-lg">
                 {/* Blurred Background Preview */}
-                <div className="p-8 space-y-4 filter blur-xs select-none pointer-events-none opacity-40 bg-white dark:bg-[#0E1015]">
+                <div className="p-8 space-y-4 filter blur-xs select-none pointer-events-none opacity-40 bg-white dark:bg-[#0D0E14]">
                   <h4 className="text-sm font-bold dark:text-white">1. Finansal Büyüme &amp; Kârlılık Röntgeni</h4>
                   <p className="text-xs leading-relaxed dark:text-slate-300">
                     Şirketin 2026 yılı 3. çeyrek finansal tablolarında esas faaliyet kârlılığı güçlü bir ivme sergilemiş olup, faizli borç rasyolarındaki hareketlilik izlenmektedir...
@@ -1632,7 +1632,7 @@ export default function CompanyDetailPage() {
                 </div>
 
                 {/* Centered Frosted Conversion Modal Overlay */}
-                <div className="absolute inset-0 bg-[#182542]/70 dark:bg-black/70 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white space-y-4">
+                <div className="absolute inset-0 bg-[#08080C]/70 dark:bg-black/70 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center text-white space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 to-amber-600 text-white flex items-center justify-center shadow-lg">
                     <Sparkles size={24} />
                   </div>
@@ -1649,7 +1649,7 @@ export default function CompanyDetailPage() {
                   <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
                     <Link
                       href="/ayarlar"
-                      className="px-5 py-2.5 rounded-full bg-white text-[#182542] hover:bg-slate-100 text-xs font-bold transition shadow-md flex items-center gap-1.5 active:scale-95"
+                      className="px-5 py-2.5 rounded-full bg-white text-[#08080C] hover:bg-slate-100 text-xs font-bold transition shadow-md flex items-center gap-1.5 active:scale-95"
                     >
                       <Sparkles size={13} className="text-amber-600" />
                       <span>Mizan PRO&apos;ya Geç (₺149/ay)</span>
@@ -1676,15 +1676,15 @@ export default function CompanyDetailPage() {
         {activeTab === "AKIS" && (
           <div className="space-y-5">
             {/* Akış Başlık Kartı */}
-            <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+            <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#182542] to-[#2563EB] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#08080C] to-[#2563EB] text-white flex items-center justify-center shadow-xs">
                     <Radio size={20} className="animate-pulse" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-base font-extrabold text-[#182542] dark:text-white">
+                      <h3 className="text-base font-extrabold text-[#08080C] dark:text-white">
                         {ticker} &bull; Canlı KAP &amp; SPK Akışı
                       </h3>
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
@@ -1704,7 +1704,7 @@ export default function CompanyDetailPage() {
                     href={`https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3.5 py-1.5 rounded-full bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                    className="px-3.5 py-1.5 rounded-full bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
                   >
                     <span>KAP Resmi Sayfası</span>
                     <ExternalLink size={12} />
@@ -1714,7 +1714,7 @@ export default function CompanyDetailPage() {
                     href="https://spk.gov.tr/spk-bultenleri"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition flex items-center gap-1.5"
+                    className="px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 text-[#08080C] dark:text-white text-xs font-bold transition flex items-center gap-1.5"
                   >
                     <span>SPK Bültenleri</span>
                     <ExternalLink size={12} />
@@ -1730,7 +1730,7 @@ export default function CompanyDetailPage() {
               return (
                 <div className="space-y-3">
                   {disclosuresLoading && tickerDisclosures.length === 0 ? (
-                    <div className="p-8 text-center bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-2xl border border-white/80 dark:border-white/10">
+                    <div className="p-8 text-center bg-white/70 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-2xl border border-white/80 dark:border-white/10">
                       <RefreshCw size={20} className="animate-spin text-slate-400 mx-auto mb-2" />
                       <p className="text-xs text-[#6E81A0]">KAP ve SPK resmi akışı kontrol ediliyor...</p>
                     </div>
@@ -1738,7 +1738,7 @@ export default function CompanyDetailPage() {
                     tickerDisclosures.map((item) => (
                       <div
                         key={item.id}
-                        className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-[22px] border border-white/80 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3 transition hover:border-[#182542]/30 dark:hover:border-white/20"
+                        className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-[22px] border border-white/80 dark:border-white/10 p-4 sm:p-5 shadow-xs space-y-3 transition hover:border-[#08080C]/30 dark:hover:border-white/20"
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
@@ -1756,7 +1756,7 @@ export default function CompanyDetailPage() {
                         </div>
 
                         <div>
-                          <h4 className="text-sm font-bold text-[#182542] dark:text-white leading-snug">
+                          <h4 className="text-sm font-bold text-[#08080C] dark:text-white leading-snug">
                             {item.title}
                           </h4>
                           {item.summary && (
@@ -1779,7 +1779,7 @@ export default function CompanyDetailPage() {
                           <button
                             type="button"
                             onClick={() => setSelectedDisclosure(item)}
-                            className="inline-flex items-center gap-1.5 font-bold text-[#182542] dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300"
+                            className="inline-flex items-center gap-1.5 font-bold text-[#08080C] dark:text-[#C6F432] hover:text-blue-600 dark:hover:text-blue-300"
                           >
                             <Sparkles size={12} className="text-amber-500" />
                             <span>Mizan AI Fıkhi Analizi &amp; Ayrıntı</span>
@@ -1789,7 +1789,7 @@ export default function CompanyDetailPage() {
                             href={item.url || `https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                            className="inline-flex items-center gap-1 font-semibold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                           >
                             <span>KAP Resmi Bildirimini Aç</span>
                             <ExternalLink size={11} />
@@ -1798,12 +1798,12 @@ export default function CompanyDetailPage() {
                       </div>
                     ))
                   ) : (
-                    <div className="p-8 text-center bg-white/70 dark:bg-[#0E1015]/80 backdrop-blur-xl rounded-[26px] border border-white/80 dark:border-white/10 space-y-3">
+                    <div className="p-8 text-center bg-white/70 dark:bg-[#0D0E14]/80 backdrop-blur-xl rounded-[26px] border border-white/80 dark:border-white/10 space-y-3">
                       <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-500 flex items-center justify-center mx-auto">
                         <FileText size={18} />
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-sm font-bold text-[#182542] dark:text-white">
+                        <h4 className="text-sm font-bold text-[#08080C] dark:text-white">
                           Son 72 Saatte Yeni KAP Bildirimi Bulunmuyor
                         </h4>
                         <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] max-w-md mx-auto">
@@ -1814,7 +1814,7 @@ export default function CompanyDetailPage() {
                         href={`https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#182542] dark:bg-[#273869] text-white text-xs font-bold hover:scale-105 transition shadow-xs"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#08080C] dark:bg-[#10B981] text-white text-xs font-bold hover:scale-105 transition shadow-xs"
                       >
                         <span>KAP {ticker} Resmi Şirket Sayfasına Git</span>
                         <ExternalLink size={12} />
@@ -1836,13 +1836,13 @@ export default function CompanyDetailPage() {
                         <div
                           key={d.id}
                           onClick={() => setSelectedDisclosure(d)}
-                          className="p-3.5 rounded-2xl bg-white/70 dark:bg-[#0E1015]/70 backdrop-blur-md border border-white/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 transition cursor-pointer space-y-1.5"
+                          className="p-3.5 rounded-2xl bg-white/70 dark:bg-[#0D0E14]/70 backdrop-blur-md border border-white/80 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 transition cursor-pointer space-y-1.5"
                         >
                           <div className="flex items-center justify-between text-[10px]">
-                            <span className="font-bold text-blue-600 dark:text-blue-400">{d.category}</span>
+                            <span className="font-bold text-blue-600 dark:text-[#C6F432]">{d.category}</span>
                             <span className="font-mono text-slate-400">{d.timeAgo}</span>
                           </div>
-                          <p className="text-xs font-bold text-[#182542] dark:text-white line-clamp-2">
+                          <p className="text-xs font-bold text-[#08080C] dark:text-white line-clamp-2">
                             {d.title}
                           </p>
                         </div>

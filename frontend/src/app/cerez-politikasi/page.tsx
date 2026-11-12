@@ -53,12 +53,12 @@ export default function CookiePolicyPage() {
       <div className="space-y-6 max-w-4xl mx-auto pb-12">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-[#6E81A0]">
-          <Link href="/" className="hover:text-[#182542] flex items-center gap-1 transition">
+          <Link href="/" className="hover:text-[#08080C] flex items-center gap-1 transition">
             <ArrowLeft size={13} />
             <span>Ana Sayfa</span>
           </Link>
           <span>/</span>
-          <span className="text-[#182542] font-semibold">Çerez Politikası &amp; İzin Yönetimi</span>
+          <span className="text-[#08080C] font-semibold">Çerez Politikası &amp; İzin Yönetimi</span>
         </div>
 
         {/* Hero Card */}
@@ -68,7 +68,7 @@ export default function CookiePolicyPage() {
             <span>GDPR Consent Mode v2 &bull; Granüler İzin Yönetimi</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#182542] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#08080C] tracking-tight">
             Çerez Politikası ve <span className="font-serif italic text-[#405881]">İzin Tercihleri</span>
           </h1>
 
@@ -81,13 +81,13 @@ export default function CookiePolicyPage() {
         <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/85 p-6 sm:p-8 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
           <div className="flex items-center justify-between border-b border-[#EDF1F7] pb-4">
             <div>
-              <h2 className="text-sm font-bold text-[#182542]">Çerez İzinlerinizi Özelleştirin</h2>
+              <h2 className="text-sm font-bold text-[#08080C]">Çerez İzinlerinizi Özelleştirin</h2>
               <p className="text-xs text-[#6E81A0]">Değişiklikler anında tarayıcınıza kaydedilir.</p>
             </div>
             <button
               type="button"
               onClick={handleSavePreferences}
-              className="px-4 py-2 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold shadow-xs transition"
+              className="px-4 py-2 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold shadow-xs transition"
             >
               Tercihleri Kaydet
             </button>
@@ -106,7 +106,7 @@ export default function CookiePolicyPage() {
             <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200 flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#182542]">1. Zorunlu ve Güvenlik Çerezleri</span>
+                  <span className="text-xs font-bold text-[#08080C]">1. Zorunlu ve Güvenlik Çerezleri</span>
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
                     Her Zaman Aktif
                   </span>
@@ -119,7 +119,7 @@ export default function CookiePolicyPage() {
                 type="checkbox"
                 checked={true}
                 disabled
-                className="w-4 h-4 text-[#182542] accent-[#182542] cursor-not-allowed mt-1"
+                className="w-4 h-4 text-[#08080C] accent-[#08080C] cursor-not-allowed mt-1"
               />
             </div>
 
@@ -127,7 +127,7 @@ export default function CookiePolicyPage() {
             <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#182542]">2. İşlevsel &amp; Tercih Çerezleri</span>
+                  <span className="text-xs font-bold text-[#08080C]">2. İşlevsel &amp; Tercih Çerezleri</span>
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
                     Önerilen
                   </span>
@@ -140,7 +140,7 @@ export default function CookiePolicyPage() {
                 type="checkbox"
                 checked={preferences.functional}
                 onChange={(e) => setPreferences({ ...preferences, functional: e.target.checked })}
-                className="w-4 h-4 text-[#182542] accent-[#182542] cursor-pointer mt-1"
+                className="w-4 h-4 text-[#08080C] accent-[#08080C] cursor-pointer mt-1"
               />
             </div>
 
@@ -148,7 +148,7 @@ export default function CookiePolicyPage() {
             <div className="p-4 rounded-2xl bg-white border border-[#EDF1F7] flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#182542]">3. Performans ve Analitik Çerezleri</span>
+                  <span className="text-xs font-bold text-[#08080C]">3. Performans ve Analitik Çerezleri</span>
                   <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                     İsteğe Bağlı
                   </span>
@@ -161,7 +161,7 @@ export default function CookiePolicyPage() {
                 type="checkbox"
                 checked={preferences.analytics}
                 onChange={(e) => setPreferences({ ...preferences, analytics: e.target.checked })}
-                className="w-4 h-4 text-[#182542] accent-[#182542] cursor-pointer mt-1"
+                className="w-4 h-4 text-[#08080C] accent-[#08080C] cursor-pointer mt-1"
               />
             </div>
           </div>

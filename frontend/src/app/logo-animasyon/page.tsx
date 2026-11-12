@@ -92,21 +92,21 @@ export default function LogoAnimationStudioPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] py-6 px-4 sm:px-6 lg:px-10 transition-colors duration-200">
+    <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#14151A] dark:text-[#F1F3F7] py-6 px-4 sm:px-6 lg:px-10 transition-colors duration-200">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* TOP HEADER */}
-        <header className="flex flex-wrap items-center justify-between gap-4 bg-white/80 dark:bg-[#0A0B0E]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 px-5 py-4 shadow-sm">
+        <header className="flex flex-wrap items-center justify-between gap-4 bg-white/80 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 px-5 py-4 shadow-sm">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 flex items-center justify-center text-[#182542] dark:text-white transition mizan-logo-pressable"
+              className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 flex items-center justify-center text-[#08080C] dark:text-white transition mizan-logo-pressable"
               title="Ana Sayfaya Dön"
             >
               <ArrowLeft size={16} />
             </Link>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-black tracking-tight text-[#182542] dark:text-white">
+                <h1 className="text-base sm:text-lg font-black tracking-tight text-[#08080C] dark:text-white">
                   Mizan Logo Açılış Animasyonu Stüdyosu
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-extrabold">
@@ -128,7 +128,7 @@ export default function LogoAnimationStudioPage() {
                   variant: selectedVariant,
                 })
               }
-              className="px-3.5 py-2 rounded-full bg-white dark:bg-[#141720] border border-slate-200 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white hover:border-[#273869] transition flex items-center gap-1.5 mizan-logo-pressable"
+              className="px-3.5 py-2 rounded-full bg-white dark:bg-[#141720] border border-slate-200 dark:border-white/10 text-xs font-bold text-[#08080C] dark:text-white hover:border-[#10B981] transition flex items-center gap-1.5 mizan-logo-pressable"
             >
               <Maximize2 size={13} />
               <span>Splash Test (Polish)</span>
@@ -142,7 +142,7 @@ export default function LogoAnimationStudioPage() {
                   variant: selectedVariant,
                 })
               }
-              className="px-4 py-2 rounded-full bg-[#182542] hover:bg-[#273869] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#182542] text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm mizan-logo-pressable"
+              className="px-4 py-2 rounded-full bg-[#08080C] hover:bg-[#10B981] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#08080C] text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm mizan-logo-pressable"
             >
               <Film size={13} />
               <span>Tam Ekran Sinematik Açılış</span>
@@ -151,7 +151,7 @@ export default function LogoAnimationStudioPage() {
             <button
               type="button"
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white transition mizan-logo-pressable"
+              className="w-9 h-9 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#08080C] dark:text-white transition mizan-logo-pressable"
               title="Tema Değiştir"
             >
               {isDark ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} />}
@@ -162,7 +162,7 @@ export default function LogoAnimationStudioPage() {
         {/* MAIN GRID: CONTROLS + INTERACTIVE STAGE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* LEFT PANEL: MOTION & ICON CONTROLS */}
-          <div className="lg:col-span-4 space-y-5 bg-white/85 dark:bg-[#0A0B0E]/90 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 shadow-sm">
+          <div className="lg:col-span-4 space-y-5 bg-white/85 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 shadow-sm">
             {/* 1. Motion Weighting Selector */}
             <div className="space-y-2.5">
               <label className="text-xs font-extrabold uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8] flex items-center gap-1.5">
@@ -179,8 +179,8 @@ export default function LogoAnimationStudioPage() {
                   }}
                   className={`p-3.5 rounded-2xl border text-left transition mizan-logo-pressable ${
                     selectedMotion === "polish"
-                      ? "bg-[#182542] text-white border-[#182542] dark:bg-white dark:text-[#182542] dark:border-white shadow-sm"
-                      : "bg-slate-50/80 dark:bg-white/5 border-slate-200/70 dark:border-white/10 text-[#182542] dark:text-white hover:border-slate-300"
+                      ? "bg-[#08080C] text-white border-[#08080C] dark:bg-white dark:text-[#08080C] dark:border-white shadow-sm"
+                      : "bg-slate-50/80 dark:bg-white/5 border-slate-200/70 dark:border-white/10 text-[#08080C] dark:text-white hover:border-slate-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -210,8 +210,8 @@ export default function LogoAnimationStudioPage() {
                   }}
                   className={`p-3.5 rounded-2xl border text-left transition mizan-logo-pressable ${
                     selectedMotion === "cinematic"
-                      ? "bg-[#182542] text-white border-[#182542] dark:bg-white dark:text-[#182542] dark:border-white shadow-sm"
-                      : "bg-slate-50/80 dark:bg-white/5 border-slate-200/70 dark:border-white/10 text-[#182542] dark:text-white hover:border-slate-300"
+                      ? "bg-[#08080C] text-white border-[#08080C] dark:bg-white dark:text-[#08080C] dark:border-white shadow-sm"
+                      : "bg-slate-50/80 dark:bg-white/5 border-slate-200/70 dark:border-white/10 text-[#08080C] dark:text-white hover:border-slate-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -255,7 +255,7 @@ export default function LogoAnimationStudioPage() {
                       }}
                       className={`w-full p-3 rounded-2xl border text-left transition flex items-start gap-3 mizan-logo-pressable ${
                         active
-                          ? "bg-slate-900/5 dark:bg-white/10 border-[#273869] dark:border-white/40"
+                          ? "bg-slate-900/5 dark:bg-white/10 border-[#10B981] dark:border-white/40"
                           : "bg-white/60 dark:bg-white/[0.02] border-slate-200/60 dark:border-white/10 hover:border-slate-300"
                       }`}
                     >
@@ -268,14 +268,14 @@ export default function LogoAnimationStudioPage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
-                          <span className="text-xs font-bold text-[#182542] dark:text-white truncate">
+                          <span className="text-xs font-bold text-[#08080C] dark:text-white truncate">
                             {item.label}
                           </span>
                           {active && (
                             <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
                           )}
                         </div>
-                        <span className="text-[10px] font-mono text-[#273869] dark:text-sky-400 block truncate">
+                        <span className="text-[10px] font-mono text-[#10B981] dark:text-sky-400 block truncate">
                           {item.sourceFile}
                         </span>
                       </div>
@@ -310,7 +310,7 @@ export default function LogoAnimationStudioPage() {
                       }}
                       className={`py-2.5 px-2 rounded-xl border text-[11px] font-bold flex flex-col items-center gap-1 transition mizan-logo-pressable ${
                         active
-                          ? "bg-[#182542] text-white border-[#182542] dark:bg-white dark:text-[#182542]"
+                          ? "bg-[#08080C] text-white border-[#08080C] dark:bg-white dark:text-[#08080C]"
                           : "bg-slate-50 dark:bg-white/5 border-slate-200/60 dark:border-white/10 text-[#525E75] dark:text-slate-300"
                       }`}
                     >
@@ -352,7 +352,7 @@ export default function LogoAnimationStudioPage() {
               {/* Ambient Glows */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[320px] rounded-full bg-gradient-to-b from-sky-500/15 via-[#273869]/20 to-transparent blur-3xl"
+                className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[520px] h-[320px] rounded-full bg-gradient-to-b from-sky-500/15 via-[#10B981]/20 to-transparent blur-3xl"
               />
               <div
                 aria-hidden="true"
@@ -549,10 +549,10 @@ export default function LogoAnimationStudioPage() {
             </div>
 
             {/* SIDE-BY-SIDE COMPARISON STRIP (ALL 4 MASTER SVG ICONS) */}
-            <div className="bg-white/85 dark:bg-[#0A0B0E]/90 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 sm:p-6 space-y-4 shadow-sm">
+            <div className="bg-white/85 dark:bg-[#0D0E14]/90 backdrop-blur-2xl rounded-[28px] border border-white/90 dark:border-white/10 p-5 sm:p-6 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-extrabold text-[#182542] dark:text-white">
+                  <h2 className="text-sm font-extrabold text-[#08080C] dark:text-white">
                     Yüksek Çözünürlüklü Master İkon Koleksiyonu (`logolar/` &amp; `public/brand/`)
                   </h2>
                   <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -576,7 +576,7 @@ export default function LogoAnimationStudioPage() {
                       setSelectedVariant(card.id);
                       setReplayCounter((c) => c + 1);
                     }}
-                    className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 hover:border-[#273869] dark:hover:border-white/30 transition flex flex-col items-center gap-3 cursor-pointer mizan-logo-pressable"
+                    className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 hover:border-[#10B981] dark:hover:border-white/30 transition flex flex-col items-center gap-3 cursor-pointer mizan-logo-pressable"
                   >
                     <AnimatedMizanLogo
                       variant={card.id}
@@ -584,7 +584,7 @@ export default function LogoAnimationStudioPage() {
                       size={76}
                       replayKey={replayCounter}
                     />
-                    <span className="text-xs font-bold text-[#182542] dark:text-white text-center">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white text-center">
                       {card.title}
                     </span>
                   </div>

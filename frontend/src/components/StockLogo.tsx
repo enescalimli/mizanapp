@@ -49,7 +49,7 @@ export const StockLogo: React.FC<StockLogoProps> = ({
   if (hasError) {
     return (
       <div
-        className={`${sizeClass} rounded-2xl bg-gradient-to-tr from-[#182542] to-[#273869] dark:from-[#1E293B] dark:to-[#334155] text-white font-mono font-bold flex items-center justify-center shrink-0 shadow-xs border border-white/10 ${className}`}
+        className={`${sizeClass} rounded-2xl bg-gradient-to-tr from-[#08080C] to-[#10B981] dark:from-[#1E293B] dark:to-[#334155] text-white font-mono font-bold flex items-center justify-center shrink-0 shadow-xs border border-white/10 ${className}`}
         title={`${cleanTicker} - ${name || ""}`}
       >
         <span>{initials}</span>

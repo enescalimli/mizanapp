@@ -175,13 +175,13 @@ export function FinancialReportsTab({
       {/* =================================================================== */}
       {/* 1. ÜST SEÇİM VE KONTROL PANELİ                                      */}
       {/* =================================================================== */}
-      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
+      <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-5 sm:p-6 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-4">
         
         {/* Başlık & İndir */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EDF1F7] dark:border-white/10 pb-3">
           <div>
-            <h3 className="text-base font-extrabold text-[#182542] dark:text-white flex items-center gap-2">
-              <FileSpreadsheet size={17} className="text-indigo-600 dark:text-indigo-400" />
+            <h3 className="text-base font-extrabold text-[#08080C] dark:text-white flex items-center gap-2">
+              <FileSpreadsheet size={17} className="text-indigo-600 dark:text-[#C6F432]" />
               <span>Ayrıntılı Finansal Tablolar &amp; KAP Raporları</span>
             </h3>
             <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -197,8 +197,8 @@ export function FinancialReportsTab({
                 onClick={() => setUnit("MN")}
                 className={`px-2.5 py-1 rounded-full transition ${
                   unit === "MN"
-                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
               >
                 Mn ₺
@@ -208,8 +208,8 @@ export function FinancialReportsTab({
                 onClick={() => setUnit("BIN")}
                 className={`px-2.5 py-1 rounded-full transition ${
                   unit === "BIN"
-                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
               >
                 Bin ₺
@@ -219,8 +219,8 @@ export function FinancialReportsTab({
                 onClick={() => setUnit("RAW")}
                 className={`px-2.5 py-1 rounded-full transition ${
                   unit === "RAW"
-                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-xs"
-                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                    : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
               >
                 Tam ₺
@@ -231,7 +231,7 @@ export function FinancialReportsTab({
             <button
               type="button"
               onClick={handleExportCsv}
-              className="px-3 py-1.5 rounded-full bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-[#182542] dark:text-white flex items-center gap-1.5 transition shadow-2xs"
+              className="px-3 py-1.5 rounded-full bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 border border-slate-200/80 dark:border-white/10 text-xs font-bold text-[#08080C] dark:text-white flex items-center gap-1.5 transition shadow-2xs"
               title="Tabloyu Excel / CSV olarak indir"
             >
               <Download size={13} />
@@ -258,8 +258,8 @@ export function FinancialReportsTab({
                 onClick={() => setStatementType(tab.id as StatementType)}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 transition shrink-0 ${
                   isActive
-                    ? "bg-[#182542] dark:bg-[#273869] text-white shadow-md shadow-[#182542]/15"
-                    : "bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white border border-slate-200/60 dark:border-white/5"
+                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-md shadow-[#08080C]/15"
+                    : "bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white border border-slate-200/60 dark:border-white/5"
                 }`}
               >
                 <Icon size={14} />
@@ -313,7 +313,7 @@ export function FinancialReportsTab({
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 placeholder="Kalem ara (örn: nakit, faiz)..."
-                className="w-full pl-8 pr-3 py-1.5 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 text-xs text-[#182542] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] outline-none focus:border-indigo-500 transition"
+                className="w-full pl-8 pr-3 py-1.5 rounded-full bg-slate-50 dark:bg-white/5 border border-slate-200/70 dark:border-white/10 text-xs text-[#08080C] dark:text-white placeholder-[#6E81A0] dark:placeholder-[#94A3B8] outline-none focus:border-indigo-500 transition"
               />
             </div>
           )}
@@ -325,7 +325,7 @@ export function FinancialReportsTab({
       {/* 2. GÖRÜNÜM A: ÇOK DÖNEMLİ TABLOLAR (Bilanço, Gelir, Nakit, KAFİF)   */}
       {/* =================================================================== */}
       {statementType !== "DUPONT" && (
-        <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] overflow-hidden transition-colors">
+        <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 shadow-[0_8px_30px_rgba(24,37,66,0.04)] overflow-hidden transition-colors">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
@@ -336,7 +336,7 @@ export function FinancialReportsTab({
                   {selectedPeriods.map((p) => (
                     <th key={p} className="py-3.5 px-4 text-right font-mono min-w-[120px]">
                       <div className="space-y-0.5">
-                        <span className="text-[#182542] dark:text-white block font-extrabold">{p}</span>
+                        <span className="text-[#08080C] dark:text-white block font-extrabold">{p}</span>
                         <span className="text-[10px] text-slate-400 font-normal">
                           {p.endsWith("/12") ? "12 Aylık" : p.endsWith("/09") ? "3. Çeyrek" : p.endsWith("/06") ? "2. Çeyrek" : "1. Çeyrek"}
                         </span>
@@ -344,7 +344,7 @@ export function FinancialReportsTab({
                     </th>
                   ))}
                   {selectedPeriods.length >= 2 && showGrowthDeltas && (
-                    <th className="py-3.5 px-4 text-right font-mono min-w-[100px] text-indigo-700 dark:text-indigo-400">
+                    <th className="py-3.5 px-4 text-right font-mono min-w-[100px] text-indigo-700 dark:text-[#C6F432]">
                       Değişim (Δ%)
                     </th>
                   )}
@@ -374,9 +374,9 @@ export function FinancialReportsTab({
                       key={row.key}
                       className={`transition ${
                         isHeader
-                          ? "bg-slate-100/70 dark:bg-white/[0.04] font-bold text-[#182542] dark:text-white"
+                          ? "bg-slate-100/70 dark:bg-white/[0.04] font-bold text-[#08080C] dark:text-white"
                           : isTotal
-                          ? "bg-indigo-50/40 dark:bg-indigo-950/20 font-bold text-[#182542] dark:text-white border-t border-b border-indigo-100 dark:border-indigo-900/40"
+                          ? "bg-indigo-50/40 dark:bg-indigo-950/20 font-bold text-[#08080C] dark:text-white border-t border-b border-indigo-100 dark:border-indigo-900/40"
                           : "hover:bg-slate-50/50 dark:hover:bg-white/[0.02]"
                       }`}
                     >
@@ -392,9 +392,9 @@ export function FinancialReportsTab({
                           <span
                             className={`${
                               isHeader
-                                ? "text-xs font-black uppercase text-[#182542] dark:text-white"
+                                ? "text-xs font-black uppercase text-[#08080C] dark:text-white"
                                 : isTotal
-                                ? "text-xs font-extrabold text-[#182542] dark:text-white"
+                                ? "text-xs font-extrabold text-[#08080C] dark:text-white"
                                 : indent === 2
                                 ? "text-[11px] text-[#6E81A0] dark:text-[#94A3B8]"
                                 : "text-xs text-slate-700 dark:text-slate-200"
@@ -413,9 +413,9 @@ export function FinancialReportsTab({
                             key={p}
                             className={`py-2.5 px-4 text-right font-mono ${
                               isHeader
-                                ? "font-bold text-[#182542] dark:text-white"
+                                ? "font-bold text-[#08080C] dark:text-white"
                                 : isTotal
-                                ? "font-black text-[#182542] dark:text-white"
+                                ? "font-black text-[#08080C] dark:text-white"
                                 : val < 0
                                 ? "text-rose-600 dark:text-rose-400 font-semibold"
                                 : "text-slate-800 dark:text-slate-200"
@@ -472,11 +472,11 @@ export function FinancialReportsTab({
       {/* =================================================================== */}
       {statementType === "DUPONT" && activeDupont && (
         <div className="space-y-6">
-          <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
+          <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-[28px] border border-white/85 dark:border-white/10 p-6 sm:p-7 shadow-[0_8px_30px_rgba(24,37,66,0.04)] space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#EDF1F7] dark:border-white/10 pb-4">
               <div className="space-y-1">
-                <h3 className="text-base font-extrabold text-[#182542] dark:text-white flex items-center gap-2">
-                  <Split size={17} className="text-indigo-600 dark:text-indigo-400" />
+                <h3 className="text-base font-extrabold text-[#08080C] dark:text-white flex items-center gap-2">
+                  <Split size={17} className="text-indigo-600 dark:text-[#C6F432]" />
                   <span>DuPont Analiz Modeli &bull; {activeDupont.period} Dönemi</span>
                 </h3>
                 <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8]">
@@ -485,7 +485,7 @@ export function FinancialReportsTab({
               </div>
 
               {/* ROE Hero Badge */}
-              <div className="flex items-center gap-2 bg-gradient-to-r from-indigo-900 to-[#182542] text-white px-5 py-2.5 rounded-2xl shadow-sm border border-white/10">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-indigo-900 to-[#08080C] text-white px-5 py-2.5 rounded-2xl shadow-sm border border-white/10">
                 <span className="text-xs text-white/70">Hesaplanan ROE:</span>
                 <span className="font-mono font-extrabold text-lg text-emerald-300">
                   %{activeDupont.calculatedRoePercent}
@@ -499,7 +499,7 @@ export function FinancialReportsTab({
                 <span className="text-[10px] uppercase font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   1. Net Kâr Marjı
                 </span>
-                <div className="text-2xl font-mono font-black text-[#182542] dark:text-white">
+                <div className="text-2xl font-mono font-black text-[#08080C] dark:text-white">
                   %{activeDupont.netMarginPercent}
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
@@ -514,7 +514,7 @@ export function FinancialReportsTab({
                 <span className="text-[10px] uppercase font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   2. Aktif Devir Hızı
                 </span>
-                <div className="text-2xl font-mono font-black text-[#182542] dark:text-white">
+                <div className="text-2xl font-mono font-black text-[#08080C] dark:text-white">
                   {activeDupont.assetTurnover}x
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
@@ -529,7 +529,7 @@ export function FinancialReportsTab({
                 <span className="text-[10px] uppercase font-bold text-[#6E81A0] dark:text-[#94A3B8] block">
                   3. Finansal Kaldıraç
                 </span>
-                <div className="text-2xl font-mono font-black text-[#182542] dark:text-white">
+                <div className="text-2xl font-mono font-black text-[#08080C] dark:text-white">
                   {activeDupont.leverageMultiplier}x
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
@@ -540,16 +540,16 @@ export function FinancialReportsTab({
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/50 space-y-2">
+              <div className="p-5 rounded-2xl bg-indigo-50/70 dark:bg-[#C6F432]/15 border border-indigo-200/80 dark:border-indigo-800/50 space-y-2">
                 <span className="text-[10px] uppercase font-bold text-indigo-900 dark:text-indigo-200 block">
                   Özkaynak Kârlılığı (ROE)
                 </span>
-                <div className="text-2xl font-mono font-black text-indigo-700 dark:text-indigo-400">
+                <div className="text-2xl font-mono font-black text-indigo-700 dark:text-[#C6F432]">
                   %{activeDupont.calculatedRoePercent}
                 </div>
                 <div className="text-[11px] text-indigo-800 dark:text-indigo-300 font-semibold space-y-0.5">
                   <div>1 &times; 2 &times; 3 Çarpımı</div>
-                  <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-normal">
+                  <div className="text-[10px] text-indigo-600 dark:text-[#C6F432] font-normal">
                     Hissedara Yaratılan Değer
                   </div>
                 </div>
@@ -558,7 +558,7 @@ export function FinancialReportsTab({
 
             {/* DuPont Tarihsel Karşılaştırma Tablosu */}
             <div className="pt-3 border-t border-slate-100 dark:border-white/10">
-              <h4 className="text-xs font-bold text-[#182542] dark:text-white uppercase tracking-wider mb-2">
+              <h4 className="text-xs font-bold text-[#08080C] dark:text-white uppercase tracking-wider mb-2">
                 Çeyreklik DuPont Gelişim Trendi
               </h4>
               <div className="overflow-x-auto">
@@ -569,7 +569,7 @@ export function FinancialReportsTab({
                       <th className="py-2 px-3 text-right">Net Kâr Marjı</th>
                       <th className="py-2 px-3 text-right">Aktif Devri</th>
                       <th className="py-2 px-3 text-right">Kaldıraç</th>
-                      <th className="py-2 px-3 text-right text-indigo-700 dark:text-indigo-400 font-bold">Hesaplanan ROE</th>
+                      <th className="py-2 px-3 text-right text-indigo-700 dark:text-[#C6F432] font-bold">Hesaplanan ROE</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -592,14 +592,14 @@ export function FinancialReportsTab({
                               : "hover:bg-slate-50 dark:hover:bg-white/5"
                           }`}
                         >
-                          <td className="py-2 px-3 font-sans font-bold text-[#182542] dark:text-white flex items-center gap-1.5">
+                          <td className="py-2 px-3 font-sans font-bold text-[#08080C] dark:text-white flex items-center gap-1.5">
                             {isCur && <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />}
                             <span>{p.label}</span>
                           </td>
                           <td className="py-2 px-3 text-right">%{nm.toFixed(1)}</td>
                           <td className="py-2 px-3 text-right">{at.toFixed(2)}x</td>
                           <td className="py-2 px-3 text-right">{lm.toFixed(2)}x</td>
-                          <td className="py-2 px-3 text-right text-indigo-700 dark:text-indigo-400 font-bold">
+                          <td className="py-2 px-3 text-right text-indigo-700 dark:text-[#C6F432] font-bold">
                             %{roe.toFixed(1)}
                           </td>
                         </tr>

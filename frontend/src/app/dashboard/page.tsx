@@ -161,7 +161,7 @@ export default function DashboardPage() {
       return [];
     }
 
-    const palette = ["#182542", "#0D8B52", "#2563EB", "#7C3AED", "#F59E0B", "#0891B2", "#DC2626", "#475569"];
+    const palette = ["#C6F432", "#10B981", "#FFFFFF", "#94A3B8", "#F59E0B", "#34D399", "#FB7185", "#52525B"];
 
     return userHoldings
       .map((h, idx) => {
@@ -207,17 +207,17 @@ export default function DashboardPage() {
         {/* =================================================================== */}
         {/* 1. ÜST KARŞILAMA VE HIZLI AKSİYON BARI                               */}
         {/* =================================================================== */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-[#6E81A0] dark:text-[#94A3B8]">
                 {greetingText},
               </span>
-              <span className="text-xs font-bold text-[#182542] dark:text-white">
+              <span className="text-xs font-bold text-[#08080C] dark:text-white">
                 {profile?.full_name || user?.email?.split("@")[0] || "Yatırımcı"}
               </span>
             </div>
-            <h1 className="text-lg sm:text-xl font-black text-[#182542] dark:text-white tracking-tight">
+            <h1 className="text-lg sm:text-xl font-black text-[#08080C] dark:text-white tracking-tight">
               Katılım Finans Genel Bakış
             </h1>
           </div>
@@ -225,7 +225,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Link
               href="/tarayici"
-              className="w-full sm:w-auto px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold transition flex items-center justify-center gap-2 shadow-xs active:scale-95"
+              className="w-full sm:w-auto px-4 py-2 rounded-full mizan-accent-btn hover:opacity-90 text-xs font-semibold transition flex items-center justify-center gap-2 shadow-xs active:scale-95"
             >
               <Search size={14} />
               <span>BIST Hisse Tara</span>
@@ -278,7 +278,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* KOLON 1: TOPLAM PORTFÖY BAKİYESİ VE DAİRE GRAFİK (lg:col-span-5) */}
-          <div className="lg:col-span-5 bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4 transition-colors">
+          <div className="lg:col-span-5 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4 transition-colors">
             
             {/* Üst Satır: Başlık & Döviz Seçimi */}
             <div>
@@ -290,7 +290,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   onClick={() => setCurrency((c) => (c === "TRY" ? "USD" : "TRY"))}
-                  className="bg-[#F4F5F7] dark:bg-white/10 hover:bg-[#E9EBEF] dark:hover:bg-white/15 text-[#182542] dark:text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition"
+                  className="bg-[#F4F5F7] dark:bg-white/10 hover:bg-[#E9EBEF] dark:hover:bg-white/15 text-[#08080C] dark:text-white px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition"
                 >
                   <span>{currency === "USD" ? "🇺🇸 USD" : "🇹🇷 TRY ₺"}</span>
                   <ChevronDown size={12} className="text-[#6E81A0] dark:text-[#94A3B8]" />
@@ -299,13 +299,13 @@ export default function DashboardPage() {
 
               {/* Tutar & Gizleme */}
               <div className="mt-2.5 flex items-baseline gap-3">
-                <span className="text-2xl sm:text-3xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
+                <span className="text-2xl sm:text-3xl font-black text-[#08080C] dark:text-white font-mono tracking-tight">
                   {formattedBalance}
                 </span>
                 <button
                   type="button"
                   onClick={() => setBalanceVisible(!balanceVisible)}
-                  className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white transition"
+                  className="text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white transition"
                   title="Bakiyeyi Gizle / Göster"
                 >
                   {balanceVisible ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -328,7 +328,7 @@ export default function DashboardPage() {
             {/* DAİRE GRAFİK (Portföydeki Hisselerin Ağırlık Dağılımı) */}
             <div className="py-2 px-3 rounded-2xl bg-slate-50/70 dark:bg-white/5 border border-slate-200/60 dark:border-white/5">
               <div className="flex items-center justify-between text-xs mb-2">
-                <span className="font-bold text-[#182542] dark:text-white flex items-center gap-1.5">
+                <span className="font-bold text-[#08080C] dark:text-white flex items-center gap-1.5">
                   <PieChart size={13} className="text-[#0D8B52] dark:text-emerald-400" />
                   <span>Hisse Ağırlık Dağılımı</span>
                 </span>
@@ -394,7 +394,7 @@ export default function DashboardPage() {
 
                   {/* Merkez Metin */}
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                    <span className="text-[10px] font-mono font-black text-[#182542] dark:text-white leading-none">
+                    <span className="text-[10px] font-mono font-black text-[#08080C] dark:text-white leading-none">
                       {portfolioMetrics.count === 0 ? "0" : portfolioMetrics.count}
                     </span>
                     <span className="text-[8px] uppercase tracking-wider text-[#6E81A0] dark:text-[#94A3B8] font-bold">
@@ -414,7 +414,7 @@ export default function DashboardPage() {
                       <div key={h.ticker} className="flex items-center justify-between text-xs">
                         <div className="flex items-center gap-1.5 truncate">
                           <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: h.color }} />
-                          <span className="font-bold text-[#182542] dark:text-white truncate">{h.ticker}</span>
+                          <span className="font-bold text-[#08080C] dark:text-white truncate">{h.ticker}</span>
                         </div>
                         <span className="font-mono font-bold text-[#6E81A0] dark:text-[#94A3B8] text-[11px]">
                           %{h.weightPercent.toFixed(1)}
@@ -430,7 +430,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-2 pt-1">
               <Link
                 href="/portfolio?action=add"
-                className="rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 py-2 px-3 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition text-center"
+                className="rounded-full mizan-accent-btn hover:opacity-90 py-2 px-3 text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition text-center"
               >
                 <Plus size={13} />
                 <span>Hisse Ekle</span>
@@ -438,7 +438,7 @@ export default function DashboardPage() {
 
               <Link
                 href="/portfolio?tab=arindirma"
-                className="rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-[#182542] dark:text-white py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition text-center"
+                className="rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/15 text-[#08080C] dark:text-white py-2 px-3 text-xs font-semibold flex items-center justify-center gap-1.5 transition text-center"
               >
                 <Scale size={13} />
                 <span>Arındır</span>
@@ -451,18 +451,18 @@ export default function DashboardPage() {
           <div className="lg:col-span-7 grid grid-cols-2 gap-3 sm:gap-4">
             
             {/* KART 1: PORTFÖY GETİRİSİ */}
-            <div className="relative overflow-hidden bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="relative overflow-hidden bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Portföy Getirisi
                 </span>
-                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#08080C] dark:text-white">
                   <TrendingUp size={12} />
                 </div>
               </div>
 
               <div className="space-y-0.5">
-                <div className="text-lg sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
+                <div className="text-lg sm:text-2xl font-black text-[#08080C] dark:text-white font-mono tracking-tight">
                   ₺{Math.abs(portfolioMetrics.netReturnTRY).toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                 </div>
                 <div className="text-[11px] font-bold text-[#0D8B52] dark:text-emerald-400 flex items-center gap-0.5">
@@ -477,21 +477,21 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 2: ARINDIRMA YÜKÜ (Terazi) */}
-            <div className="bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Fıkhi Arındırma
                 </span>
-                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#08080C] dark:text-white">
                   <Scale size={12} />
                 </div>
               </div>
 
               <div className="space-y-0.5">
-                <div className="text-lg sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
+                <div className="text-lg sm:text-2xl font-black text-[#08080C] dark:text-white font-mono tracking-tight">
                   ₺{portfolioMetrics.purificationTRY.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
-                <div className="text-[11px] font-bold text-[#273869] dark:text-blue-400 flex items-center gap-0.5">
+                <div className="text-[11px] font-bold text-[#10B981] dark:text-[#C6F432] flex items-center gap-0.5">
                   <span>
                     %{portfolioMetrics.totalValueTRY > 0
                       ? ((portfolioMetrics.purificationTRY / portfolioMetrics.totalValueTRY) * 100).toFixed(2)
@@ -503,18 +503,18 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 3: YILLIK TEMETTÜ GELİRİ */}
-            <div className="bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Temettü Beklentisi
                 </span>
-                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#182542] dark:text-white">
+                <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center text-[#08080C] dark:text-white">
                   <Coins size={12} />
                 </div>
               </div>
 
               <div className="space-y-0.5">
-                <div className="text-lg sm:text-2xl font-black text-[#182542] dark:text-white font-mono tracking-tight">
+                <div className="text-lg sm:text-2xl font-black text-[#08080C] dark:text-white font-mono tracking-tight">
                   ₺{portfolioMetrics.dividendTRY.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                 </div>
                 <div className="text-[11px] font-semibold text-[#6E81A0] dark:text-[#94A3B8]">
@@ -524,7 +524,7 @@ export default function DashboardPage() {
             </div>
 
             {/* KART 4: KATILIM STANDARTLARI UYUMU */}
-            <div className="bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
+            <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[24px] p-4 sm:p-5 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between min-h-[140px] sm:min-h-[150px] transition-colors">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8]">
                   Katılım Standartları
@@ -554,11 +554,11 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 items-stretch">
           
           {/* SOL: PORTFÖY POZİSYONLARI TABLOSU (lg:col-span-7) */}
-          <div className="lg:col-span-7 bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-7 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
             
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+                <h3 className="text-sm font-bold text-[#08080C] dark:text-white">
                   Portföy Pozisyonları
                 </h3>
                 <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -568,7 +568,7 @@ export default function DashboardPage() {
 
               <Link
                 href="/portfolio"
-                className="text-xs font-bold text-[#273869] dark:text-blue-400 hover:underline flex items-center gap-1"
+                className="text-xs font-bold text-[#10B981] dark:text-[#C6F432] hover:underline flex items-center gap-1"
               >
                 <span>Tüm Portföy &rarr;</span>
               </Link>
@@ -584,7 +584,7 @@ export default function DashboardPage() {
                 </p>
                 <Link
                   href="/portfolio?action=add"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black hover:opacity-90 text-xs font-semibold hover:scale-105 transition"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full mizan-accent-btn hover:opacity-90 text-xs font-semibold hover:scale-105 transition"
                 >
                   <Plus size={13} />
                   <span>İlk Hissenizi Ekleyin</span>
@@ -606,7 +606,7 @@ export default function DashboardPage() {
                         <StockLogo ticker={h.ticker} name={comp?.name || h.ticker} size="sm" />
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-[#182542] dark:text-white">{h.ticker}</span>
+                            <span className="font-bold text-xs text-[#08080C] dark:text-white">{h.ticker}</span>
                             {comp?.bistStatus === "COMPLIANT" ? (
                               <span className="text-[9px] px-1.5 py-0.2 rounded font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
                                 Katılım
@@ -622,12 +622,12 @@ export default function DashboardPage() {
                       </div>
 
                       <div className="text-right">
-                        <span className="text-xs font-bold font-mono text-[#182542] dark:text-white block">
+                        <span className="text-xs font-bold font-mono text-[#08080C] dark:text-white block">
                           ₺{val.toLocaleString("tr-TR", { maximumFractionDigits: 0 })}
                         </span>
                         <Link
                           href={`/companies/${h.ticker}`}
-                          className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline"
+                          className="text-[10px] text-blue-600 dark:text-[#C6F432] hover:underline"
                         >
                           İncele &rarr;
                         </Link>
@@ -641,10 +641,10 @@ export default function DashboardPage() {
           </div>
 
           {/* SAĞ: HIZLI İŞLEMLER & PLATFORM KISAYOLLARI (lg:col-span-5) */}
-          <div className="lg:col-span-5 bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-5 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs flex flex-col justify-between space-y-4">
             
             <div>
-              <h3 className="text-sm font-bold text-[#182542] dark:text-white">
+              <h3 className="text-sm font-bold text-[#08080C] dark:text-white">
                 Hızlı Katılım Araçları
               </h3>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -658,11 +658,11 @@ export default function DashboardPage() {
                 className="p-3 rounded-2xl bg-slate-50/70 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/60 dark:border-white/5 flex items-center justify-between group transition"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-600 dark:text-[#C6F432] flex items-center justify-center">
                     <BarChart3 size={16} />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white block">
                       BIST Katılım Tarayıcısı
                     </span>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -682,7 +682,7 @@ export default function DashboardPage() {
                     <Calendar size={16} />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white block">
                       Halka Arz Takvimi
                     </span>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -702,7 +702,7 @@ export default function DashboardPage() {
                     <Scale size={16} />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white block">
                       Arındırma Defteri
                     </span>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -718,11 +718,11 @@ export default function DashboardPage() {
                 className="p-3 rounded-2xl bg-slate-50/70 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/60 dark:border-white/5 flex items-center justify-between group transition"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#182542] to-[#0D8B52] text-white flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#08080C] to-[#0D8B52] text-white flex items-center justify-center">
                     <Sparkles size={16} className="text-emerald-300" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-[#182542] dark:text-white block">
+                    <span className="text-xs font-bold text-[#08080C] dark:text-white block">
                       Mizan AI Danışman
                     </span>
                     <span className="text-[10px] text-[#6E81A0] dark:text-[#94A3B8]">
@@ -741,13 +741,13 @@ export default function DashboardPage() {
         {/* =================================================================== */}
         {/* 4. ÜÇÜNCÜ SATIR: CANLI KAP & SPK AKIŞI (PİYASA HABERLERİ)           */}
         {/* =================================================================== */}
-        <div className="bg-white/45 dark:bg-[#0E1015]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
+        <div className="bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl rounded-[26px] p-4 sm:p-6 border border-white/80 dark:border-white/10 shadow-xs space-y-4 transition-colors">
           
           {/* Başlık ve Canlı Durum */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm sm:text-base font-bold text-[#182542] dark:text-white flex items-center gap-2">
+                <h3 className="text-sm sm:text-base font-bold text-[#08080C] dark:text-white flex items-center gap-2">
                   <Radio size={16} className="text-emerald-500 animate-pulse shrink-0" />
                   <span>Canlı KAP &amp; SPK Akışı (Piyasa Haberleri)</span>
                 </h3>
@@ -766,7 +766,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => refreshDisclosures()}
                 disabled={disclosuresRefreshing}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#182542] dark:text-white text-xs font-bold transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-[#08080C] dark:text-white text-xs font-bold transition disabled:opacity-50"
                 title="Akışı Yenile"
               >
                 <RefreshCw size={12} className={disclosuresRefreshing ? "animate-spin" : ""} />
@@ -832,11 +832,11 @@ export default function DashboardPage() {
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         {item.ticker && (
-                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#182542] dark:bg-[#273869] text-white">
+                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#08080C] dark:bg-[#10B981] text-white">
                             {item.ticker}
                           </span>
                         )}
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200/50">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-[#C6F432]/15 text-blue-700 dark:text-[#C6F432] border border-blue-200/50">
                           {item.category}
                         </span>
                         {item.isCompliant === true && (
@@ -854,7 +854,7 @@ export default function DashboardPage() {
                         </span>
                       </div>
 
-                      <h4 className="text-xs sm:text-sm font-bold text-[#182542] dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition truncate">
+                      <h4 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C6F432] transition truncate">
                         {item.title}
                       </h4>
 
@@ -865,7 +865,7 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Sağ İncele Aksiyonu */}
-                  <div className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-[#273869] dark:text-blue-400 group-hover:translate-x-0.5 transition">
+                  <div className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-[#10B981] dark:text-[#C6F432] group-hover:translate-x-0.5 transition">
                     <span className="hidden sm:inline">İncele</span>
                     <ChevronRight size={14} />
                   </div>
@@ -879,7 +879,7 @@ export default function DashboardPage() {
             <span>Kamuyu Aydınlatma Platformu (KAP) &amp; SPK 2026 Veritabanı</span>
             <Link
               href="/tarayici"
-              className="font-bold text-[#182542] dark:text-white hover:underline flex items-center gap-1"
+              className="font-bold text-[#08080C] dark:text-white hover:underline flex items-center gap-1"
             >
               <span>Tüm Katılım Hisselerini Tara</span>
               <ChevronRight size={12} />

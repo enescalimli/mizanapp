@@ -131,7 +131,7 @@ export const InstitutionalLogosSection: React.FC = () => {
       url: "https://www.tradingview.com",
       accentColor: "from-indigo-500/10 to-violet-600/5",
       borderColor: "hover:border-indigo-500/40",
-      badgeColor: "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-900/50",
+      badgeColor: "bg-indigo-50 dark:bg-[#C6F432]/15 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-900/50",
       logo: (
         <svg viewBox="0 0 200 48" className="h-8 w-auto fill-current" aria-label="TradingView Logosu">
           {/* TradingView Icon */}
@@ -169,7 +169,7 @@ export const InstitutionalLogosSection: React.FC = () => {
             <span className="uppercase tracking-wider text-[10px]">Resmi Veri &amp; Fıkhi Standart Entegrasyonları</span>
           </div>
 
-          <h2 className="text-2xl sm:text-4xl font-black text-[#182542] dark:text-white tracking-tight leading-tight">
+          <h2 className="text-2xl sm:text-4xl font-black text-[#08080C] dark:text-white tracking-tight leading-tight">
             Gücünü Türkiye’nin ve Dünyanın Lider Finans Altyapılarından Alır.
           </h2>
 
@@ -183,7 +183,7 @@ export const InstitutionalLogosSection: React.FC = () => {
           {institutions.map((inst) => (
             <div
               key={inst.id}
-              className={`rounded-3xl p-6 bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 ${inst.borderColor} transition-all duration-200 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:-translate-y-1 group`}
+              className={`rounded-3xl p-6 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 ${inst.borderColor} transition-all duration-200 flex flex-col justify-between space-y-5 shadow-xs hover:shadow-lg hover:-translate-y-1 group`}
             >
               {/* Card Top: Logo & Status Badge */}
               <div className="space-y-4">
@@ -212,7 +212,7 @@ export const InstitutionalLogosSection: React.FC = () => {
                       {inst.status}
                     </span>
                   </div>
-                  <h3 className="text-sm font-black text-[#182542] dark:text-white">
+                  <h3 className="text-sm font-black text-[#08080C] dark:text-white">
                     {inst.name}
                   </h3>
                   <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 block">
@@ -232,7 +232,7 @@ export const InstitutionalLogosSection: React.FC = () => {
                 </span>
                 <div className="grid grid-cols-1 gap-1.5">
                   {inst.dataItems.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-1.5 text-[11px] text-[#182542] dark:text-slate-300 font-medium">
+                    <div key={idx} className="flex items-center gap-1.5 text-[11px] text-[#08080C] dark:text-slate-300 font-medium">
                       <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
                       <span className="truncate">{item}</span>
                     </div>
@@ -244,7 +244,7 @@ export const InstitutionalLogosSection: React.FC = () => {
         </div>
 
         {/* Unified Data Pipeline Flow Banner */}
-        <div className="rounded-2xl p-4 sm:p-5 bg-white/45 dark:bg-[#0A0B0E]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-2xs">
+        <div className="rounded-2xl p-4 sm:p-5 bg-white/45 dark:bg-[#0D0E14]/55 backdrop-blur-xl border border-white/80 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 text-xs shadow-2xs">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
               <Database size={20} />
@@ -265,7 +265,7 @@ export const InstitutionalLogosSection: React.FC = () => {
           <div className="flex items-center gap-2 shrink-0">
             <Link
               href="/tarayici"
-              className="px-4 py-2 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs"
+              className="px-4 py-2 rounded-xl bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs"
             >
               <span>Canlı Hisseleri İncele</span>
               <ArrowUpRight size={13} />

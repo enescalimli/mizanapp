@@ -411,7 +411,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="p-7 sm:p-9 border border-white/85 dark:border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 dark:bg-[#0E1015]/95 backdrop-blur-2xl space-y-6">
+      <div className="p-7 sm:p-9 border border-white/85 dark:border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 dark:bg-[#0D0E14]/95 backdrop-blur-2xl space-y-6">
         
         {/* Header / Brand */}
         <div className="text-center">
@@ -419,7 +419,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             <ShieldCheck size={14} />
             <span>Mizan Güvenli Giriş</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-[#182542] dark:text-white tracking-tight">
+          <h2 className="text-2xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             {mode === "login" ? "Hesabınıza Giriş Yapın" : "Yeni Katılım Hesabı Aç"}
           </h2>
           <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-1.5 font-normal">
@@ -439,8 +439,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "login"
-                ? "bg-[#182542] text-white shadow-xs font-bold"
-                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                ? "bg-[#08080C] text-white shadow-xs font-bold"
+                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
             }`}
           >
             Giriş Yap
@@ -453,8 +453,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             }}
             className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
               mode === "register"
-                ? "bg-[#182542] text-white shadow-xs font-bold"
-                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white"
+                ? "bg-[#08080C] text-white shadow-xs font-bold"
+                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
             }`}
           >
             Kayıt Ol
@@ -509,7 +509,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
             <div className="w-full border-t border-slate-200 dark:border-white/10" />
           </div>
           <div className="relative flex justify-center text-[10px] uppercase font-semibold">
-            <span className="bg-white dark:bg-[#0E1015] px-3 text-slate-400 dark:text-[#94A3B8]">veya e-posta ile</span>
+            <span className="bg-white dark:bg-[#0D0E14] px-3 text-slate-400 dark:text-[#94A3B8]">veya e-posta ile</span>
           </div>
         </div>
 
@@ -530,7 +530,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Örn: Mustafa Çalımlı"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -550,7 +550,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@yatirim.com"
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -566,7 +566,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   onClick={() =>
                     alert("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.")
                   }
-                  className="text-[10px] text-[#273869] dark:text-indigo-300 hover:underline font-semibold"
+                  className="text-[10px] text-[#10B981] dark:text-indigo-300 hover:underline font-semibold"
                 >
                   Şifremi Unuttum
                 </button>
@@ -582,7 +582,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
               />
               <button
                 type="button"
@@ -625,7 +625,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#182542] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -639,7 +639,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-slate-300 dark:border-white/20 text-[#182542] focus:ring-[#182542]"
+                  className="rounded border-slate-300 dark:border-white/20 text-[#08080C] focus:ring-[#08080C]"
                 />
                 <span className="text-slate-600 dark:text-[#94A3B8]">Beni hatırla</span>
               </label>
@@ -649,10 +649,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   type="checkbox"
                   checked={agreeTerms}
                   onChange={(e) => setAgreeTerms(e.target.checked)}
-                  className="rounded border-slate-300 dark:border-white/20 text-[#182542] focus:ring-[#182542] mt-0.5"
+                  className="rounded border-slate-300 dark:border-white/20 text-[#08080C] focus:ring-[#08080C] mt-0.5"
                 />
                 <span className="text-[11px] text-slate-600 dark:text-[#94A3B8] leading-tight">
-                  <Link href="/rehber" className="text-[#182542] dark:text-blue-400 underline font-semibold">
+                  <Link href="/rehber" className="text-[#08080C] dark:text-[#C6F432] underline font-semibold">
                     Kullanıcı Sözleşmesi
                   </Link>
                   &apos;ni ve Katılım Finansı İlkelerini kabul ediyorum.
@@ -665,7 +665,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
+            className="w-full py-3 rounded-xl bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#08080C]/20"
           >
             {isLoading ? (
               <RefreshCw size={15} className="animate-spin" />
@@ -691,7 +691,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
       {/* ===================================================================== */}
       {isOtpModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md bg-white dark:bg-[#0E1015] rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-white/10 space-y-6 animate-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md bg-white dark:bg-[#0D0E14] rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200 dark:border-white/10 space-y-6 animate-in zoom-in-95 duration-150">
             
             {/* Modal Close Button */}
             <button
@@ -707,11 +707,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mx-auto flex items-center justify-center shadow-xs">
                 <KeyRound size={24} />
               </div>
-              <h3 className="text-lg font-extrabold text-[#182542] dark:text-white">
+              <h3 className="text-lg font-extrabold text-[#08080C] dark:text-white">
                 E-Posta Onay Kodunu Girin
               </h3>
               <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed max-w-xs mx-auto">
-                <strong className="text-[#182542] dark:text-white font-semibold">{otpTargetEmail}</strong> adresinize 6 haneli güvenlik doğrulama kodu gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol ediniz.
+                <strong className="text-[#08080C] dark:text-white font-semibold">{otpTargetEmail}</strong> adresinize 6 haneli güvenlik doğrulama kodu gönderildi. Lütfen gelen kutunuzu (ve spam klasörünü) kontrol ediniz.
               </p>
             </div>
 
@@ -733,8 +733,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                     disabled={otpVerified || isVerifyingOtp}
                     className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-black font-mono rounded-2xl border transition-all duration-150 outline-none ${
                       digit
-                        ? "border-[#182542] dark:border-blue-400 bg-white dark:bg-white/10 text-[#182542] dark:text-white shadow-sm"
-                        : "border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:border-[#182542] dark:focus:border-blue-400 focus:bg-white dark:focus:bg-white/10"
+                        ? "border-[#08080C] dark:border-[#C6F432] bg-white dark:bg-white/10 text-[#08080C] dark:text-white shadow-sm"
+                        : "border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 focus:bg-white dark:focus:bg-white/10"
                     } ${otpError ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/40" : ""} ${
                       otpVerified ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300" : ""
                     }`}
@@ -769,7 +769,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 <button
                   type="button"
                   onClick={handleResendOtp}
-                  className="font-bold text-[#182542] dark:text-white hover:underline inline-flex items-center gap-1"
+                  className="font-bold text-[#08080C] dark:text-white hover:underline inline-flex items-center gap-1"
                 >
                   <RotateCcw size={12} />
                   <span>Yeni Kod Gönder</span>
@@ -782,7 +782,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               type="button"
               onClick={() => checkOtpSubmission(otpDigits.join(""))}
               disabled={otpDigits.some((d) => d === "") || otpVerified || isVerifyingOtp}
-              className="w-full py-3 rounded-xl bg-[#182542] hover:bg-[#273869] dark:bg-[#273869] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#182542]/20"
+              className="w-full py-3 rounded-xl bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#08080C]/20"
             >
               {isVerifyingOtp ? (
                 <RefreshCw size={15} className="animate-spin text-white" />

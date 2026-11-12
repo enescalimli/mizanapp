@@ -20,13 +20,13 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200 flex flex-col justify-between py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] transition-colors duration-200 flex flex-col justify-between py-6 px-4 sm:px-6 lg:px-8">
       
       {/* Top Bar: Brand & Back to Home */}
       <div className="max-w-7xl w-full mx-auto flex items-center justify-between pb-6">
         <Link
           href="/"
-          className="inline-flex items-center gap-2.5 text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#182542] dark:hover:text-white transition group"
+          className="inline-flex items-center gap-2.5 text-xs font-bold text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white transition group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           <span>Ana Sayfaya Dön</span>
@@ -51,8 +51,8 @@ export default function RegisterPage() {
               priority
             />
           </div>
-          <span className="text-base font-black tracking-tight text-[#182542] dark:text-white">
-            mizan <span className="text-[#273869] dark:text-slate-300 font-bold text-xs">katılım</span>
+          <span className="text-base font-black tracking-tight text-[#08080C] dark:text-white">
+            mizan <span className="text-[#10B981] dark:text-slate-300 font-bold text-xs">katılım</span>
           </span>
         </Link>
       </div>
@@ -71,9 +71,9 @@ export default function RegisterPage() {
             <span>Ücretsiz Katılım Hesabı</span>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black text-[#182542] dark:text-white tracking-tight leading-[1.18]">
+          <h1 className="text-2xl sm:text-4xl font-black text-[#08080C] dark:text-white tracking-tight leading-[1.18]">
             Helal Birikimlerinizi{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#182542] via-[#273869] to-[#3a5298] dark:from-white dark:via-slate-200 dark:to-blue-300">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#08080C] via-[#10B981] to-[#3a5298] dark:from-white dark:via-slate-200 dark:to-blue-300">
               Güvenle Büyütün.
             </span>
           </h1>
@@ -86,11 +86,11 @@ export default function RegisterPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
             
             {/* 1. Canlı KAP & SPK Bildirim Akışı */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#273869]/40 dark:hover:border-white/20 transition">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                 <Radio size={16} className="animate-pulse" />
               </div>
-              <h3 className="text-xs font-extrabold text-[#182542] dark:text-white">
+              <h3 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                 Canlı KAP &amp; SPK Akışı
               </h3>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
@@ -99,11 +99,11 @@ export default function RegisterPage() {
             </div>
 
             {/* 2. Mizan AI Fıkhi & Finansal Asistan */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#273869]/40 dark:hover:border-white/20 transition">
-              <div className="w-8 h-8 rounded-xl bg-[#182542]/10 dark:bg-white/10 text-[#182542] dark:text-white flex items-center justify-center">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
+              <div className="w-8 h-8 rounded-xl bg-[#08080C]/10 dark:bg-white/10 text-[#08080C] dark:text-white flex items-center justify-center">
                 <Sparkles size={16} />
               </div>
-              <h3 className="text-xs font-extrabold text-[#182542] dark:text-white">
+              <h3 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                 Mizan AI Asistan
               </h3>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
@@ -112,11 +112,11 @@ export default function RegisterPage() {
             </div>
 
             {/* 3. BIST Katılım Taraması */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#273869]/40 dark:hover:border-white/20 transition">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-[#C6F432]/15 text-blue-600 dark:text-[#C6F432] flex items-center justify-center">
                 <Scale size={16} />
               </div>
-              <h3 className="text-xs font-extrabold text-[#182542] dark:text-white">
+              <h3 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                 BIST Katılım 3 Altın Rasyo
               </h3>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">
@@ -125,11 +125,11 @@ export default function RegisterPage() {
             </div>
 
             {/* 4. Arındırma & Zekât Motoru */}
-            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0E1015] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#273869]/40 dark:hover:border-white/20 transition">
+            <div className="p-4 rounded-2xl bg-white/70 dark:bg-[#0D0E14] border border-slate-200/70 dark:border-white/10 shadow-xs space-y-2 hover:border-[#10B981]/40 dark:hover:border-white/20 transition">
               <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
                 <Coins size={16} />
               </div>
-              <h3 className="text-xs font-extrabold text-[#182542] dark:text-white">
+              <h3 className="text-xs font-extrabold text-[#08080C] dark:text-white">
                 Hassas Tathir &amp; Zekât
               </h3>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8] leading-relaxed">

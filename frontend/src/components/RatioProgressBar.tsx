@@ -72,7 +72,7 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
     <div className="payno-card p-6">
       <div className="flex items-start justify-between gap-4 mb-3">
         <div>
-          <h4 className="text-sm font-extrabold text-[#182542] tracking-tight">{label}</h4>
+          <h4 className="text-sm font-extrabold text-[#08080C] tracking-tight">{label}</h4>
           {subLabel && <p className="text-xs text-[#6E81A0] font-medium mt-0.5">{subLabel}</p>}
         </div>
         <div className="text-right">
@@ -114,7 +114,7 @@ export const RatioProgressBar: React.FC<RatioProgressBarProps> = ({
       {/* Footer labels */}
       <div className="flex items-center justify-between text-xs text-[#7B8FA8] font-mono tabular-nums">
         <span className="text-[11px] font-semibold">0%</span>
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#182542]">
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#08080C]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#E11D48]" />
           <span>Eşik: {detail.thresholdPercentage}</span>
         </div>

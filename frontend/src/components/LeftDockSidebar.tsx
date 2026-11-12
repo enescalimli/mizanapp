@@ -88,7 +88,7 @@ export const LeftDockSidebar: React.FC = () => {
   return (
     <aside className="fixed left-3 lg:left-5 top-8 bottom-8 z-40 hidden md:flex flex-col justify-between items-center select-none pointer-events-auto transition-colors duration-200">
       {/* 1. Üst Mini Kapsül: Açık / Koyu Tema Anahtarı (Şeffaf Cam) */}
-      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-full p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-1.5 transition-colors">
+      <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-full p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-1.5 transition-colors">
         <button
           type="button"
           onClick={() => setTheme("light")}
@@ -116,7 +116,7 @@ export const LeftDockSidebar: React.FC = () => {
       </div>
 
       {/* 2. Ana Navigasyon Kapsülü: Dikey İkon Dock (Şeffaf Cam) */}
-      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-full py-3.5 px-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.7)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-3 transition-colors">
+      <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-full py-3.5 px-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.7)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-3 transition-colors">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -142,7 +142,7 @@ export const LeftDockSidebar: React.FC = () => {
       </div>
 
       {/* 3. Alt Mini Kapsül: Fıkhi Rehber ve Güvenli Çıkış (Şeffaf Cam) */}
-      <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-full py-2 px-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-2 transition-colors">
+      <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-full py-2 px-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.6)] border border-white/80 dark:border-white/10 flex flex-col items-center gap-2 transition-colors">
         <div className="group relative flex items-center">
           <Link
             href="/rehber"
@@ -169,7 +169,7 @@ export const LeftDockSidebar: React.FC = () => {
           >
             <LogOut size={15} strokeWidth={2} />
           </button>
-          <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#182542] dark:bg-[#0F172A] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
+          <span className="pointer-events-none absolute left-12 z-50 whitespace-nowrap rounded-xl bg-[#08080C] dark:bg-[#0F172A] border border-white/10 px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-1">
             Çıkış Yap
           </span>
         </div>

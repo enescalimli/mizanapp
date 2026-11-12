@@ -47,7 +47,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
             <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full inline-block">
               Abonelik İptal Adımı
             </span>
-            <h3 className="text-lg font-extrabold text-[#182542] tracking-tight">
+            <h3 className="text-lg font-extrabold text-[#08080C] tracking-tight">
               Ayrılmadan Önce Bize Geri Bildirim Verin
             </h3>
             <p className="text-xs text-[#6E81A0]">
@@ -65,7 +65,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
 
         {/* Survey Reasons */}
         <div className="space-y-2">
-          <label className="text-[11px] font-bold text-[#182542] block">
+          <label className="text-[11px] font-bold text-[#08080C] block">
             Ayrılma Sebebiniz Nedir?
           </label>
           {[
@@ -79,7 +79,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
               onClick={() => handleReasonSelect(item.id)}
               className={`flex items-center justify-between p-3 rounded-2xl border text-xs cursor-pointer transition ${
                 selectedReason === item.id
-                  ? "bg-[#182542]/5 border-[#182542] font-bold text-[#182542]"
+                  ? "bg-[#08080C]/5 border-[#08080C] font-bold text-[#08080C]"
                   : "bg-slate-50/70 hover:bg-white border-slate-200 text-slate-700"
               }`}
             >
@@ -89,7 +89,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
                 name="churnReason"
                 checked={selectedReason === item.id}
                 onChange={() => {}}
-                className="w-4 h-4 accent-[#182542]"
+                className="w-4 h-4 accent-[#08080C]"
               />
             </label>
           ))}
@@ -129,7 +129,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
             <button
               type="button"
               onClick={() => onApplyRetentionOffer("PAUSE_2_MONTHS")}
-              className="w-full py-2.5 rounded-xl bg-[#182542] hover:bg-[#273869] text-white text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5"
             >
               <span>Aboneliği 60 Gün Dondur</span>
               <ArrowRight size={14} />
@@ -147,7 +147,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
             onChange={(e) => setFeedback(e.target.value)}
             rows={2}
             placeholder="Hangi özelliği ekleseydik Mizan'da kalmayı tercih ederdiniz?"
-            className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-[#182542] focus:border-[#182542] outline-none transition resize-none"
+            className="w-full p-3 rounded-2xl bg-slate-50 border border-slate-200 text-xs font-medium text-[#08080C] focus:border-[#08080C] outline-none transition resize-none"
           />
         </div>
 
@@ -156,7 +156,7 @@ export const ChurnSurveyModal: React.FC<ChurnSurveyModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[#182542] text-xs font-bold transition"
+            className="px-4 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-[#08080C] text-xs font-bold transition"
           >
             Vazgeç, Aboneliği Koru
           </button>

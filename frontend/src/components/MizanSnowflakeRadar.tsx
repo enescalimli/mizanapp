@@ -183,7 +183,7 @@ export const MizanSnowflakeRadar: React.FC<MizanSnowflakeRadarProps> = ({
           fontWeight="800"
           fontFamily="ui-monospace, monospace"
           fill="currentColor"
-          className="text-[#182542] dark:text-white"
+          className="text-[#08080C] dark:text-white"
         >
           {averageScore}
         </text>

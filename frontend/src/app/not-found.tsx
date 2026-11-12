@@ -19,7 +19,7 @@ export default function NotFoundPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EEF0F4] dark:bg-[#000000] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden transition-colors">
+    <div className="min-h-screen bg-[#F4F5F7] dark:bg-[#08080C] text-[#14151A] dark:text-[#F1F3F7] selection:bg-[#E6F8EF] selection:text-[#0D8B52] flex flex-col justify-between p-6 sm:p-12 relative overflow-hidden transition-colors">
       {/* Top Brand Bar */}
       <header className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-between">
         <Link href="/" className="inline-flex items-center gap-2.5">
@@ -39,7 +39,7 @@ export default function NotFoundPage() {
 
       {/* Central Bento 404 Card */}
       <main className="relative z-10 max-w-xl mx-auto w-full my-auto py-10 space-y-6 text-center">
-        <div className="bg-white/80 dark:bg-[#0E1015]/80 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-12 shadow-2xl space-y-6">
+        <div className="bg-white/80 dark:bg-[#0D0E14]/80 backdrop-blur-2xl rounded-3xl border border-black/10 dark:border-white/10 p-8 sm:p-12 shadow-2xl space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-bold">
             <span>404 &bull; Sayfa Bulunamadı</span>
           </div>
@@ -65,7 +65,7 @@ export default function NotFoundPage() {
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <button
               type="submit"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-black dark:bg-white text-white dark:text-black text-xs font-semibold transition hover:opacity-90 cursor-pointer"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl mizan-accent-btn text-xs font-semibold transition hover:opacity-90 cursor-pointer"
             >
               Ara
             </button>
@@ -89,7 +89,7 @@ export default function NotFoundPage() {
             </Link>
             <Link
               href="/portfolio"
-              className="px-4 py-2 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold flex items-center gap-1.5 transition hover:opacity-90 cursor-pointer"
+              className="px-4 py-2 rounded-full mizan-accent-btn text-xs font-semibold flex items-center gap-1.5 transition hover:opacity-90 cursor-pointer"
             >
               <span>Portföyüm</span>
             </Link>
