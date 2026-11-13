@@ -321,7 +321,7 @@ export const NotificationPopover: React.FC = () => {
             {/* Header */}
             <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] flex items-center justify-center shadow-xs">
                   <Bell size={15} />
                 </div>
                 <div>
@@ -374,7 +374,7 @@ export const NotificationPopover: React.FC = () => {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`px-3 py-1 rounded-full whitespace-nowrap transition-all ${
                     activeTab === tab.id
-                      ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                      ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                       : "bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8]"
                   }`}
                 >
@@ -427,7 +427,7 @@ export const NotificationPopover: React.FC = () => {
                       <div className="flex items-center justify-between gap-1 mb-0.5">
                         <div className="flex items-center gap-1.5 truncate">
                           {notif.ticker && (
-                            <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#08080C] dark:bg-[#10B981] text-white shrink-0">
+                            <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shrink-0">
                               {notif.ticker}
                             </span>
                           )}

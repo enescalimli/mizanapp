@@ -156,7 +156,7 @@ export const Navbar: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center justify-between px-4 py-3 rounded-2xl text-xs font-semibold ${
                     isActive
-                      ? "bg-[#08080C] text-white font-bold"
+                      ? "mizan-accent-btn font-bold"
                       : "text-[#08080C] dark:text-white hover:bg-[#EEF3F9]"
                   }`}
                 >

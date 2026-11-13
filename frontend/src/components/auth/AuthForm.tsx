@@ -410,19 +410,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="p-7 sm:p-9 border border-white/85 dark:border-white/10 rounded-3xl shadow-[0_20px_60px_rgba(24,37,66,0.08)] bg-white/80 dark:bg-[#101118]/95 backdrop-blur-2xl space-y-6">
+    <div className="w-full max-w-md mx-auto relative">
+      <div className="pointer-events-none absolute -inset-4 mizan-hero-glow blur-2xl opacity-70 -z-10" />
+      <div className="p-7 sm:p-9 border border-slate-200/80 dark:border-white/[0.1] rounded-3xl shadow-2xl bg-white dark:bg-[#101118] backdrop-blur-2xl space-y-6">
         
         {/* Header / Brand */}
         <div className="text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#0D8B52] dark:text-emerald-400 text-xs font-semibold mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#10B981]/10 dark:bg-[#C6F432]/15 border border-[#10B981]/25 dark:border-[#C6F432]/30 text-[#10B981] dark:text-[#C6F432] text-xs font-semibold mb-3">
             <ShieldCheck size={14} />
             <span>Mizan Güvenli Giriş</span>
           </div>
           <h2 className="text-2xl font-extrabold text-[#08080C] dark:text-white tracking-tight">
             {mode === "login" ? "Hesabınıza Giriş Yapın" : "Yeni Katılım Hesabı Aç"}
           </h2>
-          <p className="text-xs text-[#6E81A0] dark:text-[#94A3B8] mt-1.5 font-normal">
+          <p className="text-xs text-[#6E81A0] dark:text-zinc-400 mt-1.5 font-normal">
             {mode === "login"
               ? "Katılım portföyünüze ve kuruşu kuruşuna arındırma verilerinize erişin."
               : "DİB ve BIST Katılım standartlarında şer'i portföy takibine hemen başlayın."}
@@ -430,17 +431,17 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex p-1 rounded-xl bg-[#EDF1F7] dark:bg-white/5 border border-white dark:border-white/10">
+        <div className="flex p-1 rounded-xl bg-slate-100 dark:bg-white/[0.05] border border-slate-200/60 dark:border-white/[0.08]">
           <button
             type="button"
             onClick={() => {
               setMode("login");
               setErrorMessage(null);
             }}
-            className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
+            className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 cursor-pointer ${
               mode === "login"
-                ? "bg-[#08080C] text-white shadow-xs font-bold"
-                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
+                ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
+                : "text-[#6E81A0] dark:text-zinc-400 hover:text-[#08080C] dark:hover:text-white"
             }`}
           >
             Giriş Yap
@@ -451,10 +452,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               setMode("register");
               setErrorMessage(null);
             }}
-            className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 ${
+            className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all duration-150 cursor-pointer ${
               mode === "register"
-                ? "bg-[#08080C] text-white shadow-xs font-bold"
-                : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
+                ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
+                : "text-[#6E81A0] dark:text-zinc-400 hover:text-[#08080C] dark:hover:text-white"
             }`}
           >
             Kayıt Ol
@@ -530,7 +531,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Örn: Mustafa Çalımlı"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] transition placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -550,7 +551,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="ornek@yatirim.com"
-                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] transition placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -582,7 +583,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                className="w-full pl-9 pr-10 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] transition placeholder:text-slate-400"
               />
               <button
                 type="button"
@@ -625,7 +626,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-blue-400 transition placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-mono focus:outline-none focus:border-[#08080C] dark:focus:border-[#C6F432] transition placeholder:text-slate-400"
                 />
               </div>
             </div>
@@ -665,7 +666,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#08080C]/20"
+            className="w-full py-3 rounded-xl mizan-accent-btn font-extrabold text-xs flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {isLoading ? (
               <RefreshCw size={15} className="animate-spin" />
@@ -734,7 +735,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
                     className={`w-11 h-13 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-black font-mono rounded-2xl border transition-all duration-150 outline-none ${
                       digit
                         ? "border-[#08080C] dark:border-[#C6F432] bg-white dark:bg-white/10 text-[#08080C] dark:text-white shadow-sm"
-                        : "border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 focus:bg-white dark:focus:bg-white/10"
+                        : "border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-800 dark:text-white focus:border-[#08080C] dark:focus:border-[#C6F432] focus:bg-white dark:focus:bg-white/10"
                     } ${otpError ? "border-rose-400 bg-rose-50/50 dark:bg-rose-950/40" : ""} ${
                       otpVerified ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300" : ""
                     }`}
@@ -782,7 +783,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ initialMode = "login" }) => 
               type="button"
               onClick={() => checkOtpSubmission(otpDigits.join(""))}
               disabled={otpDigits.some((d) => d === "") || otpVerified || isVerifyingOtp}
-              className="w-full py-3 rounded-xl bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white font-bold text-xs flex items-center justify-center gap-2 transition disabled:opacity-50 active:scale-95 shadow-md shadow-[#08080C]/20"
+              className="w-full py-3 rounded-xl mizan-accent-btn font-extrabold text-xs flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               {isVerifyingOtp ? (
                 <RefreshCw size={15} className="animate-spin text-white" />

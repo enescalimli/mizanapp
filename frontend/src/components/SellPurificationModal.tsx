@@ -200,7 +200,7 @@ export const SellPurificationModal: React.FC<SellPurificationModalProps> = ({
                 onClick={() => handleApplyPreset(p.val)}
                 className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition ${
                   selectedLots === Math.round(totalLotsNumber * p.val)
-                    ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                    ? "mizan-accent-btn border-transparent shadow-sm"
                     : "bg-slate-50 dark:bg-white/[0.04] text-slate-600 dark:text-zinc-400 border-slate-200 dark:border-white/[0.09] hover:border-slate-300"
                 }`}
               >

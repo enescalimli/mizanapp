@@ -30,7 +30,6 @@ import { useLiveMarketData } from "@/lib/hooks/useLiveMarketData";
 import { PaynoShell } from "@/components/PaynoShell";
 import { StockLogo } from "@/components/StockLogo";
 import { useAuth } from "@/lib/auth/AuthContext";
-import { KafifRiskRadarWidget } from "@/components/KafifRiskRadarWidget";
 import { useLiveDisclosures } from "@/lib/hooks/useLiveDisclosures";
 import { DisclosureDetailModal } from "@/components/DisclosureDetailModal";
 import { DisclosureItem } from "@/types/disclosure";
@@ -265,12 +264,6 @@ export default function DashboardPage() {
             </div>
           </div>
         )}
-
-        {/* KAFİF Erken Uyarı Risk Radarı Bildirimi */}
-        <KafifRiskRadarWidget
-          portfolioTickers={userHoldings.length > 0 ? userHoldings.map((h) => h.ticker) : undefined}
-          mode="banner"
-        />
 
         {/* =================================================================== */}
         {/* 2. ANA METRİKLER (Row 1): PORTFÖY DEĞERİ & DAİRE GRAFİK + 2x2 BENTO   */}
@@ -698,7 +691,7 @@ export default function DashboardPage() {
                 className="p-3 rounded-2xl bg-slate-50/70 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200/60 dark:border-white/5 flex items-center justify-between group transition"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-xl bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center">
                     <Scale size={16} />
                   </div>
                   <div>
@@ -822,7 +815,7 @@ export default function DashboardPage() {
                       {item.ticker ? (
                         <StockLogo ticker={item.ticker} name={item.companyName || item.ticker} size="sm" />
                       ) : (
-                        <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-xs">
+                        <div className="w-8 h-8 rounded-xl bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center font-bold text-xs">
                           SPK
                         </div>
                       )}
@@ -832,7 +825,7 @@ export default function DashboardPage() {
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         {item.ticker && (
-                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#08080C] dark:bg-[#10B981] text-white">
+                          <span className="font-mono font-bold text-xs px-1.5 py-0.5 rounded-md bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C]">
                             {item.ticker}
                           </span>
                         )}

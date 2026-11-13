@@ -483,7 +483,7 @@ export default function MobileAppEntryPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold shadow-md transition flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3 px-4 rounded-xl mizan-accent-btn disabled:opacity-50 text-xs font-bold shadow-md transition flex items-center justify-center gap-2 mt-2"
             >
               {isLoading ? (
                 <>

@@ -51,7 +51,7 @@ export default function RefundPolicyPage() {
           </div>
           <Link
             href="mailto:destek@mizanapp.tr?subject=İade%20Talebi"
-            className="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition shrink-0 shadow-xs"
+            className="px-4 py-2.5 rounded-2xl mizan-accent-btn text-xs font-bold transition shrink-0 shadow-xs"
           >
             İade Talebi Aç
           </Link>

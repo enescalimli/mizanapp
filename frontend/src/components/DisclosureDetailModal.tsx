@@ -176,7 +176,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
             <span
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wide uppercase ${
                 isKAP
-                  ? "bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50"
+                  ? "bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] border border-[#10B981]/25 dark:border-[#C6F432]/30"
                   : "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50"
               }`}
             >

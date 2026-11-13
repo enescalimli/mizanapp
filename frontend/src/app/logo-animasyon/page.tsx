@@ -142,7 +142,7 @@ export default function LogoAnimationStudioPage() {
                   variant: selectedVariant,
                 })
               }
-              className="px-4 py-2 rounded-full bg-[#08080C] hover:bg-[#10B981] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#08080C] text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm mizan-logo-pressable"
+              className="px-4 py-2 rounded-full mizan-accent-btn text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm mizan-logo-pressable"
             >
               <Film size={13} />
               <span>Tam Ekran Sinematik Açılış</span>

@@ -393,7 +393,7 @@ export default function SettingsPage() {
                   type="text"
                   value={settings.fullName}
                   onChange={(e) => setSettings({ ...settings, fullName: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-[#C6F432] outline-none transition"
                 />
               </div>
 
@@ -405,7 +405,7 @@ export default function SettingsPage() {
                   type="email"
                   value={settings.email}
                   onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-[#C6F432] outline-none transition"
                 />
               </div>
 
@@ -417,7 +417,7 @@ export default function SettingsPage() {
                   type="tel"
                   value={settings.phone}
                   onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold font-mono text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-[#C6F432] outline-none transition"
                 />
               </div>
 
@@ -428,7 +428,7 @@ export default function SettingsPage() {
                 <select
                   value={settings.investorLevel}
                   onChange={(e) => setSettings({ ...settings, investorLevel: e.target.value as any })}
-                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
+                  className="w-full px-3.5 py-2.5 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-[#C6F432] outline-none transition"
                 >
                   <option value="BASLANGIC" className="dark:bg-[#101118]">Başlangıç (BIST Katılım Kriterlerini Yeni Öğreniyor)</option>
                   <option value="ORTA" className="dark:bg-[#101118]">Orta Düzey (Düzenli Halka Arz ve Hisse Yatırımcısı)</option>
@@ -456,7 +456,7 @@ export default function SettingsPage() {
                     onClick={() => setBillingCycle("MONTHLY")}
                     className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                       billingCycle === "MONTHLY"
-                        ? "bg-white dark:bg-[#08080C] text-[#08080C] dark:text-white shadow-xs"
+                        ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                         : "text-[#6E81A0] dark:text-[#94A3B8]"
                     }`}
                   >
@@ -467,12 +467,12 @@ export default function SettingsPage() {
                     onClick={() => setBillingCycle("ANNUAL")}
                     className={`px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1.5 ${
                       billingCycle === "ANNUAL"
-                        ? "bg-[#08080C] text-white shadow-xs"
+                        ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                         : "text-[#6E81A0] dark:text-[#94A3B8]"
                     }`}
                   >
                     <span>Yıllık</span>
-                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-500 text-white font-extrabold">
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#10B981]/20 text-[#10B981] dark:bg-[#08080C]/20 dark:text-[#08080C] font-extrabold">
                       2 Ay Bedava
                     </span>
                   </button>
@@ -600,7 +600,7 @@ export default function SettingsPage() {
                     className={`w-full py-2.5 rounded-xl text-xs font-bold transition shadow-xs ${
                       subscriptionPlan === "PRO"
                         ? "bg-amber-500 text-white cursor-default"
-                        : "bg-[#08080C] hover:bg-[#10B981] text-white"
+                        : "mizan-accent-btn"
                     }`}
                   >
                     {subscriptionPlan === "PRO" ? "Aktif Planınız" : "Mizan Pro'ya Geç"}
@@ -610,16 +610,16 @@ export default function SettingsPage() {
                 {/* 3. MİZAN PLUS */}
                 <div className={`p-5 rounded-2xl border transition flex flex-col justify-between space-y-4 relative ${
                   subscriptionPlan === "PLUS"
-                    ? "bg-gradient-to-br from-[#08080C] via-[#213054] to-[#2d4170] text-white border-purple-400 shadow-xl ring-2 ring-purple-400/30"
-                    : "bg-white dark:bg-white/5 border-purple-200 dark:border-purple-900/50 hover:border-purple-400"
+                    ? "bg-[#101118] text-white border-[#C6F432] shadow-xl ring-2 ring-[#C6F432]/30"
+                    : "bg-white dark:bg-white/5 border-[#10B981]/25 dark:border-[#C6F432]/30 hover:border-[#C6F432]/60"
                 }`}>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-300 flex items-center gap-1.5">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-[#10B981] dark:text-[#C6F432] flex items-center gap-1.5">
                         <ShieldCheck size={14} />
                         <span>Mizan Plus</span>
                       </span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/80 text-purple-800 dark:text-purple-200">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#10B981]/15 dark:bg-[#C6F432]/20 text-[#10B981] dark:text-[#C6F432]">
                         {subscriptionPlan === "PLUS" ? "Aktif" : "Süper Katılım"}
                       </span>
                     </div>
@@ -630,7 +630,7 @@ export default function SettingsPage() {
                           {billingCycle === "ANNUAL" ? " / yıl" : " / ay"}
                         </span>
                       </div>
-                      <div className="text-[10px] text-purple-600 dark:text-purple-300 font-bold">
+                      <div className="text-[10px] text-[#10B981] dark:text-[#C6F432] font-bold">
                         {billingCycle === "ANNUAL" ? "Yıllık peşin (aylık ~₺249)" : "Aylık faturalandırma"}
                       </div>
                     </div>
@@ -667,8 +667,8 @@ export default function SettingsPage() {
                     disabled={subscriptionPlan === "PLUS"}
                     className={`w-full py-2.5 rounded-xl text-xs font-bold transition shadow-xs ${
                       subscriptionPlan === "PLUS"
-                        ? "bg-purple-600 text-white cursor-default"
-                        : "bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20"
+                        ? "mizan-accent-btn cursor-default"
+                        : "mizan-accent-btn"
                     }`}
                   >
                     {subscriptionPlan === "PLUS" ? "Aktif Planınız" : "Mizan Plus'a Yükselt"}
@@ -791,7 +791,7 @@ export default function SettingsPage() {
                     value={userGeminiApiKey}
                     onChange={(e) => setUserGeminiApiKey(e.target.value)}
                     placeholder="AIzaSy..."
-                    className="w-full px-4 py-2.5 pr-10 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-mono font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-blue-400 outline-none transition"
+                    className="w-full px-4 py-2.5 pr-10 rounded-2xl bg-white dark:bg-white/5 border border-[#EDF1F7] dark:border-white/10 text-xs font-mono font-semibold text-[#08080C] dark:text-white focus:border-[#08080C] dark:focus:border-[#C6F432] outline-none transition"
                   />
                   <button
                     type="button"
@@ -811,7 +811,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleSaveApiKey}
-                  className="px-4 py-2 rounded-xl bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition flex items-center gap-2 shadow-xs cursor-pointer"
+                  className="px-4 py-2 rounded-xl mizan-accent-btn text-xs font-bold transition flex items-center gap-2 shadow-xs cursor-pointer"
                 >
                   <Save size={13} />
                   <span>Anahtarı Kaydet</span>
@@ -955,7 +955,7 @@ export default function SettingsPage() {
                       })
                     }
                     className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${
-                      settings[item.key as keyof UserSettingsState] ? "bg-[#08080C] dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
+                      settings[item.key as keyof UserSettingsState] ? "bg-[#08080C] dark:bg-[#C6F432]" : "bg-slate-300 dark:bg-slate-700"
                     }`}
                   >
                     <span
@@ -1000,7 +1000,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={() => setSettings({ ...settings, maskBalances: !settings.maskBalances })}
                 className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${
-                  settings.maskBalances ? "bg-[#08080C] dark:bg-indigo-600" : "bg-slate-300 dark:bg-slate-700"
+                  settings.maskBalances ? "bg-[#08080C] dark:bg-[#C6F432]" : "bg-slate-300 dark:bg-slate-700"
                 }`}
               >
                 <span

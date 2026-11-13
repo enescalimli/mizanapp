@@ -70,7 +70,6 @@ import {
   calculateZakatForPositionClient,
 } from "@/lib/decimal/decimal";
 import { getCompliantAlternativesForTicker } from "@/lib/data/compliantAlternatives";
-import { KafifRiskRadarWidget } from "@/components/KafifRiskRadarWidget";
 
 function PortfolioManagementContent() {
   const router = useRouter();
@@ -1377,7 +1376,7 @@ function PortfolioManagementContent() {
             onClick={() => setActiveBasket("ALL")}
             className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
               activeBasket === "ALL"
-                ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                 : "bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
             }`}
           >
@@ -1394,7 +1393,7 @@ function PortfolioManagementContent() {
                 onClick={() => setActiveBasket(basketName)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 shrink-0 cursor-pointer ${
                   activeBasket === basketName
-                    ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                     : "bg-white dark:bg-[#101118] border border-slate-200/60 dark:border-white/10 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
@@ -1413,27 +1412,6 @@ function PortfolioManagementContent() {
             <span>+ Yeni Sepet</span>
           </button>
         </div>
-
-        {/* KAFİF Erken Uyarı - Yalnızca kritik risk varsa zarif mini şerit */}
-        {portfolioAnalysis.kafifAlerts.length > 0 && (
-          <div className="p-3 px-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3 animate-in fade-in">
-            <div className="flex items-center gap-2">
-              <AlertTriangle size={15} className="text-amber-600 dark:text-amber-400 shrink-0" />
-              <span>
-                <strong>KAFİF Erken Uyarı:</strong> {portfolioAnalysis.kafifAlerts.map(a => a.warningMessage).join(" ")}
-              </span>
-            </div>
-            {nonCompliantHoldings.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setSwapModalOpen(true)}
-                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[11px] font-bold shrink-0 transition cursor-pointer"
-              >
-                Muadille Değiştir &rarr;
-              </button>
-            )}
-          </div>
-        )}
 
         {/* ================================================================= */}
         {/* 3. 4'LÜ COMPACT BENTO METRİK ŞERİDİ                                */}
@@ -1586,7 +1564,7 @@ function PortfolioManagementContent() {
                   onClick={() => setBenchmarkIndex(benchmarkIndex === "XU100" ? "NONE" : "XU100")}
                   className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 cursor-pointer ${
                     benchmarkIndex === "XU100"
-                      ? "bg-blue-600 text-white shadow-2xs"
+                      ? "mizan-accent-btn shadow-2xs"
                       : "text-[#6E81A0] dark:text-[#94A3B8]"
                   }`}
                   title="BIST 100 ile kıyasla"
@@ -1734,12 +1712,6 @@ function PortfolioManagementContent() {
           </div>
         </div>
 
-        {/* KAFİF Erken Uyarı Risk Radarı Bildirimi */}
-        <KafifRiskRadarWidget
-          portfolioTickers={holdings.map((h) => h.ticker)}
-          mode="banner"
-        />
-
         {/* ================================================================= */}
         {/* SEGMENTED TAB SELECTOR (5 Modern Sekme)                           */}
         {/* ================================================================= */}
@@ -1750,7 +1722,7 @@ function PortfolioManagementContent() {
               onClick={() => setActiveTab("HOLDINGS")}
               className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "HOLDINGS"
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                   : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
@@ -1763,7 +1735,7 @@ function PortfolioManagementContent() {
               onClick={() => setActiveTab("CALENDAR")}
               className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "CALENDAR"
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                   : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
@@ -1776,7 +1748,7 @@ function PortfolioManagementContent() {
               onClick={() => setActiveTab("PURIFICATION")}
               className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "PURIFICATION"
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                   : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
@@ -1789,7 +1761,7 @@ function PortfolioManagementContent() {
               onClick={() => setActiveTab("TRANSACTIONS")}
               className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "TRANSACTIONS"
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                   : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
@@ -1802,7 +1774,7 @@ function PortfolioManagementContent() {
               onClick={() => setActiveTab("ZAKAT")}
               className={`px-3.5 py-1.5 rounded-full text-xs transition flex items-center gap-1.5 cursor-pointer ${
                 activeTab === "ZAKAT"
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-black shadow-xs font-bold"
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs font-bold"
                   : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white font-medium"
               }`}
             >
@@ -1860,7 +1832,7 @@ function PortfolioManagementContent() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("TRANSACTIONS")}
-                    className="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition shadow-xs cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg mizan-accent-btn font-bold text-[11px] transition shadow-xs cursor-pointer"
                   >
                     Deftere Git &rarr;
                   </button>
@@ -2912,7 +2884,7 @@ function PortfolioManagementContent() {
                       onClick={() => setGlobalZakatIntent("LONG_TERM_DIVIDEND")}
                       className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                         globalZakatIntent === "LONG_TERM_DIVIDEND"
-                          ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                          ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                           : "text-[#6E81A0] dark:text-[#94A3B8]"
                       }`}
                     >
@@ -2923,7 +2895,7 @@ function PortfolioManagementContent() {
                       onClick={() => setGlobalZakatIntent("TRADING_SHORT_TERM")}
                       className={`px-3 py-1 rounded-full text-xs font-bold transition ${
                         globalZakatIntent === "TRADING_SHORT_TERM"
-                          ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                          ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                           : "text-[#6E81A0] dark:text-[#94A3B8]"
                       }`}
                     >
@@ -3058,7 +3030,7 @@ function PortfolioManagementContent() {
                 <button
                   type="button"
                   onClick={() => setShowCertificateModal(true)}
-                  className="px-4 py-2 rounded-full bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 shrink-0"
+                  className="px-4 py-2 rounded-full mizan-accent-btn text-xs font-bold shadow-xs transition flex items-center gap-1.5 shrink-0"
                 >
                   <Printer size={14} className="text-amber-400" />
                   <span>Zekât Belgesini Yazdır</span>
@@ -3696,7 +3668,7 @@ function PortfolioManagementContent() {
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    className="px-5 py-2 rounded-xl mizan-accent-btn text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                   >
                     <Plus size={14} />
                     <span>Deftere Kaydet</span>
@@ -3772,7 +3744,7 @@ function PortfolioManagementContent() {
                   <button
                     type="submit"
                     disabled={!newBasketName.trim()}
-                    className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                    className="px-5 py-2.5 rounded-xl mizan-accent-btn disabled:opacity-50 text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
                   >
                     <FolderPlus size={14} />
                     <span>Sepeti Oluştur</span>
@@ -3884,7 +3856,7 @@ function PortfolioManagementContent() {
                       </span>
                     </div>
                   </div>
-                  <label className="px-3 py-1.5 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black text-xs font-bold transition hover:opacity-90 cursor-pointer shrink-0">
+                  <label className="px-3 py-1.5 rounded-xl bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] text-xs font-bold transition hover:opacity-90 cursor-pointer shrink-0">
                     <span>Dosya Seç</span>
                     <input
                       type="file"
@@ -3941,7 +3913,7 @@ function PortfolioManagementContent() {
                   type="button"
                   onClick={handleImportCSV}
                   disabled={!csvInputText.trim()}
-                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl mizan-accent-btn disabled:opacity-50 text-xs font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer"
                 >
                   <Upload size={14} />
                   <span>Portföyü İçe Aktar</span>

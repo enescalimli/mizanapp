@@ -347,7 +347,7 @@ export default function IpoCalendarPage() {
                   {/* Üst Satır: Ticker, Durum ve Katılım Rozeti */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-2xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center font-mono font-black text-sm shadow-xs group-hover:scale-105 transition">
+                      <div className="w-11 h-11 rounded-2xl bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] flex items-center justify-center font-mono font-black text-sm shadow-xs group-hover:scale-105 transition">
                         {item.ticker}
                       </div>
                       <div>
@@ -546,7 +546,7 @@ export default function IpoCalendarPage() {
                         {/* Ticker & Şirket */}
                         <td className="py-4 px-4 font-mono">
                           <div className="flex items-center gap-2.5">
-                            <span className="w-8 h-8 rounded-xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
+                            <span className="w-8 h-8 rounded-xl bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] flex items-center justify-center font-bold text-xs shadow-2xs">
                               {item.ticker}
                             </span>
                             <div>
@@ -631,7 +631,7 @@ export default function IpoCalendarPage() {
               {/* Modal Başlık ve Kapat Butonu */}
               <div className="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-white/10 pb-5">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center font-mono font-black text-base shadow-xs">
+                  <div className="w-12 h-12 rounded-2xl bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] flex items-center justify-center font-mono font-black text-base shadow-xs">
                     {selectedDetailIpo.ticker}
                   </div>
                   <div>
@@ -722,7 +722,7 @@ export default function IpoCalendarPage() {
               {/* ============================================================= */}
               {/* INTERAKTİF LOT DAĞITIM HESAPLAYICI                             */}
               {/* ============================================================= */}
-              <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#08080C] to-[#10B981] text-white shadow-xl space-y-4">
+              <div className="p-5 sm:p-6 rounded-2xl bg-[#101118] border border-[#C6F432]/25 text-white shadow-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-base">🎯</span>

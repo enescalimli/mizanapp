@@ -281,7 +281,7 @@ export const FloatingBottomBar: React.FC = () => {
                 className="flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-[#10B981]/10 to-[#08080C]/5 dark:from-blue-950/40 dark:to-slate-900/40 border border-[#10B981]/15 dark:border-white/10 transition group text-left mt-1"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#08080C] dark:bg-[#10B981] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] flex items-center justify-center shadow-xs">
                     <User size={18} />
                   </div>
                   <div>

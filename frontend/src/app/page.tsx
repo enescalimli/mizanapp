@@ -873,7 +873,7 @@ export default function LandingPage() {
                   {/* Disclosure Item 2 */}
                   <div className="p-3.5 rounded-xl bg-white dark:bg-[#141720] border border-slate-200/60 dark:border-white/10 space-y-1.5 hover:border-purple-500/40 transition">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+                      <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-purple-100 dark:bg-purple-950/60 text-[#10B981] dark:text-[#C6F432]">
                         KAP • DEVRE KESİCİ
                       </span>
                       <span className="text-[10px] font-mono text-slate-400">14:15</span>

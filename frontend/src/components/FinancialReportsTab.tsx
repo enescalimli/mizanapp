@@ -197,7 +197,7 @@ export function FinancialReportsTab({
                 onClick={() => setUnit("MN")}
                 className={`px-2.5 py-1 rounded-full transition ${
                   unit === "MN"
-                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                     : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
               >
@@ -208,7 +208,7 @@ export function FinancialReportsTab({
                 onClick={() => setUnit("BIN")}
                 className={`px-2.5 py-1 rounded-full transition ${
                   unit === "BIN"
-                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                     : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
               >
@@ -219,7 +219,7 @@ export function FinancialReportsTab({
                 onClick={() => setUnit("RAW")}
                 className={`px-2.5 py-1 rounded-full transition ${
                   unit === "RAW"
-                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-xs"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-xs"
                     : "text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white"
                 }`}
               >
@@ -258,7 +258,7 @@ export function FinancialReportsTab({
                 onClick={() => setStatementType(tab.id as StatementType)}
                 className={`px-4 py-2 rounded-2xl text-xs font-bold flex items-center gap-2 transition shrink-0 ${
                   isActive
-                    ? "bg-[#08080C] dark:bg-[#10B981] text-white shadow-md shadow-[#08080C]/15"
+                    ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] shadow-md shadow-[#08080C]/15"
                     : "bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 text-[#6E81A0] dark:text-[#94A3B8] hover:text-[#08080C] dark:hover:text-white border border-slate-200/60 dark:border-white/5"
                 }`}
               >

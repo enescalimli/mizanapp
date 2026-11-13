@@ -268,7 +268,7 @@ export default function CompanyDetailPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleAddToPortfolio}
-              className="px-3.5 py-1.5 rounded-full bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95"
+              className="px-3.5 py-1.5 rounded-full mizan-accent-btn text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95"
             >
               <PlusCircle size={13} />
               <span>{addedToPortfolio ? "Eklendi!" : "Portföye Ekle"}</span>
@@ -745,7 +745,7 @@ export default function CompanyDetailPage() {
                   scorecard.ratingLetter === "A+" || scorecard.ratingLetter === "A"
                     ? "bg-emerald-600 text-white"
                     : scorecard.ratingLetter.startsWith("B")
-                    ? "bg-blue-600 text-white"
+                    ? "mizan-accent-btn"
                     : scorecard.ratingLetter === "C"
                     ? "bg-amber-500 text-white"
                     : "bg-rose-600 text-white"
@@ -1230,7 +1230,7 @@ export default function CompanyDetailPage() {
                           <td className="py-2.5 px-3 text-right">
                             <Link
                               href={`/companies/${p.ticker}`}
-                              className="px-2.5 py-1 rounded-lg bg-[#08080C] hover:bg-[#10B981] text-white text-[10px] font-bold font-sans transition inline-flex items-center gap-1"
+                              className="px-2.5 py-1 rounded-lg mizan-accent-btn text-[10px] font-bold font-sans transition inline-flex items-center gap-1"
                             >
                               <span>İncele</span>
                               <ArrowRight size={10} />
@@ -1704,7 +1704,7 @@ export default function CompanyDetailPage() {
                     href={`https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3.5 py-1.5 rounded-full bg-[#08080C] hover:bg-[#10B981] text-white text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+                    className="px-3.5 py-1.5 rounded-full mizan-accent-btn text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
                   >
                     <span>KAP Resmi Sayfası</span>
                     <ExternalLink size={12} />
@@ -1742,7 +1742,7 @@ export default function CompanyDetailPage() {
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/20">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] border border-[#10B981]/25 dark:border-[#C6F432]/30">
                               {item.category}
                             </span>
                             <span className="text-xs font-mono text-[#6E81A0] dark:text-[#94A3B8]">
@@ -1814,7 +1814,7 @@ export default function CompanyDetailPage() {
                         href={`https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${ticker}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#08080C] dark:bg-[#10B981] text-white text-xs font-bold hover:scale-105 transition shadow-xs"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] text-xs font-bold hover:scale-105 transition shadow-xs"
                       >
                         <span>KAP {ticker} Resmi Şirket Sayfasına Git</span>
                         <ExternalLink size={12} />

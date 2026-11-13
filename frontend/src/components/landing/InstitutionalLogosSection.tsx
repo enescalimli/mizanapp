@@ -265,7 +265,7 @@ export const InstitutionalLogosSection: React.FC = () => {
           <div className="flex items-center gap-2 shrink-0">
             <Link
               href="/tarayici"
-              className="px-4 py-2 rounded-xl bg-[#08080C] hover:bg-[#10B981] dark:bg-[#10B981] dark:hover:bg-[#344b82] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-xs"
+              className="px-4 py-2 rounded-xl mizan-accent-btn font-bold text-xs transition flex items-center gap-1.5 shadow-xs"
             >
               <span>Canlı Hisseleri İncele</span>
               <ArrowUpRight size={13} />
