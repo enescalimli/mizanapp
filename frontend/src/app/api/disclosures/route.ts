@@ -250,12 +250,227 @@ async function fetchKapOfficialDisclosures(): Promise<Array<{ rawTitle: string; 
   return items;
 }
 
-// 4. Fetch Ticker-Specific KAP Disclosures
-async function fetchKapTickerDisclosures(ticker: string): Promise<Array<{ rawTitle: string; pubDate: string; link: string }>> {
-  const items: Array<{ rawTitle: string; pubDate: string; link: string }> = [];
+const TR_MONTHS: Record<string, number> = {
+  ocak: 0, oca: 0,
+  şubat: 1, subat: 1, şub: 1, sub: 1,
+  mart: 2, mar: 2,
+  nisan: 3, nis: 3,
+  mayıs: 4, mayis: 4, may: 4,
+  haziran: 5, haz: 5,
+  temmuz: 6, tem: 6,
+  ağustos: 7, agustos: 7, ağu: 7, agu: 7,
+  eylül: 8, eylul: 8, eyl: 8,
+  ekim: 9, eki: 9,
+  kasım: 10, kasim: 10, kas: 10,
+  aralık: 11, aralik: 11, ara: 11,
+};
+
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;|&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function parseTurkishDate(text: string): { isoDate: string; label: string } | null {
+  const m = text.match(/(\d{1,2})\s+([A-Za-zÇĞİÖŞÜçğıöşü]+)\s+(20\d{2})/i);
+  if (!m) return null;
+  const day = Number(m[1]);
+  const monthKey = m[2].toLocaleLowerCase("tr-TR");
+  const month = TR_MONTHS[monthKey];
+  const year = Number(m[3]);
+  if (month === undefined || day < 1 || day > 31) return null;
+  const d = new Date(Date.UTC(year, month, day, 12, 0, 0));
+  return {
+    isoDate: d.toISOString(),
+    label: `${String(day).padStart(2, "0")} ${m[2]} ${year}`,
+  };
+}
+
+const KNOWN_PUBLISHERS_RE =
+  /\s+-\s+(CNBC-e|Yeni Şafak|GZT|Bloomberg HT|Ekonomim|Dünya Gazetesi|Foreks|Matriks|Investing\.com Türkiye|Hürriyet|Milliyet|Sabah|Sözcü|NTV|Habertürk|Anadolu Ajansı|İHA|DHA|Finans Gündem|Para Analiz|[A-Za-z0-9ÇĞİÖŞÜçğıöşü\s\.]+)$/i;
+
+function isJunkHeadlineOrSubject(text: string): boolean {
+  const cleaned = text.trim();
+  if (cleaned.length < 7) return true;
+  // Purely numbers, fractions or codes like "67/7", "2026/1"
+  if (/^[\d\s\/\.\-,:%()]+$/.test(cleaned)) return true;
+  // Generic roundup / clickbait articles without specific disclosure subject
+  if (
+    /işte günün kap haberleri|peş peşe kap bildirimleri|kap açıklamaları:|kap bülteni özeti|stratejik plan/i.test(
+      cleaned
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function parseKapRssHeadline(
+  rawTitleInput: string,
+  forcedTicker?: string,
+  explicitSource?: string
+): {
+  ticker?: string;
+  companyName?: string;
+  subject: string;
+  formattedTitle: string;
+} | null {
+  let titleNoSource = decodeHtmlEntities(rawTitleInput);
+  if (explicitSource) {
+    const escaped = explicitSource.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    titleNoSource = titleNoSource.replace(new RegExp(`\\s*-\\s*${escaped}$`, "i"), "").trim();
+  }
+  titleNoSource = titleNoSource.replace(KNOWN_PUBLISHERS_RE, "").trim();
+
+  let ticker: string | undefined = forcedTicker;
+  let companyName: string | undefined = undefined;
+  let subject = titleNoSource;
+
+  if (titleNoSource.includes("***")) {
+    const parts = titleNoSource
+      .split("***")
+      .map((p) => p.trim())
+      .filter(Boolean);
+    if (parts.length < 2) return null;
+
+    // Identify ticker token(s) from parts (skip leading "KAP")
+    for (let i = 1; i < parts.length; i++) {
+      const p = parts[i];
+      const upperCompact = p.replace(/\s+/g, "").toUpperCase();
+      if (/^[A-Z0-9,]{3,20}$/.test(upperCompact) && !/^(KAP|A\.Ş\.|AS)$/.test(upperCompact)) {
+        const candidates = upperCompact
+          .split(",")
+          .map((c) => c.trim())
+          .filter((c) => /^[A-Z0-9]{3,6}$/.test(c));
+        if (candidates.length > 0) {
+          const matchedKnown = candidates.find((c) => tickerMap.has(c));
+          ticker = forcedTicker || matchedKnown || candidates[0];
+          break;
+        }
+      }
+    }
+
+    // Subject is the last meaningful non-ticker part
+    const lastPart = parts[parts.length - 1];
+    if (
+      ticker &&
+      lastPart.replace(/\s+/g, "").toUpperCase().includes(ticker) &&
+      parts.length >= 3
+    ) {
+      subject = parts[parts.length - 2];
+    } else {
+      subject = lastPart;
+    }
+
+    // Company name if meaningful
+    if (parts.length >= 3) {
+      const candidateCo = parts[1];
+      if (
+        candidateCo &&
+        !/^(KAP|KAMUYU AYDINLATMA PLATFORMU|BORSA İSTANBUL)$/i.test(candidateCo) &&
+        candidateCo !== ticker
+      ) {
+        companyName = candidateCo;
+      }
+    }
+  } else {
+    if (!ticker) {
+      for (const [knownTicker, info] of tickerMap.entries()) {
+        const regex = new RegExp(`\\b${knownTicker}\\b`, "i");
+        if (regex.test(titleNoSource)) {
+          ticker = knownTicker;
+          companyName = info.name;
+          break;
+        }
+      }
+    }
+    const lower = titleNoSource.toLowerCase();
+    const hasDisclosureSignal =
+      Boolean(ticker) ||
+      /(kâr payı|kar payı|temettü|sermaye artır|geri alım|devre kesici|bilanço|faaliyet raporu|sorumluluk beyanı|katılım|kafif|ihraç|özel durum|esas sözleşme|kira sertifikası)/i.test(
+        lower
+      );
+    if (!hasDisclosureSignal) return null;
+  }
+
+  subject = subject.replace(/^[\-\–:\s]+|[\-\–:\s]+$/g, "").trim();
+  if (isJunkHeadlineOrSubject(subject)) return null;
+
+  const primaryTicker = ticker?.toUpperCase();
+  const companyInfo = primaryTicker ? tickerMap.get(primaryTicker) : undefined;
+  const resolvedCompanyName = companyInfo?.name || companyName;
+  const formattedTitle = primaryTicker
+    ? `${primaryTicker} - ${subject}`
+    : resolvedCompanyName
+    ? `${resolvedCompanyName} - ${subject}`
+    : `KAP - ${subject}`;
+
+  return {
+    ticker: primaryTicker,
+    companyName: resolvedCompanyName,
+    subject,
+    formattedTitle,
+  };
+}
+
+function buildKapSummaryAndNote(
+  subject: string,
+  category: string,
+  primaryTicker?: string,
+  resolvedCompanyName?: string
+): { summary: string; islamicFinanceNote: string; isCompliant: boolean | null } {
+  const companyInfo = primaryTicker ? tickerMap.get(primaryTicker) : undefined;
+  const displayEntity = companyInfo?.name || resolvedCompanyName || primaryTicker || "Borsa İstanbul";
+  const lowerSub = subject.toLowerCase();
+
+  let summary = "";
+  if (category === "Devre Kesici") {
+    summary = `Borsa İstanbul BISTECH Devre Kesici Uygulaması: ${primaryTicker || displayEntity} payında işlemler geçici olarak durdurulmuş ve tek fiyat emir toplama başlatılmıştır. Resmi KAP duyurusudur.`;
+  } else if (lowerSub.includes("geri alım") || lowerSub.includes("payların geri")) {
+    summary = `${displayEntity}: Pay geri alım programı kapsamında gerçekleştirilen işlemlere dair resmi bildirim Kamuyu Aydınlatma Platformu'nda (KAP) yayımlanmıştır.`;
+  } else if (category === "Hak Kullanımı / Temettü") {
+    summary = `${displayEntity}: Kâr payı (temettü) dağıtımı, bedelsiz/bedelli sermaye artırımı veya rüçhan hak kullanımına ilişkin resmi KAP açıklamasıdır.`;
+  } else if (lowerSub.includes("yeni iş") || lowerSub.includes("ihale") || lowerSub.includes("sözleşme")) {
+    summary = `${displayEntity}: Şirket ciro ve backlog'unu doğrudan etkileyen yeni iş ilişkisi / ticari sözleşme bildirimi KAP'ta yayımlanmıştır.`;
+  } else if (lowerSub.includes("kira sertifikası") || lowerSub.includes("faizsiz") || lowerSub.includes("sukuk")) {
+    summary = `${displayEntity}: Faizsiz finans / kira sertifikası (sukuk) ihracına ilişkin resmi KAP bildirimidir.`;
+  } else if (category === "Finansal Rapor & Bilanço") {
+    summary = `${displayEntity}: ${subject} — dönemsel finansal tablolar, borçluluk rasyoları ve faaliyet raporu dipnotlarını kapsayan resmi KAP bildirimidir.`;
+  } else {
+    summary = `${displayEntity}: ${subject} konulu resmi açıklama Kamuyu Aydınlatma Platformu'nda (KAP) yayımlanmıştır.`;
+  }
+
+  let islamicFinanceNote = "Kamuyu Aydınlatma Platformu (KAP) resmi şirket bildirimi.";
+  if (companyInfo) {
+    if (companyInfo.isCompliant) {
+      islamicFinanceNote = `✅ ${primaryTicker} hissesi BIST Katılım Endeksi (XKTUM) kapsamındadır. DİB ve TKBB fıkhi standartlarına uygundur.`;
+    } else {
+      islamicFinanceNote = `⚠️ ${primaryTicker} hissesi Katılım Endeksi dışındadır. Finansal borç/faiz oranı (%33) veya ana faaliyet alanı uygun görülmemiştir.`;
+    }
+  } else if (lowerSub.includes("faizsiz") || lowerSub.includes("katılım") || lowerSub.includes("kira sertifikası")) {
+    islamicFinanceNote = "✅ Bildirim içeriği faizsiz / katılım finans enstrümanlarıyla doğrudan ilgilidir.";
+  }
+
+  return {
+    summary,
+    islamicFinanceNote,
+    isCompliant: companyInfo ? companyInfo.isCompliant : null,
+  };
+}
+
+type RawKapRssItem = { rawTitle: string; pubDate: string; link: string; sourceName?: string };
+
+async function fetchGoogleRssQuery(query: string): Promise<RawKapRssItem[]> {
+  const items: RawKapRssItem[] = [];
   try {
-    const q = `"KAP" "${ticker}" when:14d`;
-    const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=tr&gl=TR&ceid=TR:tr`;
+    const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=tr&gl=TR&ceid=TR:tr`;
     const res = await fetch(url, {
       headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" },
       next: { revalidate: 30 },
@@ -269,19 +484,30 @@ async function fetchKapTickerDisclosures(ticker: string): Promise<Array<{ rawTit
       const titleMatch = block.match(/<title>([\s\S]*?)<\/title>/);
       const pubDateMatch = block.match(/<pubDate>([\s\S]*?)<\/pubDate>/);
       const linkMatch = block.match(/<link>([\s\S]*?)<\/link>/);
+      const sourceMatch = block.match(/<source[^>]*>([\s\S]*?)<\/source>/);
 
       const rawTitle = titleMatch ? cleanHtml(titleMatch[1]) : "";
       const pubDate = pubDateMatch ? pubDateMatch[1].trim() : "";
       const link = linkMatch ? linkMatch[1].trim() : "";
+      const sourceName = sourceMatch ? decodeHtmlEntities(cleanHtml(sourceMatch[1])) : undefined;
 
       if (rawTitle && link) {
-        items.push({ rawTitle, pubDate, link });
+        items.push({ rawTitle, pubDate, link, sourceName });
       }
     }
   } catch (err) {
-    console.error(`fetchKapTickerDisclosures error for ${ticker}:`, err);
+    console.error(`fetchGoogleRssQuery error for [${query}]:`, err);
   }
   return items;
+}
+
+// 4. Fetch Structured Official KAP Disclosures & Ticker-Specific KAP Disclosures
+async function fetchStructuredKapFeed(): Promise<RawKapRssItem[]> {
+  return fetchGoogleRssQuery(`"KAP ***" when:7d`);
+}
+
+async function fetchKapTickerDisclosures(ticker: string): Promise<RawKapRssItem[]> {
+  return fetchGoogleRssQuery(`("KAP ***" OR "KAP") "${ticker}" when:21d`);
 }
 
 // Curated resilient fallback disclosures (ensures feed is NEVER empty if external APIs fail)
@@ -413,15 +639,19 @@ export async function GET(request: Request) {
 
   try {
     // Parallel fetching of official sources
-    const [spkBulletinsRes, spkAnnouncementsRes, kapDisclosuresRes] = await Promise.allSettled([
-      fetchSpkOfficialBulletins(),
-      fetchSpkOfficialAnnouncements(),
-      fetchKapOfficialDisclosures(),
-    ]);
+    const [spkBulletinsRes, spkAnnouncementsRes, structuredKapRes, kapDisclosuresRes] =
+      await Promise.allSettled([
+        fetchSpkOfficialBulletins(),
+        fetchSpkOfficialAnnouncements(),
+        fetchStructuredKapFeed(),
+        fetchKapOfficialDisclosures(),
+      ]);
 
     const spkBulletins = spkBulletinsRes.status === "fulfilled" ? spkBulletinsRes.value : [];
     const spkAnnouncements = spkAnnouncementsRes.status === "fulfilled" ? spkAnnouncementsRes.value : [];
-    const kapDisclosures = kapDisclosuresRes.status === "fulfilled" ? kapDisclosuresRes.value : [];
+    const structuredKap = structuredKapRes.status === "fulfilled" ? structuredKapRes.value : [];
+    const fallbackKap = kapDisclosuresRes.status === "fulfilled" ? kapDisclosuresRes.value : [];
+    const kapDisclosures: Array<RawKapRssItem> = [...structuredKap, ...fallbackKap];
 
     const items: DisclosureItem[] = [];
     const seenKeys = new Set<string>();
@@ -430,23 +660,32 @@ export async function GET(request: Request) {
     // 1. Process Official SPK Bulletins (spk.gov.tr direct)
     // -------------------------------------------------------------
     for (const b of spkBulletins.slice(0, 10)) {
-      const key = "spk-b-" + b.title.slice(0, 30).toLowerCase();
+      const cleanRawTitle = decodeHtmlEntities(b.title);
+      if (isJunkHeadlineOrSubject(cleanRawTitle)) continue;
+
+      const bulletinNoMatch = cleanRawTitle.match(/B[üu]lten\s*No\s*:\s*([\d\/\-]+)/i);
+      const parsedDate = parseTurkishDate(cleanRawTitle) || (b.dateStr ? parseTurkishDate(b.dateStr) : null);
+      const displayTitle = bulletinNoMatch
+        ? `SPK Haftalık Bülteni: ${bulletinNoMatch[1]}`
+        : cleanRawTitle;
+
+      const key = "spk-b-" + displayTitle.toLowerCase();
       if (seenKeys.has(key)) continue;
       seenKeys.add(key);
 
-      const id = "spk-b-" + Math.abs(hashCode(b.title));
+      const id = "spk-b-" + Math.abs(hashCode(displayTitle));
       items.push({
         id,
         source: "SPK",
-        title: b.title,
-        rawTitle: b.title,
-        summary: `Sermaye Piyasası Kurulu (SPK) resmi haftalık bülteni. Halka arz onayları, sermaye artırımları, idari tedbirler ve kurul ilke kararlarını içerir. Resmi SPK yayınıdır.`,
+        title: displayTitle,
+        rawTitle: cleanRawTitle,
+        summary: `Sermaye Piyasası Kurulu (SPK) resmi haftalık bülteni (${bulletinNoMatch ? bulletinNoMatch[1] : "Güncel"}). Halka arz onayları, bedelsiz/bedelli sermaye artırımları ve kurul ilke kararlarını içerir.`,
         category: "SPK Bülteni",
         categoryColor: "purple",
         publisher: "Sermaye Piyasası Kurulu (SPK)",
-        pubDate: new Date().toUTCString(),
-        isoDate: new Date().toISOString(),
-        timeAgo: b.dateStr || "Resmi Bülten",
+        pubDate: parsedDate ? new Date(parsedDate.isoDate).toUTCString() : new Date().toUTCString(),
+        isoDate: parsedDate ? parsedDate.isoDate : new Date().toISOString(),
+        timeAgo: parsedDate?.label || b.dateStr || "Resmi Bülten",
         url: b.link,
         isCompliant: null,
         islamicFinanceNote: "SPK bülten kararlarında yer alan sermaye artırımları ve bedelsiz/bedelli onayları fıkhi açıdan caiz sermaye dönüşümleridir.",
@@ -457,25 +696,33 @@ export async function GET(request: Request) {
     // 2. Process Official SPK Press Announcements (spk.gov.tr direct)
     // -------------------------------------------------------------
     for (const d of spkAnnouncements.slice(0, 10)) {
-      const key = "spk-d-" + d.title.slice(0, 40).toLowerCase();
+      let cleanTitle = decodeHtmlEntities(d.title);
+      const parsedDate = parseTurkishDate(cleanTitle) || (d.dateStr ? parseTurkishDate(d.dateStr) : null);
+      cleanTitle = cleanTitle
+        .replace(/^\d{1,2}\s+[A-Za-zÇĞİÖŞÜçğıöşü]+\s+20\d{2}\s*(Yeni)?\s*/i, "")
+        .trim();
+
+      if (cleanTitle.length < 18 || isJunkHeadlineOrSubject(cleanTitle)) continue;
+
+      const key = "spk-d-" + cleanTitle.slice(0, 45).toLowerCase();
       if (seenKeys.has(key)) continue;
       seenKeys.add(key);
 
-      const { category, categoryColor } = detectCategory(d.title);
-      const id = "spk-d-" + Math.abs(hashCode(d.title));
+      const { category, categoryColor } = detectCategory(cleanTitle);
+      const id = "spk-d-" + Math.abs(hashCode(cleanTitle));
 
       items.push({
         id,
         source: "SPK",
-        title: d.title,
-        rawTitle: d.title,
-        summary: d.summary,
+        title: cleanTitle,
+        rawTitle: cleanTitle,
+        summary: decodeHtmlEntities(d.summary),
         category: category === "SPK Bülteni" ? "İdari Yaptırım & Tedbir" : category,
         categoryColor,
         publisher: "Sermaye Piyasası Kurulu (SPK)",
-        pubDate: new Date().toUTCString(),
-        isoDate: new Date().toISOString(),
-        timeAgo: d.dateStr || "Resmi Duyuru",
+        pubDate: parsedDate ? new Date(parsedDate.isoDate).toUTCString() : new Date().toUTCString(),
+        isoDate: parsedDate ? parsedDate.isoDate : new Date().toISOString(),
+        timeAgo: parsedDate?.label || d.dateStr || "Resmi Duyuru",
         url: d.link,
         isCompliant: null,
         islamicFinanceNote: "Sermaye Piyasası Kurulu'nun piyasa şeffaflığı ve yatırımcı koruma kararıdır.",
@@ -486,74 +733,22 @@ export async function GET(request: Request) {
     // 3. Process Official KAP Disclosures
     // -------------------------------------------------------------
     for (const item of kapDisclosures) {
-      let titleNoSource = item.rawTitle.replace(/\s*-\s*[A-Za-z0-9ÇĞİÖŞÜçğıöşü\s\.]+$/, "").trim();
+      const parsed = parseKapRssHeadline(item.rawTitle, undefined, item.sourceName);
+      if (!parsed) continue;
 
-      let ticker: string | undefined = undefined;
-      let subject = titleNoSource;
-      let companyName: string | undefined = undefined;
-
-      if (titleNoSource.includes("***")) {
-        const parts = titleNoSource.split("***").map((p) => p.trim()).filter(Boolean);
-        if (parts.length >= 2) {
-          for (const p of parts.slice(1)) {
-            const cleanCandidate = p.replace(/\s+/g, "").toUpperCase();
-            if (/^[A-Z0-9]{3,6}$/.test(cleanCandidate) || /^[A-Z0-9,]+$/.test(cleanCandidate)) {
-              ticker = cleanCandidate.split(",")[0].trim();
-              break;
-            }
-          }
-          subject = parts[parts.length - 1];
-          if (parts.length >= 3 && !companyName) {
-            companyName = parts[1];
-          }
-        }
-      } else {
-        // Find ticker by checking all known tickers in title
-        for (const [knownTicker, info] of tickerMap.entries()) {
-          const regex = new RegExp(`\\b${knownTicker}\\b`, "i");
-          if (regex.test(titleNoSource)) {
-            ticker = knownTicker;
-            companyName = info.name;
-            break;
-          }
-        }
-      }
-
-      const primaryTicker = ticker?.toUpperCase();
-      const companyInfo = primaryTicker ? tickerMap.get(primaryTicker) : undefined;
-
+      const { ticker: primaryTicker, companyName: resolvedCompanyName, subject, formattedTitle } = parsed;
       const { category, categoryColor } = detectCategory(subject);
 
-      let formattedTitle = "";
-      if (primaryTicker) {
-        formattedTitle = `${primaryTicker} - ${subject}`;
-      } else {
-        formattedTitle = `Borsa İstanbul - ${subject}`;
-      }
-
-      const key = "kap-" + formattedTitle.toLowerCase().slice(0, 50);
+      const key = "kap-" + formattedTitle.toLowerCase().slice(0, 55);
       if (seenKeys.has(key)) continue;
       seenKeys.add(key);
 
-      let summary = "";
-      if (category === "Devre Kesici") {
-        summary = `Borsa İstanbul BISTECH Devre Kesici Uygulaması: ${primaryTicker || "İlgili"} payında işlemler geçici olarak durdurulmuş ve tek fiyat emir toplama başlatılmıştır. Resmi KAP duyurusudur.`;
-      } else if (subject.toLowerCase().includes("geri alım") || subject.toLowerCase().includes("payların geri")) {
-        summary = `${companyInfo?.name || primaryTicker || "Şirket"}: Pay geri alım programı kapsamında resmi bildirim Kamuyu Aydınlatma Platformu'nda yayımlanmıştır.`;
-      } else if (category === "Hak Kullanımı / Temettü") {
-        summary = `${companyInfo?.name || primaryTicker || "Borsa İstanbul"}: Kâr payı dağıtımı / sermaye artırımı / rüçhan hak kullanımına ilişkin resmi KAP açıklamasıdır.`;
-      } else {
-        summary = `${companyInfo?.name || primaryTicker || "Borsa İstanbul"}: ${subject} konulu resmi açıklama Kamuyu Aydınlatma Platformu'nda yayımlanmıştır.`;
-      }
-
-      let islamicFinanceNote = "Kamuyu Aydınlatma Platformu (KAP) resmi şirket bildirimi.";
-      if (companyInfo) {
-        if (companyInfo.isCompliant) {
-          islamicFinanceNote = `✅ ${primaryTicker} hissesi BIST Katılım Endeksi (XKTUM) kapsamındadır. DİB ve TKBB fıkhi standartlarına uygundur.`;
-        } else {
-          islamicFinanceNote = `⚠️ ${primaryTicker} hissesi Katılım Endeksi dışındadır. Finansal borç/faiz oranı veya ana faaliyet alanı uygun görülmemiştir.`;
-        }
-      }
+      const { summary, islamicFinanceNote, isCompliant } = buildKapSummaryAndNote(
+        subject,
+        category,
+        primaryTicker,
+        resolvedCompanyName
+      );
 
       const officialKapUrl = primaryTicker
         ? `https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${primaryTicker}`
@@ -572,12 +767,12 @@ export async function GET(request: Request) {
         categoryColor,
         publisher: "Kamuyu Aydınlatma Platformu (KAP)",
         ticker: primaryTicker,
-        companyName: companyInfo?.name || companyName,
+        companyName: resolvedCompanyName,
         pubDate: item.pubDate,
         isoDate: item.pubDate ? new Date(item.pubDate).toISOString() : new Date().toISOString(),
         timeAgo: formatRelativeTime(item.pubDate),
         url: officialKapUrl,
-        isCompliant: companyInfo ? companyInfo.isCompliant : null,
+        isCompliant,
         islamicFinanceNote,
       });
     }
@@ -622,28 +817,23 @@ export async function GET(request: Request) {
         const companyInfo = tickerMap.get(filterTicker);
 
         for (const r of rawTickerItems) {
-          let titleNoSource = r.rawTitle.replace(/\s*-\s*[A-Za-z0-9ÇĞİÖŞÜçğıöşü\s\.]+$/, "").trim();
-          let subject = titleNoSource;
-          if (titleNoSource.includes("***")) {
-            const parts = titleNoSource.split("***").map((p) => p.trim()).filter(Boolean);
-            subject = parts[parts.length - 1];
-          }
+          const parsed = parseKapRssHeadline(r.rawTitle, filterTicker, r.sourceName);
+          if (!parsed) continue;
 
+          const { subject, formattedTitle, companyName } = parsed;
           const { category, categoryColor } = detectCategory(subject);
-          const formattedTitle = `${filterTicker} - ${subject}`;
           const id = "kap-" + Math.abs(hashCode(formattedTitle));
 
           if (seenTickerKeys.has(id)) continue;
           seenTickerKeys.add(id);
 
-          let summary = `${companyInfo?.name || filterTicker}: ${subject} konulu resmi açıklama Kamuyu Aydınlatma Platformu'nda yayımlanmıştır.`;
-          if (category === "Hak Kullanımı / Temettü") {
-            summary = `${companyInfo?.name || filterTicker}: Kâr payı dağıtımı / sermaye artırımına ilişkin resmi KAP açıklamasıdır.`;
-          } else if (category === "Finansal Rapor & Bilanço") {
-            summary = `${companyInfo?.name || filterTicker}: Dönemsel finansal tablolar ve dipnot açıklamasıdır.`;
-          }
+          const { summary, islamicFinanceNote, isCompliant } = buildKapSummaryAndNote(
+            subject,
+            category,
+            filterTicker,
+            companyName || companyInfo?.name
+          );
 
-          const isComp = companyInfo ? companyInfo.isCompliant : null;
           tickerItems.push({
             id,
             source: "KAP",
@@ -654,15 +844,13 @@ export async function GET(request: Request) {
             categoryColor,
             publisher: "Kamuyu Aydınlatma Platformu (KAP)",
             ticker: filterTicker,
-            companyName: companyInfo?.name || filterTicker,
+            companyName: companyName || companyInfo?.name || filterTicker,
             pubDate: r.pubDate,
             isoDate: r.pubDate ? new Date(r.pubDate).toISOString() : new Date().toISOString(),
             timeAgo: formatRelativeTime(r.pubDate),
             url: `https://www.kap.org.tr/tr/sirket-bilgileri/ozet/${filterTicker}`,
-            isCompliant: isComp,
-            islamicFinanceNote: isComp
-              ? `✅ ${filterTicker} hissesi BIST Katılım Endeksi (XKTUM) kapsamındadır.`
-              : `⚠️ ${filterTicker} hissesi Katılım Endeksi dışındadır.`,
+            isCompliant,
+            islamicFinanceNote,
           });
         }
       } catch (err) {

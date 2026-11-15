@@ -579,13 +579,13 @@ export default function LandingPage() {
               Mizan AI Fıkhi &amp; Finansal Asistan
             </h3>
             <p className="text-xs sm:text-sm text-[#525E75] dark:text-[#94A3B8] leading-relaxed">
-              Gemini 3.8 Flash tabanlı akıllı asistan; DİB ve TKBB fetvalarıyla eğitilmiş olup bilanço dipnotlarını analiz eder ve sesli/yazılı sorularınızı yanıtlar.
+              Gemini Flash tabanlı akıllı asistan; DİB ve TKBB fetvalarıyla eğitilmiş olup bilanço dipnotlarını analiz eder ve KAP/SPK PDF belgelerini yorumlar.
             </p>
           </div>
 
           {/* Card 3: BIST Katılım 7/24 Radar */}
           <div className="p-7 rounded-[28px] bg-white/45 dark:bg-[#101118] backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-sm hover:shadow-md transition space-y-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-[#C6F432]/15 text-blue-700 dark:text-[#C6F432] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-[#C6F432]/15 text-[#0D8B52] dark:text-[#C6F432] flex items-center justify-center">
               <Scale size={24} />
             </div>
             <h3 className="text-lg font-bold text-[#08080C] dark:text-white">
@@ -723,9 +723,9 @@ export default function LandingPage() {
 
               {activeFeatureTab === "AI_ASISTAN" && (
                 <>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-[#C6F432]/15 text-blue-800 dark:text-[#C6F432] text-xs font-bold">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 dark:bg-[#C6F432]/15 text-[#0D8B52] dark:text-[#C6F432] text-xs font-bold">
                     <Sparkles size={13} />
-                    <span>Gemini 3.8 Flash Fıkhi Danışman</span>
+                    <span>Gemini Flash Fıkhi Danışman</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-extrabold text-[#08080C] dark:text-white">
                     Akıllı İcazet Denetimi ve Bilanço Dipnot Danışmanı.
@@ -920,8 +920,8 @@ export default function LandingPage() {
                         Mizan AI Asistan Canlı Sorgulama
                       </span>
                     </div>
-                    <span className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold">
-                      Gemini 3.8 Flash
+                    <span className="text-[10px] font-mono text-[#0D8B52] dark:text-[#C6F432] font-bold">
+                      Gemini Flash
                     </span>
                   </div>
 

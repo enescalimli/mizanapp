@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -20,6 +20,8 @@ import {
   Send,
   MessageSquare,
   Scale,
+  Upload,
+  Trash2,
 } from "lucide-react";
 import { DisclosureItem } from "@/types/disclosure";
 import { StockLogo } from "./StockLogo";
@@ -37,6 +39,16 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [showPasteBox, setShowPasteBox] = useState(false);
   const [customText, setCustomText] = useState("");
+  const [uploadedAttachment, setUploadedAttachment] = useState<{
+    name: string;
+    sizeLabel: string;
+    mimeType: string;
+    base64Data?: string;
+    textContent?: string;
+  } | null>(null);
+  const [attachmentError, setAttachmentError] = useState<string | null>(null);
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Modal kapandığında state'i sıfırla
   useEffect(() => {
@@ -46,6 +58,9 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
     setAnalysisError(null);
     setShowPasteBox(false);
     setCustomText("");
+    setUploadedAttachment(null);
+    setAttachmentError(null);
+    setIsDraggingFile(false);
   }, [disclosure]);
 
   // ESC tuşu ile kapatma & body scroll lock
@@ -68,6 +83,66 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
   if (!disclosure) return null;
 
   const isKAP = disclosure.source === "KAP";
+  const isOfficialSpkPdf =
+    !isKAP &&
+    Boolean(disclosure.url?.startsWith("https://spk.gov.tr/")) &&
+    Boolean(disclosure.url?.toLowerCase().endsWith(".pdf"));
+
+  const handleAttachmentFile = async (file: File) => {
+    setAttachmentError(null);
+    const maxBytes = 2.8 * 1024 * 1024;
+    if (file.size > maxBytes) {
+      setAttachmentError(
+        "Dosya boyutu 2.8 MB sınırını aşıyor. Büyük PDF'ler için ilgili sayfaları seçebilir veya metni aşağıya yapıştırabilirsiniz."
+      );
+      return;
+    }
+
+    const lowerName = file.name.toLowerCase();
+    const isPdf = file.type === "application/pdf" || lowerName.endsWith(".pdf");
+    const isText =
+      file.type.startsWith("text/") ||
+      lowerName.endsWith(".txt") ||
+      lowerName.endsWith(".md") ||
+      lowerName.endsWith(".csv");
+
+    if (!isPdf && !isText) {
+      setAttachmentError("Yalnızca PDF (.pdf) veya metin (.txt, .md, .csv) dosyaları yüklenebilir.");
+      return;
+    }
+
+    const sizeKB = Math.max(1, Math.round(file.size / 1024));
+    const sizeLabel = sizeKB >= 1024 ? `${(sizeKB / 1024).toFixed(2)} MB` : `${sizeKB} KB`;
+
+    try {
+      if (isText) {
+        const textContent = (await file.text()).slice(0, 28000);
+        setUploadedAttachment({
+          name: file.name,
+          sizeLabel,
+          mimeType: "text/plain",
+          textContent,
+        });
+      } else {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(new Error("Dosya okunamadı"));
+          reader.readAsDataURL(file);
+        });
+        const base64Data = dataUrl.includes(",") ? dataUrl.split(",")[1] : dataUrl;
+        setUploadedAttachment({
+          name: file.name,
+          sizeLabel,
+          mimeType: "application/pdf",
+          base64Data,
+        });
+      }
+      setShowPasteBox(true);
+    } catch {
+      setAttachmentError("Dosya işlenirken hata oluştu. Lütfen tekrar deneyin.");
+    }
+  };
 
   // Modal içinde doğrudan Mizan AI Analizi çalıştırma
   const handleRunInlineAnalysis = async () => {
@@ -75,13 +150,19 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
     setAnalysisError(null);
 
     const fullPayloadText = customText.trim()
-      ? `${disclosure.summary}\n\n[Kullanıcı Tarafından Sağlanan Ek Metin / PDF İçeriği]:\n${customText.trim()}`
+      ? `${disclosure.summary}\n\n[Kullanıcı Tarafından Sağlanan Ek Metin]:\n${customText.trim()}`
       : disclosure.summary;
 
     const savedUserKey =
       typeof window !== "undefined"
         ? localStorage.getItem("mizan_user_gemini_api_key") || ""
         : "";
+
+    const basePrompt = uploadedAttachment
+      ? `Eklediğim "${uploadedAttachment.name}" belgesini ve aşağıdaki resmi ${disclosure.source} bildirimini DİB ve TKBB katılım ilkelerine göre madde madde incele. Kritik finansal rakamları, katılım endeksi etkisini ve arındırma/yatırımcı aksiyonu gerekip gerekmediğini açıkla.`
+      : isOfficialSpkPdf
+      ? `Aşağıdaki resmi SPK haftalık bülten PDF'ini ve duyurusunu DİB/TKBB katılım ilkelerine göre özetle. Öne çıkan halka arz onayları, bedelsiz/bedelli sermaye artırımları, idari yaptırımlar ve katılım yatırımcısını ilgilendiren kararları maddeler halinde çıkar.`
+      : `Aşağıdaki resmi ${disclosure.source} bildirimini DİB ve TKBB katılım ilkelerine göre analiz et. Şirketin katılım durumuna etkisi nedir? Kâr payı arındırması veya yatırımcı aksiyonu gerekir mi?`;
 
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -93,10 +174,18 @@ export function DisclosureDetailModal({ disclosure, onClose }: DisclosureDetailM
         method: "POST",
         headers,
         body: JSON.stringify({
+          attachment: uploadedAttachment
+            ? {
+                name: uploadedAttachment.name,
+                mimeType: uploadedAttachment.mimeType,
+                base64Data: uploadedAttachment.base64Data,
+                textContent: uploadedAttachment.textContent,
+              }
+            : undefined,
           messages: [
             {
               role: "user",
-              content: `Aşağıdaki resmi ${disclosure.source} bildirimini DİB ve TKBB katılım ilkelerine göre analiz et. Şirketin katılım durumuna etkisi nedir? Kâr payı arındırması veya yatırımcı aksiyonu gerekir mi?`,
+              content: basePrompt,
             },
           ],
           userApiKey: savedUserKey.trim() || undefined,
@@ -293,29 +382,127 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
           </p>
         </div>
 
-        {/* İsteğe Bağlı: PDF veya Detaylı Metin Ekleme Akordiyonu */}
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={() => setShowPasteBox(!showPasteBox)}
-            className="text-xs font-bold text-[#10B981] dark:text-[#C6F432] hover:underline flex items-center gap-1.5"
-          >
-            <FileCode size={13} />
-            <span>{showPasteBox ? "Metin Girişini Gizle" : "PDF İçeriği veya Detaylı Metin Ekleyerek Analiz Et (Opsiyonel)"}</span>
-          </button>
+        {/* İsteğe Bağlı: PDF Yükleme veya Detaylı Metin Ekleme Akordiyonu */}
+        <div className="space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => setShowPasteBox(!showPasteBox)}
+              className="text-xs font-bold text-[#10B981] dark:text-[#C6F432] hover:underline flex items-center gap-1.5"
+            >
+              <FileCode size={13} />
+              <span>
+                {showPasteBox
+                  ? "PDF & Metin Alanını Gizle"
+                  : "KAP / SPK PDF Yükle veya Tam Metin Yapıştır (Opsiyonel)"}
+              </span>
+            </button>
+
+            {isOfficialSpkPdf && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#10B981]/10 text-[#0D8B52] dark:bg-[#C6F432]/15 dark:text-[#C6F432] border border-[#10B981]/20 dark:border-[#C6F432]/25">
+                <Sparkles size={10} />
+                Resmi SPK PDF Otomatik Okunur
+              </span>
+            )}
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,application/pdf,.txt,.md,.csv,text/plain"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleAttachmentFile(f);
+              e.target.value = "";
+            }}
+            className="hidden"
+          />
+
+          {uploadedAttachment && (
+            <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-[#C6F432]/10 border border-emerald-200/70 dark:border-[#C6F432]/30 text-xs">
+              <div className="flex items-center gap-2 min-w-0">
+                <FileText size={14} className="text-[#10B981] dark:text-[#C6F432] shrink-0" />
+                <span className="font-bold text-[#08080C] dark:text-white truncate">
+                  {uploadedAttachment.name}
+                </span>
+                <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 shrink-0">
+                  ({uploadedAttachment.sizeLabel})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setUploadedAttachment(null);
+                  setAttachmentError(null);
+                }}
+                className="text-rose-500 hover:text-rose-600 p-1 rounded-lg hover:bg-rose-500/10 transition shrink-0"
+                title="Dosyayı Kaldır"
+              >
+                <Trash2 size={13} />
+              </button>
+            </div>
+          )}
+
+          {attachmentError && (
+            <p className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+              {attachmentError}
+            </p>
+          )}
 
           {showPasteBox && (
-            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-2 animate-in fade-in duration-150">
-              <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">
-                KAP bildiriminin tam metnini veya SPK bülten maddesini buraya yapıştırabilirsiniz:
-              </label>
-              <textarea
-                value={customText}
-                onChange={(e) => setCustomText(e.target.value)}
-                placeholder="Örn: 'Şirketimiz Yönetim Kurulu 2026 konsolide net dönem kârından pay başına brüt ₺2,40 kâr payı dağıtılmasına karar vermiştir...'"
-                rows={3}
-                className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-y"
-              />
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 space-y-3 animate-in fade-in duration-150">
+              {/* PDF / Dosya Sürükle-Bırak Alanı */}
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDraggingFile(true);
+                }}
+                onDragLeave={() => setIsDraggingFile(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDraggingFile(false);
+                  const f = e.dataTransfer.files?.[0];
+                  if (f) handleAttachmentFile(f);
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                className={`p-3 rounded-xl border border-dashed transition cursor-pointer flex items-center justify-between gap-3 ${
+                  isDraggingFile
+                    ? "border-[#10B981] dark:border-[#C6F432] bg-[#10B981]/10 dark:bg-[#C6F432]/10"
+                    : "border-slate-300 dark:border-white/20 hover:border-[#10B981] dark:hover:border-[#C6F432] bg-white dark:bg-[#101118]"
+                }`}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shrink-0">
+                    <Upload size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-[#08080C] dark:text-white truncate">
+                      {uploadedAttachment
+                        ? "Farklı Bir KAP / SPK PDF Yükle"
+                        : "KAP veya SPK PDF Belgesi Yükle (Maks. 2.8 MB)"}
+                    </p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                      PDF, TXT veya CSV sürükleyip bırakın ya da seçmek için tıklayın.
+                    </p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/10 text-[10px] font-bold text-[#08080C] dark:text-white shrink-0">
+                  Dosya Seç
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-600 dark:text-slate-300 block">
+                  Veya KAP / SPK bildirim metnini doğrudan buraya yapıştırın:
+                </label>
+                <textarea
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value)}
+                  placeholder="Örn: 'Şirketimiz Yönetim Kurulu 2026 konsolide net dönem kârından pay başına brüt ₺2,40 kâr payı dağıtılmasına karar vermiştir...'"
+                  rows={3}
+                  className="w-full text-xs p-3 rounded-xl bg-white dark:bg-[#101118] border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#10B981]/30 dark:focus:ring-[#C6F432]/30 resize-y"
+                />
+              </div>
             </div>
           )}
         </div>

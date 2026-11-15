@@ -761,8 +761,8 @@ export default function SettingsPage() {
                     <span>Kişisel Ücretli Hesap Devrede</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 dark:text-[#C6F432] border border-blue-500/20">
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#0D8B52] dark:text-[#C6F432] border border-[#10B981]/20 dark:border-[#C6F432]/25">
+                    <span className="w-2 h-2 rounded-full bg-[#10B981] dark:bg-[#C6F432]" />
                     <span>Mizan Kurumsal Sunucu Devrede</span>
                   </span>
                 )}

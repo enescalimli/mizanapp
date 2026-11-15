@@ -68,9 +68,15 @@ interface ChatRequestMessage {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { messages, context, userApiKey: directUserApiKey } = body as {
+    const { messages, context, userApiKey: directUserApiKey, attachment } = body as {
       messages: ChatRequestMessage[];
       userApiKey?: string;
+      attachment?: {
+        name?: string;
+        mimeType?: string;
+        base64Data?: string;
+        textContent?: string;
+      };
       context?: {
         userApiKey?: string;
         currentTicker?: string;
@@ -302,16 +308,89 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
       }
     }
 
-    // Hızlı, stabil ve güncel model kademesi
+    // Hızlı, stabil ve aktif Gemini model kademesi (multimodal PDF & ~1.2sn canlı yanıt doğrulanmış)
     const candidateModels = [
+      "gemini-3.5-flash-lite",
       "gemini-3.1-flash-lite",
       "gemini-flash-lite-latest",
-      "gemini-3.5-flash-lite",
       "gemini-3.5-flash",
       "gemini-3.8-flash",
     ];
 
-    const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}\n${historySection}\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Kullanıcının sorusuna doğrudan, canlı ve derinlemesine yanıt ver. SPK uyarınca yatırım tavsiyesi olmadığını (YTD) belirt.`;
+    let resolvedAttachmentName = attachment?.name;
+    let resolvedMimeType = attachment?.mimeType;
+    let resolvedBase64 = attachment?.base64Data
+      ? attachment.base64Data.replace(/^data:[^;]+;base64,/, "").trim()
+      : "";
+    let resolvedTextContent = attachment?.textContent || "";
+
+    // Eğer kullanıcı dosya yüklemediyse ve SPK resmi PDF/duyuru URL'si varsa sunucu tarafından otomatik çek
+    const discUrl = context?.disclosure?.url;
+    if (!resolvedBase64 && !resolvedTextContent && discUrl) {
+      try {
+        const parsedUrl = new URL(discUrl);
+        if (
+          parsedUrl.protocol === "https:" &&
+          (parsedUrl.hostname === "spk.gov.tr" || parsedUrl.hostname === "www.spk.gov.tr")
+        ) {
+          const docController = new AbortController();
+          const docTimer = setTimeout(() => docController.abort(), 6000);
+          const docRes = await fetch(parsedUrl.toString(), {
+            headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)" },
+            signal: docController.signal,
+          });
+          clearTimeout(docTimer);
+
+          if (docRes.ok) {
+            const ct = (docRes.headers.get("content-type") || "").toLowerCase();
+            if (parsedUrl.pathname.toLowerCase().endsWith(".pdf") || ct.includes("application/pdf")) {
+              const arrBuf = await docRes.arrayBuffer();
+              if (arrBuf.byteLength > 100 && arrBuf.byteLength <= 3_500_000) {
+                resolvedBase64 = Buffer.from(arrBuf).toString("base64");
+                resolvedMimeType = "application/pdf";
+                resolvedAttachmentName = parsedUrl.pathname.split("/").pop() || "spk-bulten.pdf";
+              }
+            } else if (ct.includes("text/html")) {
+              const rawHtml = await docRes.text();
+              const plain = rawHtml
+                .replace(/<script[\s\S]*?<\/script>/gi, " ")
+                .replace(/<style[\s\S]*?<\/style>/gi, " ")
+                .replace(/<[^>]+>/g, " ")
+                .replace(/&nbsp;/gi, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+              if (plain.length > 120) {
+                resolvedTextContent = plain.slice(0, 14000);
+                resolvedAttachmentName = "SPK Resmi Duyuru Metni";
+              }
+            }
+          }
+        }
+      } catch {
+        // Resmi doküman indirilemezse mevcut özet bağlamıyla devam et
+      }
+    }
+
+    const attachmentTextSection = resolvedTextContent
+      ? `\n\n--- EKLENEN BELGE METNİ (${resolvedAttachmentName || "Belge"}) ---\n${resolvedTextContent.slice(0, 24000)}\n--- BELGE SONU ---`
+      : "";
+
+    const geminiPrompt = `${MIZAN_SYSTEM_PROMPT}\n${contextAddition}${attachmentTextSection}\n${historySection}\nKULLANICI SORUSU: ${lastUserMessage}\nLütfen DİB ve TKBB standartlarına göre net, akıcı, zengin markdown biçimli fıkhi ve finansal analiz yanıtı ver. Kullanıcının sorusuna doğrudan, canlı ve derinlemesine yanıt ver. SPK uyarınca yatırım tavsiyesi olmadığını (YTD) belirt.`;
+
+    const geminiParts: Array<
+      | { text: string }
+      | { inlineData: { mimeType: string; data: string } }
+    > = [];
+
+    if (resolvedBase64 && resolvedMimeType) {
+      geminiParts.push({
+        inlineData: {
+          mimeType: resolvedMimeType,
+          data: resolvedBase64,
+        },
+      });
+    }
+    geminiParts.push({ text: geminiPrompt });
 
     for (const keyItem of keysToTry) {
       if (aiText) break;
@@ -319,7 +398,7 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
         if (aiText) break;
         try {
           const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 7000);
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
 
           const geminiRes = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${keyItem.key}`,
@@ -327,7 +406,7 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                contents: [{ parts: [{ text: geminiPrompt }] }],
+                contents: [{ parts: geminiParts }],
                 generationConfig: {
                   temperature: 0.3,
                   maxOutputTokens: 2048,

@@ -829,7 +829,7 @@ export default function DashboardPage() {
                             {item.ticker}
                           </span>
                         )}
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 dark:bg-[#C6F432]/15 text-blue-700 dark:text-[#C6F432] border border-blue-200/50">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-[#C6F432]/15 text-[#0D8B52] dark:text-[#C6F432] border border-emerald-200/60 dark:border-[#C6F432]/25">
                           {item.category}
                         </span>
                         {item.isCompliant === true && (
@@ -847,7 +847,7 @@ export default function DashboardPage() {
                         </span>
                       </div>
 
-                      <h4 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white group-hover:text-blue-600 dark:group-hover:text-[#C6F432] transition truncate">
+                      <h4 className="text-xs sm:text-sm font-bold text-[#08080C] dark:text-white group-hover:text-[#0D8B52] dark:group-hover:text-[#C6F432] transition truncate">
                         {item.title}
                       </h4>
 

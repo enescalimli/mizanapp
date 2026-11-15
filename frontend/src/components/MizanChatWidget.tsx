@@ -65,7 +65,7 @@ export const MizanChatWidget: React.FC = () => {
       id: "welcome-1",
       role: "assistant",
       content:
-        "Selamün aleyküm! Ben **Mizan AI**; Google Gemini 3.8 Flash ve Diyanet / TKBB Katılım Standartları ile güçlendirilmiş fıkhi ve finansal BIST asistanınızım.\n\nHisselerin helallik durumunu, borç oranlarını, kuruş hassasiyetli arındırma (infak) ve hisse zekâtı yükümlülüklerinizi sorabilirsiniz.",
+        "Selamün aleyküm! Ben **Mizan AI**; Google Gemini Flash ve Diyanet / TKBB Katılım Standartları ile güçlendirilmiş fıkhi ve finansal BIST asistanınızım.\n\nHisselerin helallik durumunu, borç oranlarını, kuruş hassasiyetli arındırma (infak) ve hisse zekâtı yükümlülüklerinizi sorabilirsiniz.",
       suggestedQuestions: [
         "THYAO neden katılım dışı kaldı?",
         "BIMAS için bu çeyrek arındırma infakı ne kadar?",
@@ -97,18 +97,30 @@ export const MizanChatWidget: React.FC = () => {
     setInput("");
     setLoading(true);
 
+    const savedUserKey =
+      typeof window !== "undefined"
+        ? localStorage.getItem("mizan_user_gemini_api_key") || ""
+        : "";
+
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (savedUserKey.trim()) {
+        headers["x-gemini-api-key"] = savedUserKey.trim();
+      }
+
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           messages: [...messages, userMsg].map((m) => ({
             role: m.role,
             content: m.content,
           })),
+          userApiKey: savedUserKey.trim() || undefined,
           context: {
             currentTicker,
             currentPath: pathname,
+            userApiKey: savedUserKey.trim() || undefined,
           },
         }),
       });
@@ -159,25 +171,25 @@ export const MizanChatWidget: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#08080C] via-[#1f325c] to-[#0D8B52] dark:from-[#10B981] dark:via-[#1e3059] dark:to-[#0D8B52] text-white shadow-[0_10px_30px_rgba(13,139,82,0.35)] hover:shadow-[0_15px_40px_rgba(13,139,82,0.5)] hover:scale-105 active:scale-95 transition-all duration-200 border border-white/20 select-none backdrop-blur-xl"
+            className="group relative flex items-center gap-2.5 px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full bg-[#08080C] dark:bg-[#C6F432] text-white dark:text-[#08080C] shadow-[0_10px_30px_rgba(16,185,129,0.28)] hover:scale-105 active:scale-95 transition-all duration-200 border border-white/15 dark:border-[#C6F432]/40 select-none backdrop-blur-xl"
             title="Mizan AI Fıkhi & Finansal Asistan"
           >
             {/* Animasyonlu Parıltı Halkası */}
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white dark:border-[#0A0B0E]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C6F432] dark:bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#10B981] border-2 border-white dark:border-[#0A0B0E]" />
             </span>
 
-            <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-              <Sparkles size={14} className="text-emerald-400 group-hover:rotate-12 transition-transform" />
+            <div className="w-6 h-6 rounded-lg bg-white/10 dark:bg-[#08080C]/15 flex items-center justify-center shrink-0">
+              <Sparkles size={14} className="text-[#C6F432] dark:text-[#08080C] group-hover:rotate-12 transition-transform" />
             </div>
 
             <div className="flex flex-col text-left">
               <span className="text-xs font-black tracking-tight leading-none">
                 Mizan AI
               </span>
-              <span className="text-[10px] text-emerald-300 font-medium leading-tight">
-                Gemini 3.8 Flash
+              <span className="text-[10px] text-[#C6F432] dark:text-[#08080C]/80 font-semibold leading-tight">
+                Gemini Flash AI
               </span>
             </div>
           </button>
@@ -189,20 +201,20 @@ export const MizanChatWidget: React.FC = () => {
         <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[85vh] bg-white/85 dark:bg-[#101118]/95 backdrop-blur-2xl rounded-[28px] border border-white/80 dark:border-white/10 shadow-[0_25px_70px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {/* Üst Bar */}
-          <div className="p-3.5 sm:p-4 bg-gradient-to-r from-[#08080C] via-[#20345e] to-[#0D8B52] dark:from-[#0D0E14]/95 dark:via-[#08080C]/95 dark:to-[#0D8B52]/90 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10 shrink-0">
+          <div className="p-3.5 sm:p-4 bg-[#08080C] dark:bg-[#0D0E14]/95 backdrop-blur-xl text-white flex items-center justify-between border-b border-white/10 shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center border border-white/20">
-                <Sparkles size={16} className="text-emerald-300" />
+              <div className="w-8 h-8 rounded-xl bg-[#C6F432]/15 flex items-center justify-center border border-[#C6F432]/30">
+                <Sparkles size={16} className="text-[#C6F432]" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-xs sm:text-sm font-black tracking-tight">
                     Mizan AI Katılım Asistanı
                   </h3>
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
                 </div>
-                <p className="text-[10px] text-emerald-200/80 font-mono">
-                  Gemini 3.8 Flash • DİB &amp; TKBB
+                <p className="text-[10px] text-[#C6F432]/90 font-mono">
+                  Gemini Flash • DİB &amp; TKBB
                 </p>
               </div>
             </div>
@@ -341,7 +353,7 @@ export const MizanChatWidget: React.FC = () => {
                               </span>
                               <Link
                                 href={`/companies/${alt.ticker}`}
-                                className="text-[9px] text-blue-600 dark:text-[#C6F432] underline font-bold"
+                                className="text-[9px] text-[#0D8B52] dark:text-[#C6F432] underline font-bold"
                               >
                                 İncele &rarr;
                               </Link>
@@ -416,9 +428,9 @@ export const MizanChatWidget: React.FC = () => {
 
             {loading && (
               <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/70 dark:bg-white/10 backdrop-blur-md max-w-[70%]">
-                <div className="w-4 h-4 border-2 border-[#0D8B52] border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#10B981] dark:border-[#C6F432] border-t-transparent rounded-full animate-spin" />
                 <span className="text-[11px] text-slate-600 dark:text-slate-300 font-medium animate-pulse">
-                  Gemini 3.8 Flash fıkhi standartları inceliyor...
+                  Mizan AI fıkhi standartları inceliyor...
                 </span>
               </div>
             )}
@@ -447,7 +459,7 @@ export const MizanChatWidget: React.FC = () => {
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="w-8 h-8 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-300 dark:disabled:bg-white/10 text-white flex items-center justify-center shrink-0 transition shadow-xs"
+                className="w-8 h-8 rounded-xl mizan-accent-btn disabled:bg-slate-300 dark:disabled:bg-white/10 disabled:text-slate-400 flex items-center justify-center shrink-0 transition shadow-xs"
               >
                 <Send size={13} />
               </button>

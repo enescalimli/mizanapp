@@ -32,6 +32,14 @@ interface ChatMessage {
   timestamp: string;
 }
 
+import * as MizanReact from "react";
+import {
+  FileText as MizanDocIcon,
+  FileUp as MizanUploadIcon,
+  Paperclip as MizanClipIcon,
+  X as MizanClearIcon,
+} from "lucide-react";
+
 const STARTER_PROMPTS = [
   "THYAO neden katılım endeksi dışı kaldı?",
   "BIMAS için bu çeyrek arındırma infakı ne kadar?",
@@ -123,6 +131,20 @@ function AsistanContent() {
             role: m.role,
             content: m.content,
           })),
+          attachment:
+            attachedDocRef.current || pastedDocTextRef.current.trim()
+              ? {
+                  name: attachedDocRef.current?.name || "Yapıştırılan KAP/SPK Metni",
+                  mimeType: attachedDocRef.current?.mimeType || "text/plain",
+                  base64Data: attachedDocRef.current?.base64Data,
+                  textContent: [
+                    attachedDocRef.current?.textContent || "",
+                    pastedDocTextRef.current.trim(),
+                  ]
+                    .filter(Boolean)
+                    .join("\n\n") || undefined,
+                }
+              : undefined,
           userApiKey: savedUserKey.trim() || undefined,
           context: {
             ...(contextOverride || {}),
@@ -149,6 +171,11 @@ function AsistanContent() {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
+      setAttachedDoc(null);
+      attachedDocRef.current = null;
+      setPastedDocText("");
+      pastedDocTextRef.current = "";
+      setDocPanelOpen(false);
     } catch (err) {
       console.error(err);
       setMessages((prev) => [
@@ -180,6 +207,68 @@ function AsistanContent() {
     }
   };
 
+  const [attachedDoc, setAttachedDoc] = MizanReact.useState<{
+    name: string;
+    sizeLabel: string;
+    mimeType: string;
+    base64Data?: string;
+    textContent?: string;
+  } | null>(null);
+  const [docPanelOpen, setDocPanelOpen] = MizanReact.useState(false);
+  const [pastedDocText, setPastedDocText] = MizanReact.useState("");
+  const [docError, setDocError] = MizanReact.useState<string | null>(null);
+  const docFileInputRef = MizanReact.useRef<HTMLInputElement>(null);
+  const attachedDocRef = MizanReact.useRef(attachedDoc);
+  const pastedDocTextRef = MizanReact.useRef(pastedDocText);
+  attachedDocRef.current = attachedDoc;
+  pastedDocTextRef.current = pastedDocText;
+
+  const handleDocFileSelect = async (file: File) => {
+    setDocError(null);
+    if (file.size > 2.8 * 1024 * 1024) {
+      setDocError("Dosya boyutu 2.8 MB sınırını aşıyor. Büyük PDF'ler için ilgili metni yapıştırabilirsiniz.");
+      return;
+    }
+    const lowerName = file.name.toLowerCase();
+    const isPdf = file.type === "application/pdf" || lowerName.endsWith(".pdf");
+    const isText =
+      file.type.startsWith("text/") ||
+      lowerName.endsWith(".txt") ||
+      lowerName.endsWith(".md") ||
+      lowerName.endsWith(".csv");
+
+    if (!isPdf && !isText) {
+      setDocError("Yalnızca PDF (.pdf) veya metin (.txt, .md, .csv) dosyaları yüklenebilir.");
+      return;
+    }
+
+    const sizeKB = Math.max(1, Math.round(file.size / 1024));
+    const sizeLabel = sizeKB >= 1024 ? `${(sizeKB / 1024).toFixed(2)} MB` : `${sizeKB} KB`;
+
+    try {
+      if (isText) {
+        const textContent = (await file.text()).slice(0, 28000);
+        const doc = { name: file.name, sizeLabel, mimeType: "text/plain", textContent };
+        setAttachedDoc(doc);
+        attachedDocRef.current = doc;
+      } else {
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result || ""));
+          reader.onerror = () => reject(new Error("Dosya okunamadı"));
+          reader.readAsDataURL(file);
+        });
+        const base64Data = dataUrl.includes(",") ? dataUrl.split(",")[1] : dataUrl;
+        const doc = { name: file.name, sizeLabel, mimeType: "application/pdf", base64Data };
+        setAttachedDoc(doc);
+        attachedDocRef.current = doc;
+      }
+      setDocPanelOpen(true);
+    } catch {
+      setDocError("Belge okunurken hata oluştu.");
+    }
+  };
+
   return (
     <PaynoShell badge="asistan">
       <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-125px)]">
@@ -187,10 +276,10 @@ function AsistanContent() {
         {/* ================================================================= */}
         {/* SADE & ŞIK ÜST BAŞLIK BAR                                         */}
         {/* ================================================================= */}
-        <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-200/60 dark:border-white/10 shrink-0">
+        <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-200/60 dark:border-white/10 shrink-0 gap-2 flex-wrap">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#08080C] to-[#0D8B52] dark:from-[#10B981] dark:to-[#0D8B52] text-white flex items-center justify-center shadow-md">
-              <Sparkles size={20} className="text-emerald-300" />
+            <div className="w-10 h-10 rounded-2xl bg-[#08080C] dark:bg-[#C6F432] text-[#C6F432] dark:text-[#08080C] flex items-center justify-center shadow-md">
+              <Sparkles size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -200,12 +289,36 @@ function AsistanContent() {
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
               <p className="text-[11px] text-[#6E81A0] dark:text-[#94A3B8]">
-                DİB &amp; TKBB Standartlarında BIST Fıkhi Analiz
+                Gemini Flash • DİB &amp; TKBB Standartlarında BIST ve KAP/SPK PDF Analizi
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            <input
+              ref={docFileInputRef}
+              type="file"
+              accept=".pdf,application/pdf,.txt,.md,.csv,text/plain"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleDocFileSelect(f);
+                e.target.value = "";
+              }}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => setDocPanelOpen(!docPanelOpen)}
+              className={`px-3 py-1.5 rounded-full border text-xs font-bold shadow-xs transition flex items-center gap-1.5 ${
+                docPanelOpen || attachedDoc || pastedDocText.trim()
+                  ? "bg-[#08080C] text-[#C6F432] dark:bg-[#C6F432] dark:text-[#08080C] border-transparent"
+                  : "bg-white dark:bg-[#101118] hover:bg-slate-50 dark:hover:bg-white/5 border-slate-200/80 dark:border-white/10 text-[#08080C] dark:text-white"
+              }`}
+              title="KAP / SPK PDF veya Metin Ekle"
+            >
+              <MizanClipIcon size={13} />
+              <span>{attachedDoc ? `PDF: ${attachedDoc.name.slice(0, 14)}` : "PDF / KAP Ekle"}</span>
+            </button>
             <button
               type="button"
               onClick={handleClear}
@@ -217,6 +330,108 @@ function AsistanContent() {
             </button>
           </div>
         </div>
+
+        {/* ================================================================= */}
+        {/* KAP / SPK PDF VE TAM METİN ANALİZ ÇEKMECESİ                       */}
+        {/* ================================================================= */}
+        {docPanelOpen && (
+          <div className="mb-3 p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-[#101118] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3 shrink-0 animate-in fade-in duration-150">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#08080C] dark:text-white">
+                <MizanDocIcon size={15} className="text-[#10B981] dark:text-[#C6F432]" />
+                <span>KAP / SPK PDF Yükle veya Bildirim Metni Yapıştır</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDocPanelOpen(false)}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"
+                title="Paneli Küçült"
+              >
+                <MizanClearIcon size={14} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div
+                onClick={() => docFileInputRef.current?.click()}
+                className="p-3 rounded-xl border border-dashed border-slate-300 dark:border-white/20 hover:border-[#10B981] dark:hover:border-[#C6F432] bg-slate-50/70 dark:bg-white/[0.03] cursor-pointer flex items-center justify-between gap-3 transition"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#10B981]/10 dark:bg-[#C6F432]/15 text-[#10B981] dark:text-[#C6F432] flex items-center justify-center shrink-0">
+                    <MizanUploadIcon size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-[#08080C] dark:text-white truncate">
+                      {attachedDoc ? attachedDoc.name : "PDF / TXT Belge Seç (Maks. 2.8 MB)"}
+                    </p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                      {attachedDoc
+                        ? `${attachedDoc.sizeLabel} • Analize Hazır`
+                        : "KAP faaliyet raporu, dipnot veya SPK bülteni"}
+                    </p>
+                  </div>
+                </div>
+                {attachedDoc ? (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAttachedDoc(null);
+                      attachedDocRef.current = null;
+                    }}
+                    className="text-[11px] font-bold text-rose-500 hover:underline shrink-0"
+                  >
+                    Kaldır
+                  </button>
+                ) : (
+                  <span className="px-2.5 py-1 rounded-lg bg-white dark:bg-white/10 text-[10px] font-bold text-[#08080C] dark:text-white border border-slate-200 dark:border-white/10 shrink-0">
+                    Seç
+                  </span>
+                )}
+              </div>
+
+              <textarea
+                value={pastedDocText}
+                onChange={(e) => {
+                  setPastedDocText(e.target.value);
+                  pastedDocTextRef.current = e.target.value;
+                }}
+                rows={2}
+                placeholder="Veya KAP/SPK duyuru metnini buraya yapıştırın..."
+                className="w-full text-xs p-2.5 rounded-xl bg-slate-50/70 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-[#08080C] dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#10B981]/30 dark:focus:ring-[#C6F432]/30 resize-y"
+              />
+            </div>
+
+            {docError && (
+              <p className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                {docError}
+              </p>
+            )}
+
+            {(attachedDoc || pastedDocText.trim().length > 0) && (
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Aşağıdan özel soru sorabilir veya tek tuşla fıkhi/finansal tarama başlatabilirsiniz.
+                </span>
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={() =>
+                    handleSend(
+                      attachedDoc
+                        ? `Eklediğim "${attachedDoc.name}" belgesini DİB ve TKBB katılım finans ilkelerine göre analiz et; kritik finansal kalemleri, katılım endeksi etkisini ve arındırma/yatırımcı aksiyonu gerekip gerekmediğini özetle.`
+                        : "Yapıştırdığım KAP/SPK bildirim metnini DİB ve TKBB katılım finans ilkelerine göre analiz et; hissenin katılım uygunluğuna etkisini ve yatırımcı aksiyonu gerekip gerekmediğini özetle."
+                    )
+                  }
+                  className="px-3.5 py-1.5 rounded-xl mizan-accent-btn text-xs font-bold shadow-xs transition disabled:opacity-50 flex items-center gap-1.5 shrink-0"
+                >
+                  <Sparkles size={13} />
+                  <span>Belgeyi Şimdi Analiz Et</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ================================================================= */}
         {/* ODAKLANMIŞ CHATBOT MESAJ AKIŞI                                    */}
@@ -332,7 +547,7 @@ function AsistanContent() {
                             </span>
                             <Link
                               href={`/companies/${alt.ticker}`}
-                              className="text-[10px] text-blue-600 dark:text-[#C6F432] font-bold hover:underline"
+                              className="text-[10px] text-[#0D8B52] dark:text-[#C6F432] font-bold hover:underline"
                             >
                               İncele &rarr;
                             </Link>
@@ -426,7 +641,7 @@ function AsistanContent() {
               <button
                 type="submit"
                 disabled={!input.trim() || loading}
-                className="w-9 h-9 rounded-xl bg-[#0D8B52] hover:bg-[#0b7444] disabled:bg-slate-200 dark:disabled:bg-white/10 disabled:text-slate-400 text-white flex items-center justify-center shrink-0 shadow-xs transition"
+                className="w-9 h-9 rounded-xl mizan-accent-btn disabled:bg-slate-200 dark:disabled:bg-white/10 disabled:text-slate-400 flex items-center justify-center shrink-0 shadow-xs transition"
               >
                 <Send size={15} />
               </button>
