@@ -188,14 +188,19 @@ export default function SettingsPage() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (data.modelUsed?.includes("Google Gemini")) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("mizan_user_gemini_api_key", userGeminiApiKey.trim());
+        }
         setApiKeyTestResult({
           success: true,
-          message: `Bağlantı Başarılı! (${data.modelUsed} • ${elapsed}ms gecikme)`,
+          message: `Bağlantı Başarılı ve Anahtar Kaydedildi! (${data.modelUsed} • ${elapsed}ms gecikme)`,
         });
       } else {
         setApiKeyTestResult({
           success: false,
-          message: `Model doğrulaması yapılamadı. Hesabınızın API erişimini ve bakiye tanımlarını kontrol edin.`,
+          message:
+            data.diagnosticReason ||
+            "Model doğrulaması yapılamadı. Hesabınızın API erişimini ve bakiye tanımlarını kontrol edin.",
         });
       }
     } catch (err: any) {
@@ -877,7 +882,7 @@ export default function SettingsPage() {
                     href="https://aistudio.google.com/apikey"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-[#C6F432] font-bold underline inline-flex items-center gap-1"
+                    className="text-[#0D8B52] dark:text-[#C6F432] font-bold underline inline-flex items-center gap-1"
                   >
                     <span>aistudio.google.com/apikey</span>
                     <ArrowRight size={11} />

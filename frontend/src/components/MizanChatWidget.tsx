@@ -31,6 +31,7 @@ interface ChatMessage {
   zakatCalculation?: any;
   suggestedQuestions?: string[];
   modelUsed?: string;
+  diagnosticReason?: string | null;
   tokenMetrics?: {
     historyTokens: number;
     prunedMessages: number;
@@ -44,11 +45,6 @@ export const MizanChatWidget: React.FC = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  // Asistan sayfasında tam sayfa asistan zaten var, yüzen widget gizlenir
-  if (pathname === "/asistan") {
-    return null;
-  }
 
   // Sayfa bağlamından hisse kodu tespiti (Örn: /companies/THYAO -> THYAO)
   const currentTicker = React.useMemo(() => {
@@ -81,6 +77,11 @@ export const MizanChatWidget: React.FC = () => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen, loading]);
+
+  // Asistan sayfasında tam sayfa asistan zaten var, yüzen widget gizlenir (Tüm hook'lardan sonra)
+  if (pathname === "/asistan") {
+    return null;
+  }
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || input).trim();
@@ -141,6 +142,7 @@ export const MizanChatWidget: React.FC = () => {
         zakatCalculation: data.zakatCalculation,
         suggestedQuestions: data.suggestedQuestions,
         modelUsed: data.modelUsed,
+        diagnosticReason: data.diagnosticReason,
         tokenMetrics: data.tokenMetrics,
         timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
       };
@@ -383,15 +385,28 @@ export const MizanChatWidget: React.FC = () => {
 
                 <div className="flex items-center justify-between w-full max-w-[88%] text-[9px] text-slate-400 mt-1 px-1">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
+                    {msg.role === "assistant" &&
+                    (msg.modelUsed?.includes("Google Gemini") ||
+                      msg.modelUsed?.includes("Canlı") ||
+                      msg.modelUsed?.includes("Kişisel")) ? (
                       <span className="flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
                         <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
                       </span>
                     ) : msg.role === "assistant" && msg.modelUsed ? (
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 flex-wrap">
                         <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block" />
                         <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
+                        {msg.diagnosticReason && (
+                          <Link
+                            href="/ayarlar"
+                            onClick={() => setIsOpen(false)}
+                            className="text-[9px] underline text-rose-500 dark:text-rose-400"
+                            title={msg.diagnosticReason}
+                          >
+                            ({msg.diagnosticReason} • Ayarlar)
+                          </Link>
+                        )}
                       </span>
                     ) : null}
 

@@ -292,6 +292,7 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
     let isLiveGemini = false;
     let successfulModel = "";
     let activeKeySource: "USER_PROVIDED" | "ENV" = "ENV";
+    let diagnosticReason: string | null = null;
 
     // Güvenilir API Anahtarı Öncelik Sırası:
     // 1. Kullanıcı Kişisel Anahtarı (Google AI Studio ücretli hesabı / Ayarlar)
@@ -306,6 +307,11 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
       if (!keysToTry.some((existing) => existing.key === k)) {
         keysToTry.push({ key: k, source: "ENV" });
       }
+    }
+
+    if (keysToTry.length === 0) {
+      diagnosticReason =
+        "Sunucu GEMINI_API_KEY ortam değişkeni tanımlı değil ve kişisel API anahtarı gönderilmedi.";
     }
 
     // Hızlı, stabil ve aktif Gemini model kademesi (multimodal PDF & ~1.2sn canlı yanıt doğrulanmış)
@@ -430,9 +436,25 @@ ${compliantAlternatives.map((a) => `- ${a.ticker} (${a.name}): Borç oranı ${a.
             }
           } else {
             const errStatus = geminiRes.status;
+            const errBody = await geminiRes.text().catch(() => "");
+            let apiErrMsg = "";
+            try {
+              const parsedErr = JSON.parse(errBody);
+              apiErrMsg = parsedErr?.error?.message || "";
+            } catch {
+              // ignore non-json error body
+            }
+            if (errStatus === 429) {
+              diagnosticReason = `[${keyItem.source}] Gemini kota/bakiye sınırı aşıldı (HTTP 429).`;
+            } else if (errStatus === 400 || errStatus === 403) {
+              diagnosticReason = `[${keyItem.source}] API anahtarı geçersiz veya yetkisiz (HTTP ${errStatus}): ${apiErrMsg.slice(0, 120)}`;
+            } else {
+              diagnosticReason = `[${keyItem.source}] ${modelName} HTTP ${errStatus}${apiErrMsg ? `: ${apiErrMsg.slice(0, 100)}` : ""}`;
+            }
             console.warn(`Key [${keyItem.source}] with model ${modelName} returned HTTP ${errStatus}`);
           }
         } catch (e) {
+          diagnosticReason = `[${keyItem.source}] ${modelName} zaman aşımı veya bağlantı hatası.`;
           console.warn(`Key [${keyItem.source}] with model ${modelName} call failed, trying next...`, e);
         }
       }
@@ -544,6 +566,8 @@ Detaylı analiz için hisse kodu belirtebilirsiniz (Örn: *“THYAO neden katıl
           }`
         : "Mizan Fıkhi Kural Motoru (Çevrimdışı Güvence Devrede)",
       keySourceUsed: isLiveGemini ? activeKeySource : null,
+      hasServerKey: ENV_GEMINI_KEYS.length > 0,
+      diagnosticReason: isLiveGemini ? null : diagnosticReason,
       stockData,
       compliantAlternatives,
       purificationCalculation,

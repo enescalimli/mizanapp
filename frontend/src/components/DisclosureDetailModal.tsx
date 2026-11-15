@@ -301,7 +301,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/companies/${disclosure.ticker}`}
-                    className="text-base font-black text-[#08080C] dark:text-white hover:text-blue-500 transition"
+                    className="text-base font-black text-[#08080C] dark:text-white hover:text-[#10B981] dark:hover:text-[#C6F432] transition"
                   >
                     {disclosure.ticker}
                   </Link>
@@ -340,7 +340,7 @@ Soru: Bu açıklamayı Diyanet İşleri Başkanlığı Din İşleri Yüksek Kuru
 
         {/* Category & Time Information */}
         <div className="flex items-center justify-between flex-wrap gap-2 text-xs">
-          <span className="px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-[#C6F432]/15 text-blue-700 dark:text-[#C6F432] font-bold border border-blue-200/60 dark:border-blue-800/30">
+          <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-[#C6F432]/15 text-[#0D8B52] dark:text-[#C6F432] font-bold border border-emerald-200/60 dark:border-[#C6F432]/25">
             {disclosure.category}
           </span>
 

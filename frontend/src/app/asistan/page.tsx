@@ -25,6 +25,7 @@ interface ChatMessage {
   zakatCalculation?: any;
   suggestedQuestions?: string[];
   modelUsed?: string;
+  diagnosticReason?: string | null;
   tokenMetrics?: {
     historyTokens: number;
     prunedMessages: number;
@@ -166,6 +167,7 @@ function AsistanContent() {
         zakatCalculation: data.zakatCalculation,
         suggestedQuestions: data.suggestedQuestions,
         modelUsed: data.modelUsed,
+        diagnosticReason: data.diagnosticReason,
         tokenMetrics: data.tokenMetrics,
         timestamp: new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }),
       };
@@ -562,15 +564,26 @@ function AsistanContent() {
               {/* Mesaj Alt Çubuğu (Model Durumu, Pruning, Sesli Dinle, Saat) */}
               <div className="flex items-center justify-between w-full max-w-[92%] sm:max-w-[85%] text-[10px] text-slate-400 mt-1 px-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  {msg.role === "assistant" && msg.modelUsed?.includes("Canlı") ? (
+                  {msg.role === "assistant" &&
+                  (msg.modelUsed?.includes("Google Gemini") ||
+                    msg.modelUsed?.includes("Canlı") ||
+                    msg.modelUsed?.includes("Kişisel")) ? (
                     <span className="flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse inline-block" />
                       <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{msg.modelUsed}</span>
                     </span>
                   ) : msg.role === "assistant" && msg.modelUsed ? (
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5 flex-wrap">
                       <span className="w-2 h-2 rounded-full bg-amber-500 inline-block" />
                       <span className="text-amber-600 dark:text-amber-400">{msg.modelUsed}</span>
+                      {msg.diagnosticReason && (
+                        <Link
+                          href="/ayarlar"
+                          className="text-[10px] underline text-rose-500 dark:text-rose-400"
+                        >
+                          ({msg.diagnosticReason} — Ayarlar&apos;dan Kontrol Et)
+                        </Link>
+                      )}
                     </span>
                   ) : null}
 
